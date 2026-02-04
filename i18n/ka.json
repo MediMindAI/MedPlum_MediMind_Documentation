@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "lang": "ka",
+    "langName": "ქართული",
+    "htmlLang": "ka"
+  },
+  "header": {
+    "brandTitle": "MediMind",
+    "brandSubtitle": "EMR SYSTEM",
+    "searchBtn": "Ctrl+K",
+    "pdfBtn": "PDF"
+  },
+  "search": {
+    "placeholder": "ძებნა დოკუმენტაციაში...",
+    "noResults": "შედეგი ვერ მოიძებნა",
+    "startTyping": "დაიწყეთ აკრეფა ძებნისთვის",
+    "escHint": "ESC"
+  },
+  "toc": {
+    "title": "სარჩევი",
+    "technicalOverview": "პლატფორმის მიმოხილვა",
+    "introduction": "შესავალი",
+    "whyFhir": "რატომ FHIR?",
+    "medplumPlatform": "Medplum პლატფორმა",
+    "techStack": "Tech Stack",
+    "patientRegistration": "პაციენტის რეგისტრაცია და ვიზიტები",
+    "overview": "მიმოხილვა",
+    "registration": "პაციენტის რეგისტრაცია",
+    "formSections": "რეგისტრაციის ფორმის სექციები",
+    "searchSystem": "პაციენტის ძებნის სისტემა",
+    "saveOptions": "შენახვის ვარიანტები",
+    "visitManagement": "ვიზიტების მართვა",
+    "wizardSteps": "ვიზიტის დამატების ნაბიჯები",
+    "insurance": "დაზღვევის მართვა",
+    "technicalReference": "ტექნიკური რეფერენსი",
+    "architecture": "სისტემის არქიტექტურა",
+    "technicalOverviewDetail": "ტექნიკური მიმოხილვა",
+    "uiComponents": "UI კომპონენტები",
+    "validationSystem": "ვალიდაციის სისტემა",
+    "dataFlow": "მონაცემთა ნაკადი",
+    "fhirResources": "FHIR რესურსები",
+    "services": "სერვისები",
+    "authentication": "Authentication",
+    "unknownPatient": "უცნობი პაციენტი",
+    "troubleshooting": "პრობლემების მოგვარება",
+    "commonIssues": "გავრცელებული პრობლემები",
+    "additional": "დამატებითი",
+    "support": "მხარდაჭერა"
+  },
+  "hero": {
+    "title": "პაციენტის რეგისტრაციის და ვიზიტების მოდული",
+    "subtitle": "საწარმოო დოკუმენტაცია IT სპეციალისტებისთვის",
+    "version": "v2.0"
+  },
+  "footer": {
+    "copyright": "© 2026 MediMind EMR. ვერსია 2.0 | საწარმოო დოკუმენტაცია"
+  },
+  "aria": {
+    "menuOpen": "მენიუს გახსნა",
+    "backToTop": "ზემოთ დაბრუნება",
+    "search": "ძებნა"
+  },
+  "loading": {
+    "sections": "სექციები იტვირთება...",
+    "loading": "იტვირთება...",
+    "error": "შეცდომა სექციების ჩატვირთვისას"
+  },
+  "zoom": {
+    "zoomIn": "გადიდება",
+    "zoomOut": "შემცირება"
+  },
+  "buttons": {
+    "viewOnInterface": "ნახე ინტერფეისზე",
+    "back": "უკან დაბრუნება"
+  },
+  "searchItems": [
+    { "title": "მიმოხილვა", "href": "#overview", "section": "დაწყება" },
+    { "title": "ძებნის სისტემა", "href": "#search", "section": "ფუნქციები" },
+    { "title": "ფორმის სექციები", "href": "#form-sections", "section": "ფუნქციები" },
+    { "title": "ვიზიტის ფორმა", "href": "#wizard", "section": "ფუნქციები" },
+    { "title": "დაზღვევის მართვა", "href": "#insurance", "section": "ფუნქციები" },
+    { "title": "უცნობი პაციენტი", "href": "#unknown-patient", "section": "ფუნქციები" },
+    { "title": "არქიტექტურა", "href": "#architecture", "section": "ტექნიკური რეფერენსი" },
+    { "title": "პრობლემების მოგვარება", "href": "#troubleshooting", "section": "მხარდაჭერა" },
+    { "title": "შეცდომის კოდები", "href": "#error-codes", "section": "მხარდაჭერა" }
+  ]
+}

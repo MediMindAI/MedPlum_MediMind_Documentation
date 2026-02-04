@@ -1,0 +1,171 @@
+<section class="doc-section" id="features">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">2</span> Функции</h2>
+  </div>
+
+  <!-- Search System -->
+  <h3 id="search">Система поиска</h3>
+  <p>Система предлагает гибкий поиск по множеству параметров:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Тип поиска</th>
+          <th>Описание</th>
+          <th>FHIR параметр</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Быстрый поиск</strong></td>
+          <td>По личному номеру или имени — автозаполнение</td>
+          <td><code>identifier | name</code></td>
+        </tr>
+        <tr>
+          <td><strong>Детальный поиск</strong></td>
+          <td>Множество фильтров: дата, отделение, статус</td>
+          <td><code>_lastUpdated | organization</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form Sections -->
+  <h3 id="form-sections">4 секции формы</h3>
+  <p>Форма регистрации разделена на <strong>4 логические секции</strong>:</p>
+
+  <div class="doc-form-sections-grid">
+    <div class="doc-form-section-card">
+      <img src="images/section-1-personal-ru.png" alt="Личная информация" data-i18n-img="section-1-personal">
+    </div>
+    <div class="doc-form-section-card">
+      <img src="images/section-2-contact-ru.png" alt="Контактные данные" data-i18n-img="section-2-contact">
+    </div>
+    <div class="doc-form-section-card">
+      <img src="images/section-3-additional-ru.png" alt="Дополнительно" data-i18n-img="section-3-additional">
+    </div>
+    <div class="doc-form-section-card">
+      <img src="images/section-4-representative-ru.png" alt="Представитель" data-i18n-img="section-4-representative">
+    </div>
+  </div>
+
+  <!-- Save Options -->
+  <h3 id="save-options">Варианты сохранения</h3>
+  <div class="doc-save-options">
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">Сохранить</div>
+        <div class="doc-save-option-desc">Только сохранение данных пациента</div>
+      </div>
+    </div>
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">Сохранить и продолжить</div>
+        <div class="doc-save-option-desc">Регистрируется, открываются шаги регистрации визита</div>
+      </div>
+    </div>
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">Сохранить и новый</div>
+        <div class="doc-save-option-desc">Регистрируется, форма очищается для нового пациента</div>
+      </div>
+    </div>
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">Сохранить и просмотреть</div>
+        <div class="doc-save-option-desc">Регистрируется, открывается карточка пациента</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wizard Steps -->
+  <h3 id="wizard">Шаги регистрации визита</h3>
+  <div class="doc-screenshot-full" id="wizard-screenshot">
+    <img src="images/visit-registration-steps-ru.png" alt="Шаги регистрации визита" class="doc-screenshot-image" data-i18n-img="visit-registration-steps">
+    <button class="doc-back-link" id="back-from-wizard-btn" onclick="goBackFromWizard()" style="display: none;">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+      Вернуться назад
+    </button>
+  </div>
+
+  <div class="doc-wizard-steps">
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">1</div>
+      <div>
+        <div class="doc-wizard-step-label">Детали регистрации</div>
+        <div class="doc-wizard-step-desc">Тип визита, дата, отделение</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">2</div>
+      <div>
+        <div class="doc-wizard-step-label">Данные страхования</div>
+        <div class="doc-wizard-step-desc">Страховая компания, полис</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">3</div>
+      <div>
+        <div class="doc-wizard-step-label">Гарантия</div>
+        <div class="doc-wizard-step-desc">Гарантийное письмо, сумма</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">4</div>
+      <div>
+        <div class="doc-wizard-step-label">Демография</div>
+        <div class="doc-wizard-step-desc">Регион, диагноз, жалоба</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">5</div>
+      <div>
+        <div class="doc-wizard-step-label">Подтверждение</div>
+        <div class="doc-wizard-step-desc">Сводка и регистрация</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insurance Management -->
+  <h3 id="insurance">Управление страхованием</h3>
+  <p>Система позволяет добавить <strong>до 3 страховых компаний</strong> на один визит.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/insurance-section-ru.png" alt="Секция страхования" class="doc-screenshot-image" data-i18n-img="insurance-section">
+  </div>
+
+  <!-- Demographics -->
+  <h3 id="demographics">Демография</h3>
+  <div class="doc-screenshot-full">
+    <img src="images/demographics-section-ru.png" alt="Секция демографии" class="doc-screenshot-image" data-i18n-img="demographics-section">
+  </div>
+</section>

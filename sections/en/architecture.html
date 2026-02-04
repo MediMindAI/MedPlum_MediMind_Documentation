@@ -1,0 +1,782 @@
+<section class="doc-section" id="architecture">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">3</span> Architecture</h2>
+  </div>
+
+  <h4>System Architecture Diagram</h4>
+  <div class="custom-diagram">
+    <svg viewBox="0 0 1100 780" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Gradients -->
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#0f172a"/>
+          <stop offset="50%" style="stop-color:#1e293b"/>
+          <stop offset="100%" style="stop-color:#0f172a"/>
+        </linearGradient>
+
+        <linearGradient id="uiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#3b82f6"/>
+          <stop offset="100%" style="stop-color:#1d4ed8"/>
+        </linearGradient>
+
+        <linearGradient id="hookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#8b5cf6"/>
+          <stop offset="100%" style="stop-color:#6d28d9"/>
+        </linearGradient>
+
+        <linearGradient id="serviceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#06b6d4"/>
+          <stop offset="100%" style="stop-color:#0891b2"/>
+        </linearGradient>
+
+        <linearGradient id="utilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f59e0b"/>
+          <stop offset="100%" style="stop-color:#d97706"/>
+        </linearGradient>
+
+        <linearGradient id="dbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#10b981"/>
+          <stop offset="100%" style="stop-color:#059669"/>
+        </linearGradient>
+
+        <linearGradient id="glowBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.6"/>
+          <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0"/>
+        </linearGradient>
+
+        <linearGradient id="glowPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.6"/>
+          <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0"/>
+        </linearGradient>
+
+        <linearGradient id="glowCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0.6"/>
+          <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0"/>
+        </linearGradient>
+
+        <linearGradient id="glowGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.6"/>
+          <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
+        </linearGradient>
+
+        <!-- Filters -->
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.4"/>
+        </filter>
+
+        <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="8" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <!-- Patterns -->
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(148,163,184,0.05)" stroke-width="1"/>
+        </pattern>
+
+        <!-- Clip paths -->
+        <clipPath id="cardClip">
+          <rect x="0" y="0" width="150" height="70" rx="14"/>
+        </clipPath>
+
+        <clipPath id="smallCardClip">
+          <rect x="0" y="0" width="140" height="55" rx="12"/>
+        </clipPath>
+      </defs>
+
+      <!-- Background -->
+      <rect width="1100" height="750" fill="url(#bgGrad)"/>
+      <rect width="1100" height="750" fill="url(#grid)"/>
+
+      <!-- Decorative circles -->
+      <circle cx="100" cy="100" r="150" fill="url(#glowBlue)" opacity="0.12"/>
+      <circle cx="1000" cy="650" r="200" fill="url(#glowGreen)" opacity="0.08"/>
+      <circle cx="550" cy="400" r="300" fill="url(#glowPurple)" opacity="0.05"/>
+
+      <!-- ═══════════════ LAYER LABELS ═══════════════ -->
+
+      <!-- UI Layer Label -->
+      <g transform="translate(25, 50)">
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5"/>
+        <circle cx="20" cy="18" r="6" fill="#3b82f6"/>
+        <text x="70" y="23" text-anchor="middle" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">UI Components</text>
+      </g>
+
+      <!-- Utilities Label (moved up) -->
+      <g transform="translate(25, 150)">
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(245, 158, 11, 0.15)" stroke="#f59e0b" stroke-width="1.5"/>
+        <circle cx="20" cy="18" r="6" fill="#f59e0b"/>
+        <text x="70" y="23" text-anchor="middle" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Utilities</text>
+      </g>
+
+      <!-- Hooks Layer Label (moved down) -->
+      <g transform="translate(25, 255)">
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(139, 92, 246, 0.15)" stroke="#8b5cf6" stroke-width="1.5"/>
+        <circle cx="20" cy="18" r="6" fill="#8b5cf6"/>
+        <text x="70" y="23" text-anchor="middle" fill="#a78bfa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">React Hooks</text>
+      </g>
+
+      <!-- Services Label -->
+      <g transform="translate(25, 365)">
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(6, 182, 212, 0.15)" stroke="#06b6d4" stroke-width="1.5"/>
+        <circle cx="20" cy="18" r="6" fill="#06b6d4"/>
+        <text x="70" y="23" text-anchor="middle" fill="#22d3ee" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Services</text>
+      </g>
+
+      <!-- FHIR API Label -->
+      <g transform="translate(25, 545)">
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1.5"/>
+        <circle cx="20" cy="18" r="6" fill="#10b981"/>
+        <text x="70" y="23" text-anchor="middle" fill="#34d399" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">FHIR API</text>
+      </g>
+
+      <!-- ═══════════════ UI COMPONENTS (Row 1) ═══════════════ -->
+
+      <!-- UnifiedRegistrationView -->
+      <g class="diagram-node" transform="translate(170, 35)">
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="rgba(30, 41, 59, 0.8)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="none" stroke="url(#uiGrad)" stroke-width="2"/>
+        <rect x="0" y="0" width="150" height="24" rx="14" fill="url(#uiGrad)" clip-path="url(#cardClip)"/>
+        <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
+
+        <rect x="12" y="7" width="12" height="10" rx="2" fill="rgba(255,255,255,0.9)"/>
+        <rect x="14" y="9" width="8" height="2" rx="1" fill="#3b82f6"/>
+        <rect x="14" y="13" width="5" height="2" rx="1" fill="#3b82f6"/>
+
+        <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Main View</text>
+        <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">UnifiedRegistration</text>
+        <text x="75" y="60" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">View</text>
+      </g>
+
+      <!-- PatientForm -->
+      <g class="diagram-node" transform="translate(340, 35)">
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="rgba(30, 41, 59, 0.8)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="none" stroke="url(#uiGrad)" stroke-width="2"/>
+        <rect x="0" y="0" width="150" height="24" rx="14" fill="url(#uiGrad)" clip-path="url(#cardClip)"/>
+        <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
+
+        <circle cx="18" cy="12" r="5" fill="rgba(255,255,255,0.9)"/>
+        <path d="M13,20 Q18,15 23,20" stroke="rgba(255,255,255,0.9)" stroke-width="2" fill="none"/>
+
+        <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Form</text>
+        <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">PatientForm</text>
+        <text x="75" y="60" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">+ Draft autosave</text>
+      </g>
+
+      <!-- VisitModal -->
+      <g class="diagram-node" transform="translate(510, 35)">
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="rgba(30, 41, 59, 0.8)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="none" stroke="url(#uiGrad)" stroke-width="2"/>
+        <rect x="0" y="0" width="150" height="24" rx="14" fill="url(#uiGrad)" clip-path="url(#cardClip)"/>
+        <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
+
+        <circle cx="18" cy="12" r="6" fill="rgba(255,255,255,0.9)"/>
+        <path d="M18,8 L18,16 M14,12 L22,12" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+
+        <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Modal</text>
+        <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">VisitModal</text>
+        <text x="75" y="60" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">4-Step Wizard</text>
+      </g>
+
+      <!-- SearchPanel -->
+      <g class="diagram-node" transform="translate(680, 35)">
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="rgba(30, 41, 59, 0.8)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="none" stroke="url(#uiGrad)" stroke-width="2"/>
+        <rect x="0" y="0" width="150" height="24" rx="14" fill="url(#uiGrad)" clip-path="url(#cardClip)"/>
+        <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
+
+        <circle cx="16" cy="11" r="5" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+        <path d="M20,15 L24,19" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+
+        <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Search</text>
+        <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">SearchPanel</text>
+        <text x="75" y="60" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">+ QuickSearch</text>
+      </g>
+
+      <!-- PatientTable -->
+      <g class="diagram-node" transform="translate(850, 35)">
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="rgba(30, 41, 59, 0.8)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="150" height="70" rx="14" fill="none" stroke="url(#uiGrad)" stroke-width="2"/>
+        <rect x="0" y="0" width="150" height="24" rx="14" fill="url(#uiGrad)" clip-path="url(#cardClip)"/>
+        <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
+
+        <rect x="10" y="7" width="16" height="10" rx="2" fill="rgba(255,255,255,0.9)"/>
+        <path d="M12,10 L24,10 M12,13 L20,13" stroke="#3b82f6" stroke-width="1"/>
+
+        <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Table</text>
+        <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">PatientTable</text>
+        <text x="75" y="60" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">+ EditModal</text>
+      </g>
+
+      <!-- ═══════════════ UTILITIES LAYER (Row 2 - moved up) ═══════════════ -->
+
+      <!-- validators -->
+      <g class="diagram-node" transform="translate(170, 135)">
+        <rect x="0" y="0" width="140" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="140" height="55" rx="12" fill="none" stroke="url(#utilGrad)" stroke-width="1.5"/>
+        <g transform="translate(15, 12)">
+          <path d="M5,15 L10,20 L20,8" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <text x="50" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">validators</text>
+        <text x="70" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Personal ID, Email</text>
+      </g>
+
+      <!-- fhirHelpers -->
+      <g class="diagram-node" transform="translate(330, 135)">
+        <rect x="0" y="0" width="140" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="140" height="55" rx="12" fill="none" stroke="url(#utilGrad)" stroke-width="1.5"/>
+        <g transform="translate(15, 12)">
+          <rect x="0" y="2" width="20" height="16" rx="2" fill="none" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="10" y="14" text-anchor="middle" fill="#fbbf24" font-size="8" font-weight="700">{ }</text>
+        </g>
+        <text x="50" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">fhirHelpers</text>
+        <text x="70" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">getIdentifierValue</text>
+      </g>
+
+      <!-- auditHelpers -->
+      <g class="diagram-node" transform="translate(490, 135)">
+        <rect x="0" y="0" width="130" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="130" height="55" rx="12" fill="none" stroke="url(#utilGrad)" stroke-width="1.5"/>
+        <g transform="translate(15, 12)">
+          <rect x="0" y="0" width="18" height="20" rx="2" fill="none" stroke="#fbbf24" stroke-width="1.5"/>
+          <path d="M4,6 L14,6 M4,10 L14,10 M4,14 L10,14" stroke="#fbbf24" stroke-width="1"/>
+        </g>
+        <text x="48" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">auditHelpers</text>
+        <text x="65" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Audit Logging</text>
+      </g>
+
+      <!-- fhir-systems.ts (Constants) -->
+      <g class="diagram-node" transform="translate(640, 135)">
+        <rect x="0" y="0" width="150" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="150" height="55" rx="12" fill="none" stroke="url(#utilGrad)" stroke-width="1.5"/>
+        <g transform="translate(15, 12)">
+          <text x="0" y="14" fill="#fbbf24" font-size="14" font-weight="700">#</text>
+        </g>
+        <text x="45" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">fhir-systems.ts</text>
+        <text x="75" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">FHIR URL Constants</text>
+      </g>
+
+      <!-- recentPatientsService -->
+      <g class="diagram-node" transform="translate(810, 135)">
+        <rect x="0" y="0" width="165" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="165" height="55" rx="12" fill="none" stroke="url(#utilGrad)" stroke-width="1.5"/>
+        <g transform="translate(15, 12)">
+          <path d="M0,10 L8,10 L8,0 L18,0 L18,10 L10,10" fill="none" stroke="#fbbf24" stroke-width="1.5"/>
+        </g>
+        <text x="45" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">recentPatientsService</text>
+        <text x="82" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">FIFO Cache (max 10)</text>
+      </g>
+
+      <!-- ═══════════════ HOOKS LAYER (Row 3) ═══════════════ -->
+
+      <!-- useRegistrationVisitForm - MAIN HOOK -->
+      <g class="diagram-node" transform="translate(170, 240)">
+        <rect x="0" y="0" width="200" height="65" rx="14" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="200" height="65" rx="14" fill="none" stroke="url(#hookGrad)" stroke-width="2"/>
+
+        <g transform="translate(12, 18)">
+          <path d="M0,12 Q7,0 14,12 Q21,24 28,12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+        </g>
+
+        <text x="100" y="28" text-anchor="middle" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700">useRegistrationVisitForm</text>
+        <text x="100" y="50" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Main Logic</text>
+      </g>
+
+      <!-- useDepartments -->
+      <g class="diagram-node" transform="translate(390, 240)">
+        <rect x="0" y="0" width="140" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="140" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
+
+        <g transform="translate(12, 12)">
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+        </g>
+
+        <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useDepartments</text>
+        <text x="70" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Departments</text>
+      </g>
+
+      <!-- useRegistrationStatuses -->
+      <g class="diagram-node" transform="translate(550, 240)">
+        <rect x="0" y="0" width="160" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="160" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
+
+        <g transform="translate(12, 12)">
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+        </g>
+
+        <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useRegistrationStatuses</text>
+        <text x="80" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">-> statusService</text>
+      </g>
+
+      <!-- useInsuranceData -->
+      <g class="diagram-node" transform="translate(730, 240)">
+        <rect x="0" y="0" width="130" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="130" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
+
+        <g transform="translate(12, 12)">
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+        </g>
+
+        <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useInsuranceData</text>
+        <text x="65" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">JSON Data</text>
+      </g>
+
+      <!-- useRecentPatients -->
+      <g class="diagram-node" transform="translate(880, 240)">
+        <rect x="0" y="0" width="130" height="55" rx="12" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="130" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
+
+        <g transform="translate(12, 12)">
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+        </g>
+
+        <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useRecentPatients</text>
+        <text x="65" y="42" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Recent Patients</text>
+      </g>
+
+
+      <!-- ═══════════════ SERVICES LAYER (Row 4) ═══════════════ -->
+
+      <!-- encounterService -->
+      <g class="diagram-node" transform="translate(170, 350)">
+        <rect x="0" y="0" width="160" height="65" rx="14" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="160" height="65" rx="14" fill="none" stroke="url(#serviceGrad)" stroke-width="2"/>
+
+        <g transform="translate(15, 15)">
+          <rect x="0" y="5" width="20" height="18" rx="3" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+          <path d="M0,12 L20,12" stroke="#22d3ee" stroke-width="1.5"/>
+          <path d="M5,2 L5,8 M15,2 L15,8" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+
+        <text x="50" y="28" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">encounterService</text>
+        <text x="80" y="48" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Visit Management</text>
+      </g>
+
+      <!-- MedplumClient (Direct FHIR API) -->
+      <g class="diagram-node" transform="translate(350, 350)">
+        <rect x="0" y="0" width="160" height="65" rx="14" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="160" height="65" rx="14" fill="none" stroke="url(#serviceGrad)" stroke-width="2"/>
+
+        <g transform="translate(15, 15)">
+          <rect x="2" y="5" width="20" height="18" rx="3" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+          <path d="M7,11 L17,11 M7,17 L14,17" stroke="#22d3ee" stroke-width="1.5"/>
+        </g>
+
+        <text x="50" y="28" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">MedplumClient</text>
+        <text x="80" y="48" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Direct FHIR API</text>
+      </g>
+
+      <!-- departmentService -->
+      <g class="diagram-node" transform="translate(530, 350)">
+        <rect x="0" y="0" width="160" height="65" rx="14" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="160" height="65" rx="14" fill="none" stroke="url(#serviceGrad)" stroke-width="2"/>
+
+        <g transform="translate(15, 15)">
+          <rect x="0" y="0" width="24" height="18" rx="2" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+          <path d="M8,0 L8,18 M16,0 L16,18" stroke="#22d3ee" stroke-width="1" opacity="0.5"/>
+        </g>
+
+        <text x="50" y="28" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">departmentService</text>
+        <text x="80" y="48" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Eligibility Check</text>
+      </g>
+
+      <!-- unknownPatientService -->
+      <g class="diagram-node" transform="translate(710, 350)">
+        <rect x="0" y="0" width="175" height="65" rx="14" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="175" height="65" rx="14" fill="none" stroke="url(#serviceGrad)" stroke-width="2"/>
+
+        <g transform="translate(15, 15)">
+          <circle cx="12" cy="8" r="6" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+          <text x="12" y="11" text-anchor="middle" fill="#22d3ee" font-size="8" font-weight="700">?</text>
+          <path d="M4,22 Q12,15 20,22" stroke="#22d3ee" stroke-width="1.5" fill="none"/>
+        </g>
+
+        <text x="55" y="28" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">unknownPatientService</text>
+        <text x="88" y="48" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">"Unknown #N" generation</text>
+      </g>
+
+      <!-- localStorage (PatientForm Draft) - Direct, not via service -->
+      <g class="diagram-node" transform="translate(905, 350)">
+        <rect x="0" y="0" width="130" height="65" rx="14" fill="rgba(30, 41, 59, 0.85)" filter="url(#cardShadow)"/>
+        <rect x="0" y="0" width="130" height="65" rx="14" fill="none" stroke="url(#utilGrad)" stroke-width="2" stroke-dasharray="6,3"/>
+
+        <g transform="translate(15, 15)">
+          <rect x="0" y="0" width="18" height="22" rx="2" fill="none" stroke="#fbbf24" stroke-width="1.5"/>
+          <path d="M4,6 L14,6 M4,10 L12,10 M4,14 L10,14" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"/>
+        </g>
+
+        <text x="50" y="28" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">localStorage</text>
+        <text x="65" y="48" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Draft (1s debounce)</text>
+      </g>
+
+      <!-- ═══════════════ FHIR / DATABASE ═══════════════ -->
+
+      <!-- Medplum Cloud -->
+      <g class="diagram-node" transform="translate(350, 530)">
+        <ellipse cx="200" cy="25" rx="200" ry="25" fill="url(#dbGrad)" filter="url(#softGlow)"/>
+        <rect x="0" y="25" width="400" height="80" fill="url(#dbGrad)"/>
+        <ellipse cx="200" cy="105" rx="200" ry="25" fill="url(#dbGrad)"/>
+
+        <ellipse cx="200" cy="25" rx="180" ry="18" fill="rgba(255,255,255,0.1)"/>
+
+        <text x="200" y="55" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="800">Medplum Cloud</text>
+        <text x="200" y="78" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="system-ui, -apple-system, sans-serif" font-size="12">FHIR R4 Server • api.medplum.com</text>
+        <text x="200" y="95" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="system-ui, -apple-system, sans-serif" font-size="10">Patient • Encounter • Coverage • Organization</text>
+      </g>
+
+
+      <!-- ═══════════════ DATA FLOW CONNECTIONS ═══════════════ -->
+      <!--
+        CARD BOUNDARIES (new coordinates):
+
+        UI Layer (y: 35-105):
+          UnifiedReg: x=170-320
+          PatientForm: x=340-490
+          VisitModal: x=510-660
+          SearchPanel: x=680-830
+          PatientTable: x=850-1000
+
+        Utilities Layer (y: 135-190):
+          validators: x=170-310
+          fhirHelpers: x=330-470
+          auditHelpers: x=490-620
+          fhir-systems: x=640-790
+          recentPatients: x=810-975
+
+        Hooks Layer (y: 240-305):
+          useRegVisitForm: x=170-370
+          useDepartments: x=390-530
+          useRegStatuses: x=550-710
+          useInsuranceData: x=730-860
+          useRecentPatients: x=880-1010
+
+        Services Layer (y: 350-415):
+          encounterService: x=170-330
+          MedplumClient: x=350-510
+          departmentService: x=530-690
+          unknownPatient: x=710-885
+          localStorage: x=905-1035
+
+        FHIR Layer (y: 485+)
+
+        SAFE CHANNELS:
+        Vertical: x=160(L), 320, 480, 630, 800, 1010(R)
+        Horizontal: y=120, 215, 325, 455
+      -->
+
+      <!-- ═══════ 1. UI -> Utilities (yellow - direct vertical) ═══════ -->
+      <g opacity="0.8">
+        <!-- PatientForm -> validators -->
+        <path d="M365,105 L365,118 L240,118 L240,135" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+        <circle cx="365" cy="105" r="4" fill="#f59e0b"/>
+        <circle cx="240" cy="135" r="4" fill="#f59e0b"/>
+
+        <!-- PatientForm -> auditHelpers -->
+        <path d="M415,105 L415,122 L555,122 L555,135" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+        <circle cx="415" cy="105" r="4" fill="#f59e0b"/>
+        <circle cx="555" cy="135" r="4" fill="#f59e0b"/>
+
+        <!-- PatientForm -> fhir-systems.ts -->
+        <path d="M460,105 L460,126 L715,126 L715,135" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+        <circle cx="460" cy="105" r="4" fill="#f59e0b"/>
+        <circle cx="715" cy="135" r="4" fill="#f59e0b"/>
+
+        <!-- PatientTable -> fhirHelpers -->
+        <path d="M870,105 L870,118 L400,118 L400,135" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+        <circle cx="870" cy="105" r="4" fill="#f59e0b"/>
+        <circle cx="400" cy="135" r="4" fill="#f59e0b"/>
+
+        <!-- PatientTable -> recentPatientsService -->
+        <path d="M920,105 L920,135" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+        <circle cx="920" cy="105" r="4" fill="#f59e0b"/>
+        <circle cx="920" cy="135" r="4" fill="#f59e0b"/>
+      </g>
+
+      <!-- ═══════ 2. UI -> Hooks (blue - from top left) ═══════ -->
+      <g opacity="0.8">
+        <!-- VisitModal -> useRegVisitForm -->
+        <path d="M510,35 L510,15 L155,15 L155,270 L170,270" stroke="#3b82f6" stroke-width="3" fill="none"/>
+        <circle cx="510" cy="35" r="5" fill="#3b82f6"/>
+        <circle cx="170" cy="270" r="5" fill="#3b82f6"/>
+
+        <!-- PatientTable -> useRecentPatients (directly down) -->
+        <path d="M945,105 L945,240" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+        <circle cx="945" cy="105" r="4" fill="#3b82f6"/>
+        <circle cx="945" cy="240" r="4" fill="#3b82f6"/>
+      </g>
+
+      <!-- ═══════ 3. Hook -> Hook (purple - horizontal arrows) ═══════ -->
+      <g opacity="0.6">
+        <!-- useRegVisitForm -> useDepartments (direct) -->
+        <path d="M370,272 L390,272" stroke="#a78bfa" stroke-width="2" fill="none"/>
+        <polygon points="388,268 395,272 388,276" fill="#a78bfa"/>
+
+        <!-- useRegVisitForm -> useRegStatuses (via bottom) -->
+        <path d="M370,280 L370,310 L550,310 L550,295" stroke="#a78bfa" stroke-width="2" fill="none"/>
+        <polygon points="546,297 550,290 554,297" fill="#a78bfa"/>
+
+        <!-- useRegVisitForm -> useInsuranceData (via bottom) -->
+        <path d="M370,285 L370,318 L730,318 L730,295" stroke="#a78bfa" stroke-width="2" fill="none"/>
+        <polygon points="726,297 730,290 734,297" fill="#a78bfa"/>
+      </g>
+
+      <!-- ═══════ 4. Hooks -> Services (purple - direct vertical) ═══════ -->
+      <g opacity="0.7">
+        <!-- useRegVisitForm -> encounterService -->
+        <path d="M220,305 L220,350" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+        <circle cx="220" cy="305" r="4" fill="#8b5cf6"/>
+        <circle cx="220" cy="350" r="4" fill="#8b5cf6"/>
+
+        <!-- useRegVisitForm -> MedplumClient -->
+        <path d="M300,305 L300,328 L430,328 L430,350" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+        <circle cx="300" cy="305" r="4" fill="#8b5cf6"/>
+        <circle cx="430" cy="350" r="4" fill="#8b5cf6"/>
+
+        <!-- useDepartments -> departmentService -->
+        <path d="M460,295 L460,328 L610,328 L610,350" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+        <circle cx="460" cy="295" r="4" fill="#8b5cf6"/>
+        <circle cx="610" cy="350" r="4" fill="#8b5cf6"/>
+      </g>
+
+      <!-- ═══════ 5. PatientForm -> localStorage (from top right) ═══════ -->
+      <g opacity="0.6">
+        <path d="M415,35 L415,15 L1050,15 L1050,382 L1035,382" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6,3" fill="none"/>
+        <circle cx="415" cy="35" r="4" fill="#f59e0b"/>
+        <circle cx="1035" cy="382" r="4" fill="#f59e0b"/>
+      </g>
+
+      <!-- ═══════ 6. PatientForm -> unknownPatientService (around) ═══════ -->
+      <g opacity="0.6">
+        <path d="M490,90 L480,90 L480,215 L870,215 L870,320 L797,320 L797,350" stroke="#06b6d4" stroke-width="2" fill="none"/>
+        <circle cx="490" cy="90" r="4" fill="#06b6d4"/>
+        <circle cx="797" cy="350" r="4" fill="#06b6d4"/>
+      </g>
+
+      <!-- ═══════ 7. Services -> FHIR (green - vertical lines) ═══════ -->
+      <g opacity="0.8">
+        <!-- encounterService -> FHIR -->
+        <path d="M250,415 L250,470 L550,470 L550,530" stroke="#10b981" stroke-width="3" fill="none"/>
+        <circle cx="250" cy="415" r="5" fill="#10b981"/>
+
+        <!-- MedplumClient -> FHIR (main connection) -->
+        <path d="M430,415 L430,480 L550,480" stroke="#10b981" stroke-width="4" fill="none"/>
+        <circle cx="430" cy="415" r="6" fill="#10b981"/>
+
+        <!-- departmentService -> FHIR -->
+        <path d="M610,415 L610,490 L550,490" stroke="#10b981" stroke-width="3" fill="none"/>
+        <circle cx="610" cy="415" r="5" fill="#10b981"/>
+
+        <!-- unknownPatientService -> FHIR -->
+        <path d="M797,415 L797,500 L550,500" stroke="#10b981" stroke-width="3" fill="none"/>
+        <circle cx="797" cy="415" r="5" fill="#10b981"/>
+
+        <!-- FHIR central connector -->
+        <circle cx="550" cy="530" r="8" fill="#10b981"/>
+      </g>
+
+
+      <!-- ═══════════════ LEGEND ═══════════════ -->
+
+      <g transform="translate(0, 680)">
+        <rect x="0" y="0" width="600" height="45" rx="12" fill="rgba(15, 23, 42, 0.95)" stroke="rgba(59, 130, 246, 0.3)" stroke-width="1.5"/>
+
+        <!-- Header -->
+        <rect x="0" y="0" width="600" height="20" rx="12" fill="rgba(59, 130, 246, 0.1)"/>
+        <rect x="0" y="10" width="600" height="10" fill="rgba(59, 130, 246, 0.1)"/>
+        <text x="300" y="14" text-anchor="middle" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700">Data Flow</text>
+
+        <!-- Legend items -->
+        <g transform="translate(15, 28)">
+          <circle cx="6" cy="6" r="5" fill="#3b82f6"/>
+          <text x="18" y="10" fill="#94a3b8" font-size="9">UI -> Hooks</text>
+        </g>
+
+        <g transform="translate(100, 28)">
+          <circle cx="6" cy="6" r="5" fill="#8b5cf6"/>
+          <text x="18" y="10" fill="#94a3b8" font-size="9">Hooks -> Services</text>
+        </g>
+
+        <g transform="translate(215, 28)">
+          <circle cx="6" cy="6" r="5" fill="#06b6d4"/>
+          <text x="18" y="10" fill="#94a3b8" font-size="9">UI/Services -> FHIR</text>
+        </g>
+
+        <g transform="translate(340, 28)">
+          <circle cx="6" cy="6" r="5" fill="#f59e0b"/>
+          <text x="18" y="10" fill="#94a3b8" font-size="9">UI -> Utilities</text>
+        </g>
+
+        <g transform="translate(460, 28)">
+          <circle cx="6" cy="6" r="5" fill="#8b5cf6" opacity="0.5"/>
+          <text x="18" y="10" fill="#94a3b8" font-size="9">Hook -> Hook</text>
+        </g>
+
+        <g transform="translate(555, 28)">
+          <circle cx="6" cy="6" r="5" fill="#10b981"/>
+          <text x="18" y="10" fill="#94a3b8" font-size="9">FHIR</text>
+        </g>
+      </g>
+
+    </svg>
+  </div>
+
+  <!-- Technical documentation (loaded by section-loader.js) -->
+  <div id="architecture-technical-container"></div>
+
+  <h3>Component Hierarchy</h3>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Purpose</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>UnifiedRegistrationView</strong></td>
+          <td>Main page - search, form, table</td>
+          <td><code>views/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>PatientForm</strong></td>
+          <td>Patient data entry + Draft autosave</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>RegistrationVisitModal</strong></td>
+          <td>4-step visit form</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>SearchPanel</strong></td>
+          <td>Detailed search panel</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>QuickSearchInput</strong></td>
+          <td>Quick search (in header)</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>PatientTable</strong></td>
+          <td>Registered patients table</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>InsuranceSection</strong></td>
+          <td>Up to 3 insurers</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>DemographicsSection</strong></td>
+          <td>Address, education</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Hooks</h3>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Purpose</th>
+          <th>Lines</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>useRegistrationVisitForm</strong></td>
+          <td>Main visit form logic</td>
+          <td><code>859</code></td>
+        </tr>
+        <tr>
+          <td><strong>useDepartments</strong></td>
+          <td>Department list</td>
+          <td><code>~80</code></td>
+        </tr>
+        <tr>
+          <td><strong>useRegistrationStatuses</strong></td>
+          <td>Registration statuses</td>
+          <td><code>~60</code></td>
+        </tr>
+        <tr>
+          <td><strong>useInsuranceData</strong></td>
+          <td>Insurance companies and types</td>
+          <td><code>~120</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Services</h3>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Purpose</th>
+          <th>Specifics</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>encounterService</strong></td>
+          <td>Visit management (Encounter CRUD)</td>
+          <td>Registration Number Generator</td>
+        </tr>
+        <tr>
+          <td><strong>MedplumClient</strong></td>
+          <td>Direct FHIR API calls</td>
+          <td>createResource, updateResource</td>
+        </tr>
+        <tr>
+          <td><strong>departmentService</strong></td>
+          <td>Department validation</td>
+          <td>isPatientEligibleDepartment</td>
+        </tr>
+        <tr>
+          <td><strong>unknownPatientService</strong></td>
+          <td>Unknown patient name</td>
+          <td>"Unknown #N" generation</td>
+        </tr>
+        <tr>
+          <td><strong>registrationStatusService</strong></td>
+          <td>Registration statuses</td>
+          <td>FHIR ValueSet-based statuses</td>
+        </tr>
+        <tr>
+          <td><strong>localStorage</strong></td>
+          <td>Draft saving</td>
+          <td>localStorage, 1-second debounce</td>
+        </tr>
+        <tr>
+          <td><strong>recentPatientsService</strong></td>
+          <td>Recent searches</td>
+          <td>FIFO Cache (max 10)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>

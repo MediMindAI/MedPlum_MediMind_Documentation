@@ -1,0 +1,820 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ტექნიკური დოკუმენტაცია - სისტემის არქიტექტურა -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<div class="architecture-technical-docs">
+
+  <h3 id="technical-overview">ტექნიკური მიმოხილვა</h3>
+  <p>
+    რეგისტრაციის მოდული აგებულია <strong>Layer-based არქიტექტურაზე</strong>, სადაც თითოეული ფენა
+    პასუხისმგებელია კონკრეტულ ფუნქციონალზე და კომუნიკაცია მიმდინარეობს მხოლოდ მეზობელ ფენებს შორის.
+  </p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>ტექნოლოგიური სტეკი:</strong>
+    <ul>
+      <li><strong>Frontend:</strong> React 18 + TypeScript 5.x</li>
+      <li><strong>Backend:</strong> Medplum FHIR R4 Server (api.medplum.com)</li>
+      <li><strong>State Management:</strong> React Hooks + Context API</li>
+      <li><strong>UI Framework:</strong> Mantine UI Components</li>
+    </ul>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფენა</th>
+          <th>პასუხისმგებლობა</th>
+          <th>მაგალითები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>UI Layer</strong></td>
+          <td>მომხმარებლის ინტერფეისი, ფორმები, მოვლენების დამუშავება</td>
+          <td><code>RegistrationVisitModal</code>, <code>PatientForm</code>, <code>RegistrationVisitWizard</code></td>
+        </tr>
+        <tr>
+          <td><strong>Hooks Layer</strong></td>
+          <td>ბიზნეს ლოგიკა, state management, side effects</td>
+          <td><code>useRegistrationVisitForm</code>, <code>useDepartments</code></td>
+        </tr>
+        <tr>
+          <td><strong>Services Layer</strong></td>
+          <td>FHIR API კომუნიკაცია, მონაცემთა ტრანსფორმაცია</td>
+          <td><code>encounterService</code>, <code>departmentService</code></td>
+        </tr>
+        <tr>
+          <td><strong>FHIR API</strong></td>
+          <td>მონაცემთა პერსისტენცია, ვალიდაცია</td>
+          <td>Medplum Cloud (Patient, Encounter, Coverage)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="ui-components-detail">UI კომპონენტები (დეტალური)</h3>
+
+  <h4>RegistrationVisitModal</h4>
+  <p>
+    მთავარი მოდალი ვიზიტის რეგისტრაციისთვის, რომელიც აერთიანებს wizard-ს და ფორმებს.
+  </p>
+  <div class="doc-table-container" id="ui-components-table">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ელემენტი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>SearchPanel</code></td>
+          <td>პაციენტის ძებნის პანელი (ID/სახელით)</td>
+        </tr>
+        <tr>
+          <td><code>PatientForm</code></td>
+          <td>ახალი პაციენტის რეგისტრაციის ფორმა</td>
+        </tr>
+        <tr>
+          <td><code>PatientTable</code></td>
+          <td>რეგისტრირებული პაციენტების ცხრილი პაგინაციით</td>
+        </tr>
+        <tr>
+          <td><code>RegistrationVisitModal</code></td>
+          <td>ვიზიტის რეგისტრაციის wizard</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="doc-view-link" onclick="goToScreenshot()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+      </svg>
+      ნახე ინტერფეისზე
+    </button>
+  </div>
+
+  <h4>PatientForm</h4>
+  <p>
+    პაციენტის მონაცემების შეყვანის ფორმა <strong>4 EMRFormSection კომპონენტით</strong> (accordion-სტილი), სულ <strong>31 ველი</strong>:
+  </p>
+
+  <!-- სექცია 1: პირადი მონაცემები -->
+  <div class="doc-form-section">
+    <div class="doc-form-section-header">
+      <span class="doc-form-section-number">1</span>
+      <span class="doc-form-section-title">პირადი მონაცემები</span>
+      <span class="doc-form-section-badge">8 ველი</span>
+    </div>
+    <div class="doc-table-container">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>ველი</th>
+            <th>ტიპი</th>
+            <th>ვალიდაცია</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ვიზიტის ტიპი</strong></td>
+            <td>Select</td>
+            <td>სავალდებულო (ambulatory / stationary / emergency)</td>
+          </tr>
+          <tr>
+            <td><strong>უცნობი პაციენტი</strong></td>
+            <td>Toggle</td>
+            <td>ჩართვისას ავტო-გენერირდება სახელი და ID</td>
+          </tr>
+          <tr>
+            <td><strong>პირადი ნომერი</strong></td>
+            <td>Text</td>
+            <td>ზუსტად 11 ციფრი, მხოლოდ რიცხვები</td>
+          </tr>
+          <tr>
+            <td><strong>სახელი</strong></td>
+            <td>Text</td>
+            <td>სავალდებულო (თუ არ არის უცნობი პაციენტი)</td>
+          </tr>
+          <tr>
+            <td><strong>გვარი</strong></td>
+            <td>Text</td>
+            <td>სავალდებულო (თუ არ არის უცნობი პაციენტი)</td>
+          </tr>
+          <tr>
+            <td><strong>მამის სახელი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>დაბადების თარიღი</strong></td>
+            <td>Date</td>
+            <td>არა მომავალში, არა 120 წელზე მეტი</td>
+          </tr>
+          <tr>
+            <td><strong>სქესი</strong></td>
+            <td>Select</td>
+            <td>სავალდებულო (male / female / other / unknown)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- სექცია 2: საკონტაქტო -->
+  <div class="doc-form-section">
+    <div class="doc-form-section-header">
+      <span class="doc-form-section-number">2</span>
+      <span class="doc-form-section-title">საკონტაქტო ინფორმაცია</span>
+      <span class="doc-form-section-badge">3 ველი</span>
+    </div>
+    <div class="doc-table-container">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>ველი</th>
+            <th>ტიპი</th>
+            <th>ვალიდაცია</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ტელეფონი</strong></td>
+            <td>Phone</td>
+            <td>საერთაშორისო ფორმატი, default: +995</td>
+          </tr>
+          <tr>
+            <td><strong>ელფოსტა</strong></td>
+            <td>Email</td>
+            <td>RFC 5322 ფორმატი</td>
+          </tr>
+          <tr>
+            <td><strong>მისამართი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- სექცია 3: დამატებითი -->
+  <div class="doc-form-section">
+    <div class="doc-form-section-header">
+      <span class="doc-form-section-number">3</span>
+      <span class="doc-form-section-title">დამატებითი დეტალები</span>
+      <span class="doc-form-section-badge">10 ველი</span>
+    </div>
+    <div class="doc-table-container">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>ველი</th>
+            <th>ტიპი</th>
+            <th>ვალიდაცია</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ოჯახური მდგომარეობა</strong></td>
+            <td>Select</td>
+            <td>S / M / D / W (Single, Married, Divorced, Widowed)</td>
+          </tr>
+          <tr>
+            <td><strong>მოქალაქეობა</strong></td>
+            <td>Select</td>
+            <td>ISO 3166 ქვეყნის კოდი, default: GE</td>
+          </tr>
+          <tr>
+            <td><strong>სამუშაო ადგილი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>სამუშაო მისამართი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>ქალაქი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>რაიონი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>შენობა</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>რეგიონი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>განათლება</strong></td>
+            <td>Select</td>
+            <td>elementary / secondary / higher / postgraduate</td>
+          </tr>
+          <tr>
+            <td><strong>ოჯახური კავშირი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- სექცია 4: წარმომადგენელი -->
+  <div class="doc-form-section">
+    <div class="doc-form-section-header">
+      <span class="doc-form-section-number">4</span>
+      <span class="doc-form-section-title">წარმომადგენელი / მეურვე</span>
+      <span class="doc-form-section-badge">9 ველი</span>
+    </div>
+    <div class="doc-table-container">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>ველი</th>
+            <th>ტიპი</th>
+            <th>ვალიდაცია</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>კავშირი პაციენტთან</strong></td>
+            <td>Select</td>
+            <td>MTH / FTH / SIS / BRO / GRMTH / GRFTH / SPS / CHILD / GUARD</td>
+          </tr>
+          <tr>
+            <td><strong>პირადი ნომერი</strong></td>
+            <td>Text</td>
+            <td>ზუსტად 11 ციფრი</td>
+          </tr>
+          <tr>
+            <td><strong>სახელი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>გვარი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+          <tr>
+            <td><strong>სქესი</strong></td>
+            <td>Select</td>
+            <td>male / female / other</td>
+          </tr>
+          <tr>
+            <td><strong>დაბადების თარიღი</strong></td>
+            <td>Date</td>
+            <td>არა მომავალში, არა 120 წელზე მეტი</td>
+          </tr>
+          <tr>
+            <td><strong>ტელეფონი</strong></td>
+            <td>Phone</td>
+            <td>საერთაშორისო ფორმატი, default: +995</td>
+          </tr>
+          <tr>
+            <td><strong>ოჯახური მდგომარეობა</strong></td>
+            <td>Select</td>
+            <td>S / M / D / W</td>
+          </tr>
+          <tr>
+            <td><strong>მისამართი</strong></td>
+            <td>Text</td>
+            <td>არჩევითი</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Draft Autosave:</strong>
+    ფორმის მონაცემები ავტომატურად ინახება <code>localStorage</code>-ში <strong>1-წამიანი debounce</strong>-ით. გვერდის განახლებისას მონაცემები აღდგება.
+  </div>
+
+  <h4>RegistrationVisitWizard</h4>
+  <p>
+    <strong>4-საფეხურიანი wizard</strong> ვიზიტის რეგისტრაციისთვის:
+  </p>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>საფეხური</th>
+          <th>აღწერა</th>
+          <th>სავალდებულო</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. რეგისტრაცია</strong></td>
+          <td>ვიზიტის ტიპი, დეპარტამენტი, ექიმი, მიმართვის ტიპი</td>
+          <td>დიახ</td>
+        </tr>
+        <tr>
+          <td><strong>2. დაზღვევა</strong></td>
+          <td>3-მდე დამზღვევის არჩევა + საგარანტიო წერილი</td>
+          <td>არა (optional)</td>
+        </tr>
+        <tr>
+          <td><strong>3. დემოგრაფია</strong></td>
+          <td>მისამართი, განათლება, დასაქმება</td>
+          <td>არა (optional)</td>
+        </tr>
+        <tr>
+          <td><strong>4. დადასტურება</strong></td>
+          <td>მონაცემების გადახედვა და შენახვა</td>
+          <td>დიახ</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="doc-view-link" onclick="goToWizardScreenshot()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+      </svg>
+      ნახე ინტერფეისზე
+    </button>
+  </div>
+
+  <h3 id="validation-system">ვალიდაციის სისტემა</h3>
+  <p>
+    ფორმის ვალიდაცია ხორციელდება <code>validators</code> utility მოდულში რეალურ დროში.
+  </p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>წესი</th>
+          <th>შეცდომის შეტყობინება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>პირადი ნომერი</strong></td>
+          <td>ზუსტად 11 ციფრი (<code>/^\d{11}$/</code>)</td>
+          <td>"პირადი ნომერი უნდა შეიცავდეს 11 ციფრს"</td>
+        </tr>
+        <tr>
+          <td><strong>ელფოსტა</strong></td>
+          <td>RFC 5322 ფორმატი</td>
+          <td>"არასწორი ელფოსტის ფორმატი"</td>
+        </tr>
+        <tr>
+          <td><strong>დაბადების თარიღი</strong></td>
+          <td>არა მომავალში, არა 120 წელზე მეტი</td>
+          <td>"თარიღი არ შეიძლება იყოს მომავალში"</td>
+        </tr>
+        <tr>
+          <td><strong>ტელეფონი</strong></td>
+          <td>საერთაშორისო ფორმატი (+995...)</td>
+          <td>"არასწორი ტელეფონის ფორმატი"</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>დუბლიკატების აღმოჩენა</h4>
+  <p>პირადი ნომრის შეყვანისას სისტემა ავტომატურად ამოწმებს არსებობს თუ არა ასეთი პაციენტი:</p>
+  <ul class="doc-list">
+    <li>თუ მოიძებნა - გამოჩნდება შედარების ფანჯარა</li>
+    <li>შეგიძლიათ აირჩიოთ არსებული ან შექმნათ ახალი</li>
+    <li>თავიდან აცილებული იქნება დუბლიკატი ჩანაწერები</li>
+  </ul>
+
+  <h3 id="data-flow">მონაცემთა ნაკადი (Data Flow)</h3>
+  <p>
+    მონაცემთა მოძრაობა მიმდინარეობს <strong>ერთმიმართულებიანად</strong>:
+  </p>
+  <pre><code>UI Component → useRegistrationVisitForm hook → Service → Medplum FHIR API</code></pre>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>პროცესი</th>
+          <th>ფენა</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ფორმის შევსება</strong></td>
+          <td>UI → Hook</td>
+          <td><code>onChange</code> → <code>setFormData</code> state update</td>
+        </tr>
+        <tr>
+          <td><strong>Draft შენახვა</strong></td>
+          <td>Hook → localStorage</td>
+          <td>1-წამიანი debounce, JSON სერიალიზაცია</td>
+        </tr>
+        <tr>
+          <td><strong>პაციენტის შენახვა</strong></td>
+          <td>Hook → Service → API</td>
+          <td><code>medplum.createResource('Patient', data)</code></td>
+        </tr>
+        <tr>
+          <td><strong>ვიზიტის შექმნა</strong></td>
+          <td>Hook → Service → API</td>
+          <td><code>encounterService.createEncounter()</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Recent Patients Cache:</strong>
+    ბოლო <strong>10</strong> მონახულებული პაციენტი ინახება localStorage-ში <code>recentPatientsService</code>-ის მეშვეობით (FIFO - First In First Out).
+  </div>
+
+  <h3 id="fhir-resources">FHIR რესურსების სტრუქტურა</h3>
+  <p>
+    სისტემა იყენებს <strong>FHIR R4</strong> სტანდარტს. ძირითადი რესურსები:
+  </p>
+
+  <h4>Patient რესურსი</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>FHIR Path</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>პირადი ნომერი</td>
+          <td><code>identifier[system="NATIONAL_ID"]</code></td>
+          <td>11-ნიშნა უნიკალური იდენტიფიკატორი</td>
+        </tr>
+        <tr>
+          <td>სახელი</td>
+          <td><code>name[0].given[0]</code></td>
+          <td>პაციენტის სახელი</td>
+        </tr>
+        <tr>
+          <td>გვარი</td>
+          <td><code>name[0].family</code></td>
+          <td>პაციენტის გვარი</td>
+        </tr>
+        <tr>
+          <td>დაბადების თარიღი</td>
+          <td><code>birthDate</code></td>
+          <td>ISO 8601 ფორმატი (YYYY-MM-DD)</td>
+        </tr>
+        <tr>
+          <td>სქესი</td>
+          <td><code>gender</code></td>
+          <td><code>male</code> | <code>female</code> | <code>other</code> | <code>unknown</code></td>
+        </tr>
+        <tr>
+          <td>ტელეფონი</td>
+          <td><code>telecom[system="phone"]</code></td>
+          <td>საკონტაქტო ნომერი</td>
+        </tr>
+        <tr>
+          <td>ელფოსტა</td>
+          <td><code>telecom[system="email"]</code></td>
+          <td>ელექტრონული ფოსტა</td>
+        </tr>
+        <tr>
+          <td>უცნობი პაციენტი</td>
+          <td><code>extension[UNKNOWN_PATIENT]</code></td>
+          <td><code>valueBoolean: true</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Encounter რესურსი</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>FHIR Path</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>პაციენტი</td>
+          <td><code>subject</code></td>
+          <td><code>Reference(Patient)</code></td>
+        </tr>
+        <tr>
+          <td>სტატუსი</td>
+          <td><code>status</code></td>
+          <td><code>planned</code> | <code>arrived</code> | <code>in-progress</code> | <code>finished</code></td>
+        </tr>
+        <tr>
+          <td>კლასი</td>
+          <td><code>class</code></td>
+          <td><code>AMB</code> (ამბულატორია) | <code>IMP</code> (სტაციონარი)</td>
+        </tr>
+        <tr>
+          <td>პერიოდი</td>
+          <td><code>period.start</code></td>
+          <td>ვიზიტის დაწყების დრო</td>
+        </tr>
+        <tr>
+          <td>რეგისტრაციის #</td>
+          <td><code>identifier[system="REG_NUMBER"]</code></td>
+          <td>ავტო-გენერირებული უნიკალური ნომერი</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Coverage რესურსი (დაზღვევა)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>FHIR Path</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ბენეფიციარი</td>
+          <td><code>beneficiary</code></td>
+          <td><code>Reference(Patient)</code></td>
+        </tr>
+        <tr>
+          <td>დამზღვევი</td>
+          <td><code>payor</code></td>
+          <td><code>Reference(Organization)</code></td>
+        </tr>
+        <tr>
+          <td>სტატუსი</td>
+          <td><code>status</code></td>
+          <td><code>active</code> | <code>cancelled</code></td>
+        </tr>
+        <tr>
+          <td>პერიოდი</td>
+          <td><code>period</code></td>
+          <td>დაზღვევის მოქმედების ვადა</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>RelatedPerson რესურსი (წარმომადგენელი)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>FHIR Path</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>პაციენტი</td>
+          <td><code>patient</code></td>
+          <td><code>Reference(Patient)</code></td>
+        </tr>
+        <tr>
+          <td>კავშირი</td>
+          <td><code>relationship</code></td>
+          <td><code>parent</code> | <code>spouse</code> | <code>guardian</code> | ...</td>
+        </tr>
+        <tr>
+          <td>სახელი</td>
+          <td><code>name</code></td>
+          <td>წარმომადგენლის სახელი/გვარი</td>
+        </tr>
+        <tr>
+          <td>ტელეფონი</td>
+          <td><code>telecom</code></td>
+          <td>საკონტაქტო ინფორმაცია</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="services-functionality">სერვისების ფუნქციონალი</h3>
+
+  <h4>encounterService</h4>
+  <p>ვიზიტის (Encounter) მართვის სერვისი:</p>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>createEncounter()</code></td>
+          <td>ახალი ვიზიტის შექმნა რეგისტრაციის ნომრით</td>
+        </tr>
+        <tr>
+          <td><code>updateEncounter()</code></td>
+          <td>ვიზიტის მონაცემების განახლება</td>
+        </tr>
+        <tr>
+          <td><code>generateRegistrationNumber()</code></td>
+          <td>უნიკალური რეგისტრაციის ნომრის გენერაცია (ფორმატი: a-1234-2025 ამბულატორიისთვის)</td>
+        </tr>
+        <tr>
+          <td><code>getEncountersByPatient()</code></td>
+          <td>პაციენტის ვიზიტების ისტორია</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>departmentService</h4>
+  <p>დეპარტამენტის მართვა და ვალიდაცია:</p>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>getDepartments()</code></td>
+          <td>აქტიური დეპარტამენტების სია</td>
+        </tr>
+        <tr>
+          <td><code>isPatientEligibleDepartment()</code></td>
+          <td>პაციენტის eligibility შემოწმება (ასაკი, სქესი)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>unknownPatientService</h4>
+  <p>უცნობი პაციენტის რეგისტრაცია:</p>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>generateUnknownPatientName()</code></td>
+          <td>"უცნობი #N" სახელის გენერაცია (მაგ: "უცნობი #1", "უცნობი #2")</td>
+        </tr>
+        <tr>
+          <td><code>generateUnknownPatientIdentifier()</code></td>
+          <td>დროებითი ID-ის გენერაცია (ფორმატი: UNK-2025-001)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>registrationStatusService</h4>
+  <p>რეგისტრაციის სტატუსების მართვა:</p>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>სტატუსი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>planned</code></td>
+          <td>დაგეგმილი ვიზიტი</td>
+        </tr>
+        <tr>
+          <td><code>arrived</code></td>
+          <td>პაციენტი მოვიდა</td>
+        </tr>
+        <tr>
+          <td><code>in-progress</code></td>
+          <td>მიმდინარე ვიზიტი</td>
+        </tr>
+        <tr>
+          <td><code>finished</code></td>
+          <td>დასრულებული</td>
+        </tr>
+        <tr>
+          <td><code>cancelled</code></td>
+          <td>გაუქმებული</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR ValueSet:</strong>
+    სტატუსები მოდის FHIR ValueSet-იდან და შეესაბამება <code>encounter-status</code> სტანდარტულ კოდების სისტემას.
+  </div>
+
+  <h3 id="authentication">Authentication სისტემა</h3>
+  <p>
+    სისტემა იყენებს <strong>Medplum OAuth 2.0</strong> ავტორიზაციას:
+  </p>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>OAuth 2.0 Flow</strong></td>
+          <td>Authorization Code Grant with PKCE</td>
+        </tr>
+        <tr>
+          <td><strong>Token Type</strong></td>
+          <td>JWT (JSON Web Token)</td>
+        </tr>
+        <tr>
+          <td><strong>Token Storage</strong></td>
+          <td>Medplum SDK (secure storage)</td>
+        </tr>
+        <tr>
+          <td><strong>Access Control</strong></td>
+          <td>Project-based permissions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="unknown-patient">უცნობი პაციენტის რეგისტრაცია</h3>
+  <p>
+    გადაუდებელი შემთხვევებისთვის, როდესაც პაციენტი უგონო მდგომარეობაშია ან ვინაობის დადგენა შეუძლებელია.
+  </p>
+  <p><strong>ავტომატურად გენერირდება:</strong></p>
+  <ul class="doc-list">
+    <li><strong>დროებითი ID:</strong> UNK-2026-001 ფორმატში</li>
+    <li><strong>სისტემური სახელი:</strong> „უცნობი #1", „უცნობი #2"...</li>
+    <li><strong>მოსვლის დრო:</strong> მიმდინარე თარიღი და დრო</li>
+  </ul>
+  <p>
+    <strong>მნიშვნელოვანი:</strong> უცნობი პაციენტის მონაცემები უნდა განახლდეს ვინაობის დადგენისთანავე. სისტემა აჩვენებს შეხსენებას ასეთი პაციენტების შესახებ.
+  </p>
+
+</div>

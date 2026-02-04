@@ -1,0 +1,83 @@
+<section class="doc-section" id="overview">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">1</span> მიმოხილვა</h2>
+  </div>
+
+  <p>პაციენტის რეგისტრაციის მოდული არის <strong>MediMind EMR სისტემის ცენტრალური კომპონენტი</strong>, რომელიც საშუალებას გაძლევთ:</p>
+
+  <ul class="doc-list">
+    <li><strong>დაარეგისტრიროთ ახალი პაციენტები</strong> კლინიკაში</li>
+    <li><strong>მოძებნოთ არსებული პაციენტები</strong> მრავალი კრიტერიუმით</li>
+    <li><strong>შეცვალოთ პაციენტის მონაცემები</strong> საჭიროებისამებრ</li>
+    <li><strong>გახსნათ ახალი ვიზიტები</strong> რეგისტრირებული პაციენტებისთვის</li>
+  </ul>
+
+  <p>მოდული განკუთვნილია <strong>რეცეფციის თანამშრომლების</strong> და <strong>მედიცინის რეგისტრატორებისთვის</strong>.</p>
+
+  <!-- Screenshot -->
+  <div class="doc-screenshot-full" id="main-screenshot">
+    <img src="images/screenshot-ka.png" alt="რეგისტრაციის ინტერფეისი" class="doc-screenshot-image" data-i18n-img="screenshot">
+    <button class="doc-back-link" id="back-to-table-btn" onclick="goBackToTable()" style="display: none;">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+      უკან დაბრუნება
+    </button>
+  </div>
+
+  <!-- Statistics -->
+  <h3 id="statistics">მოკლე სტატისტიკა</h3>
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">33</span>
+      <span class="doc-stat-inline-label">ველი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4</span>
+      <span class="doc-stat-inline-label">სექცია</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">ენა</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">ვიზიტის ტიპი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">FHIR რესურსი</span>
+    </div>
+  </div>
+
+  <!-- 3 Zones -->
+  <h3 id="zones">ინტერფეისის 3 ზონა</h3>
+  <div class="doc-zone-diagram">
+    <div class="doc-zone">
+      <div class="doc-zone-header">ძებნის პანელი</div>
+      <div class="doc-zone-content">
+        <p>სწრაფი ძებნა პ/ნ-ით ან სახელით</p>
+        <p>დეტალური ფილტრები</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">რეგისტრაციის ფორმა</div>
+      <div class="doc-zone-content">
+        <p>პაციენტის მონაცემების შეყვანა</p>
+        <p>4 ძირითადი სექცია</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">პაციენტების ცხრილი</div>
+      <div class="doc-zone-content">
+        <p>ძებნის შედეგები</p>
+        <p>სწრაფი მოქმედებები</p>
+      </div>
+    </div>
+  </div>
+</section>

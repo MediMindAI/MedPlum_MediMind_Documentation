@@ -1,0 +1,83 @@
+<section class="doc-section" id="overview">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">1</span> Overview</h2>
+  </div>
+
+  <p>The Patient Registration module is a <strong>central component of the MediMind EMR system</strong> that allows you to:</p>
+
+  <ul class="doc-list">
+    <li><strong>Register new patients</strong> at the clinic</li>
+    <li><strong>Search for existing patients</strong> using multiple criteria</li>
+    <li><strong>Modify patient data</strong> as needed</li>
+    <li><strong>Open new visits</strong> for registered patients</li>
+  </ul>
+
+  <p>The module is designed for <strong>reception staff</strong> and <strong>medical registrars</strong>.</p>
+
+  <!-- Screenshot -->
+  <div class="doc-screenshot-full" id="main-screenshot">
+    <img src="images/screenshot-en.png" alt="Registration Interface" class="doc-screenshot-image" data-i18n-img="screenshot">
+    <button class="doc-back-link" id="back-to-table-btn" onclick="goBackToTable()" style="display: none;">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+      Back to table
+    </button>
+  </div>
+
+  <!-- Statistics -->
+  <h3 id="statistics">Quick Statistics</h3>
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">33</span>
+      <span class="doc-stat-inline-label">Fields</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4</span>
+      <span class="doc-stat-inline-label">Sections</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Languages</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Visit Types</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">FHIR Resources</span>
+    </div>
+  </div>
+
+  <!-- 3 Zones -->
+  <h3 id="zones">3 Interface Zones</h3>
+  <div class="doc-zone-diagram">
+    <div class="doc-zone">
+      <div class="doc-zone-header">Search Panel</div>
+      <div class="doc-zone-content">
+        <p>Quick search by ID or name</p>
+        <p>Detailed filters</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Registration Form</div>
+      <div class="doc-zone-content">
+        <p>Patient data entry</p>
+        <p>4 main sections</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Patient Table</div>
+      <div class="doc-zone-content">
+        <p>Search results</p>
+        <p>Quick actions</p>
+      </div>
+    </div>
+  </div>
+</section>

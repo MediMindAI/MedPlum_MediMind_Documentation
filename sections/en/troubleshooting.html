@@ -1,0 +1,125 @@
+<section class="doc-section" id="troubleshooting">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">8</span> Troubleshooting</h2>
+  </div>
+
+  <h3 id="common-issues">Common Issues</h3>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Issue</span>
+      <span class="error-code-title">"Patient ID already exists"</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Description:</strong> Red error after clicking save button<br>
+      <strong>Cause:</strong> Duplicate Georgian personal ID detected<br>
+      <strong>Solution:</strong> First search for existing patient in the search field
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Issue</span>
+      <span class="error-code-title">"Active visit already exists"</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Description:</strong> Visit form doesn't open<br>
+      <strong>Cause:</strong> Patient has an Encounter with status="in-progress"<br>
+      <strong>Solution:</strong> Close existing visit or navigate to it
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Issue</span>
+      <span class="error-code-title">Validation error - Personal ID</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Description:</strong> "Invalid personal ID" message<br>
+      <strong>Cause:</strong> Luhn algorithm validation failed<br>
+      <strong>Solution:</strong> Verify 11 digits are entered correctly. For testing: <code>26001014632</code>
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Issue</span>
+      <span class="error-code-title">Insurance company not found</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Description:</strong> Empty dropdown in insurance section<br>
+      <strong>Cause:</strong> Organization resources are not loaded<br>
+      <strong>Solution:</strong> Check internet connection, refresh the page
+    </div>
+  </div>
+
+  <h3 id="error-codes">Error Codes</h3>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Message</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ERR_001</code></td>
+          <td>Invalid personal ID</td>
+          <td>Check 11 digits, Luhn validation</td>
+        </tr>
+        <tr>
+          <td><code>ERR_002</code></td>
+          <td>Active visit exists</td>
+          <td>Close existing visit</td>
+        </tr>
+        <tr>
+          <td><code>ERR_003</code></td>
+          <td>Required field is empty</td>
+          <td>Fill in name, surname, gender</td>
+        </tr>
+        <tr>
+          <td><code>ERR_004</code></td>
+          <td>Duplicate patient</td>
+          <td>Use existing or create new</td>
+        </tr>
+        <tr>
+          <td><code>ERR_005</code></td>
+          <td>Invalid phone format</td>
+          <td>Use +995XXXXXXXXX format</td>
+        </tr>
+        <tr>
+          <td><code>ERR_006</code></td>
+          <td>Invalid email format</td>
+          <td>Check @ symbol and domain</td>
+        </tr>
+        <tr>
+          <td><code>ERR_007</code></td>
+          <td>Birth date is in future</td>
+          <td>Enter a past date</td>
+        </tr>
+        <tr>
+          <td><code>ERR_008</code></td>
+          <td>Insurance has expired</td>
+          <td>Update policy validity</td>
+        </tr>
+        <tr>
+          <td><code>ERR_009</code></td>
+          <td>Department not selected</td>
+          <td>Select department from dropdown</td>
+        </tr>
+        <tr>
+          <td><code>ERR_010</code></td>
+          <td>API connection error</td>
+          <td>Check internet, try again</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

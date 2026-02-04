@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "lang": "ru",
+    "langName": "Русский",
+    "htmlLang": "ru"
+  },
+  "header": {
+    "brandTitle": "MediMind",
+    "brandSubtitle": "EMR SYSTEM",
+    "searchBtn": "Ctrl+K",
+    "pdfBtn": "PDF"
+  },
+  "search": {
+    "placeholder": "Поиск по документации...",
+    "noResults": "Результаты не найдены",
+    "startTyping": "Начните вводить для поиска",
+    "escHint": "ESC"
+  },
+  "toc": {
+    "title": "Содержание",
+    "technicalOverview": "Обзор платформы",
+    "introduction": "Введение",
+    "whyFhir": "Почему FHIR?",
+    "medplumPlatform": "Платформа Medplum",
+    "techStack": "Tech Stack",
+    "patientRegistration": "Регистрация пациентов и визиты",
+    "overview": "Обзор",
+    "registration": "Регистрация пациента",
+    "formSections": "Разделы формы регистрации",
+    "searchSystem": "Система поиска пациентов",
+    "saveOptions": "Варианты сохранения",
+    "visitManagement": "Управление визитами",
+    "wizardSteps": "Шаги регистрации визита",
+    "insurance": "Управление страховкой",
+    "technicalReference": "Техническая справка",
+    "architecture": "Архитектура системы",
+    "technicalOverviewDetail": "Технический обзор",
+    "uiComponents": "UI компоненты",
+    "validationSystem": "Система валидации",
+    "dataFlow": "Поток данных",
+    "fhirResources": "FHIR ресурсы",
+    "services": "Сервисы",
+    "authentication": "Аутентификация",
+    "unknownPatient": "Неизвестный пациент",
+    "troubleshooting": "Устранение неполадок",
+    "commonIssues": "Распространённые проблемы",
+    "additional": "Дополнительно",
+    "support": "Поддержка"
+  },
+  "hero": {
+    "title": "Модуль регистрации пациентов и визитов",
+    "subtitle": "Производственная документация для IT-специалистов",
+    "version": "v2.0"
+  },
+  "footer": {
+    "copyright": "© 2026 MediMind EMR. Версия 2.0 | Производственная документация"
+  },
+  "aria": {
+    "menuOpen": "Открыть меню",
+    "backToTop": "Наверх",
+    "search": "Поиск"
+  },
+  "loading": {
+    "sections": "Загрузка разделов...",
+    "loading": "Загрузка...",
+    "error": "Ошибка загрузки разделов"
+  },
+  "zoom": {
+    "zoomIn": "Увеличить",
+    "zoomOut": "Уменьшить"
+  },
+  "buttons": {
+    "viewOnInterface": "Посмотреть интерфейс",
+    "back": "Назад"
+  },
+  "searchItems": [
+    { "title": "Обзор", "href": "#overview", "section": "Начало работы" },
+    { "title": "Система поиска", "href": "#search", "section": "Функции" },
+    { "title": "Разделы формы", "href": "#form-sections", "section": "Функции" },
+    { "title": "Форма визита", "href": "#wizard", "section": "Функции" },
+    { "title": "Управление страховкой", "href": "#insurance", "section": "Функции" },
+    { "title": "Неизвестный пациент", "href": "#unknown-patient", "section": "Функции" },
+    { "title": "Архитектура", "href": "#architecture", "section": "Техническая справка" },
+    { "title": "Устранение неполадок", "href": "#troubleshooting", "section": "Поддержка" },
+    { "title": "Коды ошибок", "href": "#error-codes", "section": "Поддержка" }
+  ]
+}

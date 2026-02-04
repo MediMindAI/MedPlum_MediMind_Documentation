@@ -1,0 +1,362 @@
+/**
+ * Components - TOC, Sections, Cards, Badges, Info Boxes
+ */
+
+/* ================================
+   Table of Contents (TOC) - Glass Effect
+   ================================ */
+.doc-toc {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--doc-radius-xl);
+  padding: var(--doc-space-xl);
+  margin-bottom: var(--doc-space-xl);
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.doc-toc::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+}
+
+.doc-toc-title {
+  font-size: var(--doc-font-lg);
+  font-weight: 700;
+  color: var(--doc-text-primary);
+  margin-bottom: var(--doc-space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--doc-space-sm);
+}
+
+.doc-toc-title svg {
+  width: 24px;
+  height: 24px;
+  color: var(--doc-secondary);
+  filter: drop-shadow(0 0 6px var(--glow-primary));
+}
+
+.doc-toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--doc-space-sm);
+}
+
+.doc-toc-item a {
+  display: flex;
+  align-items: center;
+  gap: var(--doc-space-sm);
+  padding: var(--doc-space-md);
+  color: var(--doc-text-secondary);
+  text-decoration: none;
+  border-radius: var(--doc-radius-md);
+  font-size: var(--doc-font-sm);
+  transition: all 0.3s var(--ease-smooth);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.doc-toc-item a:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--doc-secondary);
+  text-decoration: none;
+  transform: translateX(4px);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+}
+
+.doc-toc-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--doc-gradient);
+  color: var(--doc-text-inverse);
+  border-radius: var(--doc-radius-sm);
+  font-weight: 700;
+  font-size: var(--doc-font-xs);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(26, 54, 93, 0.3);
+}
+
+/* ================================
+   Section Styles
+   ================================ */
+.doc-section {
+  animation: fadeInUp 0.6s var(--ease-smooth);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.doc-section[id] {
+  scroll-margin-top: 100px;
+}
+
+.doc-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--doc-space-md);
+  margin-bottom: var(--doc-space-lg);
+}
+
+.doc-section-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--doc-gradient);
+  border-radius: var(--doc-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 15px rgba(26, 54, 93, 0.3),
+    0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.doc-section-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--doc-text-inverse);
+}
+
+.doc-section-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--doc-gradient);
+  color: var(--doc-text-inverse);
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: var(--doc-font-sm);
+  margin-right: var(--doc-space-sm);
+  box-shadow:
+    0 4px 12px rgba(26, 54, 93, 0.3),
+    0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.doc-section-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--doc-border-color), var(--doc-secondary), var(--doc-border-color), transparent);
+  margin: var(--doc-space-3xl) 0;
+  opacity: 0.5;
+}
+
+/* ================================
+   Feature Cards with Glow
+   ================================ */
+.doc-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--doc-space-lg);
+  margin: var(--doc-space-xl) 0;
+}
+
+.doc-feature-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--doc-radius-lg);
+  padding: var(--doc-space-lg);
+  transition: all 0.4s var(--ease-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.doc-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--doc-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-smooth);
+}
+
+.doc-feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 20px 40px rgba(26, 54, 93, 0.15),
+    0 0 40px rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.doc-feature-card:hover::before {
+  transform: scaleX(1);
+}
+
+.doc-feature-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--doc-space-sm);
+  margin-bottom: var(--doc-space-md);
+}
+
+.doc-feature-card-emoji {
+  font-size: 2rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Styled Icon - Dark blue rounded background with white icon */
+.doc-styled-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(145deg, #1e3a5f 0%, #2d4a6f 50%, #1a365d 100%);
+  border-radius: 12px;
+  box-shadow:
+    0 4px 12px rgba(30, 58, 95, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.doc-styled-icon svg {
+  width: 26px;
+  height: 26px;
+  color: white;
+  stroke-width: 1.5;
+}
+
+.doc-feature-card h4 {
+  font-size: var(--doc-font-lg);
+  font-weight: 600;
+  color: var(--doc-text-primary);
+  margin: 0;
+}
+
+.doc-feature-card p {
+  color: var(--doc-text-secondary);
+  font-size: var(--doc-font-sm);
+  line-height: 1.6;
+  margin-bottom: var(--doc-space-md);
+}
+
+.doc-feature-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--doc-space-xs);
+  margin-top: auto;
+}
+
+/* ================================
+   Badges with Glow
+   ================================ */
+.doc-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: var(--doc-font-xs);
+  font-weight: 600;
+  border-radius: 20px;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.doc-badge-blue {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.doc-badge-blue:hover {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.doc-badge-green {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.doc-badge-green:hover {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+}
+
+.doc-badge-red {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.doc-badge-red:hover {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+.doc-badge-gray {
+  background: rgba(107, 114, 128, 0.15);
+  color: #4b5563;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+/* ================================
+   Info Boxes with Enhanced Styling
+   ================================ */
+.doc-info-box {
+  padding: var(--doc-space-lg);
+  border-radius: var(--doc-radius-lg);
+  margin: var(--doc-space-lg) 0;
+  border-left: 4px solid;
+  position: relative;
+  overflow: hidden;
+}
+
+.doc-info-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.5) 100%);
+  pointer-events: none;
+}
+
+.doc-info-box-blue {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.doc-info-box-green {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+  border-color: #22c55e;
+  color: #166534;
+}
+
+.doc-info-box-red {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.doc-info-box-gray {
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(107, 114, 128, 0.05) 100%);
+  border-color: #6b7280;
+  color: #374151;
+}

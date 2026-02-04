@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "lang": "en",
+    "langName": "English",
+    "htmlLang": "en"
+  },
+  "header": {
+    "brandTitle": "MediMind",
+    "brandSubtitle": "EMR SYSTEM",
+    "searchBtn": "Ctrl+K",
+    "pdfBtn": "PDF"
+  },
+  "search": {
+    "placeholder": "Search documentation...",
+    "noResults": "No results found",
+    "startTyping": "Start typing to search",
+    "escHint": "ESC"
+  },
+  "toc": {
+    "title": "Table of Contents",
+    "technicalOverview": "Platform Overview",
+    "introduction": "Introduction",
+    "whyFhir": "Why FHIR?",
+    "medplumPlatform": "Medplum Platform",
+    "techStack": "Tech Stack",
+    "patientRegistration": "Patient Registration & Visits",
+    "overview": "Overview",
+    "registration": "Patient Registration",
+    "formSections": "Registration Form Sections",
+    "searchSystem": "Patient Search System",
+    "saveOptions": "Save Options",
+    "visitManagement": "Visit Management",
+    "wizardSteps": "Visit Registration Steps",
+    "insurance": "Insurance Management",
+    "technicalReference": "Technical Reference",
+    "architecture": "System Architecture",
+    "technicalOverviewDetail": "Technical Overview",
+    "uiComponents": "UI Components",
+    "validationSystem": "Validation System",
+    "dataFlow": "Data Flow",
+    "fhirResources": "FHIR Resources",
+    "services": "Services",
+    "authentication": "Authentication",
+    "unknownPatient": "Unknown Patient",
+    "troubleshooting": "Troubleshooting",
+    "commonIssues": "Common Issues",
+    "additional": "Additional",
+    "support": "Support"
+  },
+  "hero": {
+    "title": "Patient Registration and Visits Module",
+    "subtitle": "Production Documentation for IT Specialists",
+    "version": "v2.0"
+  },
+  "footer": {
+    "copyright": "© 2026 MediMind EMR. Version 2.0 | Production Documentation"
+  },
+  "aria": {
+    "menuOpen": "Open menu",
+    "backToTop": "Back to top",
+    "search": "Search"
+  },
+  "loading": {
+    "sections": "Loading sections...",
+    "loading": "Loading...",
+    "error": "Error loading sections"
+  },
+  "zoom": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
+  "buttons": {
+    "viewOnInterface": "View on interface",
+    "back": "Go back"
+  },
+  "searchItems": [
+    { "title": "Overview", "href": "#overview", "section": "Getting Started" },
+    { "title": "Search System", "href": "#search", "section": "Features" },
+    { "title": "Form Sections", "href": "#form-sections", "section": "Features" },
+    { "title": "Visit Form", "href": "#wizard", "section": "Features" },
+    { "title": "Insurance Management", "href": "#insurance", "section": "Features" },
+    { "title": "Unknown Patient", "href": "#unknown-patient", "section": "Features" },
+    { "title": "Architecture", "href": "#architecture", "section": "Technical Reference" },
+    { "title": "Troubleshooting", "href": "#troubleshooting", "section": "Support" },
+    { "title": "Error Codes", "href": "#error-codes", "section": "Support" }
+  ]
+}

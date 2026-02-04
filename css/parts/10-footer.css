@@ -1,0 +1,36 @@
+/**
+ * Footer Styles
+ */
+
+/* ================================
+   Footer
+   ================================ */
+.doc-single-footer {
+  background: var(--gradient-sidebar);
+  color: rgba(255, 255, 255, 0.7);
+  padding: var(--doc-space-xl);
+  text-align: center;
+  font-size: var(--doc-font-sm);
+  margin-top: var(--doc-space-3xl);
+  position: relative;
+}
+
+.doc-single-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+}
+
+.doc-single-footer a {
+  color: var(--doc-text-inverse);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.doc-single-footer a:hover {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}

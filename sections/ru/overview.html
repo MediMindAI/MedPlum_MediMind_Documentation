@@ -1,0 +1,83 @@
+<section class="doc-section" id="overview">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">1</span> Обзор</h2>
+  </div>
+
+  <p>Модуль регистрации пациентов является <strong>центральным компонентом системы MediMind EMR</strong>, который позволяет:</p>
+
+  <ul class="doc-list">
+    <li><strong>Регистрировать новых пациентов</strong> в клинике</li>
+    <li><strong>Искать существующих пациентов</strong> по множеству критериев</li>
+    <li><strong>Изменять данные пациента</strong> по мере необходимости</li>
+    <li><strong>Открывать новые визиты</strong> для зарегистрированных пациентов</li>
+  </ul>
+
+  <p>Модуль предназначен для <strong>сотрудников ресепшн</strong> и <strong>медицинских регистраторов</strong>.</p>
+
+  <!-- Screenshot -->
+  <div class="doc-screenshot-full" id="main-screenshot">
+    <img src="images/screenshot-ru.png" alt="Интерфейс регистрации" class="doc-screenshot-image" data-i18n-img="screenshot">
+    <button class="doc-back-link" id="back-to-table-btn" onclick="goBackToTable()" style="display: none;">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+      Вернуться назад
+    </button>
+  </div>
+
+  <!-- Statistics -->
+  <h3 id="statistics">Краткая статистика</h3>
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">33</span>
+      <span class="doc-stat-inline-label">поля</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4</span>
+      <span class="doc-stat-inline-label">секции</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">языка</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">типа визита</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">FHIR ресурсов</span>
+    </div>
+  </div>
+
+  <!-- 3 Zones -->
+  <h3 id="zones">3 зоны интерфейса</h3>
+  <div class="doc-zone-diagram">
+    <div class="doc-zone">
+      <div class="doc-zone-header">Панель поиска</div>
+      <div class="doc-zone-content">
+        <p>Быстрый поиск по ИИН или имени</p>
+        <p>Детальные фильтры</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Форма регистрации</div>
+      <div class="doc-zone-content">
+        <p>Ввод данных пациента</p>
+        <p>4 основные секции</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Таблица пациентов</div>
+      <div class="doc-zone-content">
+        <p>Результаты поиска</p>
+        <p>Быстрые действия</p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,279 @@
+/**
+ * Sidebar Styles
+ */
+
+/* ================================
+   Collapsible Sidebar
+   ================================ */
+.doc-sidebar {
+  width: 300px;
+  background: var(--gradient-sidebar);
+  position: fixed;
+  top: 64px;
+  left: 0;
+  bottom: 0;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+  transform: translateX(-100%);
+  transition: transform 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth);
+  box-shadow: none;
+}
+
+.doc-sidebar.open {
+  transform: translateX(0);
+  box-shadow:
+    4px 0 30px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(59, 130, 246, 0.15);
+}
+
+.doc-sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(59,130,246,0.5), rgba(139,92,246,0.3), transparent);
+}
+
+/* Custom Scrollbar for Sidebar */
+.doc-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.doc-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.doc-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.doc-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.doc-sidebar-inner {
+  padding: var(--doc-space-lg) 0;
+}
+
+/* Sidebar Navigation */
+.doc-sidebar-nav {
+  padding: 0;
+}
+
+.doc-sidebar-section {
+  margin-bottom: var(--doc-space-lg);
+}
+
+.doc-sidebar-section-title {
+  padding: var(--doc-space-sm) var(--doc-space-lg);
+  font-size: var(--doc-font-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  position: relative;
+}
+
+.doc-sidebar-section-title::before {
+  content: '';
+  position: absolute;
+  left: var(--doc-space-lg);
+  right: var(--doc-space-lg);
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+}
+
+.doc-sidebar-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.doc-sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 10px var(--doc-space-lg);
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: var(--doc-font-sm);
+  border-left: 3px solid transparent;
+  transition: all 0.3s var(--ease-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.doc-sidebar-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), transparent);
+  transition: width 0.3s var(--ease-smooth);
+}
+
+.doc-sidebar-link:hover {
+  color: #ffffff;
+  text-decoration: none;
+  border-left-color: rgba(59, 130, 246, 0.5);
+}
+
+.doc-sidebar-link:hover::before {
+  width: 100%;
+}
+
+.doc-sidebar-link.active {
+  color: #ffffff;
+  border-left-color: #3b82f6;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent);
+  font-weight: 500;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.doc-sidebar-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: #3b82f6;
+  box-shadow: 0 0 10px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.5);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ================================
+   Sidebar Toggle Button
+   ================================ */
+.doc-sidebar-toggle {
+  position: fixed;
+  top: 76px;
+  left: 16px;
+  width: 48px;
+  height: 48px;
+  background: var(--gradient-hero);
+  border: none;
+  border-radius: 12px;
+  color: var(--doc-text-inverse);
+  box-shadow:
+    0 4px 20px rgba(26, 54, 93, 0.4),
+    0 0 30px rgba(59, 130, 246, 0.2);
+  cursor: pointer;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s var(--ease-spring);
+}
+
+/* Move toggle button to the right when sidebar is open */
+.doc-sidebar-toggle.active {
+  left: 316px;
+  animation: togglePulse 2s ease-in-out infinite;
+}
+
+@keyframes togglePulse {
+  0%, 100% {
+    box-shadow:
+      0 4px 20px rgba(26, 54, 93, 0.4),
+      0 0 30px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 4px 25px rgba(26, 54, 93, 0.5),
+      0 0 50px rgba(59, 130, 246, 0.4);
+  }
+}
+
+.doc-sidebar-toggle:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 6px 25px rgba(26, 54, 93, 0.5),
+    0 0 40px rgba(59, 130, 246, 0.3);
+}
+
+.doc-sidebar-toggle:active {
+  transform: scale(0.95);
+}
+
+.doc-sidebar-toggle svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.4s var(--ease-spring);
+}
+
+/* Rotate to X when active */
+.doc-sidebar-toggle.active svg {
+  transform: rotate(180deg);
+}
+
+/* Hamburger Icon Lines Animation */
+.doc-sidebar-toggle .hamburger-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: all 0.35s var(--ease-spring);
+}
+
+.doc-sidebar-toggle .hamburger-line-1 {
+  transform-origin: center;
+}
+
+.doc-sidebar-toggle .hamburger-line-2 {
+  transform-origin: center;
+}
+
+.doc-sidebar-toggle .hamburger-line-3 {
+  transform-origin: center;
+}
+
+.doc-sidebar-toggle.active .hamburger-line-1 {
+  transform: translateY(6px) rotate(45deg);
+  transform-origin: 50% 50%;
+}
+
+.doc-sidebar-toggle.active .hamburger-line-2 {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.doc-sidebar-toggle.active .hamburger-line-3 {
+  transform: translateY(-6px) rotate(-45deg);
+  transform-origin: 50% 50%;
+}
+
+/* Sidebar Overlay - hidden on desktop, visible on mobile */
+.doc-sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .doc-sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s var(--ease-smooth);
+  }
+
+  body.sidebar-open .doc-sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+}

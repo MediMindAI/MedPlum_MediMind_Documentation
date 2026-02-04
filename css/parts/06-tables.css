@@ -1,0 +1,55 @@
+/**
+ * Table Styles
+ */
+
+/* ================================
+   Tables with Glass Effect
+   ================================ */
+.doc-table-container {
+  overflow-x: auto;
+  margin: var(--doc-space-lg) 0;
+  border-radius: var(--doc-radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--doc-font-sm);
+}
+
+.doc-table th {
+  background: #1a365d;
+  padding: var(--doc-space-md) var(--doc-space-lg);
+  text-align: left;
+  font-weight: 600;
+  color: #ffffff;
+  border: none;
+}
+
+.doc-table td {
+  padding: var(--doc-space-md);
+  border-bottom: 1px solid var(--doc-border-light);
+  color: var(--doc-text-secondary);
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.doc-table tr:hover td {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.doc-table tr:last-child td {
+  border-bottom: none;
+}
+
+.doc-table code {
+  background: rgba(59, 130, 246, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--doc-font-mono);
+  font-size: 0.85em;
+  color: var(--doc-secondary);
+}

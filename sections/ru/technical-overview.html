@@ -1,0 +1,195 @@
+<section class="doc-section" id="technical-overview">
+  <div class="doc-faq-item" id="platform-overview-accordion">
+    <button class="doc-faq-question" aria-expanded="false">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="doc-section-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+          </svg>
+        </div>
+        <span><span class="doc-section-number">0</span> Обзор платформы</span>
+      </div>
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+    <div class="doc-faq-answer">
+      <div class="doc-faq-answer-content">
+        <p>MediMind EMR построена на современных стандартизированных технологиях, обеспечивающих <strong>интероперабельность</strong>, <strong>масштабируемость</strong> и <strong>безопасность</strong>.</p>
+
+        <!-- Почему FHIR -->
+        <h3 id="why-fhir">Почему FHIR?</h3>
+
+        <p><strong>FHIR (Fast Healthcare Interoperability Resources)</strong> — это современный стандарт обмена медицинскими данными, разработанный HL7.</p>
+
+        <div class="doc-callout doc-callout-info doc-callout-simple">
+          <strong>Стандарт FHIR R4:</strong>
+          MediMind использует версию <strong>FHIR R4 (4.0.1)</strong> — наиболее распространённую и стабильную версию.
+        </div>
+
+        <h4>Преимущества FHIR:</h4>
+        <ul class="doc-list">
+          <li><strong>Интероперабельность</strong> — стандартизированный API позволяет интегрироваться с различными системами</li>
+          <li><strong>RESTful архитектура</strong> — простые HTTP методы (GET, POST, PUT, DELETE) для работы с ресурсами</li>
+          <li><strong>Форматы JSON/XML</strong> — современные, легко читаемые форматы данных</li>
+          <li><strong>Модульность</strong> — более 150 типов ресурсов, используемых по мере необходимости</li>
+          <li><strong>Глобальная поддержка</strong> — всемирно признанный стандарт</li>
+        </ul>
+
+        <!-- Обзор Medplum -->
+        <h3 id="medplum-overview">Платформа Medplum</h3>
+
+        <p><strong>Medplum</strong> — это платформа здравоохранения с открытым исходным кодом (open-source), обеспечивающая FHIR-совместимую инфраструктуру.</p>
+
+        <div class="doc-zone-diagram">
+          <div class="doc-zone">
+            <div class="doc-zone-header">FHIR Datastore</div>
+            <div class="doc-zone-content">
+              <p>Полные CRUD операции</p>
+              <p>Совместимость с FHIR R4</p>
+            </div>
+          </div>
+          <div class="doc-zone">
+            <div class="doc-zone-header">Auth & Security</div>
+            <div class="doc-zone-content">
+              <p>OAuth 2.0 / SMART-on-FHIR</p>
+              <p>Access Control</p>
+            </div>
+          </div>
+          <div class="doc-zone">
+            <div class="doc-zone-header">SDK & React</div>
+            <div class="doc-zone-content">
+              <p>TypeScript SDK</p>
+              <p>React компоненты</p>
+            </div>
+          </div>
+        </div>
+
+        <h4>Основные компоненты Medplum:</h4>
+        <ul class="doc-list">
+          <li><strong>FHIR API</strong> — RESTful API для получения/отправки данных</li>
+          <li><strong>TypeScript SDK</strong> — клиентская библиотека для работы с API</li>
+          <li><strong>React Components</strong> — готовые UI компоненты для медицинских приложений</li>
+          <li><strong>Medplum Bots</strong> — запуск серверной логики</li>
+          <li><strong>Admin Console</strong> — веб-интерфейс управления данными</li>
+        </ul>
+
+        <h4>Документация Medplum</h4>
+        <p>Для получения подробной информации посетите официальные ресурсы:</p>
+
+        <div class="doc-zone-diagram" style="grid-template-columns: repeat(2, 1fr);">
+          <a href="https://www.medplum.com/docs" target="_blank" rel="noopener" class="doc-zone" style="text-decoration: none; cursor: pointer;">
+            <div class="doc-zone-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 8px; display: inline-block; vertical-align: middle;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              Medplum Docs
+            </div>
+            <div class="doc-zone-content">
+              <p>Основная документация</p>
+            </div>
+          </a>
+          <a href="https://www.medplum.com/docs/fhir-basics" target="_blank" rel="noopener" class="doc-zone" style="text-decoration: none; cursor: pointer;">
+            <div class="doc-zone-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 8px; display: inline-block; vertical-align: middle;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              FHIR Basics
+            </div>
+            <div class="doc-zone-content">
+              <p>Основы FHIR</p>
+            </div>
+          </a>
+          <a href="https://www.medplum.com/docs/api" target="_blank" rel="noopener" class="doc-zone" style="text-decoration: none; cursor: pointer;">
+            <div class="doc-zone-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 8px; display: inline-block; vertical-align: middle;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+              </svg>
+              API Overview
+            </div>
+            <div class="doc-zone-content">
+              <p>Документация API</p>
+            </div>
+          </a>
+          <a href="https://github.com/medplum/medplum" target="_blank" rel="noopener" class="doc-zone" style="text-decoration: none; cursor: pointer;">
+            <div class="doc-zone-header">
+              <svg fill="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 8px; display: inline-block; vertical-align: middle;">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              GitHub
+            </div>
+            <div class="doc-zone-content">
+              <p>Исходный код</p>
+            </div>
+          </a>
+        </div>
+
+        <!-- Tech Stack -->
+        <h3 id="tech-stack">Наш Tech Stack</h3>
+
+        <p>MediMind EMR построена на следующих технологиях:</p>
+
+        <div class="doc-stats-row">
+          <div class="doc-stat-inline">
+            <span class="doc-stat-inline-number">React</span>
+            <span class="doc-stat-inline-label">Frontend</span>
+          </div>
+          <div class="doc-stat-inline">
+            <span class="doc-stat-inline-number">TS</span>
+            <span class="doc-stat-inline-label">TypeScript</span>
+          </div>
+          <div class="doc-stat-inline">
+            <span class="doc-stat-inline-number">FHIR</span>
+            <span class="doc-stat-inline-label">R4 Standard</span>
+          </div>
+          <div class="doc-stat-inline">
+            <span class="doc-stat-inline-number">SDK</span>
+            <span class="doc-stat-inline-label">Medplum</span>
+          </div>
+        </div>
+
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Категория</th>
+              <th>Технология</th>
+              <th>Описание</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Frontend Framework</strong></td>
+              <td>React 18+</td>
+              <td>Компонентная UI библиотека</td>
+            </tr>
+            <tr>
+              <td><strong>Язык</strong></td>
+              <td>TypeScript</td>
+              <td>Статическая типизация для JavaScript</td>
+            </tr>
+            <tr>
+              <td><strong>Backend/API</strong></td>
+              <td>Medplum</td>
+              <td>FHIR-совместимая платформа здравоохранения</td>
+            </tr>
+            <tr>
+              <td><strong>Стандарт данных</strong></td>
+              <td>FHIR R4</td>
+              <td>Спецификация HL7 FHIR 4.0.1</td>
+            </tr>
+            <tr>
+              <td><strong>Аутентификация</strong></td>
+              <td>OAuth 2.0</td>
+              <td>Совместимость со SMART-on-FHIR</td>
+            </tr>
+            <tr>
+              <td><strong>State Management</strong></td>
+              <td>React Context / Hooks</td>
+              <td>Управление состоянием приложения</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

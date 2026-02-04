@@ -1,0 +1,125 @@
+<section class="doc-section" id="troubleshooting">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">8</span> Устранение неполадок</h2>
+  </div>
+
+  <h3 id="common-issues">Распространённые проблемы</h3>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Проблема</span>
+      <span class="error-code-title">«ID пациента уже существует»</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Описание:</strong> Красная ошибка после нажатия кнопки сохранения<br>
+      <strong>Причина:</strong> Обнаружен дубликат грузинского ИИН<br>
+      <strong>Решение:</strong> Сначала найдите существующего пациента в поле поиска
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Проблема</span>
+      <span class="error-code-title">«Активный визит уже существует»</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Описание:</strong> Форма визита не открывается<br>
+      <strong>Причина:</strong> У пациента есть Encounter со status="in-progress"<br>
+      <strong>Решение:</strong> Закройте существующий визит или перейдите к нему
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Проблема</span>
+      <span class="error-code-title">Ошибка валидации — личный номер</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Описание:</strong> Сообщение «Неверный личный номер»<br>
+      <strong>Причина:</strong> Валидация алгоритма Luhn не пройдена<br>
+      <strong>Решение:</strong> Проверьте, что введены 11 цифр правильно. Для теста: <code>26001014632</code>
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Проблема</span>
+      <span class="error-code-title">Страховая компания не найдена</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Описание:</strong> Пустой dropdown в секции страхования<br>
+      <strong>Причина:</strong> Ресурсы Organization не загружены<br>
+      <strong>Решение:</strong> Проверьте интернет-соединение, обновите страницу
+    </div>
+  </div>
+
+  <h3 id="error-codes">Коды ошибок</h3>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Код</th>
+          <th>Сообщение</th>
+          <th>Решение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ERR_001</code></td>
+          <td>Неверный личный номер</td>
+          <td>Проверьте 11 цифр, валидация Luhn</td>
+        </tr>
+        <tr>
+          <td><code>ERR_002</code></td>
+          <td>Активный визит существует</td>
+          <td>Закройте существующий визит</td>
+        </tr>
+        <tr>
+          <td><code>ERR_003</code></td>
+          <td>Обязательное поле пустое</td>
+          <td>Заполните имя, фамилию, пол</td>
+        </tr>
+        <tr>
+          <td><code>ERR_004</code></td>
+          <td>Дубликат пациента</td>
+          <td>Используйте существующего или создайте нового</td>
+        </tr>
+        <tr>
+          <td><code>ERR_005</code></td>
+          <td>Неверный формат телефона</td>
+          <td>Используйте формат +995XXXXXXXXX</td>
+        </tr>
+        <tr>
+          <td><code>ERR_006</code></td>
+          <td>Неверный формат эл. почты</td>
+          <td>Проверьте символ @ и домен</td>
+        </tr>
+        <tr>
+          <td><code>ERR_007</code></td>
+          <td>Дата рождения в будущем</td>
+          <td>Введите дату в прошлом</td>
+        </tr>
+        <tr>
+          <td><code>ERR_008</code></td>
+          <td>Срок страхования истёк</td>
+          <td>Обновите срок полиса</td>
+        </tr>
+        <tr>
+          <td><code>ERR_009</code></td>
+          <td>Отделение не выбрано</td>
+          <td>Выберите отделение из dropdown</td>
+        </tr>
+        <tr>
+          <td><code>ERR_010</code></td>
+          <td>Ошибка соединения с API</td>
+          <td>Проверьте интернет, попробуйте снова</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

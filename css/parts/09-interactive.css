@@ -1,0 +1,206 @@
+/**
+ * Interactive Components - FAQ, Stats, Lists, Back to Top
+ */
+
+/* ================================
+   FAQ Accordion Enhanced
+   ================================ */
+.doc-faq-category {
+  margin-bottom: var(--doc-space-xl);
+}
+
+.doc-faq-category h3 {
+  color: var(--doc-text-primary);
+  margin-bottom: var(--doc-space-md);
+  padding-bottom: var(--doc-space-sm);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+}
+
+.doc-faq-item {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--doc-radius-md);
+  margin-bottom: var(--doc-space-sm);
+  overflow: hidden;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.doc-faq-item:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.doc-faq-item.open {
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.doc-faq-question {
+  width: 100%;
+  padding: var(--doc-space-md) var(--doc-space-lg);
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: var(--doc-font-base);
+  font-weight: 500;
+  color: var(--doc-text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--doc-space-md);
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.doc-faq-question:hover {
+  color: var(--doc-secondary);
+}
+
+.doc-faq-question svg {
+  width: 20px;
+  height: 20px;
+  color: var(--doc-text-muted);
+  transition: transform 0.3s var(--ease-smooth);
+  flex-shrink: 0;
+}
+
+.doc-faq-item.open .doc-faq-question svg {
+  transform: rotate(180deg);
+  color: var(--doc-secondary);
+}
+
+.doc-faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease-smooth);
+}
+
+.doc-faq-item.open .doc-faq-answer {
+  max-height: 500px;
+}
+
+.doc-faq-answer-content {
+  padding: 0 var(--doc-space-lg) var(--doc-space-lg);
+  color: var(--doc-text-secondary);
+  font-size: var(--doc-font-sm);
+  line-height: 1.7;
+}
+
+/* ================================
+   Stats Row Enhanced
+   ================================ */
+.doc-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--doc-space-md);
+  margin: var(--doc-space-xl) 0;
+}
+
+.doc-stat-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--doc-space-sm);
+  padding: var(--doc-space-md) var(--doc-space-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--doc-radius-lg);
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.doc-stat-inline:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.doc-stat-inline-number {
+  font-size: var(--doc-font-2xl);
+  font-weight: 700;
+  background: var(--doc-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.doc-stat-inline-label {
+  font-size: var(--doc-font-sm);
+  color: var(--doc-text-secondary);
+}
+
+/* ================================
+   List Styles
+   ================================ */
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--doc-space-md) 0;
+}
+
+.doc-list li {
+  position: relative;
+  padding-left: var(--doc-space-lg);
+  margin-bottom: var(--doc-space-sm);
+  color: var(--doc-text-secondary);
+}
+
+.doc-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  background: var(--doc-gradient);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--glow-primary);
+}
+
+.doc-list-compact li {
+  margin-bottom: var(--doc-space-xs);
+  font-size: var(--doc-font-sm);
+}
+
+/* ================================
+   Back to Top Button
+   ================================ */
+.doc-back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  background: var(--doc-gradient);
+  border: none;
+  border-radius: 50%;
+  color: var(--doc-text-inverse);
+  box-shadow:
+    0 4px 20px rgba(26, 54, 93, 0.4),
+    0 0 30px rgba(59, 130, 246, 0.2);
+  cursor: pointer;
+  z-index: 250;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s var(--ease-smooth);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.doc-back-to-top.visible {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.doc-back-to-top:hover {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow:
+    0 8px 30px rgba(26, 54, 93, 0.5),
+    0 0 50px rgba(59, 130, 246, 0.3);
+}
+
+.doc-back-to-top svg {
+  width: 24px;
+  height: 24px;
+}

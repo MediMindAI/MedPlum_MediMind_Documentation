@@ -1,0 +1,150 @@
+/**
+ * Timeline, Steps, Zones, Code Blocks
+ */
+
+/* ================================
+   Steps with Timeline
+   ================================ */
+.doc-steps {
+  position: relative;
+  margin: var(--doc-space-xl) 0;
+  padding-left: 40px;
+}
+
+.doc-steps::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--doc-secondary), rgba(59, 130, 246, 0.2));
+}
+
+.doc-step {
+  position: relative;
+  padding-bottom: var(--doc-space-lg);
+  animation: fadeInUp 0.6s var(--ease-smooth);
+}
+
+.doc-step:last-child {
+  padding-bottom: 0;
+}
+
+.doc-step-number {
+  position: absolute;
+  left: -40px;
+  width: 32px;
+  height: 32px;
+  background: var(--doc-gradient);
+  color: var(--doc-text-inverse);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--doc-font-sm);
+  box-shadow:
+    0 4px 12px rgba(26, 54, 93, 0.3),
+    0 0 20px rgba(59, 130, 246, 0.3);
+  z-index: 1;
+}
+
+.doc-step-content {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--doc-radius-md);
+  padding: var(--doc-space-md);
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.doc-step:hover .doc-step-content {
+  transform: translateX(8px);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.doc-step-content h5 {
+  font-size: var(--doc-font-base);
+  font-weight: 600;
+  color: var(--doc-text-primary);
+  margin-bottom: var(--doc-space-xs);
+}
+
+.doc-step-content p {
+  font-size: var(--doc-font-sm);
+  color: var(--doc-text-secondary);
+  margin: 0;
+}
+
+/* ================================
+   Zone Diagram with Glow
+   ================================ */
+.doc-zone-diagram {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--doc-space-md);
+  margin: var(--doc-space-xl) 0;
+}
+
+.doc-zone {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--doc-radius-lg);
+  overflow: hidden;
+  transition: all 0.4s var(--ease-smooth);
+}
+
+.doc-zone:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 15px 40px rgba(26, 54, 93, 0.15),
+    0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+.doc-zone-header {
+  background: var(--doc-gradient);
+  color: var(--doc-text-inverse);
+  padding: var(--doc-space-md);
+  font-weight: 600;
+  text-align: center;
+  font-size: var(--doc-font-sm);
+}
+
+.doc-zone-content {
+  padding: var(--doc-space-md);
+}
+
+.doc-zone-content p {
+  margin: var(--doc-space-xs) 0;
+  font-size: var(--doc-font-sm);
+  color: var(--doc-text-secondary);
+}
+
+/* ================================
+   Code Blocks with Syntax Highlighting Feel
+   ================================ */
+.doc-code-block {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: var(--doc-radius-lg);
+  margin: var(--doc-space-lg) 0;
+  overflow: hidden;
+  box-shadow:
+    0 10px 40px rgba(15, 23, 42, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.doc-code-block pre {
+  padding: var(--doc-space-lg);
+  margin: 0;
+  overflow-x: auto;
+}
+
+.doc-code-block code {
+  font-family: var(--doc-font-mono);
+  font-size: var(--doc-font-sm);
+  color: #e2e8f0;
+  line-height: 1.7;
+}

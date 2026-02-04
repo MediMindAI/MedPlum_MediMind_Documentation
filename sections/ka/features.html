@@ -1,0 +1,171 @@
+<section class="doc-section" id="features">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">2</span> ფუნქციები</h2>
+  </div>
+
+  <!-- Search System -->
+  <h3 id="search">ძებნის სისტემა</h3>
+  <p>სისტემა გთავაზობთ მოქნილ ძებნას მრავალი პარამეტრით:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ძებნის ტიპი</th>
+          <th>აღწერა</th>
+          <th>FHIR პარამეტრი</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>სწრაფი ძებნა</strong></td>
+          <td>პირადი ნომრით ან სახელით - ავტომატური შევსება</td>
+          <td><code>identifier | name</code></td>
+        </tr>
+        <tr>
+          <td><strong>დეტალური ძებნა</strong></td>
+          <td>მრავალი ფილტრი: თარიღი, დეპარტამენტი, სტატუსი</td>
+          <td><code>_lastUpdated | organization</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form Sections -->
+  <h3 id="form-sections">ფორმის 4 სექცია</h3>
+  <p>რეგისტრაციის ფორმა დაყოფილია <strong>4 ლოგიკურ სექციად</strong>:</p>
+
+  <div class="doc-form-sections-grid">
+    <div class="doc-form-section-card">
+      <img src="images/section-1-personal-ka.png" alt="პირადი ინფორმაცია" data-i18n-img="section-1-personal">
+    </div>
+    <div class="doc-form-section-card">
+      <img src="images/section-2-contact-ka.png" alt="საკონტაქტო" data-i18n-img="section-2-contact">
+    </div>
+    <div class="doc-form-section-card">
+      <img src="images/section-3-additional-ka.png" alt="დამატებითი" data-i18n-img="section-3-additional">
+    </div>
+    <div class="doc-form-section-card">
+      <img src="images/section-4-representative-ka.png" alt="წარმომადგენელი" data-i18n-img="section-4-representative">
+    </div>
+  </div>
+
+  <!-- Save Options -->
+  <h3 id="save-options">შენახვის ვარიანტები</h3>
+  <div class="doc-save-options">
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">შენახვა</div>
+        <div class="doc-save-option-desc">მხოლოდ პაციენტის მონაცემების შენახვა</div>
+      </div>
+    </div>
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">შენახვა & გაგრძელება</div>
+        <div class="doc-save-option-desc">რეგისტრირდება, იხსნება ვიზიტის რეგისტრაციის ნაბიჯები</div>
+      </div>
+    </div>
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">შენახვა & ახალი</div>
+        <div class="doc-save-option-desc">რეგისტრირდება, ფორმა იცლება ახალი პაციენტისთვის</div>
+      </div>
+    </div>
+    <div class="doc-save-option">
+      <div class="doc-save-option-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+      </div>
+      <div class="doc-save-option-content">
+        <div class="doc-save-option-title">შენახვა & ნახვა</div>
+        <div class="doc-save-option-desc">რეგისტრირდება, იხსნება პაციენტის ბარათი</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wizard Steps -->
+  <h3 id="wizard">ვიზიტის რეგისტრაციის ნაბიჯები</h3>
+  <div class="doc-screenshot-full" id="wizard-screenshot">
+    <img src="images/visit-registration-steps-ka.png" alt="ვიზიტის რეგისტრაციის ნაბიჯები" class="doc-screenshot-image" data-i18n-img="visit-registration-steps">
+    <button class="doc-back-link" id="back-from-wizard-btn" onclick="goBackFromWizard()" style="display: none;">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+      უკან დაბრუნება
+    </button>
+  </div>
+
+  <div class="doc-wizard-steps">
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">1</div>
+      <div>
+        <div class="doc-wizard-step-label">რეგისტრაციის დეტალები</div>
+        <div class="doc-wizard-step-desc">ვიზიტის ტიპი, თარიღი, განყოფილება</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">2</div>
+      <div>
+        <div class="doc-wizard-step-label">დაზღვევის მონაცემები</div>
+        <div class="doc-wizard-step-desc">სადაზღვევო კომპანია, პოლისი</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">3</div>
+      <div>
+        <div class="doc-wizard-step-label">გარანტია</div>
+        <div class="doc-wizard-step-desc">საგარანტიო წერილი, თანხა</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">4</div>
+      <div>
+        <div class="doc-wizard-step-label">დემოგრაფია</div>
+        <div class="doc-wizard-step-desc">რეგიონი, დიაგნოზი, ჩივილი</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">5</div>
+      <div>
+        <div class="doc-wizard-step-label">დადასტურება</div>
+        <div class="doc-wizard-step-desc">შეჯამება და რეგისტრაცია</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insurance Management -->
+  <h3 id="insurance">დაზღვევის მართვა</h3>
+  <p>სისტემა საშუალებას გაძლევთ დაამატოთ <strong>3-მდე სადაზღვევო კომპანია</strong> ერთ ვიზიტზე.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/insurance-section-ka.png" alt="დაზღვევის სექცია" class="doc-screenshot-image" data-i18n-img="insurance-section">
+  </div>
+
+  <!-- Demographics -->
+  <h3 id="demographics">დემოგრაფია</h3>
+  <div class="doc-screenshot-full">
+    <img src="images/demographics-section-ka.png" alt="დემოგრაფიის სექცია" class="doc-screenshot-image" data-i18n-img="demographics-section">
+  </div>
+</section>

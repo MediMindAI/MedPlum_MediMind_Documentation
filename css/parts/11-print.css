@@ -1,0 +1,341 @@
+/**
+ * Print / PDF Export Styles
+ */
+
+@media print {
+  /* Hide UI elements */
+  body::before,
+  .doc-header,
+  .doc-sidebar,
+  .doc-sidebar-toggle,
+  .doc-sidebar-overlay,
+  .doc-back-to-top,
+  .doc-progress,
+  .pdf-loading {
+    display: none !important;
+  }
+
+  /* Hide placeholder screenshots but show real ones */
+  .doc-screenshot-card:not(.doc-screenshot-with-image) {
+    display: none !important;
+  }
+
+  .doc-screenshot-full {
+    display: block !important;
+    break-inside: avoid;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .doc-screenshot-full .doc-screenshot-image {
+    max-width: 100%;
+  }
+
+  /* Reset body */
+  body {
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Main content */
+  .doc-content {
+    margin: 0 !important;
+    padding: 20px !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+  }
+
+  .doc-content-inner {
+    max-width: 100% !important;
+  }
+
+  /* Hero Section */
+  .doc-hero-compact {
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 16px 24px !important;
+    margin-bottom: 20px !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+  }
+
+  .doc-hero-compact::before {
+    display: none !important;
+  }
+
+  .doc-hero-text h1 {
+    color: #ffffff !important;
+    font-size: 18px !important;
+  }
+
+  .doc-hero-text p {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .doc-hero-badge {
+    display: none !important;
+  }
+
+  /* Table of Contents */
+  .doc-toc {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    page-break-inside: avoid;
+  }
+
+  .doc-toc-number {
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Sections */
+  .doc-section {
+    page-break-inside: avoid;
+  }
+
+  .doc-section-header {
+    page-break-after: avoid;
+  }
+
+  .doc-section-number {
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-section-icon {
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-section-divider {
+    background: #e2e8f0 !important;
+    margin: 30px 0 !important;
+  }
+
+  /* Feature Cards */
+  .doc-feature-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px !important;
+  }
+
+  .doc-feature-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    page-break-inside: avoid;
+    padding: 15px !important;
+  }
+
+  .doc-feature-card::before {
+    display: none !important;
+  }
+
+  /* Tables */
+  .doc-table-container {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    page-break-inside: avoid;
+  }
+
+  .doc-table {
+    font-size: 11px !important;
+  }
+
+  .doc-table th {
+    background: #f1f5f9 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-table td,
+  .doc-table th {
+    padding: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  /* Info Boxes */
+  .doc-info-box {
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .doc-info-box::before {
+    display: none !important;
+  }
+
+  .doc-info-box-blue {
+    background: #eff6ff !important;
+    border-left: 4px solid #3b82f6 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-info-box-green {
+    background: #f0fdf4 !important;
+    border-left: 4px solid #22c55e !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-info-box-red {
+    background: #fef2f2 !important;
+    border-left: 4px solid #ef4444 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-info-box-gray {
+    background: #f9fafb !important;
+    border-left: 4px solid #6b7280 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Steps Timeline */
+  .doc-steps {
+    page-break-inside: avoid;
+  }
+
+  .doc-step {
+    page-break-inside: avoid;
+  }
+
+  .doc-step-number {
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-step-content {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Zone Diagram */
+  .doc-zone-diagram {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .doc-zone {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    page-break-inside: avoid;
+  }
+
+  .doc-zone-header {
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 10px !important;
+    font-size: 12px !important;
+  }
+
+  /* Badges */
+  .doc-badge {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .doc-badge-blue {
+    background: #dbeafe !important;
+    border-color: #3b82f6 !important;
+  }
+
+  .doc-badge-green {
+    background: #dcfce7 !important;
+    border-color: #22c55e !important;
+  }
+
+  .doc-badge-red {
+    background: #fee2e2 !important;
+    border-color: #ef4444 !important;
+  }
+
+  /* Stats */
+  .doc-stats-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .doc-stat-inline {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .doc-stat-inline-number {
+    color: #1a365d !important;
+    -webkit-text-fill-color: #1a365d !important;
+  }
+
+  /* Code Blocks */
+  .doc-code-block {
+    background: #1e293b !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    page-break-inside: avoid;
+  }
+
+  .doc-code-block code {
+    color: #e2e8f0 !important;
+    font-size: 10px !important;
+  }
+
+  /* Lists */
+  .doc-list li::before {
+    background: #1a365d !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+  }
+
+  /* FAQ */
+  .doc-faq-item {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .doc-faq-answer {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Footer */
+  .doc-single-footer {
+    background: #1e293b !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin-top: 30px !important;
+  }
+
+  /* Page breaks */
+  h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+}

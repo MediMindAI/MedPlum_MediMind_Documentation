@@ -1,0 +1,135 @@
+/**
+ * Main Content and Hero Styles
+ */
+
+/* ================================
+   Main Content Area
+   ================================ */
+.doc-content {
+  flex: 1;
+  margin-left: 0;
+  margin-top: 64px;
+  padding: var(--doc-space-lg) var(--doc-space-lg);
+  max-width: 100%;
+  min-height: calc(100vh - 64px);
+  transition: margin-left 0.4s ease;
+}
+
+/* When sidebar is open, shift content to the right */
+body.sidebar-open .doc-content {
+  margin-left: 300px !important;
+}
+
+/* Also shift the toggle button position reference */
+body.sidebar-open .doc-sidebar-toggle {
+  left: 316px;
+}
+
+.doc-content-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ================================
+   Progress Indicator with Glow
+   ================================ */
+.doc-progress {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 150;
+}
+
+.doc-progress-bar {
+  height: 100%;
+  background: var(--gradient-glow);
+  width: 0;
+  transition: width 0.1s ease;
+  box-shadow: 0 0 10px var(--glow-primary), 0 0 20px var(--glow-secondary);
+}
+
+/* ================================
+   Compact Hero Banner
+   ================================ */
+.doc-hero-compact {
+  background: var(--gradient-hero);
+  color: var(--doc-text-inverse);
+  padding: 20px 28px;
+  border-radius: 16px;
+  margin-bottom: var(--doc-space-xl);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 8px 30px rgba(26, 54, 93, 0.35),
+    0 0 50px rgba(59, 130, 246, 0.12);
+}
+
+/* Subtle shine effect */
+.doc-hero-compact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+}
+
+.doc-hero-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.doc-hero-icon svg {
+  width: 30px;
+  height: 30px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.doc-hero-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.doc-hero-text h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.doc-hero-text p {
+  font-size: 0.875rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.02em;
+}
+
+.doc-hero-badge {
+  flex-shrink: 0;
+}
+
+.doc-hero-badge span {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
