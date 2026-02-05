@@ -20,7 +20,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
   border-radius: 10px;
   color: white;
 }
@@ -36,7 +36,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 700;
@@ -52,7 +52,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(26, 54, 93, 0.8);
   backdrop-filter: blur(8px);
   z-index: 1000;
   align-items: flex-start;
@@ -61,8 +61,8 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 }
 .search-modal.open { display: flex; }
 .search-container {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #1a365d 0%, #1a365d 100%);
+  border: 1px solid rgba(43, 108, 176, 0.3);
   border-radius: 16px;
   width: 90%;
   max-width: 600px;
@@ -113,7 +113,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   transition: all 0.2s;
 }
 .search-result-item:hover, .search-result-item.active {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(43, 108, 176, 0.2);
   color: #ffffff;
 }
 .search-result-item svg {
@@ -148,8 +148,8 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 
 /* Mermaid Diagram Container - Premium Dark Theme */
 .mermaid-container {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #1a365d 0%, #1a365d 50%, #1a365d 100%);
+  border: 1px solid rgba(43, 108, 176, 0.3);
   border-radius: 20px;
   padding: 32px;
   margin: 24px 0;
@@ -168,14 +168,14 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(43, 108, 176, 0.5), transparent);
 }
 .mermaid-container:hover {
-  border-color: rgba(59, 130, 246, 0.5);
+  border-color: rgba(43, 108, 176, 0.5);
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.3),
     0 10px 40px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(59, 130, 246, 0.15),
+    0 0 30px rgba(43, 108, 176, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 .mermaid {
@@ -186,7 +186,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 .mermaid svg {
   max-width: 100%;
   height: auto;
-  filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.2));
+  filter: drop-shadow(0 2px 8px rgba(43, 108, 176, 0.2));
 }
 
 /* Override Mermaid node styles for better contrast */
@@ -221,7 +221,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 
 /* Diagram Section Titles */
 .doc-section h4 {
-  color: #60a5fa;
+  color: #63b3ed;
   font-size: 16px;
   font-weight: 600;
   margin-top: 32px;
@@ -233,13 +233,13 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 .doc-section h4::before {
   content: '';
   font-size: 10px;
-  color: #3b82f6;
+  color: #2b6cb0;
 }
 
 /* Premium Custom Diagram Styles */
 .custom-diagram {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #1a365d 0%, #1a365d 50%, #1a365d 100%);
+  border: 1px solid rgba(43, 108, 176, 0.3);
   border-radius: 20px;
   padding: 40px;
   margin: 24px 0;
@@ -253,7 +253,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(43, 108, 176, 0.5), transparent);
 }
 .custom-diagram svg {
   width: 100%;
@@ -267,10 +267,10 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   transition: all 0.3s ease;
 }
 .diagram-node:hover {
-  filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
+  filter: drop-shadow(0 0 12px rgba(43, 108, 176, 0.5));
 }
 .diagram-node-primary {
-  fill: linear-gradient(135deg, #1e40af, #3b82f6);
+  fill: linear-gradient(135deg, #1a365d, #2b6cb0);
 }
 .diagram-text {
   font-family: 'Noto Sans Georgian', sans-serif;
@@ -282,7 +282,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   fill: rgba(255, 255, 255, 0.7);
 }
 .diagram-line {
-  stroke: #60a5fa;
+  stroke: #63b3ed;
   stroke-width: 2;
   fill: none;
 }
@@ -290,7 +290,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   stroke-dasharray: 5, 5;
 }
 .diagram-arrow {
-  fill: #60a5fa;
+  fill: #63b3ed;
 }
 
 /* Hub-Spoke Layout */
@@ -315,24 +315,24 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   justify-content: center;
 }
 .flow-node {
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-  border: 2px solid #60a5fa;
+  background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+  border: 2px solid #63b3ed;
   border-radius: 12px;
   padding: 16px 24px;
   color: #ffffff;
   font-weight: 500;
   text-align: center;
   min-width: 150px;
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(43, 108, 176, 0.3);
   transition: all 0.3s ease;
 }
 .flow-node:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 30px rgba(43, 108, 176, 0.4);
 }
 .flow-node.decision {
-  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
-  border-color: #a78bfa;
+  background: linear-gradient(135deg, #2b6cb0 0%, #63b3ed 100%);
+  border-color: #63b3ed;
   transform: rotate(45deg);
   padding: 20px;
   min-width: auto;
@@ -352,7 +352,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 .flow-connector {
   width: 40px;
   height: 2px;
-  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+  background: linear-gradient(90deg, #63b3ed, #2b6cb0);
   position: relative;
 }
 .flow-connector::after {
@@ -361,12 +361,12 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   right: -6px;
   top: -4px;
   border: 5px solid transparent;
-  border-left-color: #3b82f6;
+  border-left-color: #2b6cb0;
 }
 .flow-connector.vertical {
   width: 2px;
   height: 40px;
-  background: linear-gradient(180deg, #60a5fa, #3b82f6);
+  background: linear-gradient(180deg, #63b3ed, #2b6cb0);
 }
 .flow-connector.vertical::after {
   right: auto;
@@ -374,7 +374,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   top: auto;
   bottom: -6px;
   border: 5px solid transparent;
-  border-top-color: #3b82f6;
+  border-top-color: #2b6cb0;
   border-left-color: transparent;
 }
 
@@ -390,7 +390,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   padding: 6px 12px;
-  color: #94a3b8;
+  color: #9ca3af;
   font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
@@ -399,9 +399,9 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   gap: 6px;
 }
 .mermaid-zoom-btn:hover {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(43, 108, 176, 0.2);
+  color: #63b3ed;
+  border-color: rgba(43, 108, 176, 0.4);
 }
 .mermaid-zoom-btn svg {
   width: 14px;
@@ -430,10 +430,10 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 .toc-header svg {
   width: 24px;
   height: 24px;
-  color: #94a3b8;
+  color: #9ca3af;
 }
 .toc-header span {
-  color: #94a3b8;
+  color: #9ca3af;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -451,7 +451,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   padding: 10px 12px;
   background: transparent;
   border: none;
-  color: #e2e8f0;
+  color: #e5e7eb;
   font-size: 14px;
   font-weight: 500;
   text-align: left;
@@ -461,15 +461,15 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   gap: 8px;
 }
 .toc-toggle:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(43, 108, 176, 0.1);
 }
 .toc-toggle.active {
-  color: #60a5fa;
+  color: #63b3ed;
 }
 .toc-chevron {
   width: 18px;
   height: 18px;
-  color: #64748b;
+  color: #6b7280;
   transition: transform 0.2s ease;
   flex-shrink: 0;
 }
@@ -485,18 +485,11 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 .toc-item.open > .toc-children {
   display: block;
 }
-/* Keep Platform Overview section always collapsed */
-.toc-tree > .toc-item:first-child > .toc-children {
-  display: none !important;
-}
-.toc-tree > .toc-item:first-child > .toc-toggle .toc-chevron {
-  display: none;
-}
 .toc-link {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  color: #94a3b8;
+  color: #9ca3af;
   font-size: 13px;
   text-decoration: none;
   border-radius: 6px;
@@ -504,12 +497,12 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   gap: 8px;
 }
 .toc-link:hover {
-  color: #e2e8f0;
-  background: rgba(59, 130, 246, 0.1);
+  color: #e5e7eb;
+  background: rgba(43, 108, 176, 0.1);
 }
 .toc-link.active {
   color: #ffffff;
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
   font-weight: 500;
 }
 .toc-link .toc-chevron {
@@ -529,7 +522,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 .toc-external-icon {
   width: 14px;
   height: 14px;
-  color: #64748b;
+  color: #6b7280;
   margin-left: auto;
 }
 
@@ -546,7 +539,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 .field-ref-table .field-optional { color: #6b7280; }
 .field-ref-table .field-conditional { color: #f59e0b; font-weight: 600; }
 .field-ref-table code {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(43, 108, 176, 0.1);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 11px;
@@ -555,18 +548,25 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
 /* Global Code Styling */
 code {
   background: rgba(241, 245, 249, 0.95);
-  color: #1e293b;
+  color: #1a365d;
   padding: 2px 8px;
   border-radius: 4px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
   font-weight: 500;
 }
+/* Override for code blocks with dark background */
+.doc-code-block code {
+  background: transparent;
+  color: #e5e7eb;
+  padding: 0;
+  font-weight: normal;
+}
 .error-code-solution code,
 .doc-table code,
 p code {
   background: rgba(241, 245, 249, 0.95);
-  color: #0f172a;
+  color: #1a365d;
   padding: 2px 8px;
   border-radius: 4px;
   font-weight: 600;
@@ -574,7 +574,7 @@ p code {
 
 /* Error Code Cards */
 .error-code-card {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  background: linear-gradient(135deg, #1a365d 0%, #1a365d 100%);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 12px;
   padding: 16px 20px;
@@ -611,8 +611,8 @@ p code {
 
 /* API Endpoint Cards */
 .api-endpoint {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, #1a365d 0%, #1a365d 100%);
+  border: 1px solid rgba(43, 108, 176, 0.2);
   border-radius: 12px;
   margin-bottom: 16px;
   overflow: hidden;
@@ -632,7 +632,7 @@ p code {
   font-family: monospace;
 }
 .api-method-get { background: #22c55e; color: #ffffff; }
-.api-method-post { background: #3b82f6; color: #ffffff; }
+.api-method-post { background: #2b6cb0; color: #ffffff; }
 .api-method-put { background: #f59e0b; color: #ffffff; }
 .api-method-delete { background: #ef4444; color: #ffffff; }
 .api-path {
@@ -647,7 +647,7 @@ p code {
   line-height: 1.6;
 }
 .api-endpoint-body strong {
-  color: #60a5fa;
+  color: #63b3ed;
 }
 
 /* Version History */
@@ -662,7 +662,7 @@ p code {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(180deg, #3b82f6, rgba(59, 130, 246, 0.2));
+  background: linear-gradient(180deg, #2b6cb0, rgba(43, 108, 176, 0.2));
 }
 .version-item {
   position: relative;
@@ -679,9 +679,9 @@ p code {
   top: 20px;
   width: 12px;
   height: 12px;
-  background: #3b82f6;
+  background: #2b6cb0;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 10px rgba(43, 108, 176, 0.5);
 }
 .version-number {
   display: inline-block;
@@ -1078,8 +1078,8 @@ p code {
   content: '';
   width: 24px;
   height: 24px;
-  border: 2px solid rgba(59, 130, 246, 0.3);
-  border-top-color: #3b82f6;
+  border: 2px solid rgba(43, 108, 176, 0.3);
+  border-top-color: #2b6cb0;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-left: 12px;

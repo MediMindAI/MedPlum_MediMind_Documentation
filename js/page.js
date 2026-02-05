@@ -7,52 +7,52 @@ mermaid.initialize({
   theme: 'base',
   themeVariables: {
     // Background
-    background: '#0f172a',
+    background: '#1a365d',
 
     // Primary - Gradient Blue tones
-    primaryColor: '#1e40af',
+    primaryColor: '#1a365d',
     primaryTextColor: '#ffffff',
-    primaryBorderColor: '#60a5fa',
+    primaryBorderColor: '#63b3ed',
 
-    // Secondary - Cyan/Teal accent
-    secondaryColor: '#0891b2',
+    // Secondary - Theme blue accent
+    secondaryColor: '#2b6cb0',
     secondaryTextColor: '#ffffff',
-    secondaryBorderColor: '#22d3d8',
+    secondaryBorderColor: '#63b3ed',
 
-    // Tertiary - Purple accent
-    tertiaryColor: '#7c3aed',
+    // Tertiary - Theme blue accent
+    tertiaryColor: '#3182ce',
     tertiaryTextColor: '#ffffff',
-    tertiaryBorderColor: '#a78bfa',
+    tertiaryBorderColor: '#63b3ed',
 
     // Note - Yellow/Amber for decisions
     noteBkgColor: '#fbbf24',
-    noteTextColor: '#1e293b',
+    noteTextColor: '#1a365d',
     noteBorderColor: '#f59e0b',
 
     // Lines and edges
-    lineColor: '#60a5fa',
-    textColor: '#e2e8f0',
+    lineColor: '#63b3ed',
+    textColor: '#e5e7eb',
 
     // Main background and font
-    mainBkg: '#1e40af',
+    mainBkg: '#1a365d',
     fontFamily: '"Noto Sans Georgian", sans-serif',
     fontSize: '14px',
 
     // Flowchart specific
-    nodeBorder: '#60a5fa',
-    clusterBkg: 'rgba(30, 64, 175, 0.2)',
-    clusterBorder: '#3b82f6',
-    defaultLinkColor: '#60a5fa',
+    nodeBorder: '#63b3ed',
+    clusterBkg: 'rgba(26, 54, 93, 0.2)',
+    clusterBorder: '#2b6cb0',
+    defaultLinkColor: '#63b3ed',
     titleColor: '#ffffff',
-    edgeLabelBackground: '#1e293b',
+    edgeLabelBackground: '#1a365d',
 
     // State diagram
     labelColor: '#ffffff',
-    altBackground: '#1e293b',
+    altBackground: '#1a365d',
 
     // ER Diagram
-    attributeBackgroundColorOdd: '#1e293b',
-    attributeBackgroundColorEven: '#0f172a'
+    attributeBackgroundColorOdd: '#1a365d',
+    attributeBackgroundColorEven: '#1a365d'
   },
   flowchart: {
     htmlLabels: true,
@@ -113,20 +113,21 @@ const searchModal = document.getElementById('searchModal');
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 
-// Default search items (Georgian) - will be updated by I18n
-let searchItems = [
-  { title: 'მიმოხილვა', href: '#overview', section: 'დაწყება' },
-  { title: 'ძებნის სისტემა', href: '#search', section: 'ფუნქციები' },
-  { title: 'ფორმის სექციები', href: '#form-sections', section: 'ფუნქციები' },
-  { title: 'ვიზიტის ფორმა', href: '#wizard', section: 'ფუნქციები' },
-  { title: 'დაზღვევის მართვა', href: '#insurance', section: 'ფუნქციები' },
-  { title: 'უცნობი პაციენტი', href: '#unknown-patient', section: 'ფუნქციები' },
-  { title: 'არქიტექტურა', href: '#architecture', section: 'ტექნიკური რეფერენსი' },
-  { title: 'პრობლემების მოგვარება', href: '#troubleshooting', section: 'მხარდაჭერა' },
-  { title: 'შეცდომის კოდები', href: '#error-codes', section: 'მხარდაჭერა' },
-];
+// Default search items - will be populated by SearchIndexer
+let searchItems = [];
 
-// Function to update search items (called by I18n)
+// Function to get search items from SearchIndexer or fallback
+function getSearchItems() {
+  if (typeof SearchIndexer !== 'undefined') {
+    const items = SearchIndexer.getItems();
+    if (items && items.length > 0) {
+      return items;
+    }
+  }
+  return searchItems;
+}
+
+// Function to update search items (called by I18n or SearchIndexer)
 function updateSearchItems(items) {
   if (Array.isArray(items) && items.length > 0) {
     searchItems = items;
@@ -158,7 +159,9 @@ function renderSearchResults(query) {
     return;
   }
 
-  const filtered = searchItems.filter(item =>
+  // Get items from SearchIndexer or fallback
+  const items = getSearchItems();
+  const filtered = items.filter(item =>
     item.title.toLowerCase().includes(query.toLowerCase()) ||
     item.section.toLowerCase().includes(query.toLowerCase())
   );
@@ -169,7 +172,7 @@ function renderSearchResults(query) {
   }
 
   searchResults.innerHTML = filtered.map(item => `
-    <a href="${item.href}" class="search-result-item" onclick="closeSearch()">
+    <a href="${item.href}" class="search-result-item" onclick="event.preventDefault(); navigateToSearchResult('${item.href}')">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
       </svg>
@@ -182,6 +185,31 @@ function renderSearchResults(query) {
 }
 
 searchInput.addEventListener('input', (e) => renderSearchResults(e.target.value));
+
+// Update search results to use router navigation
+function navigateToSearchResult(href) {
+  closeSearch();
+
+  // Check if router is available
+  if (typeof Router !== 'undefined' && Router.manifest) {
+    // Extract anchor from href (e.g., #overview -> overview)
+    const anchor = href.replace('#', '');
+
+    // Try to find in manifest and navigate via router
+    const resolved = Router._resolveLegacyAnchor(anchor);
+    if (resolved) {
+      Router.navigate(resolved);
+      return;
+    }
+  }
+
+  // Fallback: direct anchor navigation
+  const target = document.querySelector(href);
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+window.navigateToSearchResult = navigateToSearchResult;
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
@@ -284,19 +312,41 @@ window.addEventListener('scroll', function() {
   });
 });
 
-// Smooth scroll
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      sidebar.classList.remove('open');
-      sidebarToggle.classList.remove('active');
-      document.body.classList.remove('sidebar-open');
+// Smooth scroll - delegate to router when available
+function handleAnchorClick(e) {
+  const anchor = e.target.closest('a[href^="#"]');
+  if (!anchor) return;
+
+  // Skip if it's a TOC link (TOC generator handles these)
+  if (anchor.closest('.toc-tree')) return;
+
+  e.preventDefault();
+  const href = anchor.getAttribute('href');
+  const anchorId = href.replace('#', '');
+
+  // Close sidebar on mobile
+  sidebar.classList.remove('open');
+  sidebarToggle.classList.remove('active');
+  document.body.classList.remove('sidebar-open');
+
+  // Use router if available
+  if (typeof Router !== 'undefined' && Router.manifest) {
+    const resolved = Router._resolveLegacyAnchor(anchorId);
+    if (resolved) {
+      Router.navigate(resolved);
+      return;
     }
-  });
-});
+  }
+
+  // Fallback: direct scroll
+  const target = document.getElementById(anchorId);
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Use event delegation for anchor clicks
+document.addEventListener('click', handleAnchorClick);
 
 // Lightbox for images
 const lightboxModal = document.getElementById('lightboxModal');

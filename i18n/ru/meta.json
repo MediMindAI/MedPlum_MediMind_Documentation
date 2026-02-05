@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "lang": "ru",
+    "langName": "Русский",
+    "htmlLang": "ru"
+  },
+  "hero": {
+    "title": "Система MediMind EMR",
+    "subtitle": "Производственная документация для IT-специалистов",
+    "version": "v2.0"
+  }
+}

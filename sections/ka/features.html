@@ -8,164 +8,639 @@
     <h2><span class="doc-section-number">2</span> ფუნქციები</h2>
   </div>
 
-  <!-- Search System -->
-  <h3 id="search">ძებნის სისტემა</h3>
-  <p>სისტემა გთავაზობთ მოქნილ ძებნას მრავალი პარამეტრით:</p>
+  <!-- ========================== -->
+  <!-- 2.1 პაციენტის ძიების სისტემა -->
+  <!-- ========================== -->
+  <h3 id="search">2.1 პაციენტის ძიების სისტემა</h3>
+  <p>რეგისტრაციის მოდული აღჭურვილია მძლავრი <strong>UnifiedPatientSearch</strong> კომპონენტით, რომელიც არსებული პაციენტების მოძებნის მთავარი საშუალებაა.</p>
+
+  <!-- მთავარი ძიება -->
+  <h4 id="hero-search">მთავარი ძიების კომპონენტი</h4>
+  <p>მთავარი ძიების ველი გამოჩენილ ადგილზეა განთავსებული რეგისტრაციის გვერდის ზედა ნაწილში:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/hero-search-ka.png" alt="მთავარი ძიება" class="doc-screenshot-image" data-i18n-img="hero-search">
+  </div>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>ძებნის ტიპი</th>
+          <th>ფუნქცია</th>
           <th>აღწერა</th>
-          <th>FHIR პარამეტრი</th>
+          <th>კლავიატურის მალსახმობი</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>სწრაფი ძებნა</strong></td>
-          <td>პირადი ნომრით ან სახელით - ავტომატური შევსება</td>
-          <td><code>identifier | name</code></td>
+          <td><strong>სწრაფი ძიება</strong></td>
+          <td>ავტომატურად ცნობს შეყვანილი მონაცემი პირადი ნომერია (11 ციფრი) თუ სახელი</td>
+          <td><kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd></td>
         </tr>
         <tr>
-          <td><strong>დეტალური ძებნა</strong></td>
-          <td>მრავალი ფილტრი: თარიღი, დეპარტამენტი, სტატუსი</td>
-          <td><code>_lastUpdated | organization</code></td>
+          <td><strong>გაფართოებული ფილტრები</strong></td>
+          <td>გახსენით პანელი პირადი ნომრის, სახელის, გვარის, რეგ. ნომრისთვის</td>
+          <td><kbd>Cmd/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd></td>
+        </tr>
+        <tr>
+          <td><strong>შედეგებში ნავიგაცია</strong></td>
+          <td>გადაადგილება ძიების შედეგებში</td>
+          <td><kbd>↑</kbd> / <kbd>↓</kbd></td>
+        </tr>
+        <tr>
+          <td><strong>შედეგის არჩევა</strong></td>
+          <td>მონიშნული შედეგის არჩევა</td>
+          <td><kbd>Enter</kbd></td>
+        </tr>
+        <tr>
+          <td><strong>ძიების დახურვა</strong></td>
+          <td>ძიების პანელის დახურვა</td>
+          <td><kbd>Escape</kbd></td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Form Sections -->
-  <h3 id="form-sections">ფორმის 4 სექცია</h3>
-  <p>რეგისტრაციის ფორმა დაყოფილია <strong>4 ლოგიკურ სექციად</strong>:</p>
+  <!-- გაფართოებული ფილტრები -->
+  <h4 id="advanced-filters">გაფართოებული ფილტრების პანელი</h4>
+  <p>დააწკაპუნეთ "გაფართოებული" ღილაკზე ან გამოიყენეთ <kbd>Cmd/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> დეტალური ფილტრების გასახსნელად:</p>
 
-  <div class="doc-form-sections-grid">
-    <div class="doc-form-section-card">
-      <img src="images/section-1-personal-ka.png" alt="პირადი ინფორმაცია" data-i18n-img="section-1-personal">
-    </div>
-    <div class="doc-form-section-card">
-      <img src="images/section-2-contact-ka.png" alt="საკონტაქტო" data-i18n-img="section-2-contact">
-    </div>
-    <div class="doc-form-section-card">
-      <img src="images/section-3-additional-ka.png" alt="დამატებითი" data-i18n-img="section-3-additional">
-    </div>
-    <div class="doc-form-section-card">
-      <img src="images/section-4-representative-ka.png" alt="წარმომადგენელი" data-i18n-img="section-4-representative">
-    </div>
+  <div class="doc-screenshot-full">
+    <img src="images/advanced-filters-ka.png" alt="გაფართოებული ფილტრები" class="doc-screenshot-image" data-i18n-img="advanced-filters">
   </div>
 
-  <!-- Save Options -->
-  <h3 id="save-options">შენახვის ვარიანტები</h3>
-  <div class="doc-save-options">
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
+  <ul class="doc-list">
+    <li><strong>პირადი ნომერი</strong> - 11-ნიშნა ქართული პირადი ნომერი</li>
+    <li><strong>სახელი</strong> - პაციენტის სახელი</li>
+    <li><strong>გვარი</strong> - პაციენტის გვარი</li>
+    <li><strong>რეგისტრაციის ნომერი</strong> - EMR-ის შიდა რეგისტრაციის ნომერი</li>
+  </ul>
+
+  <!-- ძიების შედეგები -->
+  <h4 id="search-results">ძიების შედეგები ორმაგი მოქმედებით</h4>
+  <p>როდესაც ეძებთ პაციენტს სახელით ან პირადი ნომრით, შედეგები გამოჩნდება ჩამოსაშლელ სიაში ორი მოქმედების ღილაკით:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/search-results-ka.png" alt="ძიების შედეგები" class="doc-screenshot-image" data-i18n-img="search-results">
+  </div>
+
+  <p>თითოეულ ძიების შედეგზე ნაჩვენებია ორი მოქმედების ღილაკი:</p>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
       </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">შენახვა</div>
-        <div class="doc-save-option-desc">მხოლოდ პაციენტის მონაცემების შენახვა</div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">ახალი ვიზიტი</div>
+        <div class="doc-action-desc">ქმნის ახალ ვიზიტს ამ პაციენტისთვის და გადამისამართებს ვიზიტის დეტალებზე</div>
       </div>
     </div>
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
         </svg>
       </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">შენახვა & გაგრძელება</div>
-        <div class="doc-save-option-desc">რეგისტრირდება, იხსნება ვიზიტის რეგისტრაციის ნაბიჯები</div>
-      </div>
-    </div>
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">შენახვა & ახალი</div>
-        <div class="doc-save-option-desc">რეგისტრირდება, ფორმა იცლება ახალი პაციენტისთვის</div>
-      </div>
-    </div>
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-        </svg>
-      </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">შენახვა & ნახვა</div>
-        <div class="doc-save-option-desc">რეგისტრირდება, იხსნება პაციენტის ბარათი</div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">ფორმის შევსება</div>
+        <div class="doc-action-desc">რეგისტრაციის ფორმას ავსებს პაციენტის მონაცემებით რედაქტირებისთვის</div>
       </div>
     </div>
   </div>
 
-  <!-- Wizard Steps -->
-  <h3 id="wizard">ვიზიტის რეგისტრაციის ნაბიჯები</h3>
-  <div class="doc-screenshot-full" id="wizard-screenshot">
-    <img src="images/visit-registration-steps-ka.png" alt="ვიზიტის რეგისტრაციის ნაბიჯები" class="doc-screenshot-image" data-i18n-img="visit-registration-steps">
-    <button class="doc-back-link" id="back-from-wizard-btn" onclick="goBackFromWizard()" style="display: none;">
+  <!-- პაციენტის მოძიების სექცია -->
+  <h4 id="patient-lookup">პაციენტის მოძიების სექცია</h4>
+  <p>ფორმის შიგნით, <strong>PatientLookupSection</strong> გთავაზობთ სპეციალურ ველს 11-ნიშნა პირადი ნომრით პაციენტის მოსაძებნად:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/patient-lookup-ka.png" alt="პაციენტის მოძიების სექცია" class="doc-screenshot-image" data-i18n-img="patient-lookup">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
-      უკან დაბრუნება
-    </button>
+    </div>
+    <div class="doc-info-content">
+      <strong>როგორ მუშაობს პაციენტის მოძიება:</strong>
+      <ul>
+        <li>შეიყვანეთ 11-ნიშნა პირადი ნომერი</li>
+        <li>სისტემა ეძებს 300მწ დაყოვნებით</li>
+        <li>ნაპოვნის შემთხვევაში: აჩვენებს პაციენტის ბარათს სახელით, დაბადების თარიღით, ვიზიტების რაოდენობით</li>
+        <li>არნაპოვნის შემთხვევაში: საშუალებას გაძლევთ დაარეგისტრიროთ ახალი პაციენტი</li>
+        <li>პაციენტის ნაპოვნისას: ფორმის სექციები ავტომატურად იკეცება</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ნაპოვნი პაციენტის ბარათი -->
+  <h4 id="patient-found">ნაპოვნი პაციენტის ბარათი</h4>
+  <p>არსებული პაციენტის ნაპოვნისას, ბარათზე ნაჩვენებია მისი მონაცემები რედაქტირებისა და ახალი ვიზიტის შექმნის ოფციებით:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/patient-found-ka.png" alt="ნაპოვნი პაციენტის ბარათი" class="doc-screenshot-image" data-i18n-img="patient-found">
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.2 უნიფიცირებული რეგისტრაციის ფორმა -->
+  <!-- ========================== -->
+  <h3 id="form-sections">2.2 უნიფიცირებული რეგისტრაციის ფორმა</h3>
+  <p>რეგისტრაციის ფორმა ორგანიზებულია <strong>8 ჩაკეცვად სექციად</strong>. თითოეული სექცია შეიძლება გაიშალოს ან ჩაიკეცოს შესაბამის ველებზე ფოკუსირებისთვის.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/unified-form-ka.png" alt="უნიფიცირებული რეგისტრაციის ფორმა" class="doc-screenshot-image" data-i18n-img="unified-form">
+  </div>
+
+  <!-- 8 ფორმის სექციის ბადე -->
+  <div class="doc-form-sections-grid-8">
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">1</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">პაციენტის მოძიება</div>
+        <div class="doc-form-section-desc">11-ნიშნა ID-ით ძიება პაციენტის ბარათით</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">2</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">პირადი ინფორმაცია</div>
+        <div class="doc-form-section-desc">სახელი, სქესი, დაბადების თარიღი, ვიზიტის ტიპის გადამრთველი</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">3</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">საკონტაქტო ინფორმაცია</div>
+        <div class="doc-form-section-desc">ტელეფონი, ელფოსტა, მისამართი</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">4</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">დამატებითი დეტალები</div>
+        <div class="doc-form-section-desc">მოქალაქეობა, ოჯახური მდგომარეობა, სამუშაო ადგილი</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">5</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">მეურვე/წარმომადგენელი</div>
+        <div class="doc-form-section-desc">სავალდებულო 18 წლამდე პაციენტებისთვის</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">6</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">რეგისტრაცია</div>
+        <div class="doc-form-section-desc">ვიზიტის დეტალები (არასავალდებულო გადამრთველით)</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">7</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">დაზღვევა</div>
+        <div class="doc-form-section-desc">1-3 მზღვეველი დამატება/წაშლის ღილაკებით</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">8</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">გარანტია</div>
+        <div class="doc-form-section-desc">საგარანტიო წერილები დოკუმენტების ატვირთვით</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ვიზიტის შექმნის გადამრთველი -->
+  <h4 id="create-visit-toggle">ვიზიტის შექმნის გადამრთველი</h4>
+  <p>ფორმა შეიცავს გადამრთველს, რომელიც აკონტროლებს შეიქმნას თუ არა ვიზიტი პაციენტთან ერთად:</p>
+
+  <div class="doc-toggle-demo">
+    <div class="doc-toggle-option active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <strong>ვიზიტის შექმნა: ჩართული</strong>
+        <p>პაციენტი + ვიზიტი იქმნება ერთად. რეგისტრაციის, დაზღვევის და გარანტიის სექციები ხილულია.</p>
+      </div>
+    </div>
+    <div class="doc-toggle-option">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <strong>ვიზიტის შექმნა: გამორთული</strong>
+        <p>მხოლოდ პაციენტი იქმნება. ვიზიტთან დაკავშირებული სექციები დამალულია.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- რეგისტრაციის ნაკადის დიაგრამა -->
+  <h4 id="registration-flow">რეგისტრაციის ნაკადი</h4>
+  <p>შემდეგი დიაგრამა ასახავს პაციენტის რეგისტრაციის სრულ სამუშაო პროცესს:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[Patient Lookup] --> B{Patient Found?}
+    B -->|Yes| C[Auto-fill Form]
+    B -->|No| D[New Patient Entry]
+    C --> E{Create Visit?}
+    D --> E
+    E -->|Yes| F[Fill Visit Details]
+    E -->|No| G[Patient Only]
+    F --> H[Submit]
+    G --> H
+    H --> I[FHIR Resources Created]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- მონახაზის ავტოშენახვა -->
+  <h4 id="draft-autosave">მონახაზის ავტოშენახვა</h4>
+  <p>ფორმა ავტომატურად ინახავს თქვენს პროგრესს localStorage-ში:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/draft-indicator-ka.png" alt="მონახაზის შენახვის ინდიკატორი" class="doc-screenshot-image" data-i18n-img="draft-indicator">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>ქცევა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ავტოშენახვის ინტერვალი</strong></td>
+          <td>1-წამიანი დაყოვნება ნებისმიერი ველის ცვლილების შემდეგ</td>
+        </tr>
+        <tr>
+          <td><strong>მონახაზის ინდიკატორი</strong></td>
+          <td>აჩვენებს "მონახაზი შენახულია" ბეჯს შეუნახავი ცვლილებების არსებობისას</td>
+        </tr>
+        <tr>
+          <td><strong>მონახაზის გასუფთავება</strong></td>
+          <td>ღილაკი შენახული მონახაზის გასუფთავებისა და ფორმის განულებისთვის</td>
+        </tr>
+        <tr>
+          <td><strong>შენახვის გასაღები</strong></td>
+          <td><code>medimind-registration-draft</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.3 დოკუმენტების ატვირთვა -->
+  <!-- ========================== -->
+  <h3 id="document-upload">2.3 დოკუმენტების ატვირთვა</h3>
+  <p>გარანტიის სექცია შეიცავს დოკუმენტების ატვირთვის ფუნქციას საგარანტიო წერილებისა და დამხმარე დოკუმენტების დასამაგრებლად:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/document-upload-ka.png" alt="დოკუმენტების ატვირთვა" class="doc-screenshot-image" data-i18n-img="document-upload">
+  </div>
+
+  <h4 id="upload-features">ატვირთვის ფუნქციები</h4>
+  <ul class="doc-list">
+    <li><strong>გადმოტანით ატვირთვა</strong> - გადმოიტანეთ ფაილები პირდაპირ ატვირთვის ზონაში</li>
+    <li><strong>დაწკაპუნებით დათვალიერება</strong> - დააწკაპუნეთ ზონაზე ფაილების ამომრჩევის გასახსნელად</li>
+    <li><strong>მრავალი ფაილი</strong> - თითო გარანტიაზე 5-მდე ფაილი</li>
+    <li><strong>მრავალი გარანტია</strong> - თითო რეგისტრაციაზე 3-მდე გარანტია</li>
+    <li><strong>დოკუმენტის მეტამონაცემები</strong> - სახელი, თარიღი, ავტორი, დოკუმენტის ნომერი</li>
+  </ul>
+
+  <h4 id="document-fields">დოკუმენტის ველები</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>აღწერა</th>
+          <th>სავალდებულო</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>დოკუმენტის სახელი</strong></td>
+          <td>დოკუმენტის აღწერითი სახელი</td>
+          <td>დიახ</td>
+        </tr>
+        <tr>
+          <td><strong>დოკუმენტის თარიღი</strong></td>
+          <td>დოკუმენტის გაცემის თარიღი</td>
+          <td>დიახ</td>
+        </tr>
+        <tr>
+          <td><strong>ავტორი</strong></td>
+          <td>დოკუმენტის გამცემი პირი ან ორგანიზაცია</td>
+          <td>არა</td>
+        </tr>
+        <tr>
+          <td><strong>დოკუმენტის ნომერი</strong></td>
+          <td>დოკუმენტზე მითითებული ნომერი</td>
+          <td>არა</td>
+        </tr>
+        <tr>
+          <td><strong>ფაილის დანართი</strong></td>
+          <td>თავად ფაილი (PDF, სურათი და ა.შ.)</td>
+          <td>დიახ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>შექმნილი FHIR რესურსები:</strong>
+      <ul>
+        <li><strong>Binary</strong> - ინახავს ფაილის ფაქტობრივ შინაარსს</li>
+        <li><strong>DocumentReference</strong> - შეიცავს მეტამონაცემებს და ბმულს Binary-ზე</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.4 დესკტოპის გვერდითი პანელი -->
+  <!-- ========================== -->
+  <h3 id="desktop-sidebar">2.4 დესკტოპის გვერდითი პანელი</h3>
+  <p>1024px-ზე მეტი სიგანის ეკრანებზე ჩნდება გვერდითი პანელი ორი ჩაკეცვადი სექციით:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/desktop-sidebar-ka.png" alt="დესკტოპის გვერდითი პანელი" class="doc-screenshot-image" data-i18n-img="desktop-sidebar">
+  </div>
+
+  <!-- დღევანდელი ვიზიტები -->
+  <h4 id="todays-visits">დღევანდელი ვიზიტები</h4>
+  <p>აჩვენებს მიმდინარე დღისთვის დაგეგმილ ყველა შეხვედრას:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>სვეტი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>დრო</strong></td>
+          <td>დაგეგმილი ვიზიტის დრო (მაგ., 09:30)</td>
+        </tr>
+        <tr>
+          <td><strong>პაციენტის სახელი</strong></td>
+          <td>პაციენტის სრული სახელი</td>
+        </tr>
+        <tr>
+          <td><strong>სტატუსის ბეჯი</strong></td>
+          <td>ვიზიტის სტატუსის ვიზუალური ინდიკატორი</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 id="visit-statuses">ვიზიტის სტატუსის ბეჯები</h4>
+  <div class="doc-status-badges">
+    <div class="doc-status-badge doc-status-planned">
+      <span class="doc-status-dot"></span>
+      დაგეგმილი
+    </div>
+    <div class="doc-status-badge doc-status-arrived">
+      <span class="doc-status-dot"></span>
+      მოსული
+    </div>
+    <div class="doc-status-badge doc-status-in-progress">
+      <span class="doc-status-dot"></span>
+      მიმდინარე
+    </div>
+    <div class="doc-status-badge doc-status-finished">
+      <span class="doc-status-dot"></span>
+      დასრულებული
+    </div>
+  </div>
+
+  <!-- ბოლო პაციენტები -->
+  <h4 id="recent-patients">ბოლო პაციენტები</h4>
+  <p>აჩვენებს 10 უახლეს განახლებულ EMR პაციენტს (პორტალის პაციენტების გარეშე):</p>
+
+  <ul class="doc-list">
+    <li><strong>პაციენტის სახელი</strong> - სრული სახელი</li>
+    <li><strong>პირადი ნომერი</strong> - 11-ნიშნა ნომერი</li>
+    <li><strong>დაბადების თარიღი</strong> - დაბადების თარიღი</li>
+    <li><strong>მოქმედებები:</strong>
+      <ul>
+        <li><em>ახალი ვიზიტი</em> - ახალი ვიზიტის შექმნა ამ პაციენტისთვის</li>
+        <li><em>ნახვა</em> - პაციენტის სრული ჩანაწერის გახსნა</li>
+      </ul>
+    </li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 2.5 მობილური ოსტატი -->
+  <!-- ========================== -->
+  <h3 id="mobile-wizard">2.5 მობილური ოსტატი</h3>
+  <p>768px-ზე ნაკლები სიგანის ეკრანებზე ფორმა გარდაიქმნება <strong>5-საფეხურიან ოსტატად</strong> მობილური ნავიგაციის გასამარტივებლად:</p>
+
+  <div class="doc-screenshot-full doc-screenshot-mobile">
+    <img src="images/mobile-wizard-ka.png" alt="მობილური ოსტატი" class="doc-screenshot-image" data-i18n-img="mobile-wizard">
   </div>
 
   <div class="doc-wizard-steps">
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">1</div>
       <div>
-        <div class="doc-wizard-step-label">რეგისტრაციის დეტალები</div>
-        <div class="doc-wizard-step-desc">ვიზიტის ტიპი, თარიღი, განყოფილება</div>
+        <div class="doc-wizard-step-label">პაციენტი</div>
+        <div class="doc-wizard-step-desc">მოძიება + პირადი ინფორმაცია</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">2</div>
       <div>
-        <div class="doc-wizard-step-label">დაზღვევის მონაცემები</div>
-        <div class="doc-wizard-step-desc">სადაზღვევო კომპანია, პოლისი</div>
+        <div class="doc-wizard-step-label">დეტალები</div>
+        <div class="doc-wizard-step-desc">საკონტაქტო + დამატებითი + მეურვე</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">3</div>
       <div>
-        <div class="doc-wizard-step-label">გარანტია</div>
-        <div class="doc-wizard-step-desc">საგარანტიო წერილი, თანხა</div>
+        <div class="doc-wizard-step-label">ვიზიტი</div>
+        <div class="doc-wizard-step-desc">რეგისტრაციის დეტალები (თუ createVisit=true)</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">4</div>
       <div>
-        <div class="doc-wizard-step-label">დემოგრაფია</div>
-        <div class="doc-wizard-step-desc">რეგიონი, დიაგნოზი, ჩივილი</div>
+        <div class="doc-wizard-step-label">დაზღვევა</div>
+        <div class="doc-wizard-step-desc">დაზღვევა + გარანტია (თუ createVisit=true)</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">5</div>
       <div>
         <div class="doc-wizard-step-label">დადასტურება</div>
-        <div class="doc-wizard-step-desc">შეჯამება და რეგისტრაცია</div>
+        <div class="doc-wizard-step-desc">დემოგრაფია + შეჯამება</div>
       </div>
     </div>
   </div>
 
-  <!-- Insurance Management -->
-  <h3 id="insurance">დაზღვევის მართვა</h3>
-  <p>სისტემა საშუალებას გაძლევთ დაამატოთ <strong>3-მდე სადაზღვევო კომპანია</strong> ერთ ვიზიტზე.</p>
+  <!-- მობილური ოსტატის ნაკადის დიაგრამა -->
+  <h4 id="wizard-flow">ოსტატის საფეხურების ნაკადი</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    S1[Step 1: Patient] --> S2[Step 2: Details]
+    S2 --> S3[Step 3: Visit]
+    S3 --> S4[Step 4: Insurance]
+    S4 --> S5[Step 5: Confirm]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>მობილური ოსტატის ქცევა:</strong>
+      <ul>
+        <li>მე-3 და მე-4 საფეხურები დამალულია, როცა <code>createVisit</code> გადამრთველი გამორთულია</li>
+        <li>პროგრესის ინდიკატორი აჩვენებს მიმდინარე საფეხურს</li>
+        <li>უკან/წინ ღილაკები საფეხურებს შორის ნავიგაციისთვის</li>
+        <li>მონახაზის ავტოშენახვა მუშაობს ყველა საფეხურზე</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.6 ვიზიტის მართვა -->
+  <!-- ========================== -->
+  <h3 id="visit-management">2.6 ვიზიტის მართვა</h3>
+  <p>როდესაც <code>createVisit</code> გადამრთველი ჩართულია, ვიზიტთან დაკავშირებული სექციები ხელმისაწვდომი ხდება ფორმაში:</p>
+
+  <!-- ახალი ვიზიტის შექმნა -->
+  <h4 id="encounter-creation">ახალი ვიზიტის შექმნა</h4>
+  <p>არსებული პაციენტის ნაპოვნის შემდეგ, ფორმა აჩვენებს მის მონაცემებს და ვიზიტის რეგისტრაციის ველებს ახალი ვიზიტის შესაქმნელად:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/encounter-creation-ka.png" alt="ახალი ვიზიტის შექმნა" class="doc-screenshot-image" data-i18n-img="encounter-creation">
+  </div>
+
+  <!-- რეგისტრაციის სექცია -->
+  <h4 id="registration-section">რეგისტრაციის სექცია</h4>
+  <div class="doc-screenshot-full">
+    <img src="images/registration-section-ka.png" alt="რეგისტრაციის სექცია" class="doc-screenshot-image" data-i18n-img="registration-section">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ვიზიტის ტიპი</strong></td>
+          <td>ამბულატორიული, სტაციონარული ან გადაუდებელი</td>
+        </tr>
+        <tr>
+          <td><strong>ვიზიტის თარიღი</strong></td>
+          <td>ვიზიტის თარიღი</td>
+        </tr>
+        <tr>
+          <td><strong>განყოფილება</strong></td>
+          <td>სამიზნე განყოფილება/სამსახური</td>
+        </tr>
+        <tr>
+          <td><strong>მიმართველი ექიმი</strong></td>
+          <td>ექიმი, რომელმაც მიმართა პაციენტს (არასავალდებულო)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- დაზღვევის სექცია -->
+  <h4 id="insurance">დაზღვევის სექცია</h4>
+  <p>დაამატეთ <strong>3-მდე სადაზღვევო კომპანია</strong> თითო ვიზიტზე:</p>
 
   <div class="doc-screenshot-full">
     <img src="images/insurance-section-ka.png" alt="დაზღვევის სექცია" class="doc-screenshot-image" data-i18n-img="insurance-section">
   </div>
 
-  <!-- Demographics -->
-  <h3 id="demographics">დემოგრაფია</h3>
+  <ul class="doc-list">
+    <li><strong>სადაზღვევო კომპანია</strong> - რეგისტრირებული მზღვეველების სიიდან არჩევა</li>
+    <li><strong>პოლისის ნომერი</strong> - პაციენტის პოლისის ნომერი</li>
+    <li><strong>დაფარვის ტიპი</strong> - სრული, ნაწილობრივი ან კონკრეტული დაფარვა</li>
+    <li><strong>დამატება/წაშლა ღილაკები</strong> - მრავალი მზღვეველის მართვა</li>
+  </ul>
+
+  <!-- აქტიური ვიზიტის გაფრთხილება -->
+  <h4 id="active-visit-warning">აქტიური ვიზიტის გაფრთხილება</h4>
+  <p>თუ პაციენტს უკვე აქვს მიმდინარე ვიზიტი, ჩნდება გამაფრთხილებელი მოდალი:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/active-visit-warning-ka.png" alt="აქტიური ვიზიტის გაფრთხილება" class="doc-screenshot-image" data-i18n-img="active-visit-warning">
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>აქტიური ვიზიტის აღმოჩენა:</strong>
+      <p>სისტემა ხელს უშლის დუბლიკატ შეხვედრებს მიმდინარე ვიზიტების აღმოჩენით. შეგიძლიათ:</p>
+      <ul>
+        <li>ნახოთ არსებული აქტიური ვიზიტი</li>
+        <li>შექმნათ ახალი ვიზიტი მაინც (დადასტურებით)</li>
+        <li>გააუქმოთ და დაბრუნდეთ ფორმაზე</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- დემოგრაფია -->
+  <h4 id="demographics">დემოგრაფიის სექცია</h4>
+  <p>დამატებითი დემოგრაფიული მონაცემები, რომლებიც გროვდება ვიზიტის რეგისტრაციისას:</p>
+
   <div class="doc-screenshot-full">
     <img src="images/demographics-section-ka.png" alt="დემოგრაფიის სექცია" class="doc-screenshot-image" data-i18n-img="demographics-section">
   </div>
+
+  <ul class="doc-list">
+    <li><strong>რეგიონი</strong> - პაციენტის საცხოვრებელი რეგიონი</li>
+    <li><strong>ძირითადი ჩივილი</strong> - ვიზიტის მთავარი მიზეზი</li>
+    <li><strong>მიმართვის წყარო</strong> - როგორ იქნა მიმართული პაციენტი</li>
+  </ul>
 </section>

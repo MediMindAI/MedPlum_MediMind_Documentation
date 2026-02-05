@@ -1,0 +1,35 @@
+{
+  "header": {
+    "brandTitle": "MediMind",
+    "brandSubtitle": "EMR SYSTEM",
+    "searchBtn": "Ctrl+K",
+    "pdfBtn": "PDF"
+  },
+  "search": {
+    "placeholder": "Search documentation...",
+    "noResults": "No results found",
+    "startTyping": "Start typing to search",
+    "escHint": "ESC"
+  },
+  "loading": {
+    "sections": "Loading sections...",
+    "loading": "Loading...",
+    "error": "Error loading sections"
+  },
+  "zoom": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
+  },
+  "buttons": {
+    "viewOnInterface": "View on interface",
+    "back": "Go back"
+  },
+  "aria": {
+    "menuOpen": "Open menu",
+    "backToTop": "Back to top",
+    "search": "Search"
+  },
+  "footer": {
+    "copyright": "© 2026 MediMind EMR. Version 2.0 | Production Documentation"
+  }
+}

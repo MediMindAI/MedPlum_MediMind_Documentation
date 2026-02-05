@@ -1,0 +1,35 @@
+{
+  "header": {
+    "brandTitle": "MediMind",
+    "brandSubtitle": "EMR SYSTEM",
+    "searchBtn": "Ctrl+K",
+    "pdfBtn": "PDF"
+  },
+  "search": {
+    "placeholder": "Поиск по документации...",
+    "noResults": "Результаты не найдены",
+    "startTyping": "Начните вводить для поиска",
+    "escHint": "ESC"
+  },
+  "loading": {
+    "sections": "Загрузка разделов...",
+    "loading": "Загрузка...",
+    "error": "Ошибка загрузки разделов"
+  },
+  "zoom": {
+    "zoomIn": "Увеличить",
+    "zoomOut": "Уменьшить"
+  },
+  "buttons": {
+    "viewOnInterface": "Посмотреть интерфейс",
+    "back": "Назад"
+  },
+  "aria": {
+    "menuOpen": "Открыть меню",
+    "backToTop": "Наверх",
+    "search": "Поиск"
+  },
+  "footer": {
+    "copyright": "© 2026 MediMind EMR. Версия 2.0 | Производственная документация"
+  }
+}

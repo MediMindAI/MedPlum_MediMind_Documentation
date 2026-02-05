@@ -8,7 +8,7 @@
 .doc-screenshot-card {
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(226, 232, 240, 0.9) 100%);
   backdrop-filter: blur(10px);
-  border: 2px dashed rgba(59, 130, 246, 0.3);
+  border: 2px dashed rgba(43, 108, 176, 0.3);
   border-radius: var(--doc-radius-xl);
   aspect-ratio: 16/10;
   display: flex;
@@ -30,8 +30,8 @@
   right: 0;
   bottom: 0;
   background:
-    linear-gradient(45deg, transparent 48%, rgba(59, 130, 246, 0.05) 50%, transparent 52%),
-    linear-gradient(-45deg, transparent 48%, rgba(59, 130, 246, 0.05) 50%, transparent 52%);
+    linear-gradient(45deg, transparent 48%, rgba(43, 108, 176, 0.05) 50%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(43, 108, 176, 0.05) 50%, transparent 52%);
   background-size: 20px 20px;
 }
 
@@ -40,8 +40,8 @@
   border-style: solid;
   transform: scale(1.02);
   box-shadow:
-    0 20px 50px rgba(59, 130, 246, 0.15),
-    0 0 40px rgba(59, 130, 246, 0.1);
+    0 20px 50px rgba(43, 108, 176, 0.15),
+    0 0 40px rgba(43, 108, 176, 0.1);
 }
 
 .doc-screenshot-card svg {
@@ -81,7 +81,7 @@
   overflow: hidden;
   box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.15),
-    0 0 40px rgba(59, 130, 246, 0.1);
+    0 0 40px rgba(43, 108, 176, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -89,13 +89,20 @@
   transform: scale(1.01);
   box-shadow:
     0 8px 30px rgba(0, 0, 0, 0.2),
-    0 0 60px rgba(59, 130, 246, 0.15);
+    0 0 60px rgba(43, 108, 176, 0.15);
 }
 
 .doc-screenshot-full .doc-screenshot-image {
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* Mobile screenshot - constrain tall narrow images */
+.doc-screenshot-mobile {
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ================================
@@ -114,12 +121,12 @@
   position: relative;
   cursor: pointer;
   aspect-ratio: 4 / 3;
-  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: linear-gradient(145deg, #ffffff 0%, #f3f4f6 100%);
+  border: 1px solid rgba(43, 108, 176, 0.2);
   box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.08),
-    0 0 25px rgba(59, 130, 246, 0.2),
-    0 0 50px rgba(59, 130, 246, 0.1);
+    0 0 25px rgba(43, 108, 176, 0.2),
+    0 0 50px rgba(43, 108, 176, 0.1);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -133,17 +140,17 @@
   height: 2px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(59, 130, 246, 0.6) 15%,
+    rgba(43, 108, 176, 0.6) 15%,
     rgba(99, 179, 237, 1) 50%,
-    rgba(59, 130, 246, 0.6) 85%,
+    rgba(43, 108, 176, 0.6) 85%,
     transparent 100%
   );
   border-radius: 2px;
   z-index: 10;
   box-shadow:
-    0 0 8px rgba(59, 130, 246, 0.8),
-    0 0 15px rgba(59, 130, 246, 0.5),
-    0 0 25px rgba(59, 130, 246, 0.3);
+    0 0 8px rgba(43, 108, 176, 0.8),
+    0 0 15px rgba(43, 108, 176, 0.5),
+    0 0 25px rgba(43, 108, 176, 0.3);
   transition: all 0.4s ease;
 }
 
@@ -169,11 +176,11 @@
 
 .doc-form-section-card:hover {
   transform: translateY(-8px) scale(1.02);
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: rgba(43, 108, 176, 0.4);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.15),
-    0 0 60px rgba(59, 130, 246, 0.3),
-    0 0 100px rgba(59, 130, 246, 0.15);
+    0 0 60px rgba(43, 108, 176, 0.3),
+    0 0 100px rgba(43, 108, 176, 0.15);
 }
 
 /* Brighter glow line on hover */
@@ -181,15 +188,15 @@
   height: 2px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(59, 130, 246, 0.9) 10%,
+    rgba(43, 108, 176, 0.9) 10%,
     rgba(147, 197, 253, 1) 50%,
-    rgba(59, 130, 246, 0.9) 90%,
+    rgba(43, 108, 176, 0.9) 90%,
     transparent 100%
   );
   box-shadow:
-    0 0 10px rgba(59, 130, 246, 1),
-    0 0 20px rgba(59, 130, 246, 0.7),
-    0 0 35px rgba(59, 130, 246, 0.4);
+    0 0 10px rgba(43, 108, 176, 1),
+    0 0 20px rgba(43, 108, 176, 0.7),
+    0 0 35px rgba(43, 108, 176, 0.4);
 }
 
 .doc-form-section-card:hover::after {
@@ -241,7 +248,7 @@
   border-radius: 16px;
   box-shadow:
     0 25px 80px rgba(0, 0, 0, 0.5),
-    0 0 100px rgba(59, 130, 246, 0.3);
+    0 0 100px rgba(43, 108, 176, 0.3);
   transform: scale(0.9);
   transition: transform 0.3s ease;
 }

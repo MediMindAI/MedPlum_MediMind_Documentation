@@ -18,7 +18,7 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(180deg, var(--doc-secondary), rgba(59, 130, 246, 0.2));
+  background: linear-gradient(180deg, var(--doc-secondary), rgba(43, 108, 176, 0.2));
 }
 
 .doc-step {
@@ -46,7 +46,7 @@
   font-size: var(--doc-font-sm);
   box-shadow:
     0 4px 12px rgba(26, 54, 93, 0.3),
-    0 0 20px rgba(59, 130, 246, 0.3);
+    0 0 20px rgba(43, 108, 176, 0.3);
   z-index: 1;
 }
 
@@ -61,8 +61,8 @@
 
 .doc-step:hover .doc-step-content {
   transform: translateX(8px);
-  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(43, 108, 176, 0.15);
+  border-color: rgba(43, 108, 176, 0.3);
 }
 
 .doc-step-content h5 {
@@ -101,7 +101,7 @@
   transform: translateY(-4px);
   box-shadow:
     0 15px 40px rgba(26, 54, 93, 0.15),
-    0 0 30px rgba(59, 130, 246, 0.1);
+    0 0 30px rgba(43, 108, 176, 0.1);
 }
 
 .doc-zone-header {
@@ -127,7 +127,7 @@
    Code Blocks with Syntax Highlighting Feel
    ================================ */
 .doc-code-block {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  background: linear-gradient(135deg, #1a365d 0%, #1a365d 100%);
   border-radius: var(--doc-radius-lg);
   margin: var(--doc-space-lg) 0;
   overflow: hidden;
@@ -145,6 +145,8 @@
 .doc-code-block code {
   font-family: var(--doc-font-mono);
   font-size: var(--doc-font-sm);
-  color: #e2e8f0;
+  color: #e5e7eb;
   line-height: 1.7;
+  background: transparent;
+  padding: 0;
 }

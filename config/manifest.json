@@ -1,0 +1,215 @@
+{
+  "version": "2.0",
+  "defaultSection": "technical-overview",
+  "categories": [
+    {
+      "id": "platform",
+      "titleKey": "toc.technicalOverview",
+      "sections": [
+        {
+          "id": "technical-overview",
+          "titleKey": "toc.introduction",
+          "file": "technical-overview",
+          "priority": "high",
+          "children": [
+            { "id": "why-fhir", "titleKey": "toc.whyFhir", "anchor": "why-fhir" },
+            { "id": "medplum-platform", "titleKey": "toc.medplumPlatform", "anchor": "medplum-overview" },
+            { "id": "tech-stack", "titleKey": "toc.techStack", "anchor": "tech-stack" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "patient-registration",
+      "titleKey": "toc.patientRegistration",
+      "sections": [
+        {
+          "id": "overview",
+          "titleKey": "toc.overview",
+          "file": "overview",
+          "priority": "high",
+          "children": [
+            { "id": "statistics", "titleKey": "toc.statistics", "anchor": "statistics" },
+            { "id": "zones", "titleKey": "toc.interfaceZones", "anchor": "zones" },
+            { "id": "key-features", "titleKey": "toc.keyFeatures", "anchor": "key-features" },
+            { "id": "architecture-preview", "titleKey": "toc.architecturePreview", "anchor": "architecture-preview" }
+          ]
+        },
+        {
+          "id": "registration",
+          "titleKey": "toc.registration",
+          "file": "features",
+          "priority": "high",
+          "children": [
+            {
+              "id": "search",
+              "titleKey": "toc.searchSystem",
+              "anchor": "search"
+            },
+            {
+              "id": "form-sections",
+              "titleKey": "toc.formSections",
+              "anchor": "form-sections"
+            },
+            {
+              "id": "document-upload",
+              "titleKey": "toc.documentUpload",
+              "anchor": "document-upload"
+            },
+            {
+              "id": "desktop-sidebar",
+              "titleKey": "toc.desktopSidebar",
+              "anchor": "desktop-sidebar"
+            },
+            {
+              "id": "mobile-wizard",
+              "titleKey": "toc.mobileWizard",
+              "anchor": "mobile-wizard"
+            }
+          ]
+        },
+        {
+          "id": "visit-management",
+          "titleKey": "toc.visitManagement",
+          "file": "features",
+          "children": [
+            {
+              "id": "registration-section",
+              "titleKey": "toc.registrationSection",
+              "anchor": "registration-section"
+            },
+            {
+              "id": "insurance",
+              "titleKey": "toc.insurance",
+              "anchor": "insurance"
+            },
+            {
+              "id": "active-visit-warning",
+              "titleKey": "toc.activeVisitWarning",
+              "anchor": "active-visit-warning"
+            },
+            {
+              "id": "demographics",
+              "titleKey": "toc.demographics",
+              "anchor": "demographics"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "technical-reference",
+      "titleKey": "toc.technicalReference",
+      "sections": [
+        {
+          "id": "architecture",
+          "titleKey": "toc.architecture",
+          "file": "architecture",
+          "priority": "medium",
+          "children": [
+            {
+              "id": "architecture-overview",
+              "titleKey": "toc.architectureOverview",
+              "anchor": "architecture-overview"
+            },
+            {
+              "id": "component-hierarchy",
+              "titleKey": "toc.componentHierarchy",
+              "anchor": "component-hierarchy"
+            },
+            {
+              "id": "hooks-reference",
+              "titleKey": "toc.hooksReference",
+              "anchor": "hooks-reference"
+            },
+            {
+              "id": "services-reference",
+              "titleKey": "toc.servicesReference",
+              "anchor": "services-reference"
+            },
+            {
+              "id": "fhir-flow",
+              "titleKey": "toc.fhirFlow",
+              "anchor": "fhir-flow"
+            },
+            {
+              "id": "technical-overview-detail",
+              "titleKey": "toc.technicalOverviewDetail",
+              "anchor": "technical-overview"
+            },
+            {
+              "id": "ui-components-detail",
+              "titleKey": "toc.uiComponents",
+              "anchor": "ui-components-detail"
+            },
+            {
+              "id": "validation-system",
+              "titleKey": "toc.validationSystem",
+              "anchor": "validation-system"
+            },
+            {
+              "id": "data-flow",
+              "titleKey": "toc.dataFlow",
+              "anchor": "data-flow"
+            },
+            {
+              "id": "fhir-resources",
+              "titleKey": "toc.fhirResources",
+              "anchor": "fhir-resources"
+            },
+            {
+              "id": "services-functionality",
+              "titleKey": "toc.services",
+              "anchor": "services-functionality"
+            },
+            {
+              "id": "authentication",
+              "titleKey": "toc.authentication",
+              "anchor": "authentication"
+            },
+            {
+              "id": "unknown-patient",
+              "titleKey": "toc.unknownPatient",
+              "anchor": "unknown-patient"
+            }
+          ],
+          "subSections": [
+            {
+              "id": "architecture-technical",
+              "file": "architecture-technical",
+              "containerId": "architecture-technical-container"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "troubleshooting",
+      "titleKey": "toc.troubleshooting",
+      "sections": [
+        {
+          "id": "troubleshooting",
+          "titleKey": "toc.commonIssues",
+          "file": "troubleshooting",
+          "priority": "low",
+          "children": [
+            { "id": "common-issues", "titleKey": "toc.commonIssues", "anchor": "common-issues" },
+            { "id": "error-codes", "titleKey": "toc.errorCodes", "anchor": "error-codes" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "additional",
+      "titleKey": "toc.additional",
+      "sections": [
+        {
+          "id": "contact",
+          "titleKey": "toc.support",
+          "file": "contact",
+          "priority": "low"
+        }
+      ]
+    }
+  ]
+}

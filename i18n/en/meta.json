@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "lang": "en",
+    "langName": "English",
+    "htmlLang": "en"
+  },
+  "hero": {
+    "title": "MediMind EMR System",
+    "subtitle": "Production Documentation for IT Specialists",
+    "version": "v2.0"
+  }
+}

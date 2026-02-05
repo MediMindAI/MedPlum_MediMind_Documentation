@@ -94,8 +94,15 @@ function initFaqAccordion() {
 
 /**
  * Smooth Scroll for Anchor Links
+ * Note: When Router is available, page.js handles anchor navigation via event delegation.
+ * This function is kept for backward compatibility but only applies to non-TOC links.
  */
 function initSmoothScroll() {
+  // Skip if Router is being used (page.js handles this)
+  if (typeof Router !== 'undefined') {
+    return;
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
     anchor.addEventListener('click', function(event) {
       const targetId = this.getAttribute('href');
@@ -202,7 +209,7 @@ function showNotification(message, type = 'info') {
     bottom: 20px;
     right: 20px;
     padding: 12px 20px;
-    background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
+    background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#2b6cb0'};
     color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);

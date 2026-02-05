@@ -48,12 +48,18 @@ const I18n = {
     this.updateHtmlLang();
     this.updateLanguageImages();
 
+    // Update search items
+    this.updateSearchItems();
+
+    // Dispatch initialization event
+    window.dispatchEvent(new CustomEvent('i18n:initialized', { detail: { lang } }));
+
     console.log(`I18n initialized with language: ${lang}`);
     return lang;
   },
 
   /**
-   * Load a language file
+   * Load a language using modular files with legacy fallback
    */
   loadLanguage: async function(lang) {
     if (this.translations[lang]) {
@@ -61,15 +67,56 @@ const I18n = {
     }
 
     try {
+      // Try modular loading first
+      const modules = ['core', 'toc', 'meta'];
+      const responses = await Promise.all(
+        modules.map(mod =>
+          fetch(`${this.config.i18nPath}${lang}/${mod}.json`)
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null)
+        )
+      );
+
+      // Check if any module loaded successfully
+      const hasModules = responses.some(r => r !== null);
+
+      if (hasModules) {
+        // Merge all modules into single object
+        const merged = {};
+        responses.forEach(data => {
+          if (data) {
+            Object.assign(merged, data);
+          }
+        });
+        this.translations[lang] = merged;
+        console.log(`Loaded modular i18n for: ${lang}`);
+        return merged;
+      }
+
+      // Fallback to legacy single file
+      return this._loadLegacyLanguage(lang);
+    } catch (error) {
+      console.error(`Error loading language ${lang}:`, error);
+      // Fallback to legacy single file
+      return this._loadLegacyLanguage(lang);
+    }
+  },
+
+  /**
+   * Load legacy single-file language (fallback)
+   */
+  _loadLegacyLanguage: async function(lang) {
+    try {
       const response = await fetch(`${this.config.i18nPath}${lang}.json`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       this.translations[lang] = data;
+      console.log(`Loaded legacy i18n for: ${lang}`);
       return data;
     } catch (error) {
-      console.error(`Error loading language ${lang}:`, error);
+      console.error(`Error loading legacy language ${lang}:`, error);
       // Fallback to default language if not already trying it
       if (lang !== this.config.defaultLang) {
         return this.loadLanguage(this.config.defaultLang);

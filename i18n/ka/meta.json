@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "lang": "ka",
+    "langName": "ქართული",
+    "htmlLang": "ka"
+  },
+  "hero": {
+    "title": "MediMind EMR სისტემა",
+    "subtitle": "საწარმოო დოკუმენტაცია IT სპეციალისტებისთვის",
+    "version": "v2.0"
+  }
+}

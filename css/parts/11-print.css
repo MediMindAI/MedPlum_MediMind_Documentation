@@ -80,8 +80,8 @@
 
   /* Table of Contents */
   .doc-toc {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     page-break-inside: avoid;
@@ -115,7 +115,7 @@
   }
 
   .doc-section-divider {
-    background: #e2e8f0 !important;
+    background: #e5e7eb !important;
     margin: 30px 0 !important;
   }
 
@@ -127,8 +127,8 @@
   }
 
   .doc-feature-card {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     page-break-inside: avoid;
@@ -142,7 +142,7 @@
   /* Tables */
   .doc-table-container {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     page-break-inside: avoid;
@@ -153,7 +153,7 @@
   }
 
   .doc-table th {
-    background: #f1f5f9 !important;
+    background: #f3f4f6 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -161,7 +161,7 @@
   .doc-table td,
   .doc-table th {
     padding: 8px !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #e5e7eb !important;
   }
 
   /* Info Boxes */
@@ -175,8 +175,8 @@
   }
 
   .doc-info-box-blue {
-    background: #eff6ff !important;
-    border-left: 4px solid #3b82f6 !important;
+    background: #bee3f8 !important;
+    border-left: 4px solid #2b6cb0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -218,8 +218,8 @@
   }
 
   .doc-step-content {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
   }
@@ -233,7 +233,7 @@
 
   .doc-zone {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     page-break-inside: avoid;
@@ -254,8 +254,8 @@
   }
 
   .doc-badge-blue {
-    background: #dbeafe !important;
-    border-color: #3b82f6 !important;
+    background: #bee3f8 !important;
+    border-color: #2b6cb0 !important;
   }
 
   .doc-badge-green {
@@ -276,8 +276,8 @@
   }
 
   .doc-stat-inline {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
   }
@@ -289,14 +289,14 @@
 
   /* Code Blocks */
   .doc-code-block {
-    background: #1e293b !important;
+    background: #1a365d !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     page-break-inside: avoid;
   }
 
   .doc-code-block code {
-    color: #e2e8f0 !important;
+    color: #e5e7eb !important;
     font-size: 10px !important;
   }
 
@@ -311,7 +311,7 @@
   /* FAQ */
   .doc-faq-item {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
   }
@@ -323,7 +323,7 @@
 
   /* Footer */
   .doc-single-footer {
-    background: #1e293b !important;
+    background: #1a365d !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     margin-top: 30px !important;

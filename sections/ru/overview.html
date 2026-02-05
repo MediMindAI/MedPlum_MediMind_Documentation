@@ -5,19 +5,21 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
     </div>
-    <h2><span class="doc-section-number">1</span> Обзор</h2>
+    <h2><span class="doc-section-number">2</span> Обзор</h2>
   </div>
 
   <p>Модуль регистрации пациентов является <strong>центральным компонентом системы MediMind EMR</strong>, который позволяет:</p>
 
   <ul class="doc-list">
-    <li><strong>Регистрировать новых пациентов</strong> в клинике</li>
-    <li><strong>Искать существующих пациентов</strong> по множеству критериев</li>
-    <li><strong>Изменять данные пациента</strong> по мере необходимости</li>
-    <li><strong>Открывать новые визиты</strong> для зарегистрированных пациентов</li>
+    <li><strong>Искать пациентов</strong> с помощью единого поиска с клавиатурными сочетаниями (Cmd/Ctrl+K)</li>
+    <li><strong>Регистрировать новых пациентов</strong> со сбором данных в 8 секциях формы</li>
+    <li><strong>Создавать визиты</strong> опционально как часть регистрации пациента</li>
+    <li><strong>Просматривать сегодняшние записи</strong> и недавних пациентов в боковой панели</li>
+    <li><strong>Загружать документы</strong> включая гарантийные письма с вложениями</li>
+    <li><strong>Автосохранять черновики</strong> для предотвращения потери данных</li>
   </ul>
 
-  <p>Модуль предназначен для <strong>сотрудников ресепшн</strong> и <strong>медицинских регистраторов</strong>.</p>
+  <p>Модуль предназначен для <strong>сотрудников ресепшн</strong> и <strong>медицинских регистраторов</strong>, с адаптивным интерфейсом для настольных и мобильных устройств.</p>
 
   <!-- Screenshot -->
   <div class="doc-screenshot-full" id="main-screenshot">
@@ -34,12 +36,12 @@
   <h3 id="statistics">Краткая статистика</h3>
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">33</span>
-      <span class="doc-stat-inline-label">поля</span>
+      <span class="doc-stat-inline-number">60+</span>
+      <span class="doc-stat-inline-label">полей</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">4</span>
-      <span class="doc-stat-inline-label">секции</span>
+      <span class="doc-stat-inline-number">8</span>
+      <span class="doc-stat-inline-label">секций формы</span>
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
@@ -57,27 +59,135 @@
 
   <!-- 3 Zones -->
   <h3 id="zones">3 зоны интерфейса</h3>
+  <p>Интерфейс регистрации организован в три основные зоны:</p>
+
   <div class="doc-zone-diagram">
     <div class="doc-zone">
-      <div class="doc-zone-header">Панель поиска</div>
+      <div class="doc-zone-header">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        Главный поиск
+      </div>
       <div class="doc-zone-content">
-        <p>Быстрый поиск по ИИН или имени</p>
-        <p>Детальные фильтры</p>
+        <p><strong>UnifiedPatientSearch</strong></p>
+        <p>Быстрый поиск по имени или ИИН</p>
+        <p>Клавиша: Cmd/Ctrl+K</p>
+        <p>Панель расширенных фильтров</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">Форма регистрации</div>
+      <div class="doc-zone-header">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Единая форма
+      </div>
       <div class="doc-zone-content">
+        <p><strong>8 сворачиваемых секций</strong></p>
         <p>Ввод данных пациента</p>
-        <p>4 основные секции</p>
+        <p>Опциональное создание визита</p>
+        <p>Автосохранение черновика</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">Таблица пациентов</div>
+      <div class="doc-zone-header">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+        Боковая панель
+      </div>
       <div class="doc-zone-content">
-        <p>Результаты поиска</p>
-        <p>Быстрые действия</p>
+        <p><strong>Сегодняшние визиты</strong></p>
+        <p>Записи текущего дня</p>
+        <p><strong>Недавние пациенты</strong></p>
+        <p>10 последних пациентов EMR</p>
       </div>
     </div>
+  </div>
+
+  <!-- Key Features -->
+  <h3 id="key-features">Ключевые функции</h3>
+  <div class="doc-features-grid">
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Единый поиск пациентов</div>
+      <div class="doc-feature-desc">Главный поиск с Cmd/Ctrl+K, автоопределение ИИН и имени, расширенные фильтры</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Поиск по ИИН</div>
+      <div class="doc-feature-desc">Поиск по 11-значному личному номеру с валидацией и отображением карточки</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Автосохранение черновика</div>
+      <div class="doc-feature-desc">Сохранение в localStorage с задержкой 1 секунда предотвращает потерю данных</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Мобильный мастер</div>
+      <div class="doc-feature-desc">5-шаговый адаптивный мастер для экранов менее 768px</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Загрузка документов</div>
+      <div class="doc-feature-desc">Drag & drop загрузка для гарантийных писем, до 5 файлов на гарантию</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Сегодняшние визиты</div>
+      <div class="doc-feature-desc">Боковая панель с записями текущего дня и статусными бейджами</div>
+    </div>
+  </div>
+
+  <!-- Architecture Preview -->
+  <h3 id="architecture-preview">Архитектура компонентов</h3>
+  <p>Модуль регистрации использует современную архитектуру React-компонентов:</p>
+
+  <div class="doc-code-block">
+    <pre><code>UnifiedRegistrationView
+├── UnifiedPatientSearch (Главный)
+│   ├── Быстрый поиск
+│   ├── Панель расширенных фильтров
+│   └── Результаты с двойными действиями
+├── UnifiedPatientRegistrationForm (Десктоп)
+│   ├── PatientLookupSection
+│   ├── PersonalInformation
+│   ├── ContactInformation
+│   ├── AdditionalDetails
+│   ├── GuardianSection
+│   ├── RegistrationSection (опционально)
+│   ├── InsuranceSection
+│   └── GuaranteeSection
+├── UnifiedRegistrationWizard (Мобильный)
+│   └── 5-шаговый мастер
+└── Боковая панель (Десктоп)
+    ├── Сегодняшние визиты
+    └── Недавние пациенты</code></pre>
   </div>
 </section>

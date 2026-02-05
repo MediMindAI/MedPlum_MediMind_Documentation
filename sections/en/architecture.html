@@ -8,24 +8,70 @@
     <h2><span class="doc-section-number">3</span> Architecture</h2>
   </div>
 
-  <h4>System Architecture Diagram</h4>
+  <!-- Architecture Overview (Simplified Mermaid) -->
+  <h4 id="architecture-overview">Architecture Overview</h4>
+  <p>The registration module follows a layered architecture pattern:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph UI["UI Components"]
+        UnifiedReg[UnifiedRegistrationView]
+        PatientForm[PatientForm]
+        VisitModal[VisitModal]
+        SearchPanel[SearchPanel]
+    end
+
+    subgraph Hooks["React Hooks"]
+        useRegForm[useRegistrationVisitForm]
+        useDept[useDepartments]
+        useIns[useInsuranceData]
+    end
+
+    subgraph Services["Services Layer"]
+        EncSvc[encounterService]
+        MedClient[MedplumClient]
+        DeptSvc[departmentService]
+    end
+
+    subgraph FHIR["Medplum Cloud"]
+        DB[(FHIR R4 API)]
+    end
+
+    UI --> Hooks
+    Hooks --> Services
+    Services --> FHIR
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Detailed SVG Diagram -->
+  <h4>System Architecture Diagram (Detailed)</h4>
   <div class="custom-diagram">
     <svg viewBox="0 0 1100 780" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <!-- Gradients -->
         <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#0f172a"/>
-          <stop offset="50%" style="stop-color:#1e293b"/>
-          <stop offset="100%" style="stop-color:#0f172a"/>
+          <stop offset="0%" style="stop-color:#1a365d"/>
+          <stop offset="50%" style="stop-color:#1a365d"/>
+          <stop offset="100%" style="stop-color:#1a365d"/>
         </linearGradient>
 
         <linearGradient id="uiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#3b82f6"/>
+          <stop offset="0%" style="stop-color:#2b6cb0"/>
           <stop offset="100%" style="stop-color:#1d4ed8"/>
         </linearGradient>
 
         <linearGradient id="hookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#8b5cf6"/>
+          <stop offset="0%" style="stop-color:#3182ce"/>
           <stop offset="100%" style="stop-color:#6d28d9"/>
         </linearGradient>
 
@@ -45,13 +91,13 @@
         </linearGradient>
 
         <linearGradient id="glowBlue" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.6"/>
-          <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0"/>
+          <stop offset="0%" style="stop-color:#2b6cb0;stop-opacity:0.6"/>
+          <stop offset="100%" style="stop-color:#2b6cb0;stop-opacity:0"/>
         </linearGradient>
 
         <linearGradient id="glowPurple" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.6"/>
-          <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0"/>
+          <stop offset="0%" style="stop-color:#3182ce;stop-opacity:0.6"/>
+          <stop offset="100%" style="stop-color:#3182ce;stop-opacity:0"/>
         </linearGradient>
 
         <linearGradient id="glowCyan" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -113,9 +159,9 @@
 
       <!-- UI Layer Label -->
       <g transform="translate(25, 50)">
-        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(59, 130, 246, 0.15)" stroke="#3b82f6" stroke-width="1.5"/>
-        <circle cx="20" cy="18" r="6" fill="#3b82f6"/>
-        <text x="70" y="23" text-anchor="middle" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">UI Components</text>
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(43, 108, 176, 0.15)" stroke="#2b6cb0" stroke-width="1.5"/>
+        <circle cx="20" cy="18" r="6" fill="#2b6cb0"/>
+        <text x="70" y="23" text-anchor="middle" fill="#63b3ed" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">UI Components</text>
       </g>
 
       <!-- Utilities Label (moved up) -->
@@ -127,9 +173,9 @@
 
       <!-- Hooks Layer Label (moved down) -->
       <g transform="translate(25, 255)">
-        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(139, 92, 246, 0.15)" stroke="#8b5cf6" stroke-width="1.5"/>
-        <circle cx="20" cy="18" r="6" fill="#8b5cf6"/>
-        <text x="70" y="23" text-anchor="middle" fill="#a78bfa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">React Hooks</text>
+        <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(49, 130, 206, 0.15)" stroke="#3182ce" stroke-width="1.5"/>
+        <circle cx="20" cy="18" r="6" fill="#3182ce"/>
+        <text x="70" y="23" text-anchor="middle" fill="#63b3ed" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">React Hooks</text>
       </g>
 
       <!-- Services Label -->
@@ -156,8 +202,8 @@
         <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
 
         <rect x="12" y="7" width="12" height="10" rx="2" fill="rgba(255,255,255,0.9)"/>
-        <rect x="14" y="9" width="8" height="2" rx="1" fill="#3b82f6"/>
-        <rect x="14" y="13" width="5" height="2" rx="1" fill="#3b82f6"/>
+        <rect x="14" y="9" width="8" height="2" rx="1" fill="#2b6cb0"/>
+        <rect x="14" y="13" width="5" height="2" rx="1" fill="#2b6cb0"/>
 
         <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Main View</text>
         <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">UnifiedRegistration</text>
@@ -187,7 +233,7 @@
         <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
 
         <circle cx="18" cy="12" r="6" fill="rgba(255,255,255,0.9)"/>
-        <path d="M18,8 L18,16 M14,12 L22,12" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+        <path d="M18,8 L18,16 M14,12 L22,12" stroke="#2b6cb0" stroke-width="2" stroke-linecap="round"/>
 
         <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Modal</text>
         <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">VisitModal</text>
@@ -217,7 +263,7 @@
         <rect x="0" y="12" width="150" height="12" fill="url(#uiGrad)"/>
 
         <rect x="10" y="7" width="16" height="10" rx="2" fill="rgba(255,255,255,0.9)"/>
-        <path d="M12,10 L24,10 M12,13 L20,13" stroke="#3b82f6" stroke-width="1"/>
+        <path d="M12,10 L24,10 M12,13 L20,13" stroke="#2b6cb0" stroke-width="1"/>
 
         <text x="32" y="16" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="600">Table</text>
         <text x="75" y="45" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700">PatientTable</text>
@@ -291,7 +337,7 @@
         <rect x="0" y="0" width="200" height="65" rx="14" fill="none" stroke="url(#hookGrad)" stroke-width="2"/>
 
         <g transform="translate(12, 18)">
-          <path d="M0,12 Q7,0 14,12 Q21,24 28,12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+          <path d="M0,12 Q7,0 14,12 Q21,24 28,12" fill="none" stroke="#63b3ed" stroke-width="2"/>
         </g>
 
         <text x="100" y="28" text-anchor="middle" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700">useRegistrationVisitForm</text>
@@ -304,7 +350,7 @@
         <rect x="0" y="0" width="140" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
 
         <g transform="translate(12, 12)">
-          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#63b3ed" stroke-width="1.5"/>
         </g>
 
         <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useDepartments</text>
@@ -317,7 +363,7 @@
         <rect x="0" y="0" width="160" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
 
         <g transform="translate(12, 12)">
-          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#63b3ed" stroke-width="1.5"/>
         </g>
 
         <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useRegistrationStatuses</text>
@@ -330,7 +376,7 @@
         <rect x="0" y="0" width="130" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
 
         <g transform="translate(12, 12)">
-          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#63b3ed" stroke-width="1.5"/>
         </g>
 
         <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useInsuranceData</text>
@@ -343,7 +389,7 @@
         <rect x="0" y="0" width="130" height="55" rx="12" fill="none" stroke="url(#hookGrad)" stroke-width="1.5"/>
 
         <g transform="translate(12, 12)">
-          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+          <path d="M0,14 Q8,0 16,14" fill="none" stroke="#63b3ed" stroke-width="1.5"/>
         </g>
 
         <text x="40" y="24" fill="#f0fdfa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600">useRecentPatients</text>
@@ -511,47 +557,47 @@
       <!-- ═══════ 2. UI -> Hooks (blue - from top left) ═══════ -->
       <g opacity="0.8">
         <!-- VisitModal -> useRegVisitForm -->
-        <path d="M510,35 L510,15 L155,15 L155,270 L170,270" stroke="#3b82f6" stroke-width="3" fill="none"/>
-        <circle cx="510" cy="35" r="5" fill="#3b82f6"/>
-        <circle cx="170" cy="270" r="5" fill="#3b82f6"/>
+        <path d="M510,35 L510,15 L155,15 L155,270 L170,270" stroke="#2b6cb0" stroke-width="3" fill="none"/>
+        <circle cx="510" cy="35" r="5" fill="#2b6cb0"/>
+        <circle cx="170" cy="270" r="5" fill="#2b6cb0"/>
 
         <!-- PatientTable -> useRecentPatients (directly down) -->
-        <path d="M945,105 L945,240" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
-        <circle cx="945" cy="105" r="4" fill="#3b82f6"/>
-        <circle cx="945" cy="240" r="4" fill="#3b82f6"/>
+        <path d="M945,105 L945,240" stroke="#2b6cb0" stroke-width="2.5" fill="none"/>
+        <circle cx="945" cy="105" r="4" fill="#2b6cb0"/>
+        <circle cx="945" cy="240" r="4" fill="#2b6cb0"/>
       </g>
 
       <!-- ═══════ 3. Hook -> Hook (purple - horizontal arrows) ═══════ -->
       <g opacity="0.6">
         <!-- useRegVisitForm -> useDepartments (direct) -->
-        <path d="M370,272 L390,272" stroke="#a78bfa" stroke-width="2" fill="none"/>
-        <polygon points="388,268 395,272 388,276" fill="#a78bfa"/>
+        <path d="M370,272 L390,272" stroke="#63b3ed" stroke-width="2" fill="none"/>
+        <polygon points="388,268 395,272 388,276" fill="#63b3ed"/>
 
         <!-- useRegVisitForm -> useRegStatuses (via bottom) -->
-        <path d="M370,280 L370,310 L550,310 L550,295" stroke="#a78bfa" stroke-width="2" fill="none"/>
-        <polygon points="546,297 550,290 554,297" fill="#a78bfa"/>
+        <path d="M370,280 L370,310 L550,310 L550,295" stroke="#63b3ed" stroke-width="2" fill="none"/>
+        <polygon points="546,297 550,290 554,297" fill="#63b3ed"/>
 
         <!-- useRegVisitForm -> useInsuranceData (via bottom) -->
-        <path d="M370,285 L370,318 L730,318 L730,295" stroke="#a78bfa" stroke-width="2" fill="none"/>
-        <polygon points="726,297 730,290 734,297" fill="#a78bfa"/>
+        <path d="M370,285 L370,318 L730,318 L730,295" stroke="#63b3ed" stroke-width="2" fill="none"/>
+        <polygon points="726,297 730,290 734,297" fill="#63b3ed"/>
       </g>
 
       <!-- ═══════ 4. Hooks -> Services (purple - direct vertical) ═══════ -->
       <g opacity="0.7">
         <!-- useRegVisitForm -> encounterService -->
-        <path d="M220,305 L220,350" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
-        <circle cx="220" cy="305" r="4" fill="#8b5cf6"/>
-        <circle cx="220" cy="350" r="4" fill="#8b5cf6"/>
+        <path d="M220,305 L220,350" stroke="#3182ce" stroke-width="2.5" fill="none"/>
+        <circle cx="220" cy="305" r="4" fill="#3182ce"/>
+        <circle cx="220" cy="350" r="4" fill="#3182ce"/>
 
         <!-- useRegVisitForm -> MedplumClient -->
-        <path d="M300,305 L300,328 L430,328 L430,350" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
-        <circle cx="300" cy="305" r="4" fill="#8b5cf6"/>
-        <circle cx="430" cy="350" r="4" fill="#8b5cf6"/>
+        <path d="M300,305 L300,328 L430,328 L430,350" stroke="#3182ce" stroke-width="2.5" fill="none"/>
+        <circle cx="300" cy="305" r="4" fill="#3182ce"/>
+        <circle cx="430" cy="350" r="4" fill="#3182ce"/>
 
         <!-- useDepartments -> departmentService -->
-        <path d="M460,295 L460,328 L610,328 L610,350" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
-        <circle cx="460" cy="295" r="4" fill="#8b5cf6"/>
-        <circle cx="610" cy="350" r="4" fill="#8b5cf6"/>
+        <path d="M460,295 L460,328 L610,328 L610,350" stroke="#3182ce" stroke-width="2.5" fill="none"/>
+        <circle cx="460" cy="295" r="4" fill="#3182ce"/>
+        <circle cx="610" cy="350" r="4" fill="#3182ce"/>
       </g>
 
       <!-- ═══════ 5. PatientForm -> localStorage (from top right) ═══════ -->
@@ -594,21 +640,21 @@
       <!-- ═══════════════ LEGEND ═══════════════ -->
 
       <g transform="translate(0, 680)">
-        <rect x="0" y="0" width="600" height="45" rx="12" fill="rgba(15, 23, 42, 0.95)" stroke="rgba(59, 130, 246, 0.3)" stroke-width="1.5"/>
+        <rect x="0" y="0" width="600" height="45" rx="12" fill="rgba(15, 23, 42, 0.95)" stroke="rgba(43, 108, 176, 0.3)" stroke-width="1.5"/>
 
         <!-- Header -->
-        <rect x="0" y="0" width="600" height="20" rx="12" fill="rgba(59, 130, 246, 0.1)"/>
-        <rect x="0" y="10" width="600" height="10" fill="rgba(59, 130, 246, 0.1)"/>
-        <text x="300" y="14" text-anchor="middle" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700">Data Flow</text>
+        <rect x="0" y="0" width="600" height="20" rx="12" fill="rgba(43, 108, 176, 0.1)"/>
+        <rect x="0" y="10" width="600" height="10" fill="rgba(43, 108, 176, 0.1)"/>
+        <text x="300" y="14" text-anchor="middle" fill="#63b3ed" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700">Data Flow</text>
 
         <!-- Legend items -->
         <g transform="translate(15, 28)">
-          <circle cx="6" cy="6" r="5" fill="#3b82f6"/>
+          <circle cx="6" cy="6" r="5" fill="#2b6cb0"/>
           <text x="18" y="10" fill="#94a3b8" font-size="9">UI -> Hooks</text>
         </g>
 
         <g transform="translate(100, 28)">
-          <circle cx="6" cy="6" r="5" fill="#8b5cf6"/>
+          <circle cx="6" cy="6" r="5" fill="#3182ce"/>
           <text x="18" y="10" fill="#94a3b8" font-size="9">Hooks -> Services</text>
         </g>
 
@@ -623,7 +669,7 @@
         </g>
 
         <g transform="translate(460, 28)">
-          <circle cx="6" cy="6" r="5" fill="#8b5cf6" opacity="0.5"/>
+          <circle cx="6" cy="6" r="5" fill="#3182ce" opacity="0.5"/>
           <text x="18" y="10" fill="#94a3b8" font-size="9">Hook -> Hook</text>
         </g>
 
@@ -639,7 +685,7 @@
   <!-- Technical documentation (loaded by section-loader.js) -->
   <div id="architecture-technical-container"></div>
 
-  <h3>Component Hierarchy</h3>
+  <h3 id="component-hierarchy">Component Hierarchy</h3>
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
@@ -652,84 +698,109 @@
       <tbody>
         <tr>
           <td><strong>UnifiedRegistrationView</strong></td>
-          <td>Main page - search, form, table</td>
+          <td>Main page container with search, form, sidebar</td>
           <td><code>views/registration/</code></td>
         </tr>
         <tr>
-          <td><strong>PatientForm</strong></td>
-          <td>Patient data entry + Draft autosave</td>
+          <td><strong>UnifiedPatientSearch</strong></td>
+          <td>Hero search with Cmd/Ctrl+K, advanced filters</td>
           <td><code>components/registration/</code></td>
         </tr>
         <tr>
-          <td><strong>RegistrationVisitModal</strong></td>
-          <td>4-step visit form</td>
+          <td><strong>UnifiedPatientRegistrationForm</strong></td>
+          <td>8-section desktop form with draft autosave</td>
           <td><code>components/registration/</code></td>
         </tr>
         <tr>
-          <td><strong>SearchPanel</strong></td>
-          <td>Detailed search panel</td>
+          <td><strong>UnifiedRegistrationWizard</strong></td>
+          <td>5-step mobile wizard (&lt;768px)</td>
           <td><code>components/registration/</code></td>
         </tr>
         <tr>
-          <td><strong>QuickSearchInput</strong></td>
-          <td>Quick search (in header)</td>
+          <td><strong>PatientLookupSection</strong></td>
+          <td>11-digit ID lookup with patient card</td>
           <td><code>components/registration/</code></td>
         </tr>
         <tr>
-          <td><strong>PatientTable</strong></td>
-          <td>Registered patients table</td>
+          <td><strong>TodayVisitsSidebar</strong></td>
+          <td>Today's encounters (desktop &gt;1024px)</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>RecentPatientsSidebar</strong></td>
+          <td>10 most recent EMR patients</td>
           <td><code>components/registration/</code></td>
         </tr>
         <tr>
           <td><strong>InsuranceSection</strong></td>
-          <td>Up to 3 insurers</td>
+          <td>Up to 3 insurers with add/remove</td>
+          <td><code>components/registration/</code></td>
+        </tr>
+        <tr>
+          <td><strong>GuaranteeSection</strong></td>
+          <td>Guarantee letters with document upload</td>
           <td><code>components/registration/</code></td>
         </tr>
         <tr>
           <td><strong>DemographicsSection</strong></td>
-          <td>Address, education</td>
+          <td>Region, complaint, referral source</td>
           <td><code>components/registration/</code></td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h3>Hooks</h3>
+  <h3 id="hooks-reference">Hooks</h3>
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
           <th>Hook</th>
           <th>Purpose</th>
-          <th>Lines</th>
+          <th>Key Features</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>useRegistrationVisitForm</strong></td>
-          <td>Main visit form logic</td>
-          <td><code>859</code></td>
+          <td><strong>useUnifiedRegistrationForm</strong></td>
+          <td>Main unified form logic</td>
+          <td>8 sections, createVisit toggle, draft autosave</td>
+        </tr>
+        <tr>
+          <td><strong>useTodayAppointments</strong></td>
+          <td>Today's visits for sidebar</td>
+          <td>Real-time encounter status updates</td>
+        </tr>
+        <tr>
+          <td><strong>usePatientLookup</strong></td>
+          <td>Personal ID lookup</td>
+          <td>300ms debounce, legacy ID fallback</td>
         </tr>
         <tr>
           <td><strong>useDepartments</strong></td>
           <td>Department list</td>
-          <td><code>~80</code></td>
+          <td>Organization-based filtering</td>
         </tr>
         <tr>
           <td><strong>useRegistrationStatuses</strong></td>
           <td>Registration statuses</td>
-          <td><code>~60</code></td>
+          <td>ValueSet-based status codes</td>
         </tr>
         <tr>
           <td><strong>useInsuranceData</strong></td>
           <td>Insurance companies and types</td>
-          <td><code>~120</code></td>
+          <td>JSON data with coverage types</td>
+        </tr>
+        <tr>
+          <td><strong>useRecentPatients</strong></td>
+          <td>Recent patient list</td>
+          <td>EMR-only filter, 10 max</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h3>Services</h3>
+  <h3 id="services-reference">Services</h3>
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
@@ -743,12 +814,17 @@
         <tr>
           <td><strong>encounterService</strong></td>
           <td>Visit management (Encounter CRUD)</td>
-          <td>Registration Number Generator</td>
+          <td>Registration Number Generator, Active visit check</td>
         </tr>
         <tr>
           <td><strong>MedplumClient</strong></td>
           <td>Direct FHIR API calls</td>
-          <td>createResource, updateResource</td>
+          <td>createResource, updateResource, search</td>
+        </tr>
+        <tr>
+          <td><strong>documentStorageService</strong></td>
+          <td>File upload to FHIR</td>
+          <td>Binary + DocumentReference creation</td>
         </tr>
         <tr>
           <td><strong>departmentService</strong></td>
@@ -768,15 +844,79 @@
         <tr>
           <td><strong>localStorage</strong></td>
           <td>Draft saving</td>
-          <td>localStorage, 1-second debounce</td>
+          <td>medimind-registration-draft key, 1s debounce</td>
         </tr>
         <tr>
           <td><strong>recentPatientsService</strong></td>
-          <td>Recent searches</td>
-          <td>FIFO Cache (max 10)</td>
+          <td>Recent patient cache</td>
+          <td>FIFO Cache (max 10), EMR-only</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- FHIR Resource Creation Flow -->
+  <h3 id="fhir-flow">FHIR Resource Creation Flow</h3>
+  <p>When a registration is submitted, the following FHIR resources are created:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+sequenceDiagram
+    participant U as User
+    participant F as Form
+    participant S as Service
+    participant M as Medplum
+
+    U->>F: Submit Registration
+    F->>S: createPatient()
+    S->>M: POST /Patient
+    M-->>S: Patient ID
+    F->>S: createEncounter()
+    S->>M: POST /Encounter
+    M-->>S: Encounter ID
+    F->>S: createCoverage()
+    S->>M: POST /Coverage
+    M-->>S: Coverage ID
+    S-->>F: Success
+    F-->>U: Registration Complete
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Flow Diagram -->
+  <h3 id="data-flow">Data Flow</h3>
+  <p>Data flows between layers with localStorage providing draft persistence:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    UI[UI Layer] -->|Props & Events| H[Hooks Layer]
+    H -->|API Calls| S[Services Layer]
+    S -->|FHIR Operations| F[Medplum Cloud]
+    F -->|Resources| S
+    S -->|Data| H
+    H -->|State| UI
+
+    LS[(localStorage)] -.->|Draft| UI
+    UI -.->|Auto-save| LS
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 
 </section>

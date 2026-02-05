@@ -1,0 +1,35 @@
+{
+  "header": {
+    "brandTitle": "MediMind",
+    "brandSubtitle": "EMR SYSTEM",
+    "searchBtn": "Ctrl+K",
+    "pdfBtn": "PDF"
+  },
+  "search": {
+    "placeholder": "ძებნა დოკუმენტაციაში...",
+    "noResults": "შედეგი ვერ მოიძებნა",
+    "startTyping": "დაიწყეთ აკრეფა ძებნისთვის",
+    "escHint": "ESC"
+  },
+  "loading": {
+    "sections": "სექციები იტვირთება...",
+    "loading": "იტვირთება...",
+    "error": "შეცდომა სექციების ჩატვირთვისას"
+  },
+  "zoom": {
+    "zoomIn": "გადიდება",
+    "zoomOut": "შემცირება"
+  },
+  "buttons": {
+    "viewOnInterface": "ნახე ინტერფეისზე",
+    "back": "უკან დაბრუნება"
+  },
+  "aria": {
+    "menuOpen": "მენიუს გახსნა",
+    "backToTop": "ზემოთ დაბრუნება",
+    "search": "ძებნა"
+  },
+  "footer": {
+    "copyright": "© 2026 MediMind EMR. ვერსია 2.0 | საწარმოო დოკუმენტაცია"
+  }
+}

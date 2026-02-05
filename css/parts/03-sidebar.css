@@ -25,7 +25,7 @@
   transform: translateX(0);
   box-shadow:
     4px 0 30px rgba(0, 0, 0, 0.3),
-    0 0 60px rgba(59, 130, 246, 0.15);
+    0 0 60px rgba(43, 108, 176, 0.15);
 }
 
 .doc-sidebar::before {
@@ -35,7 +35,7 @@
   right: 0;
   width: 1px;
   height: 100%;
-  background: linear-gradient(180deg, rgba(59,130,246,0.5), rgba(139,92,246,0.3), transparent);
+  background: linear-gradient(180deg, rgba(59,130,246,0.5), rgba(49,130,206,0.3), transparent);
 }
 
 /* Custom Scrollbar for Sidebar */
@@ -115,14 +115,14 @@
   top: 0;
   bottom: 0;
   width: 0;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), transparent);
+  background: linear-gradient(90deg, rgba(43, 108, 176, 0.2), transparent);
   transition: width 0.3s var(--ease-smooth);
 }
 
 .doc-sidebar-link:hover {
   color: #ffffff;
   text-decoration: none;
-  border-left-color: rgba(59, 130, 246, 0.5);
+  border-left-color: rgba(43, 108, 176, 0.5);
 }
 
 .doc-sidebar-link:hover::before {
@@ -131,10 +131,10 @@
 
 .doc-sidebar-link.active {
   color: #ffffff;
-  border-left-color: #3b82f6;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent);
+  border-left-color: #2b6cb0;
+  background: linear-gradient(90deg, rgba(43, 108, 176, 0.3), transparent);
   font-weight: 500;
-  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  text-shadow: 0 0 10px rgba(43, 108, 176, 0.5);
 }
 
 .doc-sidebar-link.active::after {
@@ -145,8 +145,8 @@
   transform: translateY(-50%);
   width: 3px;
   height: 20px;
-  background: #3b82f6;
-  box-shadow: 0 0 10px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.5);
+  background: #2b6cb0;
+  box-shadow: 0 0 10px #2b6cb0, 0 0 20px rgba(43, 108, 176, 0.5);
   border-radius: 0 2px 2px 0;
 }
 
@@ -165,7 +165,7 @@
   color: var(--doc-text-inverse);
   box-shadow:
     0 4px 20px rgba(26, 54, 93, 0.4),
-    0 0 30px rgba(59, 130, 246, 0.2);
+    0 0 30px rgba(43, 108, 176, 0.2);
   cursor: pointer;
   z-index: 300;
   display: flex;
@@ -184,12 +184,12 @@
   0%, 100% {
     box-shadow:
       0 4px 20px rgba(26, 54, 93, 0.4),
-      0 0 30px rgba(59, 130, 246, 0.2);
+      0 0 30px rgba(43, 108, 176, 0.2);
   }
   50% {
     box-shadow:
       0 4px 25px rgba(26, 54, 93, 0.5),
-      0 0 50px rgba(59, 130, 246, 0.4);
+      0 0 50px rgba(43, 108, 176, 0.4);
   }
 }
 
@@ -197,7 +197,7 @@
   transform: scale(1.05);
   box-shadow:
     0 6px 25px rgba(26, 54, 93, 0.5),
-    0 0 40px rgba(59, 130, 246, 0.3);
+    0 0 40px rgba(43, 108, 176, 0.3);
 }
 
 .doc-sidebar-toggle:active {
@@ -264,7 +264,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(26, 54, 93, 0.6);
     backdrop-filter: blur(4px);
     z-index: 90;
     opacity: 0;

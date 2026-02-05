@@ -5,19 +5,21 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
     </div>
-    <h2><span class="doc-section-number">1</span> მიმოხილვა</h2>
+    <h2><span class="doc-section-number">2</span> მიმოხილვა</h2>
   </div>
 
   <p>პაციენტის რეგისტრაციის მოდული არის <strong>MediMind EMR სისტემის ცენტრალური კომპონენტი</strong>, რომელიც საშუალებას გაძლევთ:</p>
 
   <ul class="doc-list">
-    <li><strong>დაარეგისტრიროთ ახალი პაციენტები</strong> კლინიკაში</li>
-    <li><strong>მოძებნოთ არსებული პაციენტები</strong> მრავალი კრიტერიუმით</li>
-    <li><strong>შეცვალოთ პაციენტის მონაცემები</strong> საჭიროებისამებრ</li>
-    <li><strong>გახსნათ ახალი ვიზიტები</strong> რეგისტრირებული პაციენტებისთვის</li>
+    <li><strong>მოძებნოთ პაციენტები</strong> უნიფიცირებული ძიების გამოყენებით კლავიატურის მალსახმობებით (Cmd/Ctrl+K)</li>
+    <li><strong>დაარეგისტრიროთ ახალი პაციენტები</strong> ყოვლისმომცველი მონაცემების შეგროვებით 8 ფორმის სექციაში</li>
+    <li><strong>შექმნათ ვიზიტები</strong> სურვილისამებრ პაციენტის რეგისტრაციის პროცესში</li>
+    <li><strong>ნახოთ დღევანდელი ვიზიტები</strong> და ბოლო პაციენტები დესკტოპის გვერდით პანელში</li>
+    <li><strong>ატვირთოთ დოკუმენტები</strong> საგარანტიო წერილების ჩათვლით დანართებით</li>
+    <li><strong>ავტომატურად შეინახოთ მონახაზები</strong> რეგისტრაციის დროს მონაცემების დაკარგვის თავიდან ასაცილებლად</li>
   </ul>
 
-  <p>მოდული განკუთვნილია <strong>რეცეფციის თანამშრომლების</strong> და <strong>მედიცინის რეგისტრატორებისთვის</strong>.</p>
+  <p>მოდული შექმნილია <strong>რეგისტრატურის თანამშრომლებისთვის</strong> და <strong>სამედიცინო რეგისტრატორებისთვის</strong>, ადაპტირებული ინტერფეისით დესკტოპისა და მობილური მოწყობილობებისთვის.</p>
 
   <!-- Screenshot -->
   <div class="doc-screenshot-full" id="main-screenshot">
@@ -26,20 +28,20 @@
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
       </svg>
-      უკან დაბრუნება
+      ცხრილზე დაბრუნება
     </button>
   </div>
 
   <!-- Statistics -->
-  <h3 id="statistics">მოკლე სტატისტიკა</h3>
+  <h3 id="statistics">სწრაფი სტატისტიკა</h3>
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">33</span>
+      <span class="doc-stat-inline-number">60+</span>
       <span class="doc-stat-inline-label">ველი</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">4</span>
-      <span class="doc-stat-inline-label">სექცია</span>
+      <span class="doc-stat-inline-number">8</span>
+      <span class="doc-stat-inline-label">ფორმის სექცია</span>
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
@@ -57,27 +59,135 @@
 
   <!-- 3 Zones -->
   <h3 id="zones">ინტერფეისის 3 ზონა</h3>
+  <p>რეგისტრაციის ინტერფეისი ორგანიზებულია სამ ძირითად ზონად:</p>
+
   <div class="doc-zone-diagram">
     <div class="doc-zone">
-      <div class="doc-zone-header">ძებნის პანელი</div>
+      <div class="doc-zone-header">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        მთავარი ძიება
+      </div>
       <div class="doc-zone-content">
-        <p>სწრაფი ძებნა პ/ნ-ით ან სახელით</p>
-        <p>დეტალური ფილტრები</p>
+        <p><strong>UnifiedPatientSearch</strong></p>
+        <p>სწრაფი ძიება სახელით ან ID-ით</p>
+        <p>კლავიატურის მალსახმობი: Cmd/Ctrl+K</p>
+        <p>გაფართოებული ფილტრების პანელი</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">რეგისტრაციის ფორმა</div>
+      <div class="doc-zone-header">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        უნიფიცირებული ფორმა
+      </div>
       <div class="doc-zone-content">
+        <p><strong>8 ჩაკეცვადი სექცია</strong></p>
         <p>პაციენტის მონაცემების შეყვანა</p>
-        <p>4 ძირითადი სექცია</p>
+        <p>ვიზიტის შექმნა (სურვილისამებრ)</p>
+        <p>მონახაზის ავტოშენახვა</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">პაციენტების ცხრილი</div>
+      <div class="doc-zone-header">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+        დესკტოპის გვერდითი პანელი
+      </div>
       <div class="doc-zone-content">
-        <p>ძებნის შედეგები</p>
-        <p>სწრაფი მოქმედებები</p>
+        <p><strong>დღევანდელი ვიზიტები</strong></p>
+        <p>მიმდინარე დღის შეხვედრები</p>
+        <p><strong>ბოლო პაციენტები</strong></p>
+        <p>10 უახლესი EMR პაციენტი</p>
       </div>
     </div>
+  </div>
+
+  <!-- Key Features -->
+  <h3 id="key-features">ძირითადი ფუნქციები</h3>
+  <div class="doc-features-grid">
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">უნიფიცირებული პაციენტის ძიება</div>
+      <div class="doc-feature-desc">მთავარი ძიება Cmd/Ctrl+K მალსახმობით, ID-სა და სახელის ავტომატური ამოცნობით და გაფართოებული ფილტრებით</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">პაციენტის მოძიება</div>
+      <div class="doc-feature-desc">11-ნიშნა პირადი ნომრით მოძიება რეალურ დროში ვალიდაციით და პაციენტის ბარათის ჩვენებით</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">მონახაზის ავტოშენახვა</div>
+      <div class="doc-feature-desc">localStorage-ში შენახვა 1-წამიანი დაყოვნებით მონაცემების დაკარგვის თავიდან ასაცილებლად</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">მობილური ოსტატი</div>
+      <div class="doc-feature-desc">5-საფეხურიანი ადაპტირებული ოსტატი 768px-ზე ნაკლები სიგანის ეკრანებისთვის</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">დოკუმენტების ატვირთვა</div>
+      <div class="doc-feature-desc">ფაილების გადმოტანით ატვირთვა საგარანტიო წერილებისთვის, თითო გარანტიაზე 5 ფაილამდე</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">დღევანდელი ვიზიტები</div>
+      <div class="doc-feature-desc">დესკტოპის გვერდითი პანელი მიმდინარე დღის შეხვედრებით სტატუსის ბეჯებით</div>
+    </div>
+  </div>
+
+  <!-- Architecture Preview -->
+  <h3 id="architecture-preview">კომპონენტის არქიტექტურა</h3>
+  <p>რეგისტრაციის მოდული იყენებს თანამედროვე React კომპონენტის არქიტექტურას:</p>
+
+  <div class="doc-code-block">
+    <pre><code>UnifiedRegistrationView
+├── UnifiedPatientSearch (მთავარი)
+│   ├── სწრაფი ძიების ველი
+│   ├── გაფართოებული ფილტრების პანელი
+│   └── ძიების შედეგები ორმაგი მოქმედებით
+├── UnifiedPatientRegistrationForm (დესკტოპი)
+│   ├── PatientLookupSection
+│   ├── PersonalInformation
+│   ├── ContactInformation
+│   ├── AdditionalDetails
+│   ├── GuardianSection
+│   ├── RegistrationSection (არასავალდებულო)
+│   ├── InsuranceSection
+│   └── GuaranteeSection
+├── UnifiedRegistrationWizard (მობილური)
+│   └── 5-საფეხურიანი ოსტატი
+└── დესკტოპის გვერდითი პანელი
+    ├── დღევანდელი ვიზიტები
+    └── ბოლო პაციენტები</code></pre>
   </div>
 </section>

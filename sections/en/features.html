@@ -8,164 +8,639 @@
     <h2><span class="doc-section-number">2</span> Features</h2>
   </div>
 
-  <!-- Search System -->
-  <h3 id="search">Search System</h3>
-  <p>The system offers flexible search with multiple parameters:</p>
+  <!-- ========================== -->
+  <!-- 2.1 Patient Search System -->
+  <!-- ========================== -->
+  <h3 id="search">2.1 Patient Search System</h3>
+  <p>The registration module features a powerful <strong>UnifiedPatientSearch</strong> component that serves as the primary way to find existing patients.</p>
+
+  <!-- Hero Search -->
+  <h4 id="hero-search">Hero Search Component</h4>
+  <p>The hero search bar is prominently displayed at the top of the registration page:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/hero-search-en.png" alt="Hero Search" class="doc-screenshot-image" data-i18n-img="hero-search">
+  </div>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Search Type</th>
+          <th>Feature</th>
           <th>Description</th>
-          <th>FHIR Parameter</th>
+          <th>Keyboard Shortcut</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>Quick Search</strong></td>
-          <td>By personal ID or name - auto-complete</td>
-          <td><code>identifier | name</code></td>
+          <td>Auto-detects if input is personal ID (11 digits) or name</td>
+          <td><kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd></td>
         </tr>
         <tr>
-          <td><strong>Detailed Search</strong></td>
-          <td>Multiple filters: date, department, status</td>
-          <td><code>_lastUpdated | organization</code></td>
+          <td><strong>Advanced Filters</strong></td>
+          <td>Expand panel for Personal ID, First Name, Last Name, Reg Number</td>
+          <td><kbd>Cmd/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd></td>
+        </tr>
+        <tr>
+          <td><strong>Navigate Results</strong></td>
+          <td>Move through search results</td>
+          <td><kbd>↑</kbd> / <kbd>↓</kbd></td>
+        </tr>
+        <tr>
+          <td><strong>Select Result</strong></td>
+          <td>Choose highlighted result</td>
+          <td><kbd>Enter</kbd></td>
+        </tr>
+        <tr>
+          <td><strong>Close Search</strong></td>
+          <td>Close search panel</td>
+          <td><kbd>Escape</kbd></td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Form Sections -->
-  <h3 id="form-sections">4 Form Sections</h3>
-  <p>The registration form is divided into <strong>4 logical sections</strong>:</p>
+  <!-- Advanced Filters -->
+  <h4 id="advanced-filters">Advanced Filters Panel</h4>
+  <p>Click the "Advanced" button or use <kbd>Cmd/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> to open detailed filters:</p>
 
-  <div class="doc-form-sections-grid">
-    <div class="doc-form-section-card">
-      <img src="images/section-1-personal-en.png" alt="Personal Information" data-i18n-img="section-1-personal">
-    </div>
-    <div class="doc-form-section-card">
-      <img src="images/section-2-contact-en.png" alt="Contact" data-i18n-img="section-2-contact">
-    </div>
-    <div class="doc-form-section-card">
-      <img src="images/section-3-additional-en.png" alt="Additional" data-i18n-img="section-3-additional">
-    </div>
-    <div class="doc-form-section-card">
-      <img src="images/section-4-representative-en.png" alt="Representative" data-i18n-img="section-4-representative">
-    </div>
+  <div class="doc-screenshot-full">
+    <img src="images/advanced-filters-en.png" alt="Advanced Filters" class="doc-screenshot-image" data-i18n-img="advanced-filters">
   </div>
 
-  <!-- Save Options -->
-  <h3 id="save-options">Save Options</h3>
-  <div class="doc-save-options">
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
+  <ul class="doc-list">
+    <li><strong>Personal ID</strong> - 11-digit Georgian personal number</li>
+    <li><strong>First Name</strong> - Patient's given name</li>
+    <li><strong>Last Name</strong> - Patient's family name</li>
+    <li><strong>Registration Number</strong> - Internal EMR registration number</li>
+  </ul>
+
+  <!-- Dual Action Results -->
+  <h4 id="search-results">Search Results with Dual Actions</h4>
+  <p>When you search for a patient by name or personal ID, matching results appear in a dropdown with two action buttons:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/search-results-en.png" alt="Search Results" class="doc-screenshot-image" data-i18n-img="search-results">
+  </div>
+
+  <p>Each search result displays two action buttons:</p>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
       </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">Save</div>
-        <div class="doc-save-option-desc">Save patient data only</div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">New Visit</div>
+        <div class="doc-action-desc">Creates a new visit for this patient and navigates to visit details</div>
       </div>
     </div>
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
         </svg>
       </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">Save & Continue</div>
-        <div class="doc-save-option-desc">Registers patient, opens visit registration steps</div>
-      </div>
-    </div>
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">Save & New</div>
-        <div class="doc-save-option-desc">Registers patient, clears form for new patient</div>
-      </div>
-    </div>
-    <div class="doc-save-option">
-      <div class="doc-save-option-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-        </svg>
-      </div>
-      <div class="doc-save-option-content">
-        <div class="doc-save-option-title">Save & View</div>
-        <div class="doc-save-option-desc">Registers patient, opens patient card</div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Fill Form</div>
+        <div class="doc-action-desc">Populates the registration form with patient data for editing</div>
       </div>
     </div>
   </div>
 
-  <!-- Wizard Steps -->
-  <h3 id="wizard">Visit Registration Steps</h3>
-  <div class="doc-screenshot-full" id="wizard-screenshot">
-    <img src="images/visit-registration-steps-en.png" alt="Visit Registration Steps" class="doc-screenshot-image" data-i18n-img="visit-registration-steps">
-    <button class="doc-back-link" id="back-from-wizard-btn" onclick="goBackFromWizard()" style="display: none;">
+  <!-- Patient Lookup Section -->
+  <h4 id="patient-lookup">Patient Lookup Section</h4>
+  <p>Within the form, the <strong>PatientLookupSection</strong> provides a dedicated field for looking up patients by their 11-digit personal ID:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/patient-lookup-en.png" alt="Patient Lookup Section" class="doc-screenshot-image" data-i18n-img="patient-lookup">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
-      Back to table
-    </button>
+    </div>
+    <div class="doc-info-content">
+      <strong>How Patient Lookup Works:</strong>
+      <ul>
+        <li>Enter an 11-digit personal ID</li>
+        <li>System searches with 300ms debounce</li>
+        <li>If found: displays patient card with name, DOB, visit count</li>
+        <li>If not found: allows new patient registration</li>
+        <li>When patient found: form sections auto-collapse</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Patient Found Card -->
+  <h4 id="patient-found">Patient Found Card</h4>
+  <p>When an existing patient is found, a card displays their details with options to edit or create a new visit:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/patient-found-en.png" alt="Patient Found Card" class="doc-screenshot-image" data-i18n-img="patient-found">
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.2 Unified Registration Form -->
+  <!-- ========================== -->
+  <h3 id="form-sections">2.2 Unified Registration Form</h3>
+  <p>The registration form is organized into <strong>8 collapsible sections</strong>. Each section can be expanded or collapsed to focus on relevant fields.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/unified-form-en.png" alt="Unified Registration Form" class="doc-screenshot-image" data-i18n-img="unified-form">
+  </div>
+
+  <!-- 8 Form Sections Grid -->
+  <div class="doc-form-sections-grid-8">
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">1</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Patient Lookup</div>
+        <div class="doc-form-section-desc">11-digit ID search with patient card</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">2</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Personal Information</div>
+        <div class="doc-form-section-desc">Name, gender, DOB, visit type toggle</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">3</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Contact Information</div>
+        <div class="doc-form-section-desc">Phone, email, address</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">4</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Additional Details</div>
+        <div class="doc-form-section-desc">Citizenship, marital status, workplace</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">5</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Guardian/Representative</div>
+        <div class="doc-form-section-desc">Required for patients under 18</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">6</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Registration</div>
+        <div class="doc-form-section-desc">Visit details (optional with toggle)</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">7</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Insurance</div>
+        <div class="doc-form-section-desc">1-3 insurers with add/remove</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">8</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Guarantee</div>
+        <div class="doc-form-section-desc">Letters with document upload</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- createVisit Toggle -->
+  <h4 id="create-visit-toggle">Create Visit Toggle</h4>
+  <p>The form includes a toggle to control whether a visit is created along with the patient:</p>
+
+  <div class="doc-toggle-demo">
+    <div class="doc-toggle-option active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <strong>Create Visit: ON</strong>
+        <p>Patient + Visit created together. Registration, Insurance, and Guarantee sections visible.</p>
+      </div>
+    </div>
+    <div class="doc-toggle-option">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <strong>Create Visit: OFF</strong>
+        <p>Patient only created. Visit-related sections hidden.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Flow Diagram -->
+  <h4 id="registration-flow">Registration Flow</h4>
+  <p>The following diagram illustrates the complete patient registration workflow:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[Patient Lookup] --> B{Patient Found?}
+    B -->|Yes| C[Auto-fill Form]
+    B -->|No| D[New Patient Entry]
+    C --> E{Create Visit?}
+    D --> E
+    E -->|Yes| F[Fill Visit Details]
+    E -->|No| G[Patient Only]
+    F --> H[Submit]
+    G --> H
+    H --> I[FHIR Resources Created]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Draft Auto-Save -->
+  <h4 id="draft-autosave">Draft Auto-Save</h4>
+  <p>The form automatically saves your progress to localStorage:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/draft-indicator-en.png" alt="Draft Save Indicator" class="doc-screenshot-image" data-i18n-img="draft-indicator">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Auto-Save Interval</strong></td>
+          <td>1-second debounce after any field change</td>
+        </tr>
+        <tr>
+          <td><strong>Draft Indicator</strong></td>
+          <td>Shows "Draft saved" badge when unsaved changes exist</td>
+        </tr>
+        <tr>
+          <td><strong>Clear Draft</strong></td>
+          <td>Button to discard saved draft and reset form</td>
+        </tr>
+        <tr>
+          <td><strong>Storage Key</strong></td>
+          <td><code>medimind-registration-draft</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.3 Document Upload -->
+  <!-- ========================== -->
+  <h3 id="document-upload">2.3 Document Upload</h3>
+  <p>The Guarantee section includes a document upload feature for attaching guarantee letters and supporting documents:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/document-upload-en.png" alt="Document Upload" class="doc-screenshot-image" data-i18n-img="document-upload">
+  </div>
+
+  <h4 id="upload-features">Upload Features</h4>
+  <ul class="doc-list">
+    <li><strong>Drag & Drop</strong> - Drag files directly onto the upload zone</li>
+    <li><strong>Click to Browse</strong> - Click the zone to open file picker</li>
+    <li><strong>Multiple Files</strong> - Up to 5 files per guarantee</li>
+    <li><strong>Multiple Guarantees</strong> - Up to 3 guarantees per registration</li>
+    <li><strong>Document Metadata</strong> - Name, date, author, document number</li>
+  </ul>
+
+  <h4 id="document-fields">Document Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Description</th>
+          <th>Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Document Name</strong></td>
+          <td>Descriptive name for the document</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Document Date</strong></td>
+          <td>Date the document was issued</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Author</strong></td>
+          <td>Person or organization that issued the document</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td>Reference number on the document</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>File Attachment</strong></td>
+          <td>The actual file (PDF, image, etc.)</td>
+          <td>Yes</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>FHIR Resources Created:</strong>
+      <ul>
+        <li><strong>Binary</strong> - Stores the actual file content</li>
+        <li><strong>DocumentReference</strong> - Contains metadata and links to Binary</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.4 Desktop Sidebar -->
+  <!-- ========================== -->
+  <h3 id="desktop-sidebar">2.4 Desktop Sidebar</h3>
+  <p>On screens wider than 1024px, a sidebar appears with two collapsible sections:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/desktop-sidebar-en.png" alt="Desktop Sidebar" class="doc-screenshot-image" data-i18n-img="desktop-sidebar">
+  </div>
+
+  <!-- Today's Visits -->
+  <h4 id="todays-visits">Today's Visits</h4>
+  <p>Shows all encounters scheduled for the current day:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Time</strong></td>
+          <td>Scheduled appointment time (e.g., 09:30)</td>
+        </tr>
+        <tr>
+          <td><strong>Patient Name</strong></td>
+          <td>Full name of the patient</td>
+        </tr>
+        <tr>
+          <td><strong>Status Badge</strong></td>
+          <td>Visual indicator of visit status</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 id="visit-statuses">Visit Status Badges</h4>
+  <div class="doc-status-badges">
+    <div class="doc-status-badge doc-status-planned">
+      <span class="doc-status-dot"></span>
+      Planned
+    </div>
+    <div class="doc-status-badge doc-status-arrived">
+      <span class="doc-status-dot"></span>
+      Arrived
+    </div>
+    <div class="doc-status-badge doc-status-in-progress">
+      <span class="doc-status-dot"></span>
+      In Progress
+    </div>
+    <div class="doc-status-badge doc-status-finished">
+      <span class="doc-status-dot"></span>
+      Finished
+    </div>
+  </div>
+
+  <!-- Recent Patients -->
+  <h4 id="recent-patients">Recent Patients</h4>
+  <p>Shows the 10 most recently updated EMR patients (excludes portal patients):</p>
+
+  <ul class="doc-list">
+    <li><strong>Patient Name</strong> - Full name</li>
+    <li><strong>Personal ID</strong> - 11-digit number</li>
+    <li><strong>Date of Birth</strong> - Birth date</li>
+    <li><strong>Actions:</strong>
+      <ul>
+        <li><em>New Visit</em> - Create a new visit for this patient</li>
+        <li><em>View</em> - Open patient's full record</li>
+      </ul>
+    </li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 2.5 Mobile Wizard -->
+  <!-- ========================== -->
+  <h3 id="mobile-wizard">2.5 Mobile Wizard</h3>
+  <p>On screens narrower than 768px, the form transforms into a <strong>5-step wizard</strong> for easier mobile navigation:</p>
+
+  <div class="doc-screenshot-full doc-screenshot-mobile">
+    <img src="images/mobile-wizard-en.png" alt="Mobile Wizard" class="doc-screenshot-image" data-i18n-img="mobile-wizard">
   </div>
 
   <div class="doc-wizard-steps">
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">1</div>
       <div>
-        <div class="doc-wizard-step-label">Registration Details</div>
-        <div class="doc-wizard-step-desc">Visit type, date, department</div>
+        <div class="doc-wizard-step-label">Patient</div>
+        <div class="doc-wizard-step-desc">Lookup + Personal Information</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">2</div>
       <div>
-        <div class="doc-wizard-step-label">Insurance Data</div>
-        <div class="doc-wizard-step-desc">Insurance company, policy</div>
+        <div class="doc-wizard-step-label">Details</div>
+        <div class="doc-wizard-step-desc">Contact + Additional + Guardian</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">3</div>
       <div>
-        <div class="doc-wizard-step-label">Guarantee</div>
-        <div class="doc-wizard-step-desc">Guarantee letter, amount</div>
+        <div class="doc-wizard-step-label">Visit</div>
+        <div class="doc-wizard-step-desc">Registration details (if createVisit=true)</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">4</div>
       <div>
-        <div class="doc-wizard-step-label">Demographics</div>
-        <div class="doc-wizard-step-desc">Region, diagnosis, complaint</div>
+        <div class="doc-wizard-step-label">Insurance</div>
+        <div class="doc-wizard-step-desc">Insurance + Guarantee (if createVisit=true)</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">5</div>
       <div>
-        <div class="doc-wizard-step-label">Confirmation</div>
-        <div class="doc-wizard-step-desc">Summary and registration</div>
+        <div class="doc-wizard-step-label">Confirm</div>
+        <div class="doc-wizard-step-desc">Demographics + Summary</div>
       </div>
     </div>
   </div>
 
-  <!-- Insurance Management -->
-  <h3 id="insurance">Insurance Management</h3>
-  <p>The system allows you to add <strong>up to 3 insurance companies</strong> per visit.</p>
+  <!-- Mobile Wizard Flow Diagram -->
+  <h4 id="wizard-flow">Wizard Step Flow</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    S1[Step 1: Patient] --> S2[Step 2: Details]
+    S2 --> S3[Step 3: Visit]
+    S3 --> S4[Step 4: Insurance]
+    S4 --> S5[Step 5: Confirm]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Mobile Wizard Behavior:</strong>
+      <ul>
+        <li>Steps 3 and 4 are hidden when <code>createVisit</code> toggle is OFF</li>
+        <li>Progress indicator shows current step</li>
+        <li>Back/Next buttons navigate between steps</li>
+        <li>Draft auto-save works across all steps</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 2.6 Visit Management -->
+  <!-- ========================== -->
+  <h3 id="visit-management">2.6 Visit Management</h3>
+  <p>When the <code>createVisit</code> toggle is enabled, visit-related sections become available in the form:</p>
+
+  <!-- Encounter Creation -->
+  <h4 id="encounter-creation">Creating a New Encounter</h4>
+  <p>After finding an existing patient, the form shows their details and the visit registration fields for creating a new encounter:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/encounter-creation-en.png" alt="Encounter Creation" class="doc-screenshot-image" data-i18n-img="encounter-creation">
+  </div>
+
+  <!-- Registration Section -->
+  <h4 id="registration-section">Registration Section</h4>
+  <div class="doc-screenshot-full">
+    <img src="images/registration-section-en.png" alt="Registration Section" class="doc-screenshot-image" data-i18n-img="registration-section">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Visit Type</strong></td>
+          <td>Outpatient, Inpatient, or Emergency</td>
+        </tr>
+        <tr>
+          <td><strong>Visit Date</strong></td>
+          <td>Date of the visit</td>
+        </tr>
+        <tr>
+          <td><strong>Department</strong></td>
+          <td>Target department/service</td>
+        </tr>
+        <tr>
+          <td><strong>Referring Doctor</strong></td>
+          <td>Doctor who referred the patient (optional)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Insurance Section -->
+  <h4 id="insurance">Insurance Section</h4>
+  <p>Add up to <strong>3 insurance companies</strong> per visit:</p>
 
   <div class="doc-screenshot-full">
     <img src="images/insurance-section-en.png" alt="Insurance Section" class="doc-screenshot-image" data-i18n-img="insurance-section">
   </div>
 
+  <ul class="doc-list">
+    <li><strong>Insurance Company</strong> - Select from registered insurers</li>
+    <li><strong>Policy Number</strong> - Patient's policy number</li>
+    <li><strong>Coverage Type</strong> - Full, partial, or specific coverage</li>
+    <li><strong>Add/Remove Buttons</strong> - Manage multiple insurers</li>
+  </ul>
+
+  <!-- Active Visit Warning -->
+  <h4 id="active-visit-warning">Active Visit Warning</h4>
+  <p>If a patient already has an in-progress visit, a warning modal appears:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/active-visit-warning-en.png" alt="Active Visit Warning" class="doc-screenshot-image" data-i18n-img="active-visit-warning">
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Active Visit Detection:</strong>
+      <p>The system prevents duplicate encounters by detecting in-progress visits. You can choose to:</p>
+      <ul>
+        <li>View the existing active visit</li>
+        <li>Create a new visit anyway (with confirmation)</li>
+        <li>Cancel and return to the form</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Demographics -->
-  <h3 id="demographics">Demographics</h3>
+  <h4 id="demographics">Demographics Section</h4>
+  <p>Additional demographic data collected during visit registration:</p>
+
   <div class="doc-screenshot-full">
     <img src="images/demographics-section-en.png" alt="Demographics Section" class="doc-screenshot-image" data-i18n-img="demographics-section">
   </div>
+
+  <ul class="doc-list">
+    <li><strong>Region</strong> - Patient's residential region</li>
+    <li><strong>Chief Complaint</strong> - Primary reason for visit</li>
+    <li><strong>Referral Source</strong> - How patient was referred</li>
+  </ul>
 </section>
