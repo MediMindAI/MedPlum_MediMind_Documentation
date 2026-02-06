@@ -1,0 +1,91 @@
+{
+  "sectionId": "ai-chatbot-components",
+  "file": "ai-chatbot-components",
+  "createdAt": "2026-02-06T12:00:00Z",
+  "updatedAt": "2026-02-06T18:00:00Z",
+  "totalScreenshots": 2,
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "fallbackUrl": "http://localhost:3005",
+    "credentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    }
+  },
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ka": "text=ქარ",
+      "ru": "text=РУС"
+    }
+  },
+  "screenshots": [
+    {
+      "name": "ai-welcome-screen",
+      "description": "Welcome screen with quick action cards (Quick Consult, New Case) shown when no conversation selected",
+      "route": "/emr/ai-assistant/chat",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["welcome message or greeting", "quick action cards", "New Case or Quick Consult buttons"],
+        "mustNotShow": ["active conversation with messages", "login page"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "on /emr/ai-assistant/chat", "no conversation selected"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "verifyVisible", "elements": ["welcome screen", "quick action cards"] }
+        ]
+      },
+      "differentiator": "welcome-state-with-action-cards",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "ai-welcome-screen-{lang}" }
+      ],
+      "expectedDOMElements": [".welcome-screen", ".quick-action-card"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "INTENTIONAL: Shows same welcome state as ai-chat-interface by design - this screenshot focuses on the welcome screen concept while ai-chat-interface is the full interface overview."
+      }
+    },
+    {
+      "name": "ai-message-input",
+      "description": "Message input area showing voice button, attachment button, and send button",
+      "route": "/emr/ai-assistant/chat",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["text input field with text", "voice/microphone button", "attachment/paperclip button", "send button"],
+        "mustNotShow": ["login page", "error state"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "on /emr/ai-assistant/chat"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "click", "selector": "textarea" },
+          { "action": "fill", "selector": "textarea", "value": "Sample question text" }
+        ]
+      },
+      "differentiator": "input-area-with-text-typed",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "click", "selector": "textarea" },
+        { "action": "fill", "selector": "textarea", "value": "What symptoms should I look for?" },
+        { "action": "screenshot", "name": "ai-message-input-{lang}" }
+      ],
+      "expectedDOMElements": [".message-input", ".voice-input-button"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "RECAPTURED: Now shows text typed in the input field (en: 'What symptoms should I look for?', ka: Georgian text, ru: Russian text) - visually distinct from empty input state."
+      }
+    }
+  ]
+}

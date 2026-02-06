@@ -824,3 +824,128 @@ kbd {
   border-radius: 6px;
   box-shadow: 0 2px 0 #d1d5db;
 }
+
+/* ================================
+   Collapsible Sections (Details/Summary)
+   ================================ */
+.doc-collapsible {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--doc-radius-lg);
+  margin: var(--doc-space-md) 0;
+  overflow: hidden;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.doc-collapsible:hover {
+  border-color: rgba(43, 108, 176, 0.3);
+}
+
+.doc-collapsible[open] {
+  box-shadow: 0 4px 20px rgba(43, 108, 176, 0.1);
+  border-color: rgba(43, 108, 176, 0.4);
+}
+
+.doc-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: var(--doc-space-sm);
+  padding: var(--doc-space-md) var(--doc-space-lg);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s var(--ease-smooth);
+  list-style: none;
+}
+
+.doc-collapsible-header::-webkit-details-marker {
+  display: none;
+}
+
+.doc-collapsible-header:hover {
+  background: rgba(43, 108, 176, 0.05);
+}
+
+.doc-collapsible-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  transition: transform 0.3s var(--ease-smooth);
+}
+
+.doc-collapsible-icon svg {
+  width: 16px;
+  height: 16px;
+  color: var(--doc-text-muted);
+}
+
+.doc-collapsible[open] .doc-collapsible-icon {
+  transform: rotate(90deg);
+}
+
+.doc-collapsible[open] .doc-collapsible-icon svg {
+  color: var(--doc-secondary);
+}
+
+.doc-collapsible-header strong {
+  flex: 1;
+  color: var(--doc-text-primary);
+  font-size: var(--doc-font-base);
+}
+
+.doc-collapsible-content {
+  padding: 0 var(--doc-space-lg) var(--doc-space-lg);
+  color: var(--doc-text-secondary);
+  font-size: var(--doc-font-sm);
+  line-height: 1.7;
+}
+
+.doc-collapsible-content .doc-code-block {
+  margin-top: var(--doc-space-md);
+}
+
+.doc-collapsible-content .doc-list {
+  margin: var(--doc-space-sm) 0;
+}
+
+.doc-collapsible-content .doc-table-container {
+  margin: var(--doc-space-md) 0;
+}
+
+/* Nested collapsibles */
+.doc-collapsible .doc-collapsible {
+  margin: var(--doc-space-sm) 0;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ================================
+   Mobile Screenshot Display
+   ================================ */
+/* Use for screenshots captured at mobile viewport (375x812) */
+.doc-screenshot-mobile {
+  max-width: 375px;
+  margin: 0 auto;
+  display: block;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Optional device frame wrapper for mobile screenshots */
+.doc-mobile-frame {
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 32px;
+  max-width: 399px;
+  margin: 1rem auto;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.doc-mobile-frame .doc-screenshot-mobile {
+  border-radius: 16px;
+  margin: 0;
+}

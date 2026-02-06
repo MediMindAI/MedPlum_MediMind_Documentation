@@ -42,3 +42,47 @@
 ## File Naming
 - Pattern: `{feature-name}-{lang}.png` (e.g., `hero-search-en.png`)
 - Languages: `en`, `ka`, `ru`
+
+## Documentation HTML Patterns (Updated 2026-02-06)
+
+### CSS Classes for Sections
+- `.doc-section` - Main section container with fadeInUp animation
+- `.doc-section-header` - Header with icon + h2
+- `.doc-section-icon` - 48x48 gradient icon box
+- `.doc-section-number` - Circular numbered badge
+- `.doc-table-container` + `.doc-table` - Responsive tables
+- `.doc-code-block` - Code blocks with dark background (#1a365d)
+- `.doc-info-box` + `.doc-info-icon` + `.doc-info-content` - Blue info callouts
+- `.doc-warning-box` - Orange warning callouts
+- `.doc-list` - Styled bullet lists with gradient dots
+- `.doc-collapsible` - Collapsible details/summary sections (added 2026-02-06)
+- `.doc-status-badges` - Status indicator badges
+
+### Collapsible Sections Pattern
+```html
+<details class="doc-collapsible">
+  <summary class="doc-collapsible-header">
+    <span class="doc-collapsible-icon"><svg>...</svg></span>
+    <strong>Title</strong>
+  </summary>
+  <div class="doc-collapsible-content">Content here</div>
+</details>
+```
+
+### Mermaid Diagrams
+- Wrap in `.mermaid-container` > `.mermaid.mermaid-zoomable`
+- Include zoom button controls
+- Dark theme configured in page.js
+
+### Code Highlighting
+- No Prism.js - uses `.doc-code-block` with `language-typescript` class
+- Code appears in light text (#e5e7eb) on dark blue (#1a365d)
+
+### Section Files Location
+- English: `sections/en/{section}.html`
+- Georgian: `sections/ka/{section}.html`
+- Russian: `sections/ru/{section}.html`
+
+### Source File Conversion
+- AI chatbot components source: `/Users/toko/Desktop/medplum_medimind/explanations/features/ai-chatbot-emr/`
+- Contains: components.md, state-management.md, hooks.md

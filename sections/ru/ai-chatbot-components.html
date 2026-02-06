@@ -1,0 +1,1602 @@
+<section class="doc-section" id="ai-chatbot-components">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">6</span> Компоненты AI чатбота и управление состоянием</h2>
+  </div>
+
+  <p>В этом разделе описываются <strong>40 продакшен React компонентов</strong> (76 файлов: 40 TSX + 36 CSS модулей), архитектура управления состоянием с двойным контекстом и 9 пользовательских хуков, которые обеспечивают работу интерфейса AI медицинского чатбота.</p>
+
+  <!-- ========================== -->
+  <!-- 6.1 Components Overview -->
+  <!-- ========================== -->
+  <h3 id="components-overview">6.1 Обзор компонентов</h3>
+  <p>Компоненты AI чатбота организованы в <strong>8 функциональных категорий</strong>. Все компоненты следуют паттернам mobile-first адаптивного дизайна и используют CSS Modules для изолированных стилей.</p>
+
+  <!-- Component Architecture Diagram -->
+  <h4 id="component-architecture">Архитектура компонентов</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Root["ChatbotPage (Route)"]
+        CP[ChatProvider]
+    end
+
+    subgraph UI["UI Components"]
+        CH[ChatHeader]
+        HS[HistorySidebar]
+        ML[MessageList]
+        MI[MessageInput]
+        WS[WelcomeScreen]
+    end
+
+    subgraph Enhancement["Enhancement Components"]
+        MMR[MedicalMarkdownRenderer]
+        SR[SourceReferences]
+        FC[FactCheckResult]
+        MA[MessageActions]
+    end
+
+    subgraph Streaming["Streaming Components"]
+        SI[StreamingIndicator]
+        ST[StreamingText]
+        TI[TypingIndicator]
+    end
+
+    CP --> CH
+    CP --> HS
+    CP --> ML
+    CP --> MI
+    CP --> WS
+    ML --> Enhancement
+    ML --> Streaming
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Component Category Summary -->
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Расположение компонентов:</strong>
+      <code>packages/app/src/emr/components/ai-assistant/</code>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.1 Chat Interface -->
+  <!-- ========================== -->
+  <h4 id="chat-interface">6.1.1 Компоненты интерфейса чата</h4>
+  <p>Основные компоненты, составляющие главное окно чата и отображение сообщений.</p>
+
+  <!-- Скриншот экрана приветствия -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-welcome-screen-ru.png" alt="Экран приветствия с карточками быстрых действий и подсказками для начала работы"
+         class="doc-screenshot-image" data-i18n-img="ai-welcome-screen">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ChatWindow</strong></td>
+          <td><code>ChatWindow.tsx</code></td>
+          <td>Главный контейнер для всего интерфейса чата</td>
+        </tr>
+        <tr>
+          <td><strong>ChatHeader</strong></td>
+          <td><code>ChatHeader.tsx</code></td>
+          <td>Верхняя навигация с селектором KB и действиями</td>
+        </tr>
+        <tr>
+          <td><strong>MessageList</strong></td>
+          <td><code>MessageList.tsx</code></td>
+          <td>Прокручиваемый список сообщений с авто-прокруткой</td>
+        </tr>
+        <tr>
+          <td><strong>MessageItem</strong></td>
+          <td><code>MessageItem.tsx</code></td>
+          <td>Индивидуальный пузырь сообщения (пользователь или AI)</td>
+        </tr>
+        <tr>
+          <td><strong>WelcomeScreen</strong></td>
+          <td><code>WelcomeScreen.tsx</code></td>
+          <td>Начальный экран с быстрыми действиями</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ChatWindow Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ChatWindow</strong> - Главный контейнер для интерфейса чата
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ChatWindowProps {
+  onNewChat: () => void;
+  onOpenHistory: () => void;
+  sidebarOpen: boolean;
+}</code></pre>
+      </div>
+      <p><strong>Функции:</strong></p>
+      <ul class="doc-list">
+        <li>Управляет расположением между header, областью сообщений и input</li>
+        <li>Управляет состоянием видимости боковой панели</li>
+        <li>Координирует дочерние компоненты</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ChatHeader Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ChatHeader</strong> - Верхняя панель навигации
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ChatHeaderProps {
+  onNewChat?: () => void;
+  onNewCase?: () => void;
+  onOpenHistory?: () => void;
+  onOpenCases?: () => void;
+  personalDocCount?: number;
+  historyCount?: number;
+  casesCount?: number;
+  sidebarOpen?: boolean;
+}</code></pre>
+      </div>
+      <p><strong>Функции:</strong></p>
+      <ul class="doc-list">
+        <li>Переключатель базы знаний (курируемая vs персональная)</li>
+        <li>Кнопка нового чата</li>
+        <li>Переключатель истории с бейджем счётчика</li>
+        <li>Кнопка кейсов со счётчиком</li>
+        <li>Адаптивное hamburger меню для мобильных</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- MessageList Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageList</strong> - Прокручиваемый контейнер сообщений
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageListProps {
+  messages: Message[];
+  streamingMessageId: string | null;
+  onFactCheck?: (messageId: string) => Promise&lt;FactCheckResult&gt;;
+}</code></pre>
+      </div>
+      <p><strong>Поведение:</strong></p>
+      <ul class="doc-list">
+        <li><strong>Прокручивается вниз</strong> когда: добавлено новое сообщение, стриминг активен</li>
+        <li><strong>Сохраняет позицию прокрутки</strong> когда: просмотр старых сообщений, пользователь прокручивает вверх</li>
+        <li>Группирует сообщения по дате</li>
+        <li>Обрабатывает индикаторы стриминга</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- MessageItem Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageItem</strong> - Индивидуальный пузырь сообщения
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageItemProps {
+  message: Message;
+  isStreaming?: boolean;
+  onFactCheck?: (messageId: string) => Promise&lt;FactCheckResult&gt;;
+}</code></pre>
+      </div>
+      <p><strong>Функции:</strong></p>
+      <ul class="doc-list">
+        <li>Различные стили для сообщений пользователя и AI</li>
+        <li>Анимация курсора стриминга для AI сообщений</li>
+        <li>Отображение времени</li>
+        <li>Действия с сообщением (копировать, перегенерировать)</li>
+        <li>Отображение ссылок на источники</li>
+        <li>Кнопка проверки фактов и результаты</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.2 Conversation Management -->
+  <!-- ========================== -->
+  <h4 id="conversation-management">6.1.2 Компоненты управления разговорами</h4>
+  <p>Компоненты для управления историей разговоров и навигации.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>HistorySidebar</strong></td>
+          <td><code>HistorySidebar.tsx</code></td>
+          <td>Сворачиваемая боковая панель с историей разговоров</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationList</strong></td>
+          <td><code>ConversationList.tsx</code></td>
+          <td>Виртуализированный список разговоров</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationListItem</strong></td>
+          <td><code>ConversationListItem.tsx</code></td>
+          <td>Один элемент разговора в списке</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>HistorySidebar</strong> - Панель истории разговоров
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface HistorySidebarProps {
+  onNewChat: () => void;
+  onNewCase: () => void;
+  onRefresh: () => void;
+  onClose: () => void;
+  onSelectConversation?: () => void;
+}</code></pre>
+      </div>
+      <p><strong>Поведение на мобильных:</strong></p>
+      <ul class="doc-list">
+        <li>Полноэкранное наложение</li>
+        <li>Жест свайпа для закрытия</li>
+        <li>Закрытие по клику на фон</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ConversationList</strong> - Виртуализированный список разговоров
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ConversationListProps {
+  conversations: Conversation[];
+  activeConversationId: string | null;
+  onSelect: (conversationId: string) => void;
+  onDelete?: (conversationId: string) => void;
+}</code></pre>
+      </div>
+      <p><strong>Функции:</strong></p>
+      <ul class="doc-list">
+        <li>Виртуальная прокрутка для 100+ разговоров</li>
+        <li>Выделение активного разговора</li>
+        <li>Подтверждение удаления</li>
+        <li>Группировка по дате (Сегодня, Вчера, Последние 7 дней)</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.3 Input Components -->
+  <!-- ========================== -->
+  <h4 id="input-components">6.1.3 Компоненты ввода</h4>
+  <p>Компоненты для ввода сообщений, голосовой записи и быстрых действий.</p>
+
+  <!-- Скриншот ввода сообщения -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-message-input-ru.png" alt="Компонент ввода сообщения с кнопками записи голоса и прикрепления файлов"
+         class="doc-screenshot-image" data-i18n-img="ai-message-input">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MessageInput</strong></td>
+          <td><code>MessageInput.tsx</code></td>
+          <td>Многострочный ввод с голосом и прикреплением файлов</td>
+        </tr>
+        <tr>
+          <td><strong>VoiceInputButton</strong></td>
+          <td><code>VoiceInputButton.tsx</code></td>
+          <td>Голосовая запись с STT по языкам</td>
+        </tr>
+        <tr>
+          <td><strong>QuickReplies</strong></td>
+          <td><code>QuickReplies.tsx</code></td>
+          <td>Предложенные промпты и быстрые действия</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageInput</strong> - Главный компонент ввода
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageInputProps {
+  onSend: (message: string) => Promise&lt;void&gt;;
+  onStop?: () => void;
+  isGenerating?: boolean;
+  placeholder?: string;
+  maxLength?: number;
+}</code></pre>
+      </div>
+      <p><strong>Функции:</strong></p>
+      <ul class="doc-list">
+        <li>Многострочный ввод текста (авторазмер до 5 строк)</li>
+        <li>Кнопка голосовой записи</li>
+        <li>Кнопка прикрепления файлов (PDF, изображения, Word документы - макс. 10MB)</li>
+        <li>Кнопка отправки (отключена когда пусто или генерируется)</li>
+        <li>Кнопка остановки генерации (при стриминге)</li>
+        <li>Сочетания клавиш (<kbd>Enter</kbd> для отправки, <kbd>Shift+Enter</kbd> для новой строки)</li>
+      </ul>
+      <p><strong>Состояния:</strong></p>
+      <ul class="doc-list">
+        <li><strong>Ожидание:</strong> Готов к вводу</li>
+        <li><strong>Набор:</strong> Пользователь печатает сообщение</li>
+        <li><strong>Генерация:</strong> AI отвечает (показана кнопка остановки)</li>
+        <li><strong>Запись:</strong> Голосовой ввод активен</li>
+        <li><strong>Прикрепление:</strong> Файл обрабатывается</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>VoiceInputButton</strong> - Запись речи в текст
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface VoiceInputButtonProps {
+  onTranscript: (text: string) => void;
+  onError?: (error: Error) => void;
+}</code></pre>
+      </div>
+      <p><strong>STT Backend по языкам:</strong></p>
+      <div class="doc-table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Язык</th>
+              <th>Код</th>
+              <th>STT Backend</th>
+              <th>Edge Function</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Грузинский</td>
+              <td><code>ka</code></td>
+              <td>Enagram STT (Fast)</td>
+              <td><code>georgian-tts-proxy</code></td>
+            </tr>
+            <tr>
+              <td>Английский</td>
+              <td><code>en</code></td>
+              <td>Google Chirp 2</td>
+              <td><code>google-stt-proxy</code></td>
+            </tr>
+            <tr>
+              <td>Русский</td>
+              <td><code>ru</code></td>
+              <td>Google Chirp 2</td>
+              <td><code>google-stt-proxy</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Состояния:</strong> Ожидание, Выбор языка, Запись, Обработка, Ошибка</p>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.4 Message Enhancement -->
+  <!-- ========================== -->
+  <h4 id="message-enhancement">6.1.4 Компоненты улучшения сообщений</h4>
+  <p>Компоненты для рендеринга ответов AI с медицинским форматированием и ссылками на источники.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MedicalMarkdownRenderer</strong></td>
+          <td><code>MedicalMarkdownRenderer.tsx</code></td>
+          <td>Рендеринг ответов AI с медицинским форматированием</td>
+        </tr>
+        <tr>
+          <td><strong>SourceReferences</strong></td>
+          <td><code>SourceReferences.tsx</code></td>
+          <td>Отображение ссылок на источники из ответа AI</td>
+        </tr>
+        <tr>
+          <td><strong>FactCheckResult</strong></td>
+          <td><code>FactCheckResult.tsx</code></td>
+          <td>Отображение результатов проверки фактов</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MedicalMarkdownRenderer</strong> - Форматирование медицинского контента
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MedicalMarkdownRendererProps {
+  content: string;
+  components?: Record&lt;string, React.ComponentType&gt;;
+}</code></pre>
+      </div>
+      <p><strong>Пользовательские рендереры:</strong></p>
+      <ul class="doc-list">
+        <li><strong>Названия препаратов:</strong> стилизованы моноширинным шрифтом</li>
+        <li><strong>Лабораторные значения:</strong> выделены цветовой кодировкой</li>
+        <li><strong>Медицинские аббревиатуры:</strong> с всплывающими подсказками</li>
+      </ul>
+      <p><strong>Функции:</strong> Подсветка синтаксиса для медицинских терминов, таблицы для лабораторных показателей, нумерованные/маркированные списки для дифференциальных диагнозов, HTML санитизация для предотвращения XSS</p>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>FactCheckResult</strong> - Отображение верификации фактов
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface FactCheckResultProps {
+  status: 'verified' | 'unverified' | 'partially-verified';
+  sources: SourceReference[];
+  confidence?: number;
+}</code></pre>
+      </div>
+      <p><strong>Цвета статусов:</strong></p>
+      <div class="doc-status-badges">
+        <div class="doc-status-badge doc-status-finished">
+          <span class="doc-status-dot"></span>
+          Подтверждено (Зелёный)
+        </div>
+        <div class="doc-status-badge doc-status-arrived">
+          <span class="doc-status-dot"></span>
+          Частично подтверждено (Оранжевый)
+        </div>
+        <div class="doc-status-badge doc-status-planned">
+          <span class="doc-status-dot"></span>
+          Не подтверждено (Серый)
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.5 Streaming & Status -->
+  <!-- ========================== -->
+  <h4 id="streaming-status">6.1.5 Компоненты стриминга и статуса</h4>
+  <p>Компоненты для отображения состояний загрузки и анимаций стримингового текста.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>StreamingIndicator</strong></td>
+          <td><code>StreamingIndicator.tsx</code></td>
+          <td>Показывает когда AI генерирует ответ</td>
+        </tr>
+        <tr>
+          <td><strong>StreamingText</strong></td>
+          <td><code>StreamingText.tsx</code></td>
+          <td>Анимированное отображение текста token-by-token</td>
+        </tr>
+        <tr>
+          <td><strong>StreamingCursor</strong></td>
+          <td><code>StreamingCursor.tsx</code></td>
+          <td>Мигающий курсор в конце стримингового сообщения</td>
+        </tr>
+        <tr>
+          <td><strong>TypingIndicator</strong></td>
+          <td><code>TypingIndicator.tsx</code></td>
+          <td>Показывает когда AI "думает"</td>
+        </tr>
+        <tr>
+          <td><strong>PulseLoader</strong></td>
+          <td><code>PulseLoader.tsx</code></td>
+          <td>Пульсирующая анимация точки при стриминге</td>
+        </tr>
+        <tr>
+          <td><strong>ContentSkeleton</strong></td>
+          <td><code>ContentSkeleton.tsx</code></td>
+          <td>Скелетонный placeholder загрузки</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.6 Document Library -->
+  <!-- ========================== -->
+  <h4 id="document-library">6.1.6 Компоненты библиотеки документов</h4>
+  <p>Компоненты для управления загрузкой персональных документов и библиотекой.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DocumentLibrary</strong></td>
+          <td><code>DocumentLibrary.tsx</code></td>
+          <td>Сеточный вид персональных документов</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentCard</strong></td>
+          <td><code>DocumentCard.tsx</code></td>
+          <td>Индивидуальная карточка документа в сетке</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentUpload</strong></td>
+          <td><code>DocumentUpload.tsx</code></td>
+          <td>Загрузка файлов с drag-and-drop</td>
+        </tr>
+        <tr>
+          <td><strong>CaseFileUpload</strong></td>
+          <td><code>CaseFileUpload.tsx</code></td>
+          <td>Загрузка файлов для вложений кейса</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.7 Case Management -->
+  <!-- ========================== -->
+  <h4 id="case-management">6.1.7 Компоненты управления кейсами</h4>
+  <p>Компоненты для управления кейсами пациентов и обсуждениями.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>CaseList</strong></td>
+          <td><code>CaseList.tsx</code></td>
+          <td>Сетка кейсов пациентов</td>
+        </tr>
+        <tr>
+          <td><strong>CaseCard</strong></td>
+          <td><code>CaseCard.tsx</code></td>
+          <td>Индивидуальная карточка кейса пациента</td>
+        </tr>
+        <tr>
+          <td><strong>CaseCreationModal</strong></td>
+          <td><code>CaseCreationModal.tsx</code></td>
+          <td>Модальное окно создания нового кейса пациента</td>
+        </tr>
+        <tr>
+          <td><strong>CaseReadyScreen</strong></td>
+          <td><code>CaseReadyScreen.tsx</code></td>
+          <td>Экран, показываемый при выборе кейса</td>
+        </tr>
+        <tr>
+          <td><strong>PatientSelector</strong></td>
+          <td><code>PatientSelector.tsx</code></td>
+          <td>Выбор пациента из реестра FHIR</td>
+        </tr>
+        <tr>
+          <td><strong>EncounterSelector</strong></td>
+          <td><code>EncounterSelector.tsx</code></td>
+          <td>Выбор визита для создания кейса</td>
+        </tr>
+        <tr>
+          <td><strong>PatientSummaryPanel</strong></td>
+          <td><code>PatientSummaryPanel.tsx</code></td>
+          <td>Анонимизированная сводка контекста пациента</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationSidebar</strong></td>
+          <td><code>ConversationSidebar.tsx</code></td>
+          <td>Боковая панель с вкладками для истории и кейсов</td>
+        </tr>
+        <tr>
+          <td><strong>ActiveCaseBadge</strong></td>
+          <td><code>ActiveCaseBadge.tsx</code></td>
+          <td>Индикатор активного кейса в боковой панели</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>CaseCreationModal</strong> - Создание кейса с двумя вкладками
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface CaseCreationModalProps {
+  opened: boolean;
+  onClose: () => void;
+  onCreate: (caseData: CreateCaseInput) => void;
+}</code></pre>
+      </div>
+      <p><strong>Вкладка 1 - Ручной ввод:</strong></p>
+      <ul class="doc-list">
+        <li>Ввод заголовка</li>
+        <li>Селектор специальности</li>
+        <li>Селектор сложности (низкая, средняя, высокая)</li>
+        <li>Textarea анонимизированной информации о пациенте</li>
+        <li>Ввод тегов</li>
+      </ul>
+      <p><strong>Вкладка 2 - Из пациента:</strong></p>
+      <ul class="doc-list">
+        <li><code>PatientSelector</code> - поиск и выбор пациента из FHIR</li>
+        <li><code>EncounterSelector</code> - выбор визита для выбранного пациента</li>
+        <li><code>PatientSummaryPanel</code> - анонимизированный предпросмотр контекста пациента</li>
+        <li>Чекбоксы категорий данных: Демография, Диагнозы, Медикаменты, Аллергии, Витальные показатели, Лаборатория</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.8 Utility Components -->
+  <!-- ========================== -->
+  <h4 id="utility-components">6.1.8 Вспомогательные компоненты</h4>
+  <p>Вспомогательные компоненты для выбора базы знаний и медицинских калькуляторов.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Файл</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>KnowledgeBaseSelector</strong></td>
+          <td><code>KnowledgeBaseSelector.tsx</code></td>
+          <td>Переключение между курируемой и персональной KB</td>
+        </tr>
+        <tr>
+          <td><strong>CalculatorSuggestions</strong></td>
+          <td><code>CalculatorSuggestions.tsx</code></td>
+          <td>Предложение медицинских калькуляторов на основе контекста</td>
+        </tr>
+        <tr>
+          <td><strong>QuickActionCard</strong></td>
+          <td><code>QuickActionCard.tsx</code></td>
+          <td>Крупные карточки кнопок действий</td>
+        </tr>
+        <tr>
+          <td><strong>SourceReferenceCard</strong></td>
+          <td><code>SourceReferenceCard.tsx</code></td>
+          <td>Индивидуальная карточка цитирования источника</td>
+        </tr>
+        <tr>
+          <td><strong>MessageActions</strong></td>
+          <td><code>MessageActions.tsx</code></td>
+          <td>Кнопки действий для сообщений</td>
+        </tr>
+        <tr>
+          <td><strong>ChatErrorBanner</strong></td>
+          <td><code>ChatErrorBanner.tsx</code></td>
+          <td>Отображение ошибки с авто-повтором</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationListItem</strong></td>
+          <td><code>ConversationListItem.tsx</code></td>
+          <td>Один элемент разговора</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Component Relationship Diagram -->
+  <h4 id="component-relationships">Взаимосвязи компонентов</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[ChatbotPage] --> B[ChatProvider]
+    B --> C[ChatbotContent]
+    C --> D[ChatHeader]
+    C --> E[HistorySidebar]
+    C --> F[Chat Area]
+    C --> G[MessageInput]
+
+    D --> D1[KnowledgeBaseSelector]
+
+    E --> E1[ConversationSidebar]
+    E1 --> E2[ConversationList]
+    E2 --> E3[ConversationListItem]
+    E3 --> E4[ActiveCaseBadge]
+
+    F --> F1[WelcomeScreen]
+    F --> F2[CaseReadyScreen]
+    F --> F3[MessageList]
+
+    F3 --> F4[MessageItem]
+    F4 --> F5[MedicalMarkdownRenderer]
+    F5 --> F6[StreamingText]
+    F4 --> F7[SourceReferences]
+    F4 --> F8[FactCheckResult]
+    F4 --> F9[MessageActions]
+
+    F3 --> F10[StreamingIndicator]
+    F3 --> F11[TypingIndicator]
+
+    G --> G1[VoiceInputButton]
+    G --> G2[QuickReplies]
+    G --> G3[CalculatorSuggestions]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.2 State Management -->
+  <!-- ========================== -->
+  <h3 id="state-management">6.2 Управление состоянием</h3>
+  <p>AI чатбот использует <strong>архитектуру с двойным контекстом</strong> на React Context + useReducer для предсказуемого управления состоянием. Два отдельных контекста минимизируют ненужные перерисовки.</p>
+
+  <!-- Dual Context Diagram -->
+  <h4 id="dual-context-architecture">Архитектура двойного контекста</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    A[ChatProvider] --> B[ChatUIProvider]
+    A --> C[ChatDataProvider]
+    B --> D[ChatUIContext]
+    C --> E[ChatDataContext]
+    E --> F[ChatContextBridge]
+
+    G[Components] --> H{Context Hook}
+    H -->|useChatContext| F
+    H -->|useChatUIContext| D
+    H -->|useChatDataContext| E
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Оптимизация Token Batching:</strong>
+      <p>ChatDataProvider накапливает стриминговые токены в <strong>батчах по 100мс</strong>, чтобы сократить перерисовки React с 50-100 до ~10-20 на ответ. Это отдельно от 50мс SSE token buffer в streamingHelpers.</p>
+    </div>
+  </div>
+
+  <!-- State Shape -->
+  <h4 id="state-shape">Структура состояния</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface ChatState {
+  // Messages in active conversation
+  messages: Message[];
+
+  // All user conversations
+  conversations: Conversation[];
+
+  // Active conversation ID
+  activeConversationId: string | null;
+
+  // Selected knowledge base
+  selectedKnowledgeBase: KnowledgeBaseType;
+
+  // Case context for case-study conversations
+  caseContext: CaseContext | null;
+
+  // Streaming state
+  streamingState: StreamingState;
+
+  // Loading state
+  isLoading: boolean;
+
+  // Error state
+  error: string | null;
+}</code></pre>
+  </div>
+
+  <!-- Initial State -->
+  <h4 id="initial-state">Начальное состояние</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">const initialChatState: ChatState = {
+  messages: [],
+  conversations: [],
+  activeConversationId: null,
+  selectedKnowledgeBase: 'curated',
+  caseContext: null,
+  streamingState: {
+    isStreaming: false,
+    currentMessageId: null,
+    tokens: [],
+    connectionId: null,
+    error: null,
+    startTime: null,
+  },
+  isLoading: false,
+  error: null,
+};</code></pre>
+  </div>
+
+  <!-- Action Types -->
+  <h4 id="action-types">Типы действий</h4>
+  <p>Все модификации состояния проходят через типизированные действия:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Категория</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Действия с сообщениями</strong></td>
+          <td><code>SET_MESSAGES</code>, <code>ADD_MESSAGE</code>, <code>UPDATE_MESSAGE</code>, <code>DELETE_MESSAGE</code></td>
+        </tr>
+        <tr>
+          <td><strong>Действия с разговорами</strong></td>
+          <td><code>SET_CONVERSATIONS</code>, <code>ADD_CONVERSATION</code>, <code>UPDATE_CONVERSATION</code>, <code>DELETE_CONVERSATION</code>, <code>SET_ACTIVE_CONVERSATION</code></td>
+        </tr>
+        <tr>
+          <td><strong>База знаний</strong></td>
+          <td><code>SET_KNOWLEDGE_BASE</code></td>
+        </tr>
+        <tr>
+          <td><strong>Действия стриминга</strong></td>
+          <td><code>SET_STREAMING_STATE</code>, <code>APPEND_STREAMING_TOKEN</code>, <code>FLUSH_TOKENS</code>, <code>COMPLETE_STREAMING</code></td>
+        </tr>
+        <tr>
+          <td><strong>Контекст кейса</strong></td>
+          <td><code>SET_CASE_CONTEXT</code></td>
+        </tr>
+        <tr>
+          <td><strong>Состояние UI</strong></td>
+          <td><code>SET_LOADING</code>, <code>SET_ERROR</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Action Type Definition -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Полное определение типа ChatAction</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">type ChatAction =
+  // Message actions
+  | { type: 'SET_MESSAGES'; payload: Message[] }
+  | { type: 'ADD_MESSAGE'; payload: Message }
+  | { type: 'UPDATE_MESSAGE'; payload: { id: string; updates: Partial&lt;Message&gt; } }
+  | { type: 'DELETE_MESSAGE'; payload: string }
+
+  // Conversation actions
+  | { type: 'SET_CONVERSATIONS'; payload: Conversation[] }
+  | { type: 'ADD_CONVERSATION'; payload: Conversation }
+  | { type: 'UPDATE_CONVERSATION'; payload: { id: string; updates: Partial&lt;Conversation&gt; } }
+  | { type: 'DELETE_CONVERSATION'; payload: string }
+  | { type: 'SET_ACTIVE_CONVERSATION'; payload: string | null }
+
+  // Knowledge base actions
+  | { type: 'SET_KNOWLEDGE_BASE'; payload: KnowledgeBaseType }
+
+  // Streaming actions
+  | { type: 'SET_STREAMING_STATE'; payload: Partial&lt;StreamingState&gt; }
+  | { type: 'APPEND_STREAMING_TOKEN'; payload: string }
+  | { type: 'FLUSH_TOKENS'; payload: string[] }
+  | { type: 'COMPLETE_STREAMING'; payload: { messageId: string; finalContent: string } }
+
+  // Case context actions
+  | { type: 'SET_CASE_CONTEXT'; payload: CaseContext | null }
+
+  // UI state actions
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Context Hooks -->
+  <h4 id="context-hooks">Хуки контекста</h4>
+  <p>Используйте специфичные хуки-селекторы для оптимизированных перерисовок:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">// Main context hook (legacy combined)
+function useChatContext(): ChatContextValue;
+
+// Optimized selector hooks
+function useMessages(): Message[];
+function useConversations(): Conversation[];
+function useActiveConversation(): Conversation | undefined;
+function useStreamingState(): StreamingState;
+function useKnowledgeBase(): KnowledgeBaseType;</code></pre>
+  </div>
+
+  <!-- Usage Patterns -->
+  <h4 id="context-usage">Паттерны использования контекста</h4>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Базовый пример использования</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatComponent() {
+  const { state, dispatch, addMessage } = useChatContext();
+
+  const handleSend = (content: string) => {
+    addMessage({
+      id: generateId(),
+      content,
+      type: 'user',
+      timestamp: new Date(),
+      status: 'sent',
+    });
+  };
+
+  return (
+    &lt;div&gt;
+      {state.messages.map(msg => &lt;MessageItem key={msg.id} {...msg} /&gt;)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Оптимизированное использование с селекторами</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function MessageList() {
+  // Only re-renders when messages change
+  const messages = useMessages();
+
+  return (
+    &lt;div&gt;
+      {messages.map(msg => &lt;MessageItem key={msg.id} {...msg} /&gt;)}
+    &lt;/div&gt;
+  );
+}
+
+function ConversationSidebarComponent() {
+  // Only re-renders when conversations change
+  const conversations = useConversations();
+
+  return (
+    &lt;div&gt;
+      {conversations.map(conv => &lt;ConversationItem key={conv.id} {...conv} /&gt;)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Пример стриминга</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatInput() {
+  const {
+    dispatch, addMessage, startStreaming,
+    appendToken, completeStreaming
+  } = useChatContext();
+
+  const handleSend = async (content: string) => {
+    // Add user message
+    addMessage({ id: 'user-1', content, type: 'user', ... });
+
+    // Add placeholder AI message
+    const aiMsgId = 'ai-1';
+    addMessage({ id: aiMsgId, content: '', type: 'ai', isStreaming: true, ... });
+
+    // Start streaming
+    startStreaming(aiMsgId);
+
+    // Simulate streaming tokens
+    const tokens = ['Based', ' on', ' current', ' guidelines', '...'];
+    for (const token of tokens) {
+      appendToken(token);
+      await new Promise(r => setTimeout(r, 50));
+    }
+
+    // Complete streaming
+    completeStreaming(aiMsgId, 'Based on current guidelines...');
+  };
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Performance Optimizations -->
+  <h4 id="performance-optimizations">Оптимизации производительности</h4>
+  <ul class="doc-list">
+    <li><strong>useMemo для значения контекста</strong> - Предотвращает ненужные перерисовки</li>
+    <li><strong>Хуки-селекторы</strong> - Компоненты подписываются только на нужное состояние</li>
+    <li><strong>useCallback для методов</strong> - Стабильные ссылки на функции</li>
+    <li><strong>Пакетные обновления</strong> - Несколько действий в одном цикле рендера</li>
+    <li><strong>Lazy Hydration</strong> - Асинхронная загрузка данных localStorage</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 6.3 Custom Hooks -->
+  <!-- ========================== -->
+  <h3 id="hooks">6.3 Пользовательские хуки</h3>
+  <p>Пользовательские React хуки инкапсулируют сложную логику чатбота и предоставляют чистые интерфейсы компонентам. Расположение: <code>packages/app/src/emr/hooks/chat/</code></p>
+
+  <!-- Hook Index Table -->
+  <h4 id="hook-index">Индекс хуков</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Хук</th>
+          <th>Назначение</th>
+          <th>Зависимости</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>useFlowiseChat</strong></td>
+          <td>Главная оркестрация чата + Flowise</td>
+          <td>MedplumClient, ChatContext, useChatMessages</td>
+        </tr>
+        <tr>
+          <td><strong>useChatMessages</strong></td>
+          <td>Управление состоянием сообщений</td>
+          <td>ChatContext</td>
+        </tr>
+        <tr>
+          <td><strong>useConversations</strong></td>
+          <td>CRUD разговоров</td>
+          <td>MedplumClient, ChatContext</td>
+        </tr>
+        <tr>
+          <td><strong>useDocumentLibrary</strong></td>
+          <td>Управление документами</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><strong>usePatientCases</strong></td>
+          <td>CRUD кейсов пациентов</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><strong>useVoiceInput</strong></td>
+          <td>Запись речи в текст</td>
+          <td>MediaRecorder + Supabase STT</td>
+        </tr>
+        <tr>
+          <td><strong>useFactCheck</strong></td>
+          <td>Интеграция проверки фактов</td>
+          <td>factCheckService</td>
+        </tr>
+        <tr>
+          <td><strong>useCalculatorIntegration</strong></td>
+          <td>Предложения калькуляторов</td>
+          <td>calculatorRecommendation</td>
+        </tr>
+        <tr>
+          <td><strong>useMobileKeyboard</strong></td>
+          <td>Видимость мобильной клавиатуры</td>
+          <td>window resize events</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- useFlowiseChat -->
+  <h4 id="useFlowiseChat">useFlowiseChat</h4>
+  <p><strong>Файл:</strong> <code>useFlowiseChat.ts</code></p>
+  <p>Оркестрирует весь поток чата от отправки сообщения до завершения ответа AI.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseFlowiseChatOptions {
+  specialty?: string;              // Medical specialty for endpoint selection
+  onError?: (error: Error) => void; // Error callback
+  retryConfig?: RetryConfig;       // Retry configuration (optional)
+}
+
+interface RetryConfig {
+  maxRetries?: number;             // Max retry attempts (default: 3)
+  baseDelay?: number;              // Initial delay in ms (default: 2000)
+  maxDelay?: number;               // Maximum delay in ms (default: 10000)
+  backoffMultiplier?: number;      // Exponential backoff (default: 2)
+}
+
+interface UseFlowiseChatReturn {
+  sendMessage: (content: string, files?: File[]) => Promise&lt;void&gt;;
+  stopGeneration: () => void;
+  isGenerating: boolean;
+  error: string | null;
+  retryState: RetryState;
+  retry: () => void;
+  dismissError: () => void;
+  cancelAutoRetry: () => void;
+}</code></pre>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Пример использования</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatInterface() {
+  const {
+    sendMessage,
+    stopGeneration,
+    isGenerating,
+    error,
+    retryState,
+    retry,
+    dismissError,
+    cancelAutoRetry,
+  } = useFlowiseChat({
+    specialty: 'cardiology',
+    onError: (err) => console.error('Chat error:', err),
+  });
+
+  return (
+    &lt;&gt;
+      &lt;MessageInput
+        onSend={(content, files) => sendMessage(content, files)}
+        onStop={stopGeneration}
+        isGenerating={isGenerating}
+      /&gt;
+      {error && (
+        &lt;ChatErrorBanner
+          error={error}
+          retryState={retryState}
+          onRetry={retry}
+          onDismiss={dismissError}
+          onCancelAutoRetry={cancelAutoRetry}
+        /&gt;
+      )}
+    &lt;/&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Внутренний поток</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <ol class="doc-list">
+        <li><strong>Отправка сообщения</strong> - Пользователь отправляет сообщение через <code>sendMessage()</code></li>
+        <li><strong>Инъекция контекста кейса</strong> - Если первое сообщение с кейсом, добавляет контекст кейса в начало</li>
+        <li><strong>Авто-создание разговора</strong> - Создаёт новый разговор если не существует</li>
+        <li><strong>Добавление сообщений в состояние</strong> - Добавляет сообщение пользователя и стриминговый AI placeholder</li>
+        <li><strong>Запуск стриминга</strong> - Начинает стриминг токенов с Flowise endpoint</li>
+        <li><strong>Обработка ошибок</strong> - Перехватывает и устанавливает состояние ошибки, завершает с сообщением об ошибке</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- useChatMessages -->
+  <h4 id="useChatMessages">useChatMessages</h4>
+  <p><strong>Файл:</strong> <code>useChatMessages.ts</code></p>
+  <p>Предоставляет CRUD операции для сообщений с правильной типизацией.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseChatMessagesReturn {
+  messages: Message[];
+  isStreaming: boolean;
+  streamingMessageId: string | null;
+  addUserMessage: (content: string) => Message;
+  addAIMessage: (content: string, isStreaming?: boolean) => Message;
+  updateMessageContent: (id: string, content: string) => void;
+  updateMessageStatus: (id: string, status: MessageStatus) => void;
+  completeStreaming: (id: string, finalContent: string) => void;
+  deleteMessage: (id: string) => void;
+  clearMessages: () => void;
+}</code></pre>
+  </div>
+
+  <!-- useConversations -->
+  <h4 id="useConversations">useConversations</h4>
+  <p><strong>Файл:</strong> <code>useConversations.ts</code></p>
+  <p>Управляет списком разговоров и сохранением с гибридной синхронизацией localStorage/FHIR.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseConversationsReturn {
+  conversations: Conversation[];
+  activeConversation: Conversation | undefined;
+  isLoading: boolean;
+  error: string | null;
+  createConversation: (data: CreateConversationInput) => Promise&lt;Conversation&gt;;
+  selectConversation: (id: string) => void;
+  deleteConversation: (id: string) => Promise&lt;void&gt;;
+  refreshConversations: () => Promise&lt;void&gt;;
+}</code></pre>
+  </div>
+
+  <!-- useDocumentLibrary -->
+  <h4 id="useDocumentLibrary">useDocumentLibrary</h4>
+  <p><strong>Файл:</strong> <code>useDocumentLibrary.ts</code></p>
+  <p>Управляет библиотекой персональных документов с загрузкой и поиском.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseDocumentLibraryReturn {
+  documents: UserDocument[];
+  isLoading: boolean;
+  error: string | null;
+  uploadDocument: (file: File, metadata: DocumentMetadata) => Promise&lt;UserDocument&gt;;
+  deleteDocument: (id: string) => Promise&lt;void&gt;;
+  refreshDocuments: () => Promise&lt;void&gt;;
+  searchDocuments: (query: string) => UserDocument[];
+  filterByCategory: (category: DocumentCategory) => UserDocument[];
+}</code></pre>
+  </div>
+
+  <!-- usePatientCases -->
+  <h4 id="usePatientCases">usePatientCases</h4>
+  <p><strong>Файл:</strong> <code>usePatientCases.ts</code></p>
+  <p>Управляет кейсами пациентов для AI обсуждений с фильтрацией.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UsePatientCasesReturn {
+  cases: PatientCase[];
+  isLoading: boolean;
+  error: string | null;
+  createCase: (data: CreateCaseInput) => Promise&lt;PatientCase&gt;;
+  selectCase: (id: string) => void;
+  deleteCase: (id: string) => Promise&lt;void&gt;;
+  filterBySpecialty: (specialty: string) => PatientCase[];
+  filterByComplexity: (complexity: CaseComplexity) => PatientCase[];
+}</code></pre>
+  </div>
+
+  <!-- useVoiceInput -->
+  <h4 id="useVoiceInput">useVoiceInput</h4>
+  <p><strong>Файл:</strong> <code>useVoiceInput.ts</code></p>
+  <p>Запись речи в текст с использованием MediaRecorder API и Supabase Edge Function бэкендов.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseVoiceInputReturn {
+  isRecording: boolean;
+  transcript: string;
+  error: string | null;
+  startRecording: () => void;
+  stopRecording: () => void;
+  clearTranscript: () => void;
+  selectedLanguage: 'ka' | 'en' | 'ru';
+  setLanguage: (lang: 'ka' | 'en' | 'ru') => void;
+}</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Поток голосового ввода:</strong>
+      <ol>
+        <li><strong>Начало записи</strong> - Запрашивает доступ к микрофону через MediaRecorder API</li>
+        <li><strong>Остановка записи</strong> - Останавливает запись, конвертирует аудио в base64</li>
+        <li><strong>Отправка на STT Proxy</strong> - POST запрос на соответствующую Supabase Edge Function</li>
+        <li><strong>Получение транскрипта</strong> - Edge Function возвращает транскрибированный текст</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- useFactCheck -->
+  <h4 id="useFactCheck">useFactCheck</h4>
+  <p><strong>Файл:</strong> <code>useFactCheck.ts</code></p>
+  <p>Верификация утверждений AI через сервис проверки фактов.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseFactCheckReturn {
+  isChecking: boolean;
+  results: Map&lt;string, FactCheckResult&gt;; // messageId -> result
+  verify: (messageId: string, content: string) => Promise&lt;FactCheckResult&gt;;
+  clearResult: (messageId: string) => void;
+}</code></pre>
+  </div>
+
+  <!-- useCalculatorIntegration -->
+  <h4 id="useCalculatorIntegration">useCalculatorIntegration</h4>
+  <p><strong>Файл:</strong> <code>useCalculatorIntegration.ts</code></p>
+  <p>Предложение медицинских калькуляторов на основе контекста разговора (интеграция MDCalc).</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseCalculatorIntegrationReturn {
+  suggestions: Calculator[];
+  getSuggestions: (message: string) => Calculator[];
+  openCalculator: (calculator: Calculator) => void;
+}</code></pre>
+  </div>
+
+  <!-- useMobileKeyboard -->
+  <h4 id="useMobileKeyboard">useMobileKeyboard</h4>
+  <p><strong>Файл:</strong> <code>useMobileKeyboard.ts</code></p>
+  <p>Определяет видимость мобильной клавиатуры для корректировки layout чата.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseMobileKeyboardReturn {
+  isKeyboardVisible: boolean;
+}</code></pre>
+  </div>
+
+  <!-- Hook Testing Patterns -->
+  <h4 id="hook-testing">Паттерны тестирования хуков</h4>
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Setup тестирования и пример</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">import { renderHook, act } from '@testing-library/react';
+import { MedplumProvider } from '@medplum/react';
+import { ChatProvider } from '../../contexts/ChatContext';
+
+const wrapper = ({ children }) => (
+  &lt;MedplumProvider medplum={mockMedplum}&gt;
+    &lt;ChatProvider&gt;
+      {children}
+    &lt;/ChatProvider&gt;
+  &lt;/MedplumProvider&gt;
+);
+
+describe('useChatMessages', () => {
+  it('adds user message correctly', () => {
+    const { result } = renderHook(() => useChatMessages(), { wrapper });
+
+    act(() => {
+      const message = result.current.addUserMessage('Test message');
+      expect(message.type).toBe('user');
+      expect(message.content).toBe('Test message');
+    });
+
+    expect(result.current.messages).toHaveLength(1);
+  });
+
+  it('handles streaming message updates', () => {
+    const { result } = renderHook(() => useChatMessages(), { wrapper });
+    let aiMsgId: string;
+
+    act(() => {
+      const aiMsg = result.current.addAIMessage('', true);
+      aiMsgId = aiMsg.id;
+    });
+
+    act(() => {
+      result.current.updateMessageContent(aiMsgId, 'Based on');
+    });
+
+    expect(result.current.messages[0].content).toBe('Based on');
+
+    act(() => {
+      result.current.completeStreaming(aiMsgId, 'Based on current guidelines...');
+    });
+
+    expect(result.current.messages[0].isStreaming).toBe(false);
+    expect(result.current.messages[0].status).toBe('sent');
+  });
+});</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Styling Patterns -->
+  <h3 id="styling-patterns">6.4 Паттерны стилизации</h3>
+  <p>Все компоненты используют согласованные паттерны стилизации:</p>
+
+  <ul class="doc-list">
+    <li><strong>CSS Modules</strong> для изолированных стилей</li>
+    <li><strong>Переменные темы EMR</strong> из <code>theme.css</code></li>
+    <li><strong>Компоненты Mantine</strong> для базового UI</li>
+    <li><strong>Mobile-first</strong> адаптивный дизайн</li>
+  </ul>
+
+  <div class="doc-code-block">
+    <pre><code class="language-css">/* Common CSS variables used */
+var(--emr-bg-card)          /* Card backgrounds */
+var(--emr-text-primary)     /* Primary text */
+var(--emr-border-color)     /* Borders */
+var(--emr-primary)          /* Primary actions */
+var(--emr-gradient-primary) /* Buttons */
+var(--emr-shadow-md)        /* Card shadows */</code></pre>
+  </div>
+
+  <!-- Accessibility -->
+  <h3 id="accessibility">6.5 Доступность</h3>
+  <p>Все компоненты реализуют:</p>
+
+  <ul class="doc-list">
+    <li><strong>Навигация с клавиатуры</strong> (<kbd>Tab</kbd>, <kbd>Enter</kbd>, <kbd>Escape</kbd>)</li>
+    <li><strong>ARIA метки</strong> для скринридеров</li>
+    <li><strong>Управление фокусом</strong> для модальных окон и наложений</li>
+    <li><strong>Контраст цветов</strong> (минимум WCAG AA)</li>
+    <li><strong>Размеры touch-целей</strong> (минимум 44px)</li>
+  </ul>
+
+</section>

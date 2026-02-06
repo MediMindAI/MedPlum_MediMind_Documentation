@@ -13,24 +13,24 @@ const SearchIndexer = {
       'technical-overview': 'Platform',
       'overview': 'Getting Started',
       'features': 'Features',
-      'architecture': 'Technical Reference',
-      'troubleshooting': 'Support',
+      'architecture': 'Patient Registration',
+      'troubleshooting': 'Patient Registration',
       'contact': 'Support'
     },
     ka: {
       'technical-overview': 'პლატფორმა',
       'overview': 'დაწყება',
       'features': 'ფუნქციები',
-      'architecture': 'ტექნიკური რეფერენსი',
-      'troubleshooting': 'მხარდაჭერა',
+      'architecture': 'პაციენტის რეგისტრაცია',
+      'troubleshooting': 'პაციენტის რეგისტრაცია',
       'contact': 'მხარდაჭერა'
     },
     ru: {
       'technical-overview': 'Платформа',
       'overview': 'Начало работы',
       'features': 'Функции',
-      'architecture': 'Техническая справка',
-      'troubleshooting': 'Поддержка',
+      'architecture': 'Регистрация пациентов',
+      'troubleshooting': 'Регистрация пациентов',
       'contact': 'Поддержка'
     }
   },

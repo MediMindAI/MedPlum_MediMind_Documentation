@@ -1,0 +1,1280 @@
+<section class="doc-section" id="ai-chatbot-integration">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">5</span> Интеграция AI-чатбота и сервисы</h2>
+  </div>
+
+  <p>Этот раздел документирует техническую реализацию AI медицинского чатбота, включая архитектуру сервисного слоя, сохранение данных FHIR, интеграцию потоковой передачи Flowise AI и бэкенд-инфраструктуру.</p>
+
+  <!-- ========================== -->
+  <!-- 5.1 Services Overview -->
+  <!-- ========================== -->
+  <h3 id="services">5.1 Обзор сервисов</h3>
+  <p>Сервисный слой обеспечивает бизнес-логику и интеграцию с внешними системами для AI-чатбота. Все сервисы являются чистыми TypeScript модулями, которые принимают зависимости явно без глобального состояния.</p>
+
+  <!-- Service Categories -->
+  <h4 id="service-categories">Категории сервисов</h4>
+  <p>Сервисный слой AI-чатбота организован в <strong>8 категорий</strong>, содержащих <strong>14 специализированных сервисов</strong>:</p>
+
+  <div class="doc-form-sections-grid-8">
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">1</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Потоковая передача</div>
+        <div class="doc-form-section-desc">SSE оркестрация и буферизация токенов</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">2</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Сохранение</div>
+        <div class="doc-form-section-desc">FHIR + localStorage гибридное хранилище</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">3</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Документы</div>
+        <div class="doc-form-section-desc">Загрузка и управление документами</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">4</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Улучшение</div>
+        <div class="doc-form-section-desc">Проверка фактов и калькуляторы</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">5</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Вложения</div>
+        <div class="doc-form-section-desc">OCR и обработка изображений</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">6</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Контекст пациента</div>
+        <div class="doc-form-section-desc">Анонимизированные сводки пациентов</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">7</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Госпитальная KB</div>
+        <div class="doc-form-section-desc">База знаний организации</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">8</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Личная KB</div>
+        <div class="doc-form-section-desc">Персональные векторные хранилища</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete Service Index -->
+  <h4 id="service-index">Полный индекс сервисов</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Сервис</th>
+          <th>Назначение</th>
+          <th>Основная зависимость</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>streamingService</code></td>
+          <td>Оркестрация SSE потоковой передачи</td>
+          <td>sseClient</td>
+        </tr>
+        <tr>
+          <td><code>sseClient</code></td>
+          <td>Низкоуровневое SSE соединение</td>
+          <td>fetch API</td>
+        </tr>
+        <tr>
+          <td><code>streamingHelpers</code></td>
+          <td>Буферизация токенов, логика повторных попыток</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>conversationService</code></td>
+          <td>FHIR Communication CRUD</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>localStorageService</code></td>
+          <td>Офлайн сохранение</td>
+          <td>localStorage API</td>
+        </tr>
+        <tr>
+          <td><code>documentService</code></td>
+          <td>Загрузка/управление документами</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>caseService</code></td>
+          <td>CRUD случаев пациентов</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>factCheckService</code></td>
+          <td>Верификация AI утверждений</td>
+          <td>Flowise API</td>
+        </tr>
+        <tr>
+          <td><code>calculatorRecommendation</code></td>
+          <td>Рекомендации калькуляторов</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>chatAttachmentService</code></td>
+          <td>Обработка файловых вложений (OCR, image AI)</td>
+          <td>Tesseract.js, Gemini Vision</td>
+        </tr>
+        <tr>
+          <td><code>caseOcrService</code></td>
+          <td>OCR извлечение для файлов случаев</td>
+          <td>Gemini Vision</td>
+        </tr>
+        <tr>
+          <td><code>patientContextService</code></td>
+          <td>Анонимизированные сводки пациентов</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>hospitalKnowledgeBaseService</code></td>
+          <td>Управление базой знаний больницы</td>
+          <td>Supabase Edge Functions</td>
+        </tr>
+        <tr>
+          <td><code>personalVectorStoreService</code></td>
+          <td>Персональное векторное хранилище пользователя</td>
+          <td>Supabase Edge Functions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Service Dependency Diagram -->
+  <h4 id="service-dependencies">Зависимости сервисов</h4>
+  <p>Следующая диаграмма показывает, как сервисы зависят друг от друга:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Streaming["Streaming Services"]
+        SS[streamingService]
+        SC[sseClient]
+        SH[streamingHelpers]
+    end
+
+    subgraph Persistence["Persistence Services"]
+        CS[conversationService]
+        LS[localStorageService]
+    end
+
+    subgraph Documents["Document Services"]
+        DS[documentService]
+        CaS[caseService]
+    end
+
+    subgraph Enhancement["Enhancement Services"]
+        FC[factCheckService]
+        CR[calculatorRecommendation]
+    end
+
+    subgraph Attachments["Attachment Services"]
+        CAS[chatAttachmentService]
+        COS[caseOcrService]
+    end
+
+    subgraph External["External APIs"]
+        MC[(MedplumClient)]
+        FL[(Flowise API)]
+        GV[(Gemini Vision)]
+        TS[(Tesseract.js)]
+        SB[(Supabase)]
+    end
+
+    SS --> SC
+    SS --> SH
+    SS --> CS
+    SC --> FL
+
+    CS --> MC
+    DS --> MC
+    CaS --> MC
+
+    FC --> FL
+    CAS --> TS
+    CAS --> GV
+    COS --> GV
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Streaming Service API -->
+  <h4 id="streaming-api">API сервиса потоковой передачи</h4>
+  <p><code>streamingService</code> предоставляет высокоуровневый API для потоковой передачи AI ответов:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface StreamingOptions {
+  endpoint: string;              // Flowise chatflow URL
+  message: string;               // User message
+  sessionId: string;             // Conversation ID
+  knowledgeBaseType: 'curated' | 'personal';
+  specialty?: string;            // Medical specialty
+  caseContext?: string;          // Anonymized patient info
+  onToken: (token: string, accumulated: string) => void;
+  onComplete: (fullResponse: string) => void;
+  onError: (error: Error) => void;
+  onStart?: () => void;
+  signal?: AbortSignal;          // For cancellation
+}
+
+interface StreamingSession {
+  connectionId: string;          // Unique session ID
+  sessionId: string;             // Conversation ID
+  startTime: number;             // Timestamp (ms)
+  abort: () => void;             // Abort function
+}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Функция</th>
+          <th>Параметры</th>
+          <th>Возвращает</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>startStreaming</code></td>
+          <td><code>options: StreamingOptions</code></td>
+          <td><code>Promise&lt;StreamingSession&gt;</code></td>
+          <td>Инициирует новую SSE потоковую сессию</td>
+        </tr>
+        <tr>
+          <td><code>stopStreaming</code></td>
+          <td>-</td>
+          <td><code>void</code></td>
+          <td>Останавливает текущую активную сессию</td>
+        </tr>
+        <tr>
+          <td><code>isStreaming</code></td>
+          <td>-</td>
+          <td><code>boolean</code></td>
+          <td>Возвращает, активна ли потоковая передача</td>
+        </tr>
+        <tr>
+          <td><code>getCurrentSession</code></td>
+          <td>-</td>
+          <td><code>StreamingSession | null</code></td>
+          <td>Возвращает объект активной сессии</td>
+        </tr>
+        <tr>
+          <td><code>abortAll</code></td>
+          <td>-</td>
+          <td><code>void</code></td>
+          <td>Прерывает все SSE соединения</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Token Buffering -->
+  <h4 id="token-buffering">Буферизация токенов</h4>
+  <p>AI ответы могут генерировать <strong>50-100 токенов/секунду</strong>. Чтобы предотвратить избыточные обновления UI, токены группируются с использованием буфера с задержкой:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface TokenBuffer {
+  tokens: string[];         // Accumulated tokens
+  callback: (batch: string) => void;
+  debounceMs: number;       // Default: 50ms
+  timeoutId: NodeJS.Timeout | null;
+}
+
+// Buffer batches tokens every 50ms
+const buffer = createTokenBuffer(
+  (batch) => updateUI(batch),
+  50  // debounce milliseconds
+);</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Зачем буферизировать токены?</strong>
+      <ul>
+        <li>Обновление React state 100 раз/секунду вызывает подтормаживание UI</li>
+        <li>50ms debounce группирует токены в плавные пакеты</li>
+        <li>Результат: ощущение реального времени без снижения производительности</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Retry Logic -->
+  <h4 id="retry-logic">Экспоненциальный Backoff при повторных попытках</h4>
+  <p>Временные сетевые сбои обрабатываются с экспоненциальным backoff:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface RetryOptions {
+  initialDelayMs: number;   // First retry delay (e.g., 1000ms)
+  maxDelayMs: number;       // Max retry delay (e.g., 10000ms)
+  multiplier: number;       // Backoff multiplier (e.g., 2)
+  maxRetries: number;       // Max attempts (e.g., 3)
+}
+
+// Retry sequence: 1s -> 2s -> 4s -> fail</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Попытка</th>
+          <th>Задержка</th>
+          <th>Действие</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>-</td>
+          <td>Начальный запрос</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>1,000ms</td>
+          <td>Первая повторная попытка</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>2,000ms</td>
+          <td>Вторая повторная попытка</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>4,000ms</td>
+          <td>Финальная повторная попытка или отказ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.2 FHIR Integration -->
+  <!-- ========================== -->
+  <h3 id="fhir">5.2 Интеграция FHIR</h3>
+  <p>AI-чатбот использует <strong>FHIR R4 ресурсы</strong> для сохранения данных, обеспечивая интероперабельность и соответствие стандартам клинических данных. Все пользовательские расширения следуют шаблону: <code>http://medimind.ge/fhir/StructureDefinition/{name}</code></p>
+
+  <!-- FHIR Resources Used -->
+  <h4 id="fhir-resources">Используемые FHIR ресурсы</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Ресурс</th>
+          <th>Назначение</th>
+          <th>Ключевые расширения</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>Метаданные разговора</td>
+          <td>conversation-session-id, conversation-knowledge-base</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentReference</strong></td>
+          <td>Случаи пациентов, документы пользователей</td>
+          <td>case-anonymized-info, document-vector-store-file-id</td>
+        </tr>
+        <tr>
+          <td><strong>Binary</strong></td>
+          <td>Хранение файлов документов</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>Practitioner</strong></td>
+          <td>Ссылка на векторное хранилище пользователя</td>
+          <td>user-vector-store</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Communication Resource -->
+  <h4 id="communication-resource">Ресурс Communication (Разговоры)</h4>
+  <p>Хранит метаданные разговора, включая заголовок, тип базы знаний, количество сообщений и ID сессии:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "Communication",
+  "id": "conv-12345",
+  "status": "in-progress",
+  "sender": {
+    "reference": "Practitioner/user-456"
+  },
+  "topic": {
+    "text": "Treatment guidelines for atrial fibrillation"
+  },
+  "sent": "2024-03-15T10:30:00Z",
+  "received": "2024-03-15T10:35:00Z",
+  "extension": [
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-session-id",
+      "valueString": "session-1710498600-abc123"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-knowledge-base",
+      "valueString": "curated"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-specialty",
+      "valueString": "cardiology"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-type",
+      "valueString": "general"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-message-count",
+      "valueInteger": 10
+    }
+  ],
+  "about": [
+    {
+      "reference": "DocumentReference/case-789"
+    }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- Field Mappings -->
+  <h4 id="field-mappings">Сопоставление полей TypeScript с FHIR</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поле TypeScript</th>
+          <th>Путь FHIR</th>
+          <th>Тип</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Communication.id</td>
+          <td>string</td>
+        </tr>
+        <tr>
+          <td><code>userId</code></td>
+          <td>Communication.sender.reference</td>
+          <td>string (Practitioner/{id})</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td>Communication.topic.text</td>
+          <td>string (макс 200 символов)</td>
+        </tr>
+        <tr>
+          <td><code>sessionId</code></td>
+          <td>extension[conversation-session-id].valueString</td>
+          <td>string (UUID)</td>
+        </tr>
+        <tr>
+          <td><code>knowledgeBaseType</code></td>
+          <td>extension[conversation-knowledge-base].valueString</td>
+          <td>'curated' | 'personal'</td>
+        </tr>
+        <tr>
+          <td><code>messageCount</code></td>
+          <td>extension[conversation-message-count].valueInteger</td>
+          <td>number</td>
+        </tr>
+        <tr>
+          <td><code>createdAt</code></td>
+          <td>Communication.sent</td>
+          <td>date-time (ISO 8601)</td>
+        </tr>
+        <tr>
+          <td><code>status</code></td>
+          <td>Communication.status</td>
+          <td>in-progress | completed | entered-in-error</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Extension URLs Reference -->
+  <h4 id="extension-urls">Справка по URL расширений</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">// Conversation Extensions
+http://medimind.ge/fhir/StructureDefinition/conversation-session-id
+http://medimind.ge/fhir/StructureDefinition/conversation-knowledge-base
+http://medimind.ge/fhir/StructureDefinition/conversation-specialty
+http://medimind.ge/fhir/StructureDefinition/conversation-type
+http://medimind.ge/fhir/StructureDefinition/conversation-message-count
+http://medimind.ge/fhir/StructureDefinition/conversation-last-preview
+
+// Document Extensions
+http://medimind.ge/fhir/StructureDefinition/document-category
+http://medimind.ge/fhir/StructureDefinition/document-tags
+http://medimind.ge/fhir/StructureDefinition/document-upload-status
+http://medimind.ge/fhir/StructureDefinition/document-processing-status
+http://medimind.ge/fhir/StructureDefinition/document-vector-store-file-id
+http://medimind.ge/fhir/StructureDefinition/document-openai-file-id
+
+// Case Extensions
+http://medimind.ge/fhir/StructureDefinition/case-anonymized-info
+http://medimind.ge/fhir/StructureDefinition/case-specialty
+http://medimind.ge/fhir/StructureDefinition/case-complexity
+http://medimind.ge/fhir/StructureDefinition/case-tags
+
+// User Extensions
+http://medimind.ge/fhir/StructureDefinition/user-vector-store</code></pre>
+  </div>
+
+  <!-- Hybrid Persistence Strategy -->
+  <h4 id="hybrid-persistence">Стратегия гибридного сохранения</h4>
+  <p>Чатбот использует гибридный подход FHIR + localStorage для оптимальной производительности:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[User Action] --> B[Update UI State]
+    B --> C[Save to localStorage]
+    C --> D[Save to FHIR]
+    D --> E{Success?}
+    E -->|Yes| F[Complete]
+    E -->|No| G[Fallback to localStorage]
+    G --> F
+
+    style C fill:#f59e0b,stroke:#d97706,color:#000
+    style D fill:#10b981,stroke:#059669,color:#fff
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Преимущества гибридного сохранения:</strong>
+      <ul>
+        <li><strong>Мгновенные обновления UI</strong> - Не нужно ждать ответа сервера</li>
+        <li><strong>Офлайн возможности</strong> - Работает без сети</li>
+        <li><strong>Серверное сохранение</strong> - Данные сохраняются после очистки браузера</li>
+        <li><strong>Кросс-устройственная синхронизация</strong> - FHIR обеспечивает доступ с нескольких устройств</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.3 Flowise Integration -->
+  <!-- ========================== -->
+  <h3 id="flowise">5.3 Интеграция Flowise</h3>
+  <p>Чатбот интегрирован с <strong>Flowise AI</strong>, платформой с открытым исходным кодом low-code для создания LLM приложений. Flowise обеспечивает AI инференс с оркестрацией chatflow, интеграцией базы знаний и потоковыми ответами через Server-Sent Events (SSE).</p>
+
+  <!-- Architecture -->
+  <h4 id="flowise-architecture">Архитектура Flowise</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[React Frontend] -->|SSE Request| B[Flowise API]
+    B --> C[Chatflow]
+    C --> D[Vector Store]
+    C --> E[LLM Model]
+    E -->|Streaming Tokens| A
+
+    subgraph KB["Knowledge Bases"]
+        D1[Curated Medical KB]
+        D2[Personal Documents]
+    end
+    D --> KB
+
+    subgraph Models["LLM Options"]
+        E1[GPT-4]
+        E2[Claude]
+    end
+    E --> Models
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- SSE Request Format -->
+  <h4 id="sse-request">Формат SSE запроса</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-http">POST https://flowise.example.com/api/v1/prediction/abc123
+Content-Type: application/json
+Accept: text/event-stream
+
+{
+  "question": "What is the treatment for atrial fibrillation?",
+  "sessionId": "conv-12345",
+  "knowledgeBase": "curated",
+  "specialty": "cardiology",
+  "caseContext": "Patient with CHADS2-VASc 4...",
+  "streaming": true
+}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поле</th>
+          <th>Тип</th>
+          <th>Обязательно</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>question</code></td>
+          <td>string</td>
+          <td>Да</td>
+          <td>Сообщение/вопрос пользователя</td>
+        </tr>
+        <tr>
+          <td><code>sessionId</code></td>
+          <td>string</td>
+          <td>Да</td>
+          <td>ID разговора для непрерывности контекста</td>
+        </tr>
+        <tr>
+          <td><code>knowledgeBase</code></td>
+          <td>string</td>
+          <td>Нет</td>
+          <td>'curated' или 'personal' (по умолчанию: 'curated')</td>
+        </tr>
+        <tr>
+          <td><code>specialty</code></td>
+          <td>string</td>
+          <td>Нет</td>
+          <td>Медицинская специальность для контекста</td>
+        </tr>
+        <tr>
+          <td><code>caseContext</code></td>
+          <td>string</td>
+          <td>Нет</td>
+          <td>Анонимизированная информация о случае пациента</td>
+        </tr>
+        <tr>
+          <td><code>streaming</code></td>
+          <td>boolean</td>
+          <td>Да</td>
+          <td>Всегда true для SSE</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SSE Response Format -->
+  <h4 id="sse-response">Формат SSE ответа</h4>
+  <p>Flowise возвращает Server-Sent Events со следующей структурой:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">data: {"event":"start"}
+
+data: {"event":"token","data":"Based"}
+
+data: {"event":"token","data":" on"}
+
+data: {"event":"token","data":" the"}
+
+data: {"event":"token","data":" latest"}
+
+data: {"event":"metadata","data":{"sources":[...]}}
+
+data: {"event":"end"}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Событие</th>
+          <th>Данные</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>start</code></td>
+          <td>null</td>
+          <td>Поток начался</td>
+        </tr>
+        <tr>
+          <td><code>token</code></td>
+          <td>string</td>
+          <td>Один токен от LLM</td>
+        </tr>
+        <tr>
+          <td><code>metadata</code></td>
+          <td>object</td>
+          <td>Дополнительные данные (источники, цитаты)</td>
+        </tr>
+        <tr>
+          <td><code>end</code></td>
+          <td>null</td>
+          <td>Поток завершен</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Routing Markers -->
+  <h4 id="routing-markers">Маркеры маршрутизации запросов</h4>
+  <p>Специальные маркеры в сообщениях направляют запросы на разные Flowise chatflow:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Маркер</th>
+          <th>Назначение</th>
+          <th>Целевая конечная точка</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&lt;&lt;CASE_DISCUSSION&gt;&gt;</code></td>
+          <td>Направляет к обсуждению конкретного случая</td>
+          <td>Эндпоинт кардиологии/OB-GYN</td>
+        </tr>
+        <tr>
+          <td><code>&lt;&lt;BG_INTERPRETATION&gt;&gt;</code></td>
+          <td>Направляет к интерпретации ABG газов крови</td>
+          <td><code>VITE_FLOWISE_ABG_URL</code></td>
+        </tr>
+        <tr>
+          <td><code>&lt;&lt;BG_ACTION_PLAN&gt;&gt;</code></td>
+          <td>Направляет к клиническому плану действий</td>
+          <td><code>VITE_FLOWISE_ACTION_PLAN_URL</code></td>
+        </tr>
+        <tr>
+          <td><code>CUSTOM_TEMPLATE:</code></td>
+          <td>Направляет к обработке шаблона</td>
+          <td>Эндпоинт для конкретной формы</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Performance Metrics -->
+  <h4 id="performance-metrics">Метрики производительности</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Метрика</th>
+          <th>Значение</th>
+          <th>Примечания</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Время до первого токена</td>
+          <td>500-1000ms</td>
+          <td>Начальный ответ LLM</td>
+        </tr>
+        <tr>
+          <td>Токенов в секунду</td>
+          <td>20-50</td>
+          <td>Скорость потоковой передачи</td>
+        </tr>
+        <tr>
+          <td>Общее время ответа</td>
+          <td>5-15s</td>
+          <td>Для ответа в 500 слов</td>
+        </tr>
+        <tr>
+          <td>Время векторного поиска</td>
+          <td>100-300ms</td>
+          <td>RAG извлечение</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.4 Backend Services -->
+  <!-- ========================== -->
+  <h3 id="backend">5.4 Бэкенд-сервисы</h3>
+  <p>Доступ ко всем AI сервисам осуществляется через <strong>Supabase Edge Functions</strong> (Deno runtime) или прямые вызовы Flowise API. Фронтенд никогда не взаимодействует напрямую с API AI провайдеров - edge functions служат безопасными прокси с применением CORS, аутентификацией и ограничением частоты запросов.</p>
+
+  <!-- Supabase Edge Functions -->
+  <h4 id="edge-functions">Supabase Edge Functions</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Функция</th>
+          <th>Назначение</th>
+          <th>Аутентификация</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>abg-ai-proxy</code></td>
+          <td>ABG OCR (Gemini) + Flowise интерпретация</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>mediscribe-generator</code></td>
+          <td>Генерация форм (Начальная консультация, Форма 100)</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>georgian-tts-proxy</code></td>
+          <td>Enagram STT для грузинской речи</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>google-stt-proxy</code></td>
+          <td>Google Chirp 2 STT для английского/русского</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>patient-chatbot</code></td>
+          <td>Чатбот для пациентов (GPT-4o-mini)</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-upload</code></td>
+          <td>Загрузка документов в OpenAI Vector Store</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-manage</code></td>
+          <td>Управление документами базы знаний</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-delete</code></td>
+          <td>Удаление документов из Vector Store</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>manageVectorStore</code></td>
+          <td>Создание/получение/удаление личного векторного хранилища</td>
+          <td>x-practitioner-id</td>
+        </tr>
+        <tr>
+          <td><code>upload-document-to-openai</code></td>
+          <td>Загрузка личных документов в векторное хранилище пользователя</td>
+          <td>x-practitioner-id</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AI Models Reference -->
+  <h4 id="ai-models">Справка по AI моделям</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Сервис</th>
+          <th>Модель</th>
+          <th>Температура</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Чатбот пациента</td>
+          <td>OpenAI gpt-4o-mini</td>
+          <td>0.7</td>
+          <td>Чат для пациентов (6 режимов)</td>
+        </tr>
+        <tr>
+          <td>ABG OCR</td>
+          <td>Google gemini-2.0-flash-exp</td>
+          <td>0.1</td>
+          <td>Извлечение значений газов крови</td>
+        </tr>
+        <tr>
+          <td>ABG интерпретация</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.1</td>
+          <td>Клинический анализ</td>
+        </tr>
+        <tr>
+          <td>Медицинский чат</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.3</td>
+          <td>Чатбот для персонала</td>
+        </tr>
+        <tr>
+          <td>План действий</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.3</td>
+          <td>Планирование лечения</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Руководство по температуре:</strong>
+      <ul>
+        <li><strong>0.1</strong> - OCR, ABG интерпретация (высокая точность, минимальная креативность)</li>
+        <li><strong>0.3</strong> - Медицинский чат, планы действий (баланс точности с гибкостью)</li>
+        <li><strong>0.7</strong> - Чатбот пациента (разговорный, эмпатичный тон)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Speech-to-Text Services -->
+  <h4 id="stt-services">Сервисы преобразования речи в текст</h4>
+  <p>Чатбот поддерживает голосовой ввод на трех языках с использованием специализированных STT сервисов:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Язык</th>
+          <th>Сервис</th>
+          <th>Edge Function</th>
+          <th>Внешний API</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Грузинский (ka)</td>
+          <td>Enagram</td>
+          <td><code>georgian-tts-proxy</code></td>
+          <td>enagramm.com/API</td>
+        </tr>
+        <tr>
+          <td>Английский (en)</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+          <td>speech.googleapis.com</td>
+        </tr>
+        <tr>
+          <td>Русский (ru)</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+          <td>speech.googleapis.com</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OCR Services -->
+  <h4 id="ocr-services">OCR сервисы</h4>
+  <p>Извлечение текста из документов использует многоуровневый подход:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[File Input] --> B{File Type?}
+    B -->|Image| C{Context?}
+    B -->|Document| D[Try Tesseract.js]
+
+    C -->|ABG Analysis| E[Gemini Vision]
+    C -->|Chat Context| F{Quality?}
+
+    F -->|Good| G[Tesseract.js]
+    F -->|Poor| E
+
+    D --> H{Success?}
+    H -->|Yes| I[Return Text]
+    H -->|No| E
+
+    E --> I
+    G --> I
+
+    style G fill:#10b981,stroke:#059669,color:#fff
+    style E fill:#2b6cb0,stroke:#1a365d,color:#fff
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Сервис</th>
+          <th>Тип</th>
+          <th>Случай использования</th>
+          <th>Ограничения</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tesseract.js</strong></td>
+          <td>Бесплатный, на стороне клиента</td>
+          <td>Основной OCR для документов</td>
+          <td>Низкая точность на рукописном тексте</td>
+        </tr>
+        <tr>
+          <td><strong>Gemini Vision</strong></td>
+          <td>Облачный AI</td>
+          <td>Резервный OCR, ABG анализ</td>
+          <td>Платный за запрос</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Backend Data Flow -->
+  <h4 id="backend-flow">Поток данных бэкенда</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Frontend["React Frontend"]
+        UI[Chat UI]
+        Hook[useFlowiseChat]
+    end
+
+    subgraph Supabase["Supabase Edge Functions"]
+        ABG[abg-ai-proxy]
+        STT[STT Proxies]
+        KB[KB Functions]
+        Chat[patient-chatbot]
+    end
+
+    subgraph External["External APIs"]
+        FL[Flowise AI]
+        OAI[OpenAI API]
+        GV[Gemini Vision]
+        EN[Enagram]
+        GCP[Google Cloud]
+    end
+
+    subgraph Storage["Data Storage"]
+        FHIR[(Medplum FHIR)]
+        SB[(Supabase DB)]
+        VS[(OpenAI Vector Store)]
+    end
+
+    UI --> Hook
+    Hook --> ABG
+    Hook --> STT
+    Hook --> KB
+    Hook --> Chat
+
+    ABG --> FL
+    ABG --> GV
+    Chat --> OAI
+    STT --> EN
+    STT --> GCP
+    KB --> VS
+
+    Hook --> FHIR
+    KB --> SB
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Environment Variables -->
+  <h4 id="env-vars">Справка по переменным окружения</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-bash"># Flowise AI Endpoints
+VITE_FLOWISE_CARDIOLOGY_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_OBGYN_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_ABG_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_ACTION_PLAN_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_FORM100_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_USE_FLOWISE_DIRECT_ABG=true
+
+# Streaming Configuration
+VITE_ENABLE_STREAMING=true
+VITE_STREAMING_MAX_RETRIES=3
+VITE_STREAMING_TIMEOUT=180000
+VITE_STREAMING_DEBOUNCE_MS=50
+VITE_STREAMING_FALLBACK=true
+
+# Supabase
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=...
+
+# Speech-to-Text
+VITE_STT_PROXY_URL=https://xxx.supabase.co/functions/v1/georgian-tts-proxy
+VITE_GOOGLE_STT_URL=https://xxx.supabase.co/functions/v1/google-stt-proxy
+
+# Other Services
+VITE_MEDISCRIBE_GENERATOR_URL=https://xxx.supabase.co/functions/v1/mediscribe-generator
+VITE_CHATBOT_URL=https://xxx.supabase.co/functions/v1/patient-chatbot</code></pre>
+  </div>
+
+  <!-- Error Handling -->
+  <h4 id="error-handling">Обработка ошибок и устойчивость</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Сервис</th>
+          <th>Макс попыток</th>
+          <th>Backoff</th>
+          <th>Таймаут</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Flowise SSE</td>
+          <td>3</td>
+          <td>Экспоненциальный (1s, 2s, 4s)</td>
+          <td>180s</td>
+        </tr>
+        <tr>
+          <td>Enagram STT</td>
+          <td>2</td>
+          <td>Фиксированный (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Google STT</td>
+          <td>2</td>
+          <td>Фиксированный (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Чатбот пациента</td>
+          <td>2</td>
+          <td>Фиксированный (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Gemini OCR</td>
+          <td>1</td>
+          <td>Нет</td>
+          <td>30s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Цепочка резервных вариантов:</strong>
+      <ol>
+        <li><strong>Flowise SSE не удалось</strong> - 3x повторных попытки с backoff, затем переход на JSON если <code>VITE_STREAMING_FALLBACK=true</code></li>
+        <li><strong>OCR не удалось</strong> - Tesseract не удалось, переход на Gemini Vision</li>
+        <li><strong>STT не удалось</strong> - Показать toast уведомление, разрешить ручной ввод текста</li>
+        <li><strong>FHIR не удалось</strong> - Сохранить в localStorage, фоновая синхронизация при следующей загрузке</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Security Considerations -->
+  <h4 id="security">Соображения безопасности</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Проблема</th>
+          <th>Решение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Раскрытие API ключей</td>
+          <td>Все ключи хранятся в секретах Supabase, никогда не в коде фронтенда</td>
+        </tr>
+        <tr>
+          <td>Данные пациента в AI промптах</td>
+          <td>Контекст пациента использует анонимизированные сводки (возрастные диапазоны, без PII)</td>
+        </tr>
+        <tr>
+          <td>CORS</td>
+          <td>Edge functions ограничивают источники до medimind.ge и localhost:3000</td>
+        </tr>
+        <tr>
+          <td>Ограничение частоты запросов</td>
+          <td>Enagram применяет 30с между запросами; throttling на стороне клиента</td>
+        </tr>
+        <tr>
+          <td>Аутентификация</td>
+          <td>Supabase anon key для edge functions; Medplum OAuth для FHIR</td>
+        </tr>
+        <tr>
+          <td>Передача данных</td>
+          <td>Все соединения используют HTTPS/TLS</td>
+        </tr>
+        <tr>
+          <td>XSS в AI ответах</td>
+          <td>Markdown рендерер санитизирует HTML перед отображением</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>

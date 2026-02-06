@@ -1,0 +1,1602 @@
+<section class="doc-section" id="ai-chatbot-components">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">6</span> AI ჩატბოტის კომპონენტები და მდგომარეობის მართვა</h2>
+  </div>
+
+  <p>ეს სექცია აღწერს <strong>40 პროდაქშენ React კომპონენტს</strong> (76 ფაილი: 40 TSX + 36 CSS მოდული), ორმაგი კონტექსტის მდგომარეობის მართვის არქიტექტურას და 9 მორგებულ ჰუკს, რომლებიც უზრუნველყოფენ AI სამედიცინო ჩატბოტის ინტერფეისს.</p>
+
+  <!-- ========================== -->
+  <!-- 6.1 Components Overview -->
+  <!-- ========================== -->
+  <h3 id="components-overview">6.1 კომპონენტების მიმოხილვა</h3>
+  <p>AI ჩატბოტის კომპონენტები ორგანიზებულია <strong>8 ფუნქციურ კატეგორიაში</strong>. ყველა კომპონენტი იყენებს mobile-first რესპონსიულ დიზაინის პატერნებს და CSS Modules-ს იზოლირებული სტილებისთვის.</p>
+
+  <!-- Component Architecture Diagram -->
+  <h4 id="component-architecture">კომპონენტების არქიტექტურა</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Root["ChatbotPage (Route)"]
+        CP[ChatProvider]
+    end
+
+    subgraph UI["UI Components"]
+        CH[ChatHeader]
+        HS[HistorySidebar]
+        ML[MessageList]
+        MI[MessageInput]
+        WS[WelcomeScreen]
+    end
+
+    subgraph Enhancement["Enhancement Components"]
+        MMR[MedicalMarkdownRenderer]
+        SR[SourceReferences]
+        FC[FactCheckResult]
+        MA[MessageActions]
+    end
+
+    subgraph Streaming["Streaming Components"]
+        SI[StreamingIndicator]
+        ST[StreamingText]
+        TI[TypingIndicator]
+    end
+
+    CP --> CH
+    CP --> HS
+    CP --> ML
+    CP --> MI
+    CP --> WS
+    ML --> Enhancement
+    ML --> Streaming
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Component Category Summary -->
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>კომპონენტების მდებარეობა:</strong>
+      <code>packages/app/src/emr/components/ai-assistant/</code>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.1 Chat Interface -->
+  <!-- ========================== -->
+  <h4 id="chat-interface">6.1.1 ჩატის ინტერფეისის კომპონენტები</h4>
+  <p>ძირითადი კომპონენტები, რომლებიც ქმნიან მთავარ ჩატის ფანჯარას და შეტყობინებების ჩვენებას.</p>
+
+  <!-- მისალმების ეკრანის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-welcome-screen-ka.png" alt="მისალმების ეკრანი სწრაფი მოქმედების ბარათებითა და დაწყების მოთხოვნებით"
+         class="doc-screenshot-image" data-i18n-img="ai-welcome-screen">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ChatWindow</strong></td>
+          <td><code>ChatWindow.tsx</code></td>
+          <td>მთავარი კონტეინერი მთელი ჩატის ინტერფეისისთვის</td>
+        </tr>
+        <tr>
+          <td><strong>ChatHeader</strong></td>
+          <td><code>ChatHeader.tsx</code></td>
+          <td>ზედა ნავიგაცია KB სელექტორით და მოქმედებებით</td>
+        </tr>
+        <tr>
+          <td><strong>MessageList</strong></td>
+          <td><code>MessageList.tsx</code></td>
+          <td>სქროლვადი შეტყობინებების სია ავტო-სქროლით</td>
+        </tr>
+        <tr>
+          <td><strong>MessageItem</strong></td>
+          <td><code>MessageItem.tsx</code></td>
+          <td>ინდივიდუალური შეტყობინების ბუშტი (მომხმარებელი ან AI)</td>
+        </tr>
+        <tr>
+          <td><strong>WelcomeScreen</strong></td>
+          <td><code>WelcomeScreen.tsx</code></td>
+          <td>საწყისი ეკრანი სწრაფი მოქმედებებით</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ChatWindow Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ChatWindow</strong> - მთავარი კონტეინერი ჩატის ინტერფეისისთვის
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ChatWindowProps {
+  onNewChat: () => void;
+  onOpenHistory: () => void;
+  sidebarOpen: boolean;
+}</code></pre>
+      </div>
+      <p><strong>ფუნქციები:</strong></p>
+      <ul class="doc-list">
+        <li>მართავს განლაგებას header-ს, შეტყობინებების არეას და input-ს შორის</li>
+        <li>მართავს გვერდითი პანელის ხილვადობის მდგომარეობას</li>
+        <li>კოორდინაციას უწევს შვილობილ კომპონენტებს</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ChatHeader Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ChatHeader</strong> - ზედა ნავიგაციის პანელი
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ChatHeaderProps {
+  onNewChat?: () => void;
+  onNewCase?: () => void;
+  onOpenHistory?: () => void;
+  onOpenCases?: () => void;
+  personalDocCount?: number;
+  historyCount?: number;
+  casesCount?: number;
+  sidebarOpen?: boolean;
+}</code></pre>
+      </div>
+      <p><strong>ფუნქციები:</strong></p>
+      <ul class="doc-list">
+        <li>ცოდნის ბაზის გადამრთველი (კურირებული vs პერსონალური)</li>
+        <li>ახალი ჩატის ღილაკი</li>
+        <li>ისტორიის გადამრთველი მრიცხველის ბეჯით</li>
+        <li>ქეისების ღილაკი მრიცხველით</li>
+        <li>მობილურზე რესპონსიული hamburger მენიუ</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- MessageList Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageList</strong> - სქროლვადი შეტყობინებების კონტეინერი
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageListProps {
+  messages: Message[];
+  streamingMessageId: string | null;
+  onFactCheck?: (messageId: string) => Promise&lt;FactCheckResult&gt;;
+}</code></pre>
+      </div>
+      <p><strong>ქცევა:</strong></p>
+      <ul class="doc-list">
+        <li><strong>სქროლავს ბოლოში</strong> როდესაც: ახალი შეტყობინება დაემატა, სტრიმინგი აქტიურია</li>
+        <li><strong>ინახავს სქროლის პოზიციას</strong> როდესაც: მომხმარებელი ათვალიერებს ძველ შეტყობინებებს, სქროლავს ზევით</li>
+        <li>აჯგუფებს შეტყობინებებს თარიღის მიხედვით</li>
+        <li>მართავს სტრიმინგის ინდიკატორებს</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- MessageItem Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageItem</strong> - ინდივიდუალური შეტყობინების ბუშტი
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageItemProps {
+  message: Message;
+  isStreaming?: boolean;
+  onFactCheck?: (messageId: string) => Promise&lt;FactCheckResult&gt;;
+}</code></pre>
+      </div>
+      <p><strong>ფუნქციები:</strong></p>
+      <ul class="doc-list">
+        <li>განსხვავებული სტილი მომხმარებლის და AI შეტყობინებებისთვის</li>
+        <li>სტრიმინგის კურსორის ანიმაცია AI შეტყობინებებისთვის</li>
+        <li>დროის ჩვენება</li>
+        <li>შეტყობინების მოქმედებები (კოპირება, რეგენერაცია)</li>
+        <li>წყაროების რეფერენსების ჩვენება</li>
+        <li>ფაქტების შემოწმების ღილაკი და შედეგები</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.2 Conversation Management -->
+  <!-- ========================== -->
+  <h4 id="conversation-management">6.1.2 საუბრის მართვის კომპონენტები</h4>
+  <p>კომპონენტები საუბრის ისტორიის მართვისა და ნავიგაციისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>HistorySidebar</strong></td>
+          <td><code>HistorySidebar.tsx</code></td>
+          <td>ჩაკეცვადი გვერდითი პანელი საუბრის ისტორიით</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationList</strong></td>
+          <td><code>ConversationList.tsx</code></td>
+          <td>ვირტუალიზებული საუბრების სია</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationListItem</strong></td>
+          <td><code>ConversationListItem.tsx</code></td>
+          <td>ერთი საუბრის ელემენტი სიაში</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>HistorySidebar</strong> - საუბრის ისტორიის პანელი
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface HistorySidebarProps {
+  onNewChat: () => void;
+  onNewCase: () => void;
+  onRefresh: () => void;
+  onClose: () => void;
+  onSelectConversation?: () => void;
+}</code></pre>
+      </div>
+      <p><strong>მობილურის ქცევა:</strong></p>
+      <ul class="doc-list">
+        <li>სრულეკრანიანი გადაფარვა</li>
+        <li>გადაფურცვლით დახურვის ჟესტი</li>
+        <li>ფონზე დაკლიკებით დახურვა</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ConversationList</strong> - ვირტუალიზებული საუბრების სია
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ConversationListProps {
+  conversations: Conversation[];
+  activeConversationId: string | null;
+  onSelect: (conversationId: string) => void;
+  onDelete?: (conversationId: string) => void;
+}</code></pre>
+      </div>
+      <p><strong>ფუნქციები:</strong></p>
+      <ul class="doc-list">
+        <li>ვირტუალური სქროლი 100+ საუბრისთვის</li>
+        <li>აქტიური საუბრის გამოყოფა</li>
+        <li>წაშლის დადასტურება</li>
+        <li>დაჯგუფება თარიღის მიხედვით (დღეს, გუშინ, ბოლო 7 დღე)</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.3 Input Components -->
+  <!-- ========================== -->
+  <h4 id="input-components">6.1.3 შეყვანის კომპონენტები</h4>
+  <p>კომპონენტები შეტყობინების შეყვანის, ხმოვანი ჩაწერისა და სწრაფი მოქმედებებისთვის.</p>
+
+  <!-- შეტყობინების შეყვანის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-message-input-ka.png" alt="შეტყობინების შეყვანის კომპონენტი ხმის ჩაწერისა და ფაილის მიმაგრების ღილაკებით"
+         class="doc-screenshot-image" data-i18n-img="ai-message-input">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MessageInput</strong></td>
+          <td><code>MessageInput.tsx</code></td>
+          <td>მრავალხაზიანი შეყვანა ხმოვანი და ფაილის მიმაგრებით</td>
+        </tr>
+        <tr>
+          <td><strong>VoiceInputButton</strong></td>
+          <td><code>VoiceInputButton.tsx</code></td>
+          <td>ხმოვანი ჩაწერა ენის მიხედვით STT-ით</td>
+        </tr>
+        <tr>
+          <td><strong>QuickReplies</strong></td>
+          <td><code>QuickReplies.tsx</code></td>
+          <td>შეთავაზებული მოთხოვნები და სწრაფი მოქმედებები</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageInput</strong> - მთავარი შეყვანის კომპონენტი
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageInputProps {
+  onSend: (message: string) => Promise&lt;void&gt;;
+  onStop?: () => void;
+  isGenerating?: boolean;
+  placeholder?: string;
+  maxLength?: number;
+}</code></pre>
+      </div>
+      <p><strong>ფუნქციები:</strong></p>
+      <ul class="doc-list">
+        <li>მრავალხაზიანი ტექსტის შეყვანა (ავტო-ზომის ცვლა 5 ხაზამდე)</li>
+        <li>ხმოვანი ჩაწერის ღილაკი</li>
+        <li>ფაილის მიმაგრების ღილაკი (PDF, სურათები, Word დოკუმენტები - მაქს. 10MB)</li>
+        <li>გაგზავნის ღილაკი (გამორთულია როცა ცარიელია ან გენერირდება)</li>
+        <li>გენერაციის გაჩერების ღილაკი (სტრიმინგისას)</li>
+        <li>კლავიატურის მალსახმობები (<kbd>Enter</kbd> გასაგზავნად, <kbd>Shift+Enter</kbd> ახალი ხაზისთვის)</li>
+      </ul>
+      <p><strong>მდგომარეობები:</strong></p>
+      <ul class="doc-list">
+        <li><strong>უქმი:</strong> მზადაა შეყვანისთვის</li>
+        <li><strong>აკრეფა:</strong> მომხმარებელი წერს შეტყობინებას</li>
+        <li><strong>გენერირება:</strong> AI პასუხობს (ჩანს გაჩერების ღილაკი)</li>
+        <li><strong>ჩაწერა:</strong> ხმოვანი შეყვანა აქტიურია</li>
+        <li><strong>მიმაგრება:</strong> ფაილი მუშავდება</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>VoiceInputButton</strong> - მეტყველების ტექსტად გარდაქმნის ჩაწერა
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface VoiceInputButtonProps {
+  onTranscript: (text: string) => void;
+  onError?: (error: Error) => void;
+}</code></pre>
+      </div>
+      <p><strong>STT Backend ენის მიხედვით:</strong></p>
+      <div class="doc-table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>ენა</th>
+              <th>კოდი</th>
+              <th>STT Backend</th>
+              <th>Edge Function</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ქართული</td>
+              <td><code>ka</code></td>
+              <td>Enagram STT (Fast)</td>
+              <td><code>georgian-tts-proxy</code></td>
+            </tr>
+            <tr>
+              <td>ინგლისური</td>
+              <td><code>en</code></td>
+              <td>Google Chirp 2</td>
+              <td><code>google-stt-proxy</code></td>
+            </tr>
+            <tr>
+              <td>რუსული</td>
+              <td><code>ru</code></td>
+              <td>Google Chirp 2</td>
+              <td><code>google-stt-proxy</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>მდგომარეობები:</strong> უქმი, ენის არჩევა, ჩაწერა, დამუშავება, შეცდომა</p>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.4 Message Enhancement -->
+  <!-- ========================== -->
+  <h4 id="message-enhancement">6.1.4 შეტყობინების გაუმჯობესების კომპონენტები</h4>
+  <p>კომპონენტები AI პასუხების სამედიცინო ფორმატირებითა და წყაროების ციტატებით ჩვენებისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MedicalMarkdownRenderer</strong></td>
+          <td><code>MedicalMarkdownRenderer.tsx</code></td>
+          <td>AI პასუხების რენდერინგი სამედიცინო ფორმატირებით</td>
+        </tr>
+        <tr>
+          <td><strong>SourceReferences</strong></td>
+          <td><code>SourceReferences.tsx</code></td>
+          <td>AI პასუხის წყაროების ციტატების ჩვენება</td>
+        </tr>
+        <tr>
+          <td><strong>FactCheckResult</strong></td>
+          <td><code>FactCheckResult.tsx</code></td>
+          <td>ფაქტების შემოწმების შედეგების ჩვენება</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MedicalMarkdownRenderer</strong> - სამედიცინო კონტენტის ფორმატირება
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MedicalMarkdownRendererProps {
+  content: string;
+  components?: Record&lt;string, React.ComponentType&gt;;
+}</code></pre>
+      </div>
+      <p><strong>მორგებული რენდერერები:</strong></p>
+      <ul class="doc-list">
+        <li><strong>წამლის სახელები:</strong> სტილიზებულია monospace ფონტით</li>
+        <li><strong>ლაბორატორიული მაჩვენებლები:</strong> გამოყოფილია ფერების კოდირებით</li>
+        <li><strong>სამედიცინო აბრევიატურები:</strong> tooltip-ებით</li>
+      </ul>
+      <p><strong>ფუნქციები:</strong> სინტაქსის გამოყოფა სამედიცინო ტერმინებისთვის, ცხრილები ლაბორატორიული მაჩვენებლებისთვის, დანომრილი/დაუნომრავი სიები დიფერენციალური დიაგნოზებისთვის, HTML სანიტიზაცია XSS-ის პრევენციისთვის</p>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>FactCheckResult</strong> - ფაქტების ვერიფიკაციის ჩვენება
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface FactCheckResultProps {
+  status: 'verified' | 'unverified' | 'partially-verified';
+  sources: SourceReference[];
+  confidence?: number;
+}</code></pre>
+      </div>
+      <p><strong>სტატუსის ფერები:</strong></p>
+      <div class="doc-status-badges">
+        <div class="doc-status-badge doc-status-finished">
+          <span class="doc-status-dot"></span>
+          დადასტურებული (მწვანე)
+        </div>
+        <div class="doc-status-badge doc-status-arrived">
+          <span class="doc-status-dot"></span>
+          ნაწილობრივ დადასტურებული (ნარინჯისფერი)
+        </div>
+        <div class="doc-status-badge doc-status-planned">
+          <span class="doc-status-dot"></span>
+          დაუდასტურებელი (ნაცრისფერი)
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.5 Streaming & Status -->
+  <!-- ========================== -->
+  <h4 id="streaming-status">6.1.5 სტრიმინგისა და სტატუსის კომპონენტები</h4>
+  <p>კომპონენტები ჩატვირთვის მდგომარეობებისა და სტრიმინგის ტექსტის ანიმაციების ჩვენებისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>StreamingIndicator</strong></td>
+          <td><code>StreamingIndicator.tsx</code></td>
+          <td>აჩვენებს როცა AI გენერირებს პასუხს</td>
+        </tr>
+        <tr>
+          <td><strong>StreamingText</strong></td>
+          <td><code>StreamingText.tsx</code></td>
+          <td>ანიმირებული token-by-token ტექსტის ჩვენება</td>
+        </tr>
+        <tr>
+          <td><strong>StreamingCursor</strong></td>
+          <td><code>StreamingCursor.tsx</code></td>
+          <td>მოციმციმე კურსორი სტრიმინგის შეტყობინების ბოლოს</td>
+        </tr>
+        <tr>
+          <td><strong>TypingIndicator</strong></td>
+          <td><code>TypingIndicator.tsx</code></td>
+          <td>აჩვენებს როცა AI "ფიქრობს"</td>
+        </tr>
+        <tr>
+          <td><strong>PulseLoader</strong></td>
+          <td><code>PulseLoader.tsx</code></td>
+          <td>პულსირებადი წერტილის ანიმაცია სტრიმინგისას</td>
+        </tr>
+        <tr>
+          <td><strong>ContentSkeleton</strong></td>
+          <td><code>ContentSkeleton.tsx</code></td>
+          <td>სკელეტონის ჩატვირთვის placeholder</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.6 Document Library -->
+  <!-- ========================== -->
+  <h4 id="document-library">6.1.6 დოკუმენტების ბიბლიოთეკის კომპონენტები</h4>
+  <p>კომპონენტები პერსონალური დოკუმენტების ატვირთვისა და ბიბლიოთეკის მართვისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DocumentLibrary</strong></td>
+          <td><code>DocumentLibrary.tsx</code></td>
+          <td>პერსონალური დოკუმენტების ბადის ხედი</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentCard</strong></td>
+          <td><code>DocumentCard.tsx</code></td>
+          <td>ინდივიდუალური დოკუმენტის ბარათი ბადეში</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentUpload</strong></td>
+          <td><code>DocumentUpload.tsx</code></td>
+          <td>ფაილის ატვირთვა drag-and-drop-ით</td>
+        </tr>
+        <tr>
+          <td><strong>CaseFileUpload</strong></td>
+          <td><code>CaseFileUpload.tsx</code></td>
+          <td>ფაილის ატვირთვა ქეისის დანართებისთვის</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.7 Case Management -->
+  <!-- ========================== -->
+  <h4 id="case-management">6.1.7 ქეისების მართვის კომპონენტები</h4>
+  <p>კომპონენტები პაციენტის ქეისებისა და დისკუსიების მართვისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>CaseList</strong></td>
+          <td><code>CaseList.tsx</code></td>
+          <td>პაციენტის ქეისების ბადე</td>
+        </tr>
+        <tr>
+          <td><strong>CaseCard</strong></td>
+          <td><code>CaseCard.tsx</code></td>
+          <td>ინდივიდუალური პაციენტის ქეისის ბარათი</td>
+        </tr>
+        <tr>
+          <td><strong>CaseCreationModal</strong></td>
+          <td><code>CaseCreationModal.tsx</code></td>
+          <td>მოდალი ახალი პაციენტის ქეისის შესაქმნელად</td>
+        </tr>
+        <tr>
+          <td><strong>CaseReadyScreen</strong></td>
+          <td><code>CaseReadyScreen.tsx</code></td>
+          <td>ეკრანი რომელიც ჩანს ქეისის არჩევისას</td>
+        </tr>
+        <tr>
+          <td><strong>PatientSelector</strong></td>
+          <td><code>PatientSelector.tsx</code></td>
+          <td>პაციენტის არჩევა FHIR რეესტრიდან</td>
+        </tr>
+        <tr>
+          <td><strong>EncounterSelector</strong></td>
+          <td><code>EncounterSelector.tsx</code></td>
+          <td>ვიზიტის არჩევა ქეისის შექმნისთვის</td>
+        </tr>
+        <tr>
+          <td><strong>PatientSummaryPanel</strong></td>
+          <td><code>PatientSummaryPanel.tsx</code></td>
+          <td>ანონიმიზებული პაციენტის კონტექსტის შეჯამება</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationSidebar</strong></td>
+          <td><code>ConversationSidebar.tsx</code></td>
+          <td>ჩანართებიანი გვერდითი პანელი ისტორიისა და ქეისებისთვის</td>
+        </tr>
+        <tr>
+          <td><strong>ActiveCaseBadge</strong></td>
+          <td><code>ActiveCaseBadge.tsx</code></td>
+          <td>აქტიური ქეისის ინდიკატორი გვერდით პანელში</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>CaseCreationModal</strong> - ორ-ჩანართიანი ქეისის შექმნა
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface CaseCreationModalProps {
+  opened: boolean;
+  onClose: () => void;
+  onCreate: (caseData: CreateCaseInput) => void;
+}</code></pre>
+      </div>
+      <p><strong>ჩანართი 1 - ხელით შეყვანა:</strong></p>
+      <ul class="doc-list">
+        <li>სათაურის შეყვანა</li>
+        <li>სპეციალობის სელექტორი</li>
+        <li>სირთულის სელექტორი (დაბალი, საშუალო, მაღალი)</li>
+        <li>ანონიმიზებული პაციენტის ინფორმაციის textarea</li>
+        <li>თეგების შეყვანა</li>
+      </ul>
+      <p><strong>ჩანართი 2 - პაციენტიდან:</strong></p>
+      <ul class="doc-list">
+        <li><code>PatientSelector</code> - პაციენტის ძებნა და არჩევა FHIR-დან</li>
+        <li><code>EncounterSelector</code> - ვიზიტის არჩევა არჩეული პაციენტისთვის</li>
+        <li><code>PatientSummaryPanel</code> - პაციენტის კონტექსტის ანონიმიზებული გადახედვა</li>
+        <li>მონაცემთა კატეგორიების checkbox-ები: დემოგრაფია, დიაგნოზები, მედიკამენტები, ალერგიები, ვიტალები, ლაბორატორია</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.8 Utility Components -->
+  <!-- ========================== -->
+  <h4 id="utility-components">6.1.8 დამხმარე კომპონენტები</h4>
+  <p>დამხმარე კომპონენტები ცოდნის ბაზის არჩევისა და სამედიცინო კალკულატორებისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კომპონენტი</th>
+          <th>ფაილი</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>KnowledgeBaseSelector</strong></td>
+          <td><code>KnowledgeBaseSelector.tsx</code></td>
+          <td>კურირებულ და პერსონალურ KB-ს შორის გადართვა</td>
+        </tr>
+        <tr>
+          <td><strong>CalculatorSuggestions</strong></td>
+          <td><code>CalculatorSuggestions.tsx</code></td>
+          <td>სამედიცინო კალკულატორების შეთავაზება კონტექსტის მიხედვით</td>
+        </tr>
+        <tr>
+          <td><strong>QuickActionCard</strong></td>
+          <td><code>QuickActionCard.tsx</code></td>
+          <td>დიდი მოქმედების ღილაკების ბარათები</td>
+        </tr>
+        <tr>
+          <td><strong>SourceReferenceCard</strong></td>
+          <td><code>SourceReferenceCard.tsx</code></td>
+          <td>ინდივიდუალური წყაროს ციტატის ბარათი</td>
+        </tr>
+        <tr>
+          <td><strong>MessageActions</strong></td>
+          <td><code>MessageActions.tsx</code></td>
+          <td>მოქმედების ღილაკები შეტყობინებებისთვის</td>
+        </tr>
+        <tr>
+          <td><strong>ChatErrorBanner</strong></td>
+          <td><code>ChatErrorBanner.tsx</code></td>
+          <td>შეცდომის ჩვენება ავტო-ხელახალი ცდით</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationListItem</strong></td>
+          <td><code>ConversationListItem.tsx</code></td>
+          <td>ერთი საუბრის ელემენტი</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Component Relationship Diagram -->
+  <h4 id="component-relationships">კომპონენტების ურთიერთკავშირები</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[ChatbotPage] --> B[ChatProvider]
+    B --> C[ChatbotContent]
+    C --> D[ChatHeader]
+    C --> E[HistorySidebar]
+    C --> F[Chat Area]
+    C --> G[MessageInput]
+
+    D --> D1[KnowledgeBaseSelector]
+
+    E --> E1[ConversationSidebar]
+    E1 --> E2[ConversationList]
+    E2 --> E3[ConversationListItem]
+    E3 --> E4[ActiveCaseBadge]
+
+    F --> F1[WelcomeScreen]
+    F --> F2[CaseReadyScreen]
+    F --> F3[MessageList]
+
+    F3 --> F4[MessageItem]
+    F4 --> F5[MedicalMarkdownRenderer]
+    F5 --> F6[StreamingText]
+    F4 --> F7[SourceReferences]
+    F4 --> F8[FactCheckResult]
+    F4 --> F9[MessageActions]
+
+    F3 --> F10[StreamingIndicator]
+    F3 --> F11[TypingIndicator]
+
+    G --> G1[VoiceInputButton]
+    G --> G2[QuickReplies]
+    G --> G3[CalculatorSuggestions]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.2 State Management -->
+  <!-- ========================== -->
+  <h3 id="state-management">6.2 მდგომარეობის მართვა</h3>
+  <p>AI ჩატბოტი იყენებს <strong>ორმაგი კონტექსტის არქიტექტურას</strong> React Context + useReducer-ით პროგნოზირებადი მდგომარეობის მართვისთვის. ორი ცალკეული კონტექსტი ამცირებს ზედმეტ ხელახალ რენდერებს.</p>
+
+  <!-- Dual Context Diagram -->
+  <h4 id="dual-context-architecture">ორმაგი კონტექსტის არქიტექტურა</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    A[ChatProvider] --> B[ChatUIProvider]
+    A --> C[ChatDataProvider]
+    B --> D[ChatUIContext]
+    C --> E[ChatDataContext]
+    E --> F[ChatContextBridge]
+
+    G[Components] --> H{Context Hook}
+    H -->|useChatContext| F
+    H -->|useChatUIContext| D
+    H -->|useChatDataContext| E
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Token Batching ოპტიმიზაცია:</strong>
+      <p>ChatDataProvider აგროვებს სტრიმინგის ტოკენებს <strong>100ms ბატჩებში</strong> რათა შეამციროს React-ის ხელახალი რენდერები 50-100-დან ~10-20-მდე პასუხზე. ეს განცალკევებულია 50ms SSE token buffer-ისგან streamingHelpers-ში.</p>
+    </div>
+  </div>
+
+  <!-- State Shape -->
+  <h4 id="state-shape">მდგომარეობის სტრუქტურა</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface ChatState {
+  // Messages in active conversation
+  messages: Message[];
+
+  // All user conversations
+  conversations: Conversation[];
+
+  // Active conversation ID
+  activeConversationId: string | null;
+
+  // Selected knowledge base
+  selectedKnowledgeBase: KnowledgeBaseType;
+
+  // Case context for case-study conversations
+  caseContext: CaseContext | null;
+
+  // Streaming state
+  streamingState: StreamingState;
+
+  // Loading state
+  isLoading: boolean;
+
+  // Error state
+  error: string | null;
+}</code></pre>
+  </div>
+
+  <!-- Initial State -->
+  <h4 id="initial-state">საწყისი მდგომარეობა</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">const initialChatState: ChatState = {
+  messages: [],
+  conversations: [],
+  activeConversationId: null,
+  selectedKnowledgeBase: 'curated',
+  caseContext: null,
+  streamingState: {
+    isStreaming: false,
+    currentMessageId: null,
+    tokens: [],
+    connectionId: null,
+    error: null,
+    startTime: null,
+  },
+  isLoading: false,
+  error: null,
+};</code></pre>
+  </div>
+
+  <!-- Action Types -->
+  <h4 id="action-types">მოქმედების ტიპები</h4>
+  <p>მდგომარეობის ყველა მოდიფიკაცია გადის ტიპიზებულ მოქმედებებზე:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კატეგორია</th>
+          <th>მოქმედებები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>შეტყობინების მოქმედებები</strong></td>
+          <td><code>SET_MESSAGES</code>, <code>ADD_MESSAGE</code>, <code>UPDATE_MESSAGE</code>, <code>DELETE_MESSAGE</code></td>
+        </tr>
+        <tr>
+          <td><strong>საუბრის მოქმედებები</strong></td>
+          <td><code>SET_CONVERSATIONS</code>, <code>ADD_CONVERSATION</code>, <code>UPDATE_CONVERSATION</code>, <code>DELETE_CONVERSATION</code>, <code>SET_ACTIVE_CONVERSATION</code></td>
+        </tr>
+        <tr>
+          <td><strong>ცოდნის ბაზა</strong></td>
+          <td><code>SET_KNOWLEDGE_BASE</code></td>
+        </tr>
+        <tr>
+          <td><strong>სტრიმინგის მოქმედებები</strong></td>
+          <td><code>SET_STREAMING_STATE</code>, <code>APPEND_STREAMING_TOKEN</code>, <code>FLUSH_TOKENS</code>, <code>COMPLETE_STREAMING</code></td>
+        </tr>
+        <tr>
+          <td><strong>ქეისის კონტექსტი</strong></td>
+          <td><code>SET_CASE_CONTEXT</code></td>
+        </tr>
+        <tr>
+          <td><strong>UI მდგომარეობა</strong></td>
+          <td><code>SET_LOADING</code>, <code>SET_ERROR</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Action Type Definition -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>სრული ChatAction ტიპის განმარტება</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">type ChatAction =
+  // Message actions
+  | { type: 'SET_MESSAGES'; payload: Message[] }
+  | { type: 'ADD_MESSAGE'; payload: Message }
+  | { type: 'UPDATE_MESSAGE'; payload: { id: string; updates: Partial&lt;Message&gt; } }
+  | { type: 'DELETE_MESSAGE'; payload: string }
+
+  // Conversation actions
+  | { type: 'SET_CONVERSATIONS'; payload: Conversation[] }
+  | { type: 'ADD_CONVERSATION'; payload: Conversation }
+  | { type: 'UPDATE_CONVERSATION'; payload: { id: string; updates: Partial&lt;Conversation&gt; } }
+  | { type: 'DELETE_CONVERSATION'; payload: string }
+  | { type: 'SET_ACTIVE_CONVERSATION'; payload: string | null }
+
+  // Knowledge base actions
+  | { type: 'SET_KNOWLEDGE_BASE'; payload: KnowledgeBaseType }
+
+  // Streaming actions
+  | { type: 'SET_STREAMING_STATE'; payload: Partial&lt;StreamingState&gt; }
+  | { type: 'APPEND_STREAMING_TOKEN'; payload: string }
+  | { type: 'FLUSH_TOKENS'; payload: string[] }
+  | { type: 'COMPLETE_STREAMING'; payload: { messageId: string; finalContent: string } }
+
+  // Case context actions
+  | { type: 'SET_CASE_CONTEXT'; payload: CaseContext | null }
+
+  // UI state actions
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Context Hooks -->
+  <h4 id="context-hooks">კონტექსტის ჰუკები</h4>
+  <p>გამოიყენეთ სპეციფიკური სელექტორ ჰუკები ოპტიმიზებული ხელახალი რენდერებისთვის:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">// Main context hook (legacy combined)
+function useChatContext(): ChatContextValue;
+
+// Optimized selector hooks
+function useMessages(): Message[];
+function useConversations(): Conversation[];
+function useActiveConversation(): Conversation | undefined;
+function useStreamingState(): StreamingState;
+function useKnowledgeBase(): KnowledgeBaseType;</code></pre>
+  </div>
+
+  <!-- Usage Patterns -->
+  <h4 id="context-usage">კონტექსტის გამოყენების პატერნები</h4>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ძირითადი გამოყენების მაგალითი</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatComponent() {
+  const { state, dispatch, addMessage } = useChatContext();
+
+  const handleSend = (content: string) => {
+    addMessage({
+      id: generateId(),
+      content,
+      type: 'user',
+      timestamp: new Date(),
+      status: 'sent',
+    });
+  };
+
+  return (
+    &lt;div&gt;
+      {state.messages.map(msg => &lt;MessageItem key={msg.id} {...msg} /&gt;)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ოპტიმიზებული გამოყენება სელექტორებით</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function MessageList() {
+  // Only re-renders when messages change
+  const messages = useMessages();
+
+  return (
+    &lt;div&gt;
+      {messages.map(msg => &lt;MessageItem key={msg.id} {...msg} /&gt;)}
+    &lt;/div&gt;
+  );
+}
+
+function ConversationSidebarComponent() {
+  // Only re-renders when conversations change
+  const conversations = useConversations();
+
+  return (
+    &lt;div&gt;
+      {conversations.map(conv => &lt;ConversationItem key={conv.id} {...conv} /&gt;)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>სტრიმინგის მაგალითი</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatInput() {
+  const {
+    dispatch, addMessage, startStreaming,
+    appendToken, completeStreaming
+  } = useChatContext();
+
+  const handleSend = async (content: string) => {
+    // Add user message
+    addMessage({ id: 'user-1', content, type: 'user', ... });
+
+    // Add placeholder AI message
+    const aiMsgId = 'ai-1';
+    addMessage({ id: aiMsgId, content: '', type: 'ai', isStreaming: true, ... });
+
+    // Start streaming
+    startStreaming(aiMsgId);
+
+    // Simulate streaming tokens
+    const tokens = ['Based', ' on', ' current', ' guidelines', '...'];
+    for (const token of tokens) {
+      appendToken(token);
+      await new Promise(r => setTimeout(r, 50));
+    }
+
+    // Complete streaming
+    completeStreaming(aiMsgId, 'Based on current guidelines...');
+  };
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Performance Optimizations -->
+  <h4 id="performance-optimizations">წარმადობის ოპტიმიზაციები</h4>
+  <ul class="doc-list">
+    <li><strong>useMemo კონტექსტის მნიშვნელობისთვის</strong> - ხელს უშლის ზედმეტ ხელახალ რენდერებს</li>
+    <li><strong>სელექტორ ჰუკები</strong> - კომპონენტები გამოწერილია მხოლოდ საჭირო მდგომარეობაზე</li>
+    <li><strong>useCallback მეთოდებისთვის</strong> - სტაბილური ფუნქციის რეფერენსები</li>
+    <li><strong>დაჯგუფებული განახლებები</strong> - მრავალი მოქმედება ერთ რენდერის ციკლში</li>
+    <li><strong>Lazy Hydration</strong> - localStorage მონაცემების ასინქრონული ჩატვირთვა</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 6.3 Custom Hooks -->
+  <!-- ========================== -->
+  <h3 id="hooks">6.3 მორგებული ჰუკები</h3>
+  <p>მორგებული React ჰუკები ენკაფსულირებენ ჩატბოტის კომპლექსურ ლოგიკას და უზრუნველყოფენ სუფთა ინტერფეისებს კომპონენტებისთვის. მდებარეობა: <code>packages/app/src/emr/hooks/chat/</code></p>
+
+  <!-- Hook Index Table -->
+  <h4 id="hook-index">ჰუკების ინდექსი</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ჰუკი</th>
+          <th>დანიშნულება</th>
+          <th>დამოკიდებულებები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>useFlowiseChat</strong></td>
+          <td>მთავარი ჩატის ორქესტრაცია + Flowise</td>
+          <td>MedplumClient, ChatContext, useChatMessages</td>
+        </tr>
+        <tr>
+          <td><strong>useChatMessages</strong></td>
+          <td>შეტყობინების მდგომარეობის მართვა</td>
+          <td>ChatContext</td>
+        </tr>
+        <tr>
+          <td><strong>useConversations</strong></td>
+          <td>საუბრის CRUD</td>
+          <td>MedplumClient, ChatContext</td>
+        </tr>
+        <tr>
+          <td><strong>useDocumentLibrary</strong></td>
+          <td>დოკუმენტების მართვა</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><strong>usePatientCases</strong></td>
+          <td>პაციენტის ქეისის CRUD</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><strong>useVoiceInput</strong></td>
+          <td>მეტყველების ტექსტად გარდაქმნის ჩაწერა</td>
+          <td>MediaRecorder + Supabase STT</td>
+        </tr>
+        <tr>
+          <td><strong>useFactCheck</strong></td>
+          <td>ფაქტების შემოწმების ინტეგრაცია</td>
+          <td>factCheckService</td>
+        </tr>
+        <tr>
+          <td><strong>useCalculatorIntegration</strong></td>
+          <td>კალკულატორის შეთავაზებები</td>
+          <td>calculatorRecommendation</td>
+        </tr>
+        <tr>
+          <td><strong>useMobileKeyboard</strong></td>
+          <td>მობილური კლავიატურის ხილვადობა</td>
+          <td>window resize events</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- useFlowiseChat -->
+  <h4 id="useFlowiseChat">useFlowiseChat</h4>
+  <p><strong>ფაილი:</strong> <code>useFlowiseChat.ts</code></p>
+  <p>ორქესტრირებს მთელ ჩატის ნაკადს შეტყობინების გაგზავნიდან AI პასუხის დასრულებამდე.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseFlowiseChatOptions {
+  specialty?: string;              // Medical specialty for endpoint selection
+  onError?: (error: Error) => void; // Error callback
+  retryConfig?: RetryConfig;       // Retry configuration (optional)
+}
+
+interface RetryConfig {
+  maxRetries?: number;             // Max retry attempts (default: 3)
+  baseDelay?: number;              // Initial delay in ms (default: 2000)
+  maxDelay?: number;               // Maximum delay in ms (default: 10000)
+  backoffMultiplier?: number;      // Exponential backoff (default: 2)
+}
+
+interface UseFlowiseChatReturn {
+  sendMessage: (content: string, files?: File[]) => Promise&lt;void&gt;;
+  stopGeneration: () => void;
+  isGenerating: boolean;
+  error: string | null;
+  retryState: RetryState;
+  retry: () => void;
+  dismissError: () => void;
+  cancelAutoRetry: () => void;
+}</code></pre>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>გამოყენების მაგალითი</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatInterface() {
+  const {
+    sendMessage,
+    stopGeneration,
+    isGenerating,
+    error,
+    retryState,
+    retry,
+    dismissError,
+    cancelAutoRetry,
+  } = useFlowiseChat({
+    specialty: 'cardiology',
+    onError: (err) => console.error('Chat error:', err),
+  });
+
+  return (
+    &lt;&gt;
+      &lt;MessageInput
+        onSend={(content, files) => sendMessage(content, files)}
+        onStop={stopGeneration}
+        isGenerating={isGenerating}
+      /&gt;
+      {error && (
+        &lt;ChatErrorBanner
+          error={error}
+          retryState={retryState}
+          onRetry={retry}
+          onDismiss={dismissError}
+          onCancelAutoRetry={cancelAutoRetry}
+        /&gt;
+      )}
+    &lt;/&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>შიდა ნაკადი</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <ol class="doc-list">
+        <li><strong>შეტყობინების გაგზავნა</strong> - მომხმარებელი აგზავნის შეტყობინებას <code>sendMessage()</code>-ით</li>
+        <li><strong>ქეისის კონტექსტის ინექცია</strong> - თუ პირველი შეტყობინებაა ქეისით, წინ უმატებს ქეისის კონტექსტს</li>
+        <li><strong>საუბრის ავტო-შექმნა</strong> - ქმნის ახალ საუბარს თუ არ არსებობს</li>
+        <li><strong>შეტყობინებების დამატება მდგომარეობაში</strong> - ამატებს მომხმარებლის შეტყობინებას და სტრიმინგის AI placeholder-ს</li>
+        <li><strong>სტრიმინგის დაწყება</strong> - იწყებს ტოკენების სტრიმინგს Flowise endpoint-იდან</li>
+        <li><strong>შეცდომის დამუშავება</strong> - იჭერს და ადგენს შეცდომის მდგომარეობას, ასრულებს შეცდომის შეტყობინებით</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- useChatMessages -->
+  <h4 id="useChatMessages">useChatMessages</h4>
+  <p><strong>ფაილი:</strong> <code>useChatMessages.ts</code></p>
+  <p>უზრუნველყოფს შეტყობინების CRUD ოპერაციებს სათანადო ტიპიზაციით.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseChatMessagesReturn {
+  messages: Message[];
+  isStreaming: boolean;
+  streamingMessageId: string | null;
+  addUserMessage: (content: string) => Message;
+  addAIMessage: (content: string, isStreaming?: boolean) => Message;
+  updateMessageContent: (id: string, content: string) => void;
+  updateMessageStatus: (id: string, status: MessageStatus) => void;
+  completeStreaming: (id: string, finalContent: string) => void;
+  deleteMessage: (id: string) => void;
+  clearMessages: () => void;
+}</code></pre>
+  </div>
+
+  <!-- useConversations -->
+  <h4 id="useConversations">useConversations</h4>
+  <p><strong>ფაილი:</strong> <code>useConversations.ts</code></p>
+  <p>მართავს საუბრების სიას და შენახვას ჰიბრიდული localStorage/FHIR სინქრონიზაციით.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseConversationsReturn {
+  conversations: Conversation[];
+  activeConversation: Conversation | undefined;
+  isLoading: boolean;
+  error: string | null;
+  createConversation: (data: CreateConversationInput) => Promise&lt;Conversation&gt;;
+  selectConversation: (id: string) => void;
+  deleteConversation: (id: string) => Promise&lt;void&gt;;
+  refreshConversations: () => Promise&lt;void&gt;;
+}</code></pre>
+  </div>
+
+  <!-- useDocumentLibrary -->
+  <h4 id="useDocumentLibrary">useDocumentLibrary</h4>
+  <p><strong>ფაილი:</strong> <code>useDocumentLibrary.ts</code></p>
+  <p>მართავს პერსონალური დოკუმენტების ბიბლიოთეკას ატვირთვითა და ძიებით.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseDocumentLibraryReturn {
+  documents: UserDocument[];
+  isLoading: boolean;
+  error: string | null;
+  uploadDocument: (file: File, metadata: DocumentMetadata) => Promise&lt;UserDocument&gt;;
+  deleteDocument: (id: string) => Promise&lt;void&gt;;
+  refreshDocuments: () => Promise&lt;void&gt;;
+  searchDocuments: (query: string) => UserDocument[];
+  filterByCategory: (category: DocumentCategory) => UserDocument[];
+}</code></pre>
+  </div>
+
+  <!-- usePatientCases -->
+  <h4 id="usePatientCases">usePatientCases</h4>
+  <p><strong>ფაილი:</strong> <code>usePatientCases.ts</code></p>
+  <p>მართავს პაციენტის ქეისებს AI დისკუსიებისთვის ფილტრაციით.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UsePatientCasesReturn {
+  cases: PatientCase[];
+  isLoading: boolean;
+  error: string | null;
+  createCase: (data: CreateCaseInput) => Promise&lt;PatientCase&gt;;
+  selectCase: (id: string) => void;
+  deleteCase: (id: string) => Promise&lt;void&gt;;
+  filterBySpecialty: (specialty: string) => PatientCase[];
+  filterByComplexity: (complexity: CaseComplexity) => PatientCase[];
+}</code></pre>
+  </div>
+
+  <!-- useVoiceInput -->
+  <h4 id="useVoiceInput">useVoiceInput</h4>
+  <p><strong>ფაილი:</strong> <code>useVoiceInput.ts</code></p>
+  <p>მეტყველების ტექსტად გარდაქმნის ჩაწერა MediaRecorder API-ით და Supabase Edge Function backend-ებით.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseVoiceInputReturn {
+  isRecording: boolean;
+  transcript: string;
+  error: string | null;
+  startRecording: () => void;
+  stopRecording: () => void;
+  clearTranscript: () => void;
+  selectedLanguage: 'ka' | 'en' | 'ru';
+  setLanguage: (lang: 'ka' | 'en' | 'ru') => void;
+}</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>ხმოვანი შეყვანის ნაკადი:</strong>
+      <ol>
+        <li><strong>ჩაწერის დაწყება</strong> - ითხოვს მიკროფონზე წვდომას MediaRecorder API-ით</li>
+        <li><strong>ჩაწერის დასრულება</strong> - აჩერებს ჩამწერს, გარდაქმნის აუდიოს base64-ში</li>
+        <li><strong>გაგზავნა STT Proxy-ზე</strong> - აგზავნის შესაბამის Supabase Edge Function-ზე</li>
+        <li><strong>ტრანსკრიპტის მიღება</strong> - Edge Function აბრუნებს ტრანსკრიბირებულ ტექსტს</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- useFactCheck -->
+  <h4 id="useFactCheck">useFactCheck</h4>
+  <p><strong>ფაილი:</strong> <code>useFactCheck.ts</code></p>
+  <p>AI მტკიცებულებების ვერიფიკაცია ფაქტების შემოწმების სერვისით.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseFactCheckReturn {
+  isChecking: boolean;
+  results: Map&lt;string, FactCheckResult&gt;; // messageId -> result
+  verify: (messageId: string, content: string) => Promise&lt;FactCheckResult&gt;;
+  clearResult: (messageId: string) => void;
+}</code></pre>
+  </div>
+
+  <!-- useCalculatorIntegration -->
+  <h4 id="useCalculatorIntegration">useCalculatorIntegration</h4>
+  <p><strong>ფაილი:</strong> <code>useCalculatorIntegration.ts</code></p>
+  <p>სამედიცინო კალკულატორების შეთავაზება საუბრის კონტექსტის მიხედვით (MDCalc ინტეგრაცია).</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseCalculatorIntegrationReturn {
+  suggestions: Calculator[];
+  getSuggestions: (message: string) => Calculator[];
+  openCalculator: (calculator: Calculator) => void;
+}</code></pre>
+  </div>
+
+  <!-- useMobileKeyboard -->
+  <h4 id="useMobileKeyboard">useMobileKeyboard</h4>
+  <p><strong>ფაილი:</strong> <code>useMobileKeyboard.ts</code></p>
+  <p>მობილური კლავიატურის ხილვადობის დეტექტირება ჩატის განლაგების კორექტირებისთვის.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseMobileKeyboardReturn {
+  isKeyboardVisible: boolean;
+}</code></pre>
+  </div>
+
+  <!-- Hook Testing Patterns -->
+  <h4 id="hook-testing">ჰუკების ტესტირების პატერნები</h4>
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ტესტირების Setup და მაგალითი</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">import { renderHook, act } from '@testing-library/react';
+import { MedplumProvider } from '@medplum/react';
+import { ChatProvider } from '../../contexts/ChatContext';
+
+const wrapper = ({ children }) => (
+  &lt;MedplumProvider medplum={mockMedplum}&gt;
+    &lt;ChatProvider&gt;
+      {children}
+    &lt;/ChatProvider&gt;
+  &lt;/MedplumProvider&gt;
+);
+
+describe('useChatMessages', () => {
+  it('adds user message correctly', () => {
+    const { result } = renderHook(() => useChatMessages(), { wrapper });
+
+    act(() => {
+      const message = result.current.addUserMessage('Test message');
+      expect(message.type).toBe('user');
+      expect(message.content).toBe('Test message');
+    });
+
+    expect(result.current.messages).toHaveLength(1);
+  });
+
+  it('handles streaming message updates', () => {
+    const { result } = renderHook(() => useChatMessages(), { wrapper });
+    let aiMsgId: string;
+
+    act(() => {
+      const aiMsg = result.current.addAIMessage('', true);
+      aiMsgId = aiMsg.id;
+    });
+
+    act(() => {
+      result.current.updateMessageContent(aiMsgId, 'Based on');
+    });
+
+    expect(result.current.messages[0].content).toBe('Based on');
+
+    act(() => {
+      result.current.completeStreaming(aiMsgId, 'Based on current guidelines...');
+    });
+
+    expect(result.current.messages[0].isStreaming).toBe(false);
+    expect(result.current.messages[0].status).toBe('sent');
+  });
+});</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Styling Patterns -->
+  <h3 id="styling-patterns">6.4 სტილის პატერნები</h3>
+  <p>ყველა კომპონენტი იყენებს თანმიმდევრულ სტილის პატერნებს:</p>
+
+  <ul class="doc-list">
+    <li><strong>CSS Modules</strong> იზოლირებული სტილებისთვის</li>
+    <li><strong>EMR თემის ცვლადები</strong> <code>theme.css</code>-დან</li>
+    <li><strong>Mantine კომპონენტები</strong> ბაზისური UI-სთვის</li>
+    <li><strong>Mobile-first</strong> რესპონსიული დიზაინი</li>
+  </ul>
+
+  <div class="doc-code-block">
+    <pre><code class="language-css">/* Common CSS variables used */
+var(--emr-bg-card)          /* Card backgrounds */
+var(--emr-text-primary)     /* Primary text */
+var(--emr-border-color)     /* Borders */
+var(--emr-primary)          /* Primary actions */
+var(--emr-gradient-primary) /* Buttons */
+var(--emr-shadow-md)        /* Card shadows */</code></pre>
+  </div>
+
+  <!-- Accessibility -->
+  <h3 id="accessibility">6.5 წვდომისუნარიანობა</h3>
+  <p>ყველა კომპონენტი იმპლემენტირებს:</p>
+
+  <ul class="doc-list">
+    <li><strong>კლავიატურით ნავიგაცია</strong> (<kbd>Tab</kbd>, <kbd>Enter</kbd>, <kbd>Escape</kbd>)</li>
+    <li><strong>ARIA ლეიბლები</strong> ეკრანის წამკითხველებისთვის</li>
+    <li><strong>ფოკუსის მართვა</strong> მოდალებისა და გადაფარვებისთვის</li>
+    <li><strong>ფერის კონტრასტი</strong> (WCAG AA მინიმუმი)</li>
+    <li><strong>შეხების სამიზნეები</strong> (მინიმუმ 44px)</li>
+  </ul>
+
+</section>

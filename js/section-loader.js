@@ -27,7 +27,6 @@ const SectionLoader = {
     'overview',
     'features',
     'architecture',
-    'troubleshooting',
     'contact'
   ],
 

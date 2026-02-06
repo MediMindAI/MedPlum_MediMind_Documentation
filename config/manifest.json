@@ -94,13 +94,7 @@
               "anchor": "demographics"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "technical-reference",
-      "titleKey": "toc.technicalReference",
-      "sections": [
+        },
         {
           "id": "architecture",
           "titleKey": "toc.architecture",
@@ -180,21 +174,55 @@
               "containerId": "architecture-technical-container"
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "troubleshooting",
-      "titleKey": "toc.troubleshooting",
-      "sections": [
+        },
         {
           "id": "troubleshooting",
-          "titleKey": "toc.commonIssues",
+          "titleKey": "toc.troubleshooting",
           "file": "troubleshooting",
           "priority": "low",
           "children": [
             { "id": "common-issues", "titleKey": "toc.commonIssues", "anchor": "common-issues" },
             { "id": "error-codes", "titleKey": "toc.errorCodes", "anchor": "error-codes" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-assistant",
+      "titleKey": "toc.aiMedicalAssistant",
+      "sections": [
+        {
+          "id": "ai-chatbot-overview",
+          "titleKey": "toc.aiChatbotOverview",
+          "file": "ai-chatbot-overview",
+          "priority": "high",
+          "children": [
+            { "id": "ai-introduction", "titleKey": "toc.aiIntroduction", "anchor": "introduction" },
+            { "id": "ai-architecture", "titleKey": "toc.aiArchitecture", "anchor": "architecture" },
+            { "id": "ai-features", "titleKey": "toc.aiFeatures", "anchor": "features" }
+          ]
+        },
+        {
+          "id": "ai-chatbot-components",
+          "titleKey": "toc.aiChatbotComponents",
+          "file": "ai-chatbot-components",
+          "priority": "medium",
+          "children": [
+            { "id": "ai-components-overview", "titleKey": "toc.aiComponentsOverview", "anchor": "components-overview" },
+            { "id": "ai-state-management", "titleKey": "toc.aiStateManagement", "anchor": "state-management" },
+            { "id": "ai-hooks", "titleKey": "toc.aiHooks", "anchor": "hooks" }
+          ]
+        },
+        {
+          "id": "ai-chatbot-integration",
+          "titleKey": "toc.aiChatbotIntegration",
+          "file": "ai-chatbot-integration",
+          "priority": "medium",
+          "children": [
+            { "id": "ai-services", "titleKey": "toc.aiServices", "anchor": "services" },
+            { "id": "ai-fhir", "titleKey": "toc.aiFhir", "anchor": "fhir" },
+            { "id": "ai-flowise", "titleKey": "toc.aiFlowise", "anchor": "flowise" },
+            { "id": "ai-backend", "titleKey": "toc.aiBackend", "anchor": "backend" }
           ]
         }
       ]

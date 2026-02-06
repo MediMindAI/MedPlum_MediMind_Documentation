@@ -1,0 +1,291 @@
+{
+  "sectionId": "ai-chatbot-overview",
+  "file": "ai-chatbot-overview",
+  "createdAt": "2026-02-06T12:00:00Z",
+  "updatedAt": "2026-02-06T19:00:00Z",
+  "totalScreenshots": 8,
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "fallbackUrl": "http://localhost:3005",
+    "credentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    }
+  },
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ka": "text=ქარ",
+      "ru": "text=РУС"
+    }
+  },
+  "screenshots": [
+    {
+      "name": "ai-chat-interface",
+      "description": "Full AI chat interface with sidebar, message area, and input",
+      "route": "/emr/ai-assistant/chat",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["chat header with KB selector", "welcome screen or message area", "input area at bottom", "sidebar on left"],
+        "mustNotShow": ["login page", "error page", "blank screen"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "on /emr/ai-assistant/chat"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+          { "action": "wait", "ms": 3000 }
+        ]
+      },
+      "differentiator": "full-page-overview",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "screenshot", "name": "ai-chat-interface-{lang}" }
+      ],
+      "expectedDOMElements": [".chat-window", ".message-input"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "All elements present: nav tabs, KB selector, welcome area, input at bottom"
+      }
+    },
+    {
+      "name": "ai-knowledge-base-selector",
+      "description": "Knowledge base tabs showing Medical Knowledge and My Documents options with selection highlight",
+      "route": "/emr/ai-assistant/chat",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["KB tab area visible", "Medical Knowledge tab", "My Documents tab", "My Documents tab selected/highlighted"],
+        "mustNotShow": ["login page", "dropdown menu open"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "on /emr/ai-assistant/chat"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "click", "selector": "text=My Documents" },
+          { "action": "wait", "ms": 500 }
+        ]
+      },
+      "differentiator": "kb-tabs-with-my-documents-selected",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "click", "selector": "text=My Documents" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "ai-knowledge-base-selector-{lang}" }
+      ],
+      "expectedDOMElements": ["[data-testid='kb-selector']"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "RECAPTURED: Now shows My Documents tab selected (different from ai-chat-interface which shows Medical Knowledge selected)"
+      }
+    },
+    {
+      "name": "ai-conversation-history",
+      "description": "Conversation history sidebar showing list of past chats grouped by date",
+      "route": "/emr/ai-assistant/chat",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["sidebar visible on left", "conversation list or empty state", "new chat button"],
+        "mustNotShow": ["sidebar collapsed/hidden", "login page"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "on /emr/ai-assistant/chat"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "verifyVisible", "elements": ["sidebar", "conversation list area"] }
+        ]
+      },
+      "differentiator": "sidebar-with-history-list",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "ai-conversation-history-{lang}" }
+      ],
+      "expectedDOMElements": [".history-sidebar", ".conversation-list"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "Sidebar expanded with History panel and CARDIOLOGY conversation visible. Unique from other /chat screenshots."
+      }
+    },
+    {
+      "name": "ai-document-library",
+      "description": "Document library page with uploaded documents grid and category tabs",
+      "route": "/emr/ai-assistant/library",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["document library header", "upload area or document grid", "category tabs"],
+        "mustNotShow": ["chat interface", "login page"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/library" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "differentiator": "library-page-different-route",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/library" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "ai-document-library-{lang}" }
+      ],
+      "expectedDOMElements": [".document-library", ".document-card"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "Documents page with upload area, category tabs (All, Research Papers, Clinical Guidelines, Case Studies, Personal Notes, Other). Correct languages."
+      }
+    },
+    {
+      "name": "ai-case-creation",
+      "description": "Case creation modal with Manual Entry and From Patient tabs visible",
+      "route": "/emr/ai-assistant/cases",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["modal overlay", "Manual Entry tab", "From Patient tab", "form fields"],
+        "mustNotShow": ["closed modal", "only case list without modal"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "on /emr/ai-assistant/cases"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/cases" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "click", "selector": "text=New Case", "fallback": "button:has-text('New')" },
+          { "action": "wait", "ms": 500 },
+          { "action": "verifyVisible", "elements": ["modal", "Manual Entry tab"] }
+        ]
+      },
+      "differentiator": "modal-open-with-tabs",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/cases" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "click", "selector": "text=New Case" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "ai-case-creation-{lang}" }
+      ],
+      "expectedDOMElements": [".case-creation-modal"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "Modal open with Manual Entry/From Patient tabs, Case Details section, Specialty dropdown, Patient Information textarea. Correct languages."
+      }
+    },
+    {
+      "name": "ai-mobile-chat",
+      "description": "Mobile responsive view of chat interface with collapsed sidebar and bottom navigation",
+      "route": "/emr/ai-assistant/chat",
+      "viewport": { "width": 375, "height": 812 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["narrow mobile layout", "chat area", "input at bottom"],
+        "mustNotShow": ["desktop sidebar expanded", "1440px wide layout"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "language set BEFORE viewport resize"],
+        "interactionSequence": [
+          { "action": "viewport", "width": 375, "height": 812 },
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "differentiator": "mobile-viewport-375px",
+      "captureSteps": [
+        { "action": "viewport", "width": 375, "height": 812 },
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "ai-mobile-chat-{lang}" }
+      ],
+      "expectedDOMElements": [".chat-window"],
+      "mobileNote": "IMPORTANT: Switch language BEFORE resizing to mobile viewport. Mobile viewport hides language buttons.",
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "Mobile viewport (375px) with bottom navigation (Home, Patient History, Messages, Menu), welcome screen, input area. Correct languages."
+      }
+    },
+    {
+      "name": "ai-conversation-active",
+      "description": "Active conversation showing user question and AI response with medical information",
+      "route": "/emr/ai-assistant/chat",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["user message bubble", "AI response with medical content", "message timestamps"],
+        "mustNotShow": ["login page", "empty welcome screen only"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "existing conversation or new message sent"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "fill", "selector": "textarea", "value": "What are the common symptoms of type 2 diabetes?" },
+          { "action": "click", "selector": "button[type='submit']" },
+          { "action": "wait", "ms": 5000 }
+        ]
+      },
+      "differentiator": "shows-actual-conversation-messages",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/chat" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "fill", "selector": "textarea", "value": "What are the common symptoms of type 2 diabetes?" },
+        { "action": "click", "selector": "button[type='submit']" },
+        { "action": "wait", "ms": 5000 },
+        { "action": "screenshot", "name": "ai-conversation-active-{lang}" }
+      ],
+      "expectedDOMElements": [".message-item", ".ai-response"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "Shows user question about diabetes symptoms and detailed AI response with medical information. Correct languages."
+      }
+    },
+    {
+      "name": "ai-my-documents",
+      "description": "My Documents view showing uploaded personal medical documents with storage usage",
+      "route": "/emr/ai-assistant/library",
+      "viewport": { "width": 1440, "height": 900 },
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "verificationCriteria": {
+        "mustShow": ["document count", "storage usage", "uploaded document in list", "category tabs"],
+        "mustNotShow": ["login page", "chat interface"]
+      },
+      "stateSetup": {
+        "preconditions": ["logged in", "documents uploaded to personal KB"],
+        "interactionSequence": [
+          { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/library" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "differentiator": "shows-uploaded-documents-with-stats",
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/ai-assistant/library" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "ai-my-documents-{lang}" }
+      ],
+      "expectedDOMElements": [".document-stats", ".document-card"],
+      "validationResult": {
+        "validated": true,
+        "languageCheck": { "en": "PASS", "ka": "PASS", "ru": "PASS" },
+        "contentCheck": "PASS",
+        "notes": "Shows 1 TOTAL DOCUMENTS, 506.6 KB STORAGE USED, uploaded PDF document in list. Correct languages."
+      }
+    }
+  ]
+}

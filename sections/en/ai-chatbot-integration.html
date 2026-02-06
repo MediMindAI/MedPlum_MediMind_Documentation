@@ -1,0 +1,1280 @@
+<section class="doc-section" id="ai-chatbot-integration">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">5</span> AI Chatbot Integration & Services</h2>
+  </div>
+
+  <p>This section documents the technical implementation of the AI Medical Chatbot, including the service layer architecture, FHIR data persistence, Flowise AI streaming integration, and backend infrastructure.</p>
+
+  <!-- ========================== -->
+  <!-- 5.1 Services Overview -->
+  <!-- ========================== -->
+  <h3 id="services">5.1 Services Overview</h3>
+  <p>The service layer provides business logic and external system integration for the AI chatbot. All services are pure TypeScript modules that accept dependencies explicitly with no global state.</p>
+
+  <!-- Service Categories -->
+  <h4 id="service-categories">Service Categories</h4>
+  <p>The AI chatbot service layer is organized into <strong>8 categories</strong> containing <strong>14 specialized services</strong>:</p>
+
+  <div class="doc-form-sections-grid-8">
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">1</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Streaming</div>
+        <div class="doc-form-section-desc">SSE orchestration and token buffering</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">2</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Persistence</div>
+        <div class="doc-form-section-desc">FHIR + localStorage hybrid storage</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">3</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Documents</div>
+        <div class="doc-form-section-desc">Document upload and management</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">4</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Enhancement</div>
+        <div class="doc-form-section-desc">Fact-checking and calculators</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">5</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Attachments</div>
+        <div class="doc-form-section-desc">OCR and image processing</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">6</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Patient Context</div>
+        <div class="doc-form-section-desc">Anonymized patient summaries</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">7</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Hospital KB</div>
+        <div class="doc-form-section-desc">Organization knowledge base</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">8</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Personal KB</div>
+        <div class="doc-form-section-desc">Per-user vector stores</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete Service Index -->
+  <h4 id="service-index">Complete Service Index</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Purpose</th>
+          <th>Primary Dependency</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>streamingService</code></td>
+          <td>SSE streaming orchestration</td>
+          <td>sseClient</td>
+        </tr>
+        <tr>
+          <td><code>sseClient</code></td>
+          <td>Low-level SSE connection</td>
+          <td>fetch API</td>
+        </tr>
+        <tr>
+          <td><code>streamingHelpers</code></td>
+          <td>Token buffering, retry logic</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>conversationService</code></td>
+          <td>FHIR Communication CRUD</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>localStorageService</code></td>
+          <td>Offline persistence</td>
+          <td>localStorage API</td>
+        </tr>
+        <tr>
+          <td><code>documentService</code></td>
+          <td>Document upload/management</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>caseService</code></td>
+          <td>Patient case CRUD</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>factCheckService</code></td>
+          <td>AI claim verification</td>
+          <td>Flowise API</td>
+        </tr>
+        <tr>
+          <td><code>calculatorRecommendation</code></td>
+          <td>Calculator suggestions</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>chatAttachmentService</code></td>
+          <td>File attachment processing (OCR, image AI)</td>
+          <td>Tesseract.js, Gemini Vision</td>
+        </tr>
+        <tr>
+          <td><code>caseOcrService</code></td>
+          <td>OCR extraction for case files</td>
+          <td>Gemini Vision</td>
+        </tr>
+        <tr>
+          <td><code>patientContextService</code></td>
+          <td>Anonymized patient summaries</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>hospitalKnowledgeBaseService</code></td>
+          <td>Hospital knowledge base management</td>
+          <td>Supabase Edge Functions</td>
+        </tr>
+        <tr>
+          <td><code>personalVectorStoreService</code></td>
+          <td>Personal per-user vector store</td>
+          <td>Supabase Edge Functions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Service Dependency Diagram -->
+  <h4 id="service-dependencies">Service Dependencies</h4>
+  <p>The following diagram shows how services depend on each other:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Streaming["Streaming Services"]
+        SS[streamingService]
+        SC[sseClient]
+        SH[streamingHelpers]
+    end
+
+    subgraph Persistence["Persistence Services"]
+        CS[conversationService]
+        LS[localStorageService]
+    end
+
+    subgraph Documents["Document Services"]
+        DS[documentService]
+        CaS[caseService]
+    end
+
+    subgraph Enhancement["Enhancement Services"]
+        FC[factCheckService]
+        CR[calculatorRecommendation]
+    end
+
+    subgraph Attachments["Attachment Services"]
+        CAS[chatAttachmentService]
+        COS[caseOcrService]
+    end
+
+    subgraph External["External APIs"]
+        MC[(MedplumClient)]
+        FL[(Flowise API)]
+        GV[(Gemini Vision)]
+        TS[(Tesseract.js)]
+        SB[(Supabase)]
+    end
+
+    SS --> SC
+    SS --> SH
+    SS --> CS
+    SC --> FL
+
+    CS --> MC
+    DS --> MC
+    CaS --> MC
+
+    FC --> FL
+    CAS --> TS
+    CAS --> GV
+    COS --> GV
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Streaming Service API -->
+  <h4 id="streaming-api">Streaming Service API</h4>
+  <p>The <code>streamingService</code> provides the high-level API for AI response streaming:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface StreamingOptions {
+  endpoint: string;              // Flowise chatflow URL
+  message: string;               // User message
+  sessionId: string;             // Conversation ID
+  knowledgeBaseType: 'curated' | 'personal';
+  specialty?: string;            // Medical specialty
+  caseContext?: string;          // Anonymized patient info
+  onToken: (token: string, accumulated: string) => void;
+  onComplete: (fullResponse: string) => void;
+  onError: (error: Error) => void;
+  onStart?: () => void;
+  signal?: AbortSignal;          // For cancellation
+}
+
+interface StreamingSession {
+  connectionId: string;          // Unique session ID
+  sessionId: string;             // Conversation ID
+  startTime: number;             // Timestamp (ms)
+  abort: () => void;             // Abort function
+}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Function</th>
+          <th>Parameters</th>
+          <th>Returns</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>startStreaming</code></td>
+          <td><code>options: StreamingOptions</code></td>
+          <td><code>Promise&lt;StreamingSession&gt;</code></td>
+          <td>Initiates a new SSE streaming session</td>
+        </tr>
+        <tr>
+          <td><code>stopStreaming</code></td>
+          <td>-</td>
+          <td><code>void</code></td>
+          <td>Stops the current active session</td>
+        </tr>
+        <tr>
+          <td><code>isStreaming</code></td>
+          <td>-</td>
+          <td><code>boolean</code></td>
+          <td>Returns whether streaming is active</td>
+        </tr>
+        <tr>
+          <td><code>getCurrentSession</code></td>
+          <td>-</td>
+          <td><code>StreamingSession | null</code></td>
+          <td>Returns active session object</td>
+        </tr>
+        <tr>
+          <td><code>abortAll</code></td>
+          <td>-</td>
+          <td><code>void</code></td>
+          <td>Aborts all SSE connections</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Token Buffering -->
+  <h4 id="token-buffering">Token Buffering</h4>
+  <p>AI responses can emit <strong>50-100 tokens/second</strong>. To prevent excessive UI updates, tokens are batched using a debounced buffer:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface TokenBuffer {
+  tokens: string[];         // Accumulated tokens
+  callback: (batch: string) => void;
+  debounceMs: number;       // Default: 50ms
+  timeoutId: NodeJS.Timeout | null;
+}
+
+// Buffer batches tokens every 50ms
+const buffer = createTokenBuffer(
+  (batch) => updateUI(batch),
+  50  // debounce milliseconds
+);</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Why Buffer Tokens?</strong>
+      <ul>
+        <li>Updating React state 100 times/second causes UI jank</li>
+        <li>50ms debounce groups tokens into smooth batches</li>
+        <li>Result: Real-time feel without performance degradation</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Retry Logic -->
+  <h4 id="retry-logic">Exponential Backoff Retry</h4>
+  <p>Transient network failures are handled with exponential backoff:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface RetryOptions {
+  initialDelayMs: number;   // First retry delay (e.g., 1000ms)
+  maxDelayMs: number;       // Max retry delay (e.g., 10000ms)
+  multiplier: number;       // Backoff multiplier (e.g., 2)
+  maxRetries: number;       // Max attempts (e.g., 3)
+}
+
+// Retry sequence: 1s -> 2s -> 4s -> fail</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Attempt</th>
+          <th>Delay</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>-</td>
+          <td>Initial request</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>1,000ms</td>
+          <td>First retry</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>2,000ms</td>
+          <td>Second retry</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>4,000ms</td>
+          <td>Final retry or give up</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.2 FHIR Integration -->
+  <!-- ========================== -->
+  <h3 id="fhir">5.2 FHIR Integration</h3>
+  <p>The AI chatbot uses <strong>FHIR R4 resources</strong> for data persistence, ensuring interoperability and clinical data standards compliance. All custom extensions follow the pattern: <code>http://medimind.ge/fhir/StructureDefinition/{name}</code></p>
+
+  <!-- FHIR Resources Used -->
+  <h4 id="fhir-resources">FHIR Resources Used</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Purpose</th>
+          <th>Key Extensions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>Conversation metadata</td>
+          <td>conversation-session-id, conversation-knowledge-base</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentReference</strong></td>
+          <td>Patient cases, user documents</td>
+          <td>case-anonymized-info, document-vector-store-file-id</td>
+        </tr>
+        <tr>
+          <td><strong>Binary</strong></td>
+          <td>Document file storage</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>Practitioner</strong></td>
+          <td>User vector store reference</td>
+          <td>user-vector-store</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Communication Resource -->
+  <h4 id="communication-resource">Communication Resource (Conversations)</h4>
+  <p>Stores conversation metadata including title, knowledge base type, message count, and session ID:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "Communication",
+  "id": "conv-12345",
+  "status": "in-progress",
+  "sender": {
+    "reference": "Practitioner/user-456"
+  },
+  "topic": {
+    "text": "Treatment guidelines for atrial fibrillation"
+  },
+  "sent": "2024-03-15T10:30:00Z",
+  "received": "2024-03-15T10:35:00Z",
+  "extension": [
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-session-id",
+      "valueString": "session-1710498600-abc123"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-knowledge-base",
+      "valueString": "curated"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-specialty",
+      "valueString": "cardiology"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-type",
+      "valueString": "general"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-message-count",
+      "valueInteger": 10
+    }
+  ],
+  "about": [
+    {
+      "reference": "DocumentReference/case-789"
+    }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- Field Mappings -->
+  <h4 id="field-mappings">TypeScript to FHIR Field Mappings</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>TypeScript Field</th>
+          <th>FHIR Path</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Communication.id</td>
+          <td>string</td>
+        </tr>
+        <tr>
+          <td><code>userId</code></td>
+          <td>Communication.sender.reference</td>
+          <td>string (Practitioner/{id})</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td>Communication.topic.text</td>
+          <td>string (max 200 chars)</td>
+        </tr>
+        <tr>
+          <td><code>sessionId</code></td>
+          <td>extension[conversation-session-id].valueString</td>
+          <td>string (UUID)</td>
+        </tr>
+        <tr>
+          <td><code>knowledgeBaseType</code></td>
+          <td>extension[conversation-knowledge-base].valueString</td>
+          <td>'curated' | 'personal'</td>
+        </tr>
+        <tr>
+          <td><code>messageCount</code></td>
+          <td>extension[conversation-message-count].valueInteger</td>
+          <td>number</td>
+        </tr>
+        <tr>
+          <td><code>createdAt</code></td>
+          <td>Communication.sent</td>
+          <td>date-time (ISO 8601)</td>
+        </tr>
+        <tr>
+          <td><code>status</code></td>
+          <td>Communication.status</td>
+          <td>in-progress | completed | entered-in-error</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Extension URLs Reference -->
+  <h4 id="extension-urls">Extension URL Reference</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">// Conversation Extensions
+http://medimind.ge/fhir/StructureDefinition/conversation-session-id
+http://medimind.ge/fhir/StructureDefinition/conversation-knowledge-base
+http://medimind.ge/fhir/StructureDefinition/conversation-specialty
+http://medimind.ge/fhir/StructureDefinition/conversation-type
+http://medimind.ge/fhir/StructureDefinition/conversation-message-count
+http://medimind.ge/fhir/StructureDefinition/conversation-last-preview
+
+// Document Extensions
+http://medimind.ge/fhir/StructureDefinition/document-category
+http://medimind.ge/fhir/StructureDefinition/document-tags
+http://medimind.ge/fhir/StructureDefinition/document-upload-status
+http://medimind.ge/fhir/StructureDefinition/document-processing-status
+http://medimind.ge/fhir/StructureDefinition/document-vector-store-file-id
+http://medimind.ge/fhir/StructureDefinition/document-openai-file-id
+
+// Case Extensions
+http://medimind.ge/fhir/StructureDefinition/case-anonymized-info
+http://medimind.ge/fhir/StructureDefinition/case-specialty
+http://medimind.ge/fhir/StructureDefinition/case-complexity
+http://medimind.ge/fhir/StructureDefinition/case-tags
+
+// User Extensions
+http://medimind.ge/fhir/StructureDefinition/user-vector-store</code></pre>
+  </div>
+
+  <!-- Hybrid Persistence Strategy -->
+  <h4 id="hybrid-persistence">Hybrid Persistence Strategy</h4>
+  <p>The chatbot uses a hybrid FHIR + localStorage approach for optimal performance:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[User Action] --> B[Update UI State]
+    B --> C[Save to localStorage]
+    C --> D[Save to FHIR]
+    D --> E{Success?}
+    E -->|Yes| F[Complete]
+    E -->|No| G[Fallback to localStorage]
+    G --> F
+
+    style C fill:#f59e0b,stroke:#d97706,color:#000
+    style D fill:#10b981,stroke:#059669,color:#fff
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Benefits of Hybrid Persistence:</strong>
+      <ul>
+        <li><strong>Instant UI Updates</strong> - No waiting for server response</li>
+        <li><strong>Offline Capability</strong> - Works without network</li>
+        <li><strong>Server Persistence</strong> - Data survives browser clear</li>
+        <li><strong>Cross-Device Sync</strong> - FHIR enables multi-device access</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.3 Flowise Integration -->
+  <!-- ========================== -->
+  <h3 id="flowise">5.3 Flowise Integration</h3>
+  <p>The chatbot integrates with <strong>Flowise AI</strong>, an open-source low-code platform for building LLM applications. Flowise provides AI inference with chatflow orchestration, knowledge base integration, and streaming responses via Server-Sent Events (SSE).</p>
+
+  <!-- Architecture -->
+  <h4 id="flowise-architecture">Flowise Architecture</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[React Frontend] -->|SSE Request| B[Flowise API]
+    B --> C[Chatflow]
+    C --> D[Vector Store]
+    C --> E[LLM Model]
+    E -->|Streaming Tokens| A
+
+    subgraph KB["Knowledge Bases"]
+        D1[Curated Medical KB]
+        D2[Personal Documents]
+    end
+    D --> KB
+
+    subgraph Models["LLM Options"]
+        E1[GPT-4]
+        E2[Claude]
+    end
+    E --> Models
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- SSE Request Format -->
+  <h4 id="sse-request">SSE Request Format</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-http">POST https://flowise.example.com/api/v1/prediction/abc123
+Content-Type: application/json
+Accept: text/event-stream
+
+{
+  "question": "What is the treatment for atrial fibrillation?",
+  "sessionId": "conv-12345",
+  "knowledgeBase": "curated",
+  "specialty": "cardiology",
+  "caseContext": "Patient with CHADS2-VASc 4...",
+  "streaming": true
+}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Required</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>question</code></td>
+          <td>string</td>
+          <td>Yes</td>
+          <td>User's message/question</td>
+        </tr>
+        <tr>
+          <td><code>sessionId</code></td>
+          <td>string</td>
+          <td>Yes</td>
+          <td>Conversation ID for context continuity</td>
+        </tr>
+        <tr>
+          <td><code>knowledgeBase</code></td>
+          <td>string</td>
+          <td>No</td>
+          <td>'curated' or 'personal' (default: 'curated')</td>
+        </tr>
+        <tr>
+          <td><code>specialty</code></td>
+          <td>string</td>
+          <td>No</td>
+          <td>Medical specialty for context</td>
+        </tr>
+        <tr>
+          <td><code>caseContext</code></td>
+          <td>string</td>
+          <td>No</td>
+          <td>Anonymized patient case info</td>
+        </tr>
+        <tr>
+          <td><code>streaming</code></td>
+          <td>boolean</td>
+          <td>Yes</td>
+          <td>Always true for SSE</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SSE Response Format -->
+  <h4 id="sse-response">SSE Response Format</h4>
+  <p>Flowise returns Server-Sent Events with the following structure:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">data: {"event":"start"}
+
+data: {"event":"token","data":"Based"}
+
+data: {"event":"token","data":" on"}
+
+data: {"event":"token","data":" the"}
+
+data: {"event":"token","data":" latest"}
+
+data: {"event":"metadata","data":{"sources":[...]}}
+
+data: {"event":"end"}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Data</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>start</code></td>
+          <td>null</td>
+          <td>Stream has started</td>
+        </tr>
+        <tr>
+          <td><code>token</code></td>
+          <td>string</td>
+          <td>Single token from LLM</td>
+        </tr>
+        <tr>
+          <td><code>metadata</code></td>
+          <td>object</td>
+          <td>Additional data (sources, citations)</td>
+        </tr>
+        <tr>
+          <td><code>end</code></td>
+          <td>null</td>
+          <td>Stream has completed</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Routing Markers -->
+  <h4 id="routing-markers">Request Routing Markers</h4>
+  <p>Special markers in messages route requests to different Flowise chatflows:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Marker</th>
+          <th>Purpose</th>
+          <th>Target Endpoint</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&lt;&lt;CASE_DISCUSSION&gt;&gt;</code></td>
+          <td>Routes to case-specific discussion</td>
+          <td>Cardiology/OB-GYN endpoint</td>
+        </tr>
+        <tr>
+          <td><code>&lt;&lt;BG_INTERPRETATION&gt;&gt;</code></td>
+          <td>Routes to ABG blood gas interpretation</td>
+          <td><code>VITE_FLOWISE_ABG_URL</code></td>
+        </tr>
+        <tr>
+          <td><code>&lt;&lt;BG_ACTION_PLAN&gt;&gt;</code></td>
+          <td>Routes to clinical action plan</td>
+          <td><code>VITE_FLOWISE_ACTION_PLAN_URL</code></td>
+        </tr>
+        <tr>
+          <td><code>CUSTOM_TEMPLATE:</code></td>
+          <td>Routes to template processing</td>
+          <td>Form-specific endpoint</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Performance Metrics -->
+  <h4 id="performance-metrics">Performance Metrics</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Value</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Time to First Token</td>
+          <td>500-1000ms</td>
+          <td>Initial LLM response</td>
+        </tr>
+        <tr>
+          <td>Tokens per Second</td>
+          <td>20-50</td>
+          <td>Streaming rate</td>
+        </tr>
+        <tr>
+          <td>Total Response Time</td>
+          <td>5-15s</td>
+          <td>For 500-word response</td>
+        </tr>
+        <tr>
+          <td>Vector Search Time</td>
+          <td>100-300ms</td>
+          <td>RAG retrieval</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.4 Backend Services -->
+  <!-- ========================== -->
+  <h3 id="backend">5.4 Backend Services</h3>
+  <p>All AI services are accessed through <strong>Supabase Edge Functions</strong> (Deno runtime) or direct Flowise API calls. The frontend never communicates with raw AI provider APIs directly - edge functions serve as secure proxies with CORS enforcement, authentication, and rate limiting.</p>
+
+  <!-- Supabase Edge Functions -->
+  <h4 id="edge-functions">Supabase Edge Functions</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Function</th>
+          <th>Purpose</th>
+          <th>Auth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>abg-ai-proxy</code></td>
+          <td>ABG OCR (Gemini) + Flowise interpretation</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>mediscribe-generator</code></td>
+          <td>Form generation (Initial Consult, Form 100)</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>georgian-tts-proxy</code></td>
+          <td>Enagram STT for Georgian speech</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>google-stt-proxy</code></td>
+          <td>Google Chirp 2 STT for English/Russian</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>patient-chatbot</code></td>
+          <td>Patient-facing chatbot (GPT-4o-mini)</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-upload</code></td>
+          <td>Upload docs to OpenAI Vector Store</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-manage</code></td>
+          <td>Manage knowledge base documents</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-delete</code></td>
+          <td>Delete docs from Vector Store</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>manageVectorStore</code></td>
+          <td>Create/get/delete personal user vector store</td>
+          <td>x-practitioner-id</td>
+        </tr>
+        <tr>
+          <td><code>upload-document-to-openai</code></td>
+          <td>Upload personal docs to user's vector store</td>
+          <td>x-practitioner-id</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AI Models Reference -->
+  <h4 id="ai-models">AI Models Reference</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Model</th>
+          <th>Temperature</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Patient Chatbot</td>
+          <td>OpenAI gpt-4o-mini</td>
+          <td>0.7</td>
+          <td>Patient-facing chat (6 modes)</td>
+        </tr>
+        <tr>
+          <td>ABG OCR</td>
+          <td>Google gemini-2.0-flash-exp</td>
+          <td>0.1</td>
+          <td>Blood gas value extraction</td>
+        </tr>
+        <tr>
+          <td>ABG Interpretation</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.1</td>
+          <td>Clinical analysis</td>
+        </tr>
+        <tr>
+          <td>Medical Chat</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.3</td>
+          <td>Staff-facing chatbot</td>
+        </tr>
+        <tr>
+          <td>Action Plan</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.3</td>
+          <td>Treatment planning</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Temperature Guidelines:</strong>
+      <ul>
+        <li><strong>0.1</strong> - OCR, ABG interpretation (high precision, minimal creativity)</li>
+        <li><strong>0.3</strong> - Medical chat, action plans (balanced accuracy with flexibility)</li>
+        <li><strong>0.7</strong> - Patient chatbot (conversational, empathetic tone)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Speech-to-Text Services -->
+  <h4 id="stt-services">Speech-to-Text Services</h4>
+  <p>The chatbot supports voice input in three languages using specialized STT services:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Language</th>
+          <th>Service</th>
+          <th>Edge Function</th>
+          <th>External API</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Georgian (ka)</td>
+          <td>Enagram</td>
+          <td><code>georgian-tts-proxy</code></td>
+          <td>enagramm.com/API</td>
+        </tr>
+        <tr>
+          <td>English (en)</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+          <td>speech.googleapis.com</td>
+        </tr>
+        <tr>
+          <td>Russian (ru)</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+          <td>speech.googleapis.com</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OCR Services -->
+  <h4 id="ocr-services">OCR Services</h4>
+  <p>Document text extraction uses a tiered approach:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[File Input] --> B{File Type?}
+    B -->|Image| C{Context?}
+    B -->|Document| D[Try Tesseract.js]
+
+    C -->|ABG Analysis| E[Gemini Vision]
+    C -->|Chat Context| F{Quality?}
+
+    F -->|Good| G[Tesseract.js]
+    F -->|Poor| E
+
+    D --> H{Success?}
+    H -->|Yes| I[Return Text]
+    H -->|No| E
+
+    E --> I
+    G --> I
+
+    style G fill:#10b981,stroke:#059669,color:#fff
+    style E fill:#2b6cb0,stroke:#1a365d,color:#fff
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Type</th>
+          <th>Use Case</th>
+          <th>Limitations</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tesseract.js</strong></td>
+          <td>Free, client-side</td>
+          <td>Primary OCR for documents</td>
+          <td>Lower accuracy on handwritten text</td>
+        </tr>
+        <tr>
+          <td><strong>Gemini Vision</strong></td>
+          <td>Cloud-based AI</td>
+          <td>Fallback OCR, ABG analysis</td>
+          <td>Costs money per request</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Backend Data Flow -->
+  <h4 id="backend-flow">Backend Data Flow</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Frontend["React Frontend"]
+        UI[Chat UI]
+        Hook[useFlowiseChat]
+    end
+
+    subgraph Supabase["Supabase Edge Functions"]
+        ABG[abg-ai-proxy]
+        STT[STT Proxies]
+        KB[KB Functions]
+        Chat[patient-chatbot]
+    end
+
+    subgraph External["External APIs"]
+        FL[Flowise AI]
+        OAI[OpenAI API]
+        GV[Gemini Vision]
+        EN[Enagram]
+        GCP[Google Cloud]
+    end
+
+    subgraph Storage["Data Storage"]
+        FHIR[(Medplum FHIR)]
+        SB[(Supabase DB)]
+        VS[(OpenAI Vector Store)]
+    end
+
+    UI --> Hook
+    Hook --> ABG
+    Hook --> STT
+    Hook --> KB
+    Hook --> Chat
+
+    ABG --> FL
+    ABG --> GV
+    Chat --> OAI
+    STT --> EN
+    STT --> GCP
+    KB --> VS
+
+    Hook --> FHIR
+    KB --> SB
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Environment Variables -->
+  <h4 id="env-vars">Environment Variables Reference</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-bash"># Flowise AI Endpoints
+VITE_FLOWISE_CARDIOLOGY_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_OBGYN_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_ABG_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_ACTION_PLAN_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_FORM100_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_USE_FLOWISE_DIRECT_ABG=true
+
+# Streaming Configuration
+VITE_ENABLE_STREAMING=true
+VITE_STREAMING_MAX_RETRIES=3
+VITE_STREAMING_TIMEOUT=180000
+VITE_STREAMING_DEBOUNCE_MS=50
+VITE_STREAMING_FALLBACK=true
+
+# Supabase
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=...
+
+# Speech-to-Text
+VITE_STT_PROXY_URL=https://xxx.supabase.co/functions/v1/georgian-tts-proxy
+VITE_GOOGLE_STT_URL=https://xxx.supabase.co/functions/v1/google-stt-proxy
+
+# Other Services
+VITE_MEDISCRIBE_GENERATOR_URL=https://xxx.supabase.co/functions/v1/mediscribe-generator
+VITE_CHATBOT_URL=https://xxx.supabase.co/functions/v1/patient-chatbot</code></pre>
+  </div>
+
+  <!-- Error Handling -->
+  <h4 id="error-handling">Error Handling & Resilience</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Max Retries</th>
+          <th>Backoff</th>
+          <th>Timeout</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Flowise SSE</td>
+          <td>3</td>
+          <td>Exponential (1s, 2s, 4s)</td>
+          <td>180s</td>
+        </tr>
+        <tr>
+          <td>Enagram STT</td>
+          <td>2</td>
+          <td>Fixed (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Google STT</td>
+          <td>2</td>
+          <td>Fixed (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Patient Chatbot</td>
+          <td>2</td>
+          <td>Fixed (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Gemini OCR</td>
+          <td>1</td>
+          <td>None</td>
+          <td>30s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Fallback Chain:</strong>
+      <ol>
+        <li><strong>Flowise SSE fails</strong> - Retry 3x with backoff, then fall back to JSON if <code>VITE_STREAMING_FALLBACK=true</code></li>
+        <li><strong>OCR fails</strong> - Tesseract fails, fall back to Gemini Vision</li>
+        <li><strong>STT fails</strong> - Display toast, allow manual text entry</li>
+        <li><strong>FHIR fails</strong> - Save to localStorage, background sync on next load</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Security Considerations -->
+  <h4 id="security">Security Considerations</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Concern</th>
+          <th>Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>API key exposure</td>
+          <td>All keys stored in Supabase secrets, never in frontend code</td>
+        </tr>
+        <tr>
+          <td>Patient data in AI prompts</td>
+          <td>Patient context uses anonymized summaries (age ranges, no PII)</td>
+        </tr>
+        <tr>
+          <td>CORS</td>
+          <td>Edge functions restrict origins to medimind.ge and localhost:3000</td>
+        </tr>
+        <tr>
+          <td>Rate limiting</td>
+          <td>Enagram enforces 30s between requests; client-side throttling</td>
+        </tr>
+        <tr>
+          <td>Authentication</td>
+          <td>Supabase anon key for edge functions; Medplum OAuth for FHIR</td>
+        </tr>
+        <tr>
+          <td>Data transit</td>
+          <td>All connections use HTTPS/TLS</td>
+        </tr>
+        <tr>
+          <td>XSS in AI responses</td>
+          <td>Markdown renderer sanitizes HTML before display</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>

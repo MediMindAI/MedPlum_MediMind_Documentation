@@ -1,0 +1,1280 @@
+<section class="doc-section" id="ai-chatbot-integration">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">5</span> AI ჩატბოტის ინტეგრაცია და სერვისები</h2>
+  </div>
+
+  <p>ეს სექცია აღწერს AI სამედიცინო ჩატბოტის ტექნიკურ იმპლემენტაციას, მათ შორის სერვისული ფენის არქიტექტურას, FHIR მონაცემთა შენახვას, Flowise AI სტრიმინგის ინტეგრაციას და ბექენდ ინფრასტრუქტურას.</p>
+
+  <!-- ========================== -->
+  <!-- 5.1 Services Overview -->
+  <!-- ========================== -->
+  <h3 id="services">5.1 სერვისების მიმოხილვა</h3>
+  <p>სერვისული ფენა უზრუნველყოფს ბიზნეს ლოგიკას და გარე სისტემებთან ინტეგრაციას AI ჩატბოტისთვის. ყველა სერვისი არის სუფთა TypeScript მოდული, რომელიც იღებს დამოკიდებულებებს ექსპლიციტურად გლობალური მდგომარეობის გარეშე.</p>
+
+  <!-- Service Categories -->
+  <h4 id="service-categories">სერვისების კატეგორიები</h4>
+  <p>AI ჩატბოტის სერვისული ფენა ორგანიზებულია <strong>8 კატეგორიად</strong>, რომელიც შეიცავს <strong>14 სპეციალიზებულ სერვისს</strong>:</p>
+
+  <div class="doc-form-sections-grid-8">
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">1</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">სტრიმინგი</div>
+        <div class="doc-form-section-desc">SSE ორკესტრაცია და ტოკენების ბუფერიზაცია</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">2</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">შენახვა</div>
+        <div class="doc-form-section-desc">FHIR + localStorage ჰიბრიდული საცავი</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">3</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">დოკუმენტები</div>
+        <div class="doc-form-section-desc">დოკუმენტების ატვირთვა და მართვა</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">4</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">გაუმჯობესება</div>
+        <div class="doc-form-section-desc">ფაქტების შემოწმება და კალკულატორები</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">5</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">დანართები</div>
+        <div class="doc-form-section-desc">OCR და სურათების დამუშავება</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">6</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">პაციენტის კონტექსტი</div>
+        <div class="doc-form-section-desc">ანონიმიზებული პაციენტის შეჯამებები</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">7</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">საავადმყოფოს KB</div>
+        <div class="doc-form-section-desc">ორგანიზაციის ცოდნის ბაზა</div>
+      </div>
+    </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">8</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">პირადი KB</div>
+        <div class="doc-form-section-desc">მომხმარებლის ვექტორული საცავი</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete Service Index -->
+  <h4 id="service-index">სერვისების სრული ინდექსი</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>სერვისი</th>
+          <th>დანიშნულება</th>
+          <th>ძირითადი დამოკიდებულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>streamingService</code></td>
+          <td>SSE სტრიმინგის ორკესტრაცია</td>
+          <td>sseClient</td>
+        </tr>
+        <tr>
+          <td><code>sseClient</code></td>
+          <td>დაბალი დონის SSE კავშირი</td>
+          <td>fetch API</td>
+        </tr>
+        <tr>
+          <td><code>streamingHelpers</code></td>
+          <td>ტოკენების ბუფერიზაცია, ხელახალი ცდის ლოგიკა</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>conversationService</code></td>
+          <td>FHIR Communication CRUD</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>localStorageService</code></td>
+          <td>ოფლაინ შენახვა</td>
+          <td>localStorage API</td>
+        </tr>
+        <tr>
+          <td><code>documentService</code></td>
+          <td>დოკუმენტების ატვირთვა/მართვა</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>caseService</code></td>
+          <td>პაციენტის შემთხვევის CRUD</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>factCheckService</code></td>
+          <td>AI განცხადებების ვერიფიკაცია</td>
+          <td>Flowise API</td>
+        </tr>
+        <tr>
+          <td><code>calculatorRecommendation</code></td>
+          <td>კალკულატორის რეკომენდაციები</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>chatAttachmentService</code></td>
+          <td>ფაილის დანართების დამუშავება (OCR, image AI)</td>
+          <td>Tesseract.js, Gemini Vision</td>
+        </tr>
+        <tr>
+          <td><code>caseOcrService</code></td>
+          <td>OCR ექსტრაქცია შემთხვევის ფაილებისთვის</td>
+          <td>Gemini Vision</td>
+        </tr>
+        <tr>
+          <td><code>patientContextService</code></td>
+          <td>ანონიმიზებული პაციენტის შეჯამებები</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><code>hospitalKnowledgeBaseService</code></td>
+          <td>საავადმყოფოს ცოდნის ბაზის მართვა</td>
+          <td>Supabase Edge Functions</td>
+        </tr>
+        <tr>
+          <td><code>personalVectorStoreService</code></td>
+          <td>პირადი მომხმარებლის ვექტორული საცავი</td>
+          <td>Supabase Edge Functions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Service Dependency Diagram -->
+  <h4 id="service-dependencies">სერვისების დამოკიდებულებები</h4>
+  <p>შემდეგი დიაგრამა გვიჩვენებს, როგორ არის სერვისები დამოკიდებული ერთმანეთზე:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Streaming["Streaming Services"]
+        SS[streamingService]
+        SC[sseClient]
+        SH[streamingHelpers]
+    end
+
+    subgraph Persistence["Persistence Services"]
+        CS[conversationService]
+        LS[localStorageService]
+    end
+
+    subgraph Documents["Document Services"]
+        DS[documentService]
+        CaS[caseService]
+    end
+
+    subgraph Enhancement["Enhancement Services"]
+        FC[factCheckService]
+        CR[calculatorRecommendation]
+    end
+
+    subgraph Attachments["Attachment Services"]
+        CAS[chatAttachmentService]
+        COS[caseOcrService]
+    end
+
+    subgraph External["External APIs"]
+        MC[(MedplumClient)]
+        FL[(Flowise API)]
+        GV[(Gemini Vision)]
+        TS[(Tesseract.js)]
+        SB[(Supabase)]
+    end
+
+    SS --> SC
+    SS --> SH
+    SS --> CS
+    SC --> FL
+
+    CS --> MC
+    DS --> MC
+    CaS --> MC
+
+    FC --> FL
+    CAS --> TS
+    CAS --> GV
+    COS --> GV
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Streaming Service API -->
+  <h4 id="streaming-api">სტრიმინგის სერვისის API</h4>
+  <p><code>streamingService</code> უზრუნველყოფს მაღალი დონის API-ს AI პასუხების სტრიმინგისთვის:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface StreamingOptions {
+  endpoint: string;              // Flowise chatflow URL
+  message: string;               // User message
+  sessionId: string;             // Conversation ID
+  knowledgeBaseType: 'curated' | 'personal';
+  specialty?: string;            // Medical specialty
+  caseContext?: string;          // Anonymized patient info
+  onToken: (token: string, accumulated: string) => void;
+  onComplete: (fullResponse: string) => void;
+  onError: (error: Error) => void;
+  onStart?: () => void;
+  signal?: AbortSignal;          // For cancellation
+}
+
+interface StreamingSession {
+  connectionId: string;          // Unique session ID
+  sessionId: string;             // Conversation ID
+  startTime: number;             // Timestamp (ms)
+  abort: () => void;             // Abort function
+}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>პარამეტრები</th>
+          <th>აბრუნებს</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>startStreaming</code></td>
+          <td><code>options: StreamingOptions</code></td>
+          <td><code>Promise&lt;StreamingSession&gt;</code></td>
+          <td>იწყებს ახალ SSE სტრიმინგის სესიას</td>
+        </tr>
+        <tr>
+          <td><code>stopStreaming</code></td>
+          <td>-</td>
+          <td><code>void</code></td>
+          <td>აჩერებს მიმდინარე აქტიურ სესიას</td>
+        </tr>
+        <tr>
+          <td><code>isStreaming</code></td>
+          <td>-</td>
+          <td><code>boolean</code></td>
+          <td>აბრუნებს სტრიმინგის აქტიურობას</td>
+        </tr>
+        <tr>
+          <td><code>getCurrentSession</code></td>
+          <td>-</td>
+          <td><code>StreamingSession | null</code></td>
+          <td>აბრუნებს აქტიური სესიის ობიექტს</td>
+        </tr>
+        <tr>
+          <td><code>abortAll</code></td>
+          <td>-</td>
+          <td><code>void</code></td>
+          <td>წყვეტს ყველა SSE კავშირს</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Token Buffering -->
+  <h4 id="token-buffering">ტოკენების ბუფერიზაცია</h4>
+  <p>AI პასუხებმა შეიძლება გამოიმუშაოს <strong>50-100 ტოკენი წამში</strong>. UI-ის ზედმეტი განახლებების თავიდან ასაცილებლად, ტოკენები დაჯგუფებულია debounced ბუფერის გამოყენებით:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface TokenBuffer {
+  tokens: string[];         // Accumulated tokens
+  callback: (batch: string) => void;
+  debounceMs: number;       // Default: 50ms
+  timeoutId: NodeJS.Timeout | null;
+}
+
+// Buffer batches tokens every 50ms
+const buffer = createTokenBuffer(
+  (batch) => updateUI(batch),
+  50  // debounce milliseconds
+);</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>რატომ გვჭირდება ტოკენების ბუფერიზაცია?</strong>
+      <ul>
+        <li>React state-ის 100-ჯერ/წამში განახლება იწვევს UI-ის შეფერხებას</li>
+        <li>50ms debounce აჯგუფებს ტოკენებს გლუვ ბატჩებად</li>
+        <li>შედეგი: რეალურ დროში გამოცდილება პროდუქტიულობის დაქვეითების გარეშე</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Retry Logic -->
+  <h4 id="retry-logic">ექსპონენციალური Backoff ხელახალი ცდა</h4>
+  <p>დროებითი ქსელის შეცდომები დამუშავებულია ექსპონენციალური backoff-ით:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface RetryOptions {
+  initialDelayMs: number;   // First retry delay (e.g., 1000ms)
+  maxDelayMs: number;       // Max retry delay (e.g., 10000ms)
+  multiplier: number;       // Backoff multiplier (e.g., 2)
+  maxRetries: number;       // Max attempts (e.g., 3)
+}
+
+// Retry sequence: 1s -> 2s -> 4s -> fail</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მცდელობა</th>
+          <th>დაყოვნება</th>
+          <th>მოქმედება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>-</td>
+          <td>საწყისი მოთხოვნა</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>1,000ms</td>
+          <td>პირველი ხელახალი ცდა</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>2,000ms</td>
+          <td>მეორე ხელახალი ცდა</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>4,000ms</td>
+          <td>საბოლოო ხელახალი ცდა ან უარის თქმა</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.2 FHIR Integration -->
+  <!-- ========================== -->
+  <h3 id="fhir">5.2 FHIR ინტეგრაცია</h3>
+  <p>AI ჩატბოტი იყენებს <strong>FHIR R4 რესურსებს</strong> მონაცემთა შენახვისთვის, რაც უზრუნველყოფს ინტეროპერაბელურობას და კლინიკური მონაცემების სტანდარტებთან შესაბამისობას. ყველა მორგებული გაფართოება მიჰყვება შაბლონს: <code>http://medimind.ge/fhir/StructureDefinition/{name}</code></p>
+
+  <!-- FHIR Resources Used -->
+  <h4 id="fhir-resources">გამოყენებული FHIR რესურსები</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>რესურსი</th>
+          <th>დანიშნულება</th>
+          <th>ძირითადი გაფართოებები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>საუბრის მეტადატა</td>
+          <td>conversation-session-id, conversation-knowledge-base</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentReference</strong></td>
+          <td>პაციენტის შემთხვევები, მომხმარებლის დოკუმენტები</td>
+          <td>case-anonymized-info, document-vector-store-file-id</td>
+        </tr>
+        <tr>
+          <td><strong>Binary</strong></td>
+          <td>დოკუმენტის ფაილების შენახვა</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>Practitioner</strong></td>
+          <td>მომხმარებლის ვექტორული საცავის მითითება</td>
+          <td>user-vector-store</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Communication Resource -->
+  <h4 id="communication-resource">Communication რესურსი (საუბრები)</h4>
+  <p>ინახავს საუბრის მეტადატას, მათ შორის სათაურს, ცოდნის ბაზის ტიპს, შეტყობინებების რაოდენობას და სესიის ID-ს:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "Communication",
+  "id": "conv-12345",
+  "status": "in-progress",
+  "sender": {
+    "reference": "Practitioner/user-456"
+  },
+  "topic": {
+    "text": "Treatment guidelines for atrial fibrillation"
+  },
+  "sent": "2024-03-15T10:30:00Z",
+  "received": "2024-03-15T10:35:00Z",
+  "extension": [
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-session-id",
+      "valueString": "session-1710498600-abc123"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-knowledge-base",
+      "valueString": "curated"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-specialty",
+      "valueString": "cardiology"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-type",
+      "valueString": "general"
+    },
+    {
+      "url": "http://medimind.ge/fhir/StructureDefinition/conversation-message-count",
+      "valueInteger": 10
+    }
+  ],
+  "about": [
+    {
+      "reference": "DocumentReference/case-789"
+    }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- Field Mappings -->
+  <h4 id="field-mappings">TypeScript-დან FHIR ველების შესაბამისობა</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>TypeScript ველი</th>
+          <th>FHIR გზა</th>
+          <th>ტიპი</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Communication.id</td>
+          <td>string</td>
+        </tr>
+        <tr>
+          <td><code>userId</code></td>
+          <td>Communication.sender.reference</td>
+          <td>string (Practitioner/{id})</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td>Communication.topic.text</td>
+          <td>string (მაქს 200 სიმბოლო)</td>
+        </tr>
+        <tr>
+          <td><code>sessionId</code></td>
+          <td>extension[conversation-session-id].valueString</td>
+          <td>string (UUID)</td>
+        </tr>
+        <tr>
+          <td><code>knowledgeBaseType</code></td>
+          <td>extension[conversation-knowledge-base].valueString</td>
+          <td>'curated' | 'personal'</td>
+        </tr>
+        <tr>
+          <td><code>messageCount</code></td>
+          <td>extension[conversation-message-count].valueInteger</td>
+          <td>number</td>
+        </tr>
+        <tr>
+          <td><code>createdAt</code></td>
+          <td>Communication.sent</td>
+          <td>date-time (ISO 8601)</td>
+        </tr>
+        <tr>
+          <td><code>status</code></td>
+          <td>Communication.status</td>
+          <td>in-progress | completed | entered-in-error</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Extension URLs Reference -->
+  <h4 id="extension-urls">გაფართოების URL მითითება</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">// Conversation Extensions
+http://medimind.ge/fhir/StructureDefinition/conversation-session-id
+http://medimind.ge/fhir/StructureDefinition/conversation-knowledge-base
+http://medimind.ge/fhir/StructureDefinition/conversation-specialty
+http://medimind.ge/fhir/StructureDefinition/conversation-type
+http://medimind.ge/fhir/StructureDefinition/conversation-message-count
+http://medimind.ge/fhir/StructureDefinition/conversation-last-preview
+
+// Document Extensions
+http://medimind.ge/fhir/StructureDefinition/document-category
+http://medimind.ge/fhir/StructureDefinition/document-tags
+http://medimind.ge/fhir/StructureDefinition/document-upload-status
+http://medimind.ge/fhir/StructureDefinition/document-processing-status
+http://medimind.ge/fhir/StructureDefinition/document-vector-store-file-id
+http://medimind.ge/fhir/StructureDefinition/document-openai-file-id
+
+// Case Extensions
+http://medimind.ge/fhir/StructureDefinition/case-anonymized-info
+http://medimind.ge/fhir/StructureDefinition/case-specialty
+http://medimind.ge/fhir/StructureDefinition/case-complexity
+http://medimind.ge/fhir/StructureDefinition/case-tags
+
+// User Extensions
+http://medimind.ge/fhir/StructureDefinition/user-vector-store</code></pre>
+  </div>
+
+  <!-- Hybrid Persistence Strategy -->
+  <h4 id="hybrid-persistence">ჰიბრიდული შენახვის სტრატეგია</h4>
+  <p>ჩატბოტი იყენებს ჰიბრიდულ FHIR + localStorage მიდგომას ოპტიმალური პროდუქტიულობისთვის:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[User Action] --> B[Update UI State]
+    B --> C[Save to localStorage]
+    C --> D[Save to FHIR]
+    D --> E{Success?}
+    E -->|Yes| F[Complete]
+    E -->|No| G[Fallback to localStorage]
+    G --> F
+
+    style C fill:#f59e0b,stroke:#d97706,color:#000
+    style D fill:#10b981,stroke:#059669,color:#fff
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>ჰიბრიდული შენახვის უპირატესობები:</strong>
+      <ul>
+        <li><strong>მყისიერი UI განახლებები</strong> - სერვერის პასუხის მოლოდინი არ არის საჭირო</li>
+        <li><strong>ოფლაინ შესაძლებლობა</strong> - მუშაობს ქსელის გარეშე</li>
+        <li><strong>სერვერზე შენახვა</strong> - მონაცემები რჩება ბრაუზერის გასუფთავების შემდეგაც</li>
+        <li><strong>მრავალ მოწყობილობაზე სინქრონიზაცია</strong> - FHIR უზრუნველყოფს მრავალ მოწყობილობაზე წვდომას</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.3 Flowise Integration -->
+  <!-- ========================== -->
+  <h3 id="flowise">5.3 Flowise ინტეგრაცია</h3>
+  <p>ჩატბოტი ინტეგრირებულია <strong>Flowise AI</strong>-თან, რომელიც არის ღია კოდის low-code პლატფორმა LLM აპლიკაციების შესაქმნელად. Flowise უზრუნველყოფს AI ინფერენსს chatflow ორკესტრაციით, ცოდნის ბაზის ინტეგრაციით და Server-Sent Events (SSE) მეშვეობით სტრიმინგის პასუხებით.</p>
+
+  <!-- Architecture -->
+  <h4 id="flowise-architecture">Flowise არქიტექტურა</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[React Frontend] -->|SSE Request| B[Flowise API]
+    B --> C[Chatflow]
+    C --> D[Vector Store]
+    C --> E[LLM Model]
+    E -->|Streaming Tokens| A
+
+    subgraph KB["Knowledge Bases"]
+        D1[Curated Medical KB]
+        D2[Personal Documents]
+    end
+    D --> KB
+
+    subgraph Models["LLM Options"]
+        E1[GPT-4]
+        E2[Claude]
+    end
+    E --> Models
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- SSE Request Format -->
+  <h4 id="sse-request">SSE მოთხოვნის ფორმატი</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-http">POST https://flowise.example.com/api/v1/prediction/abc123
+Content-Type: application/json
+Accept: text/event-stream
+
+{
+  "question": "What is the treatment for atrial fibrillation?",
+  "sessionId": "conv-12345",
+  "knowledgeBase": "curated",
+  "specialty": "cardiology",
+  "caseContext": "Patient with CHADS2-VASc 4...",
+  "streaming": true
+}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>ტიპი</th>
+          <th>აუცილებელი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>question</code></td>
+          <td>string</td>
+          <td>დიახ</td>
+          <td>მომხმარებლის შეტყობინება/შეკითხვა</td>
+        </tr>
+        <tr>
+          <td><code>sessionId</code></td>
+          <td>string</td>
+          <td>დიახ</td>
+          <td>საუბრის ID კონტექსტის უწყვეტობისთვის</td>
+        </tr>
+        <tr>
+          <td><code>knowledgeBase</code></td>
+          <td>string</td>
+          <td>არა</td>
+          <td>'curated' ან 'personal' (ნაგულისხმევი: 'curated')</td>
+        </tr>
+        <tr>
+          <td><code>specialty</code></td>
+          <td>string</td>
+          <td>არა</td>
+          <td>სამედიცინო სპეციალობა კონტექსტისთვის</td>
+        </tr>
+        <tr>
+          <td><code>caseContext</code></td>
+          <td>string</td>
+          <td>არა</td>
+          <td>ანონიმიზებული პაციენტის შემთხვევის ინფორმაცია</td>
+        </tr>
+        <tr>
+          <td><code>streaming</code></td>
+          <td>boolean</td>
+          <td>დიახ</td>
+          <td>ყოველთვის true SSE-სთვის</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SSE Response Format -->
+  <h4 id="sse-response">SSE პასუხის ფორმატი</h4>
+  <p>Flowise აბრუნებს Server-Sent Events შემდეგი სტრუქტურით:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">data: {"event":"start"}
+
+data: {"event":"token","data":"Based"}
+
+data: {"event":"token","data":" on"}
+
+data: {"event":"token","data":" the"}
+
+data: {"event":"token","data":" latest"}
+
+data: {"event":"metadata","data":{"sources":[...]}}
+
+data: {"event":"end"}</code></pre>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მოვლენა</th>
+          <th>მონაცემი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>start</code></td>
+          <td>null</td>
+          <td>სტრიმი დაიწყო</td>
+        </tr>
+        <tr>
+          <td><code>token</code></td>
+          <td>string</td>
+          <td>ერთეული ტოკენი LLM-დან</td>
+        </tr>
+        <tr>
+          <td><code>metadata</code></td>
+          <td>object</td>
+          <td>დამატებითი მონაცემები (წყაროები, ციტატები)</td>
+        </tr>
+        <tr>
+          <td><code>end</code></td>
+          <td>null</td>
+          <td>სტრიმი დასრულდა</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Routing Markers -->
+  <h4 id="routing-markers">მოთხოვნის მარშრუტიზაციის მარკერები</h4>
+  <p>შეტყობინებებში სპეციალური მარკერები მიმართავს მოთხოვნებს სხვადასხვა Flowise chatflow-ებზე:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მარკერი</th>
+          <th>დანიშნულება</th>
+          <th>სამიზნე ენდპოინტი</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&lt;&lt;CASE_DISCUSSION&gt;&gt;</code></td>
+          <td>მიმართავს შემთხვევის სპეციფიკურ დისკუსიას</td>
+          <td>კარდიოლოგიის/OB-GYN ენდპოინტი</td>
+        </tr>
+        <tr>
+          <td><code>&lt;&lt;BG_INTERPRETATION&gt;&gt;</code></td>
+          <td>მიმართავს ABG სისხლის გაზების ინტერპრეტაციას</td>
+          <td><code>VITE_FLOWISE_ABG_URL</code></td>
+        </tr>
+        <tr>
+          <td><code>&lt;&lt;BG_ACTION_PLAN&gt;&gt;</code></td>
+          <td>მიმართავს კლინიკურ მოქმედების გეგმას</td>
+          <td><code>VITE_FLOWISE_ACTION_PLAN_URL</code></td>
+        </tr>
+        <tr>
+          <td><code>CUSTOM_TEMPLATE:</code></td>
+          <td>მიმართავს შაბლონის დამუშავებას</td>
+          <td>ფორმის სპეციფიკური ენდპოინტი</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Performance Metrics -->
+  <h4 id="performance-metrics">პროდუქტიულობის მეტრიკები</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მეტრიკა</th>
+          <th>მნიშვნელობა</th>
+          <th>შენიშვნები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>პირველ ტოკენამდე დრო</td>
+          <td>500-1000ms</td>
+          <td>საწყისი LLM პასუხი</td>
+        </tr>
+        <tr>
+          <td>ტოკენი წამში</td>
+          <td>20-50</td>
+          <td>სტრიმინგის სიჩქარე</td>
+        </tr>
+        <tr>
+          <td>საერთო პასუხის დრო</td>
+          <td>5-15s</td>
+          <td>500-სიტყვიანი პასუხისთვის</td>
+        </tr>
+        <tr>
+          <td>ვექტორული ძებნის დრო</td>
+          <td>100-300ms</td>
+          <td>RAG ამოღება</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 5.4 Backend Services -->
+  <!-- ========================== -->
+  <h3 id="backend">5.4 ბექენდ სერვისები</h3>
+  <p>ყველა AI სერვისზე წვდომა ხორციელდება <strong>Supabase Edge Functions</strong>-ით (Deno runtime) ან პირდაპირი Flowise API გამოძახებებით. ფრონტენდი არასოდეს უკავშირდება პირდაპირ AI პროვაიდერის API-ებს - edge functions მოქმედებენ როგორც უსაფრთხო პროქსიები CORS აღსრულებით, ავთენტიფიკაციით და სიჩქარის შეზღუდვით.</p>
+
+  <!-- Supabase Edge Functions -->
+  <h4 id="edge-functions">Supabase Edge Functions</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>დანიშნულება</th>
+          <th>ავთენტიფიკაცია</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>abg-ai-proxy</code></td>
+          <td>ABG OCR (Gemini) + Flowise ინტერპრეტაცია</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>mediscribe-generator</code></td>
+          <td>ფორმის გენერაცია (საწყისი კონსულტაცია, ფორმა 100)</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>georgian-tts-proxy</code></td>
+          <td>Enagram STT ქართული მეტყველებისთვის</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>google-stt-proxy</code></td>
+          <td>Google Chirp 2 STT ინგლისური/რუსულისთვის</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>patient-chatbot</code></td>
+          <td>პაციენტზე ორიენტირებული ჩატბოტი (GPT-4o-mini)</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-upload</code></td>
+          <td>დოკუმენტების ატვირთვა OpenAI Vector Store-ში</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-manage</code></td>
+          <td>ცოდნის ბაზის დოკუმენტების მართვა</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>hospital-kb-delete</code></td>
+          <td>დოკუმენტების წაშლა Vector Store-დან</td>
+          <td>Anon key</td>
+        </tr>
+        <tr>
+          <td><code>manageVectorStore</code></td>
+          <td>პირადი მომხმარებლის ვექტორული საცავის შექმნა/მიღება/წაშლა</td>
+          <td>x-practitioner-id</td>
+        </tr>
+        <tr>
+          <td><code>upload-document-to-openai</code></td>
+          <td>პირადი დოკუმენტების ატვირთვა მომხმარებლის ვექტორულ საცავში</td>
+          <td>x-practitioner-id</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- AI Models Reference -->
+  <h4 id="ai-models">AI მოდელების მითითება</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>სერვისი</th>
+          <th>მოდელი</th>
+          <th>ტემპერატურა</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>პაციენტის ჩატბოტი</td>
+          <td>OpenAI gpt-4o-mini</td>
+          <td>0.7</td>
+          <td>პაციენტზე ორიენტირებული ჩატი (6 რეჟიმი)</td>
+        </tr>
+        <tr>
+          <td>ABG OCR</td>
+          <td>Google gemini-2.0-flash-exp</td>
+          <td>0.1</td>
+          <td>სისხლის გაზის მნიშვნელობების ექსტრაქცია</td>
+        </tr>
+        <tr>
+          <td>ABG ინტერპრეტაცია</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.1</td>
+          <td>კლინიკური ანალიზი</td>
+        </tr>
+        <tr>
+          <td>სამედიცინო ჩატი</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.3</td>
+          <td>პერსონალზე ორიენტირებული ჩატბოტი</td>
+        </tr>
+        <tr>
+          <td>მოქმედების გეგმა</td>
+          <td>Flowise (GPT-4/Claude)</td>
+          <td>0.3</td>
+          <td>მკურნალობის დაგეგმვა</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>ტემპერატურის სახელმძღვანელო:</strong>
+      <ul>
+        <li><strong>0.1</strong> - OCR, ABG ინტერპრეტაცია (მაღალი სიზუსტე, მინიმალური კრეატიულობა)</li>
+        <li><strong>0.3</strong> - სამედიცინო ჩატი, მოქმედების გეგმები (დაბალანსებული სიზუსტე მოქნილობით)</li>
+        <li><strong>0.7</strong> - პაციენტის ჩატბოტი (საუბრისებური, თანაგრძნობის ტონი)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Speech-to-Text Services -->
+  <h4 id="stt-services">მეტყველების ტექსტად გარდაქმნის სერვისები</h4>
+  <p>ჩატბოტი მხარს უჭერს ხმოვან შეყვანას სამ ენაზე სპეციალიზებული STT სერვისების გამოყენებით:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ენა</th>
+          <th>სერვისი</th>
+          <th>Edge Function</th>
+          <th>გარე API</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ქართული (ka)</td>
+          <td>Enagram</td>
+          <td><code>georgian-tts-proxy</code></td>
+          <td>enagramm.com/API</td>
+        </tr>
+        <tr>
+          <td>ინგლისური (en)</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+          <td>speech.googleapis.com</td>
+        </tr>
+        <tr>
+          <td>რუსული (ru)</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+          <td>speech.googleapis.com</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OCR Services -->
+  <h4 id="ocr-services">OCR სერვისები</h4>
+  <p>დოკუმენტის ტექსტის ექსტრაქცია იყენებს ფენოვან მიდგომას:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[File Input] --> B{File Type?}
+    B -->|Image| C{Context?}
+    B -->|Document| D[Try Tesseract.js]
+
+    C -->|ABG Analysis| E[Gemini Vision]
+    C -->|Chat Context| F{Quality?}
+
+    F -->|Good| G[Tesseract.js]
+    F -->|Poor| E
+
+    D --> H{Success?}
+    H -->|Yes| I[Return Text]
+    H -->|No| E
+
+    E --> I
+    G --> I
+
+    style G fill:#10b981,stroke:#059669,color:#fff
+    style E fill:#2b6cb0,stroke:#1a365d,color:#fff
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>სერვისი</th>
+          <th>ტიპი</th>
+          <th>გამოყენების შემთხვევა</th>
+          <th>შეზღუდვები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tesseract.js</strong></td>
+          <td>უფასო, კლიენტის მხარე</td>
+          <td>ძირითადი OCR დოკუმენტებისთვის</td>
+          <td>დაბალი სიზუსტე ხელნაწერ ტექსტზე</td>
+        </tr>
+        <tr>
+          <td><strong>Gemini Vision</strong></td>
+          <td>ღრუბელზე დაფუძნებული AI</td>
+          <td>სარეზერვო OCR, ABG ანალიზი</td>
+          <td>მოთხოვნაზე ფასიანი</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Backend Data Flow -->
+  <h4 id="backend-flow">ბექენდ მონაცემების ნაკადი</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Frontend["React Frontend"]
+        UI[Chat UI]
+        Hook[useFlowiseChat]
+    end
+
+    subgraph Supabase["Supabase Edge Functions"]
+        ABG[abg-ai-proxy]
+        STT[STT Proxies]
+        KB[KB Functions]
+        Chat[patient-chatbot]
+    end
+
+    subgraph External["External APIs"]
+        FL[Flowise AI]
+        OAI[OpenAI API]
+        GV[Gemini Vision]
+        EN[Enagram]
+        GCP[Google Cloud]
+    end
+
+    subgraph Storage["Data Storage"]
+        FHIR[(Medplum FHIR)]
+        SB[(Supabase DB)]
+        VS[(OpenAI Vector Store)]
+    end
+
+    UI --> Hook
+    Hook --> ABG
+    Hook --> STT
+    Hook --> KB
+    Hook --> Chat
+
+    ABG --> FL
+    ABG --> GV
+    Chat --> OAI
+    STT --> EN
+    STT --> GCP
+    KB --> VS
+
+    Hook --> FHIR
+    KB --> SB
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Environment Variables -->
+  <h4 id="env-vars">გარემოს ცვლადების მითითება</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-bash"># Flowise AI Endpoints
+VITE_FLOWISE_CARDIOLOGY_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_OBGYN_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_ABG_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_ACTION_PLAN_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_FLOWISE_FORM100_URL=https://flowise.example.com/api/v1/prediction/...
+VITE_USE_FLOWISE_DIRECT_ABG=true
+
+# Streaming Configuration
+VITE_ENABLE_STREAMING=true
+VITE_STREAMING_MAX_RETRIES=3
+VITE_STREAMING_TIMEOUT=180000
+VITE_STREAMING_DEBOUNCE_MS=50
+VITE_STREAMING_FALLBACK=true
+
+# Supabase
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=...
+
+# Speech-to-Text
+VITE_STT_PROXY_URL=https://xxx.supabase.co/functions/v1/georgian-tts-proxy
+VITE_GOOGLE_STT_URL=https://xxx.supabase.co/functions/v1/google-stt-proxy
+
+# Other Services
+VITE_MEDISCRIBE_GENERATOR_URL=https://xxx.supabase.co/functions/v1/mediscribe-generator
+VITE_CHATBOT_URL=https://xxx.supabase.co/functions/v1/patient-chatbot</code></pre>
+  </div>
+
+  <!-- Error Handling -->
+  <h4 id="error-handling">შეცდომების დამუშავება და მდგრადობა</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>სერვისი</th>
+          <th>მაქს ცდები</th>
+          <th>Backoff</th>
+          <th>ტაიმაუტი</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Flowise SSE</td>
+          <td>3</td>
+          <td>ექსპონენციალური (1s, 2s, 4s)</td>
+          <td>180s</td>
+        </tr>
+        <tr>
+          <td>Enagram STT</td>
+          <td>2</td>
+          <td>ფიქსირებული (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Google STT</td>
+          <td>2</td>
+          <td>ფიქსირებული (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>პაციენტის ჩატბოტი</td>
+          <td>2</td>
+          <td>ფიქსირებული (1s)</td>
+          <td>30s</td>
+        </tr>
+        <tr>
+          <td>Gemini OCR</td>
+          <td>1</td>
+          <td>არცერთი</td>
+          <td>30s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>სარეზერვო ჯაჭვი:</strong>
+      <ol>
+        <li><strong>Flowise SSE ვერ მოხერხდა</strong> - 3x ხელახალი ცდა backoff-ით, შემდეგ JSON-ზე გადასვლა თუ <code>VITE_STREAMING_FALLBACK=true</code></li>
+        <li><strong>OCR ვერ მოხერხდა</strong> - Tesseract ვერ მოხერხდა, Gemini Vision-ზე გადასვლა</li>
+        <li><strong>STT ვერ მოხერხდა</strong> - toast შეტყობინების ჩვენება, ხელით ტექსტის შეყვანის დაშვება</li>
+        <li><strong>FHIR ვერ მოხერხდა</strong> - localStorage-ში შენახვა, ფონური სინქრონიზაცია შემდეგ ჩატვირთვაზე</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Security Considerations -->
+  <h4 id="security">უსაფრთხოების მოსაზრებები</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>საზრუნავი</th>
+          <th>შერბილება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>API გასაღების გამოაშკარავება</td>
+          <td>ყველა გასაღები ინახება Supabase საიდუმლოებებში, არასოდეს ფრონტენდ კოდში</td>
+        </tr>
+        <tr>
+          <td>პაციენტის მონაცემები AI პრომპტებში</td>
+          <td>პაციენტის კონტექსტი იყენებს ანონიმიზებულ შეჯამებებს (ასაკის დიაპაზონები, PII-ის გარეშე)</td>
+        </tr>
+        <tr>
+          <td>CORS</td>
+          <td>Edge functions ზღუდავს წარმომავლობას medimind.ge და localhost:3000-ით</td>
+        </tr>
+        <tr>
+          <td>სიჩქარის შეზღუდვა</td>
+          <td>Enagram ახორციელებს 30 წამიან ინტერვალს მოთხოვნებს შორის; კლიენტის მხარის throttling</td>
+        </tr>
+        <tr>
+          <td>ავთენტიფიკაცია</td>
+          <td>Supabase anon key edge functions-ისთვის; Medplum OAuth FHIR-ისთვის</td>
+        </tr>
+        <tr>
+          <td>მონაცემთა ტრანზიტი</td>
+          <td>ყველა კავშირი იყენებს HTTPS/TLS</td>
+        </tr>
+        <tr>
+          <td>XSS AI პასუხებში</td>
+          <td>Markdown renderer ასუფთავებს HTML-ს ჩვენებამდე</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>

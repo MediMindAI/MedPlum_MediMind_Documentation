@@ -1,0 +1,740 @@
+<section class="doc-section" id="ai-chatbot-overview">
+  <div class="doc-section-header">
+    <div class="doc-section-icon" style="background: var(--emr-gradient-primary);">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">1</span> AI სამედიცინო ჩატბოტის მიმოხილვა</h2>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 1.1 შესავალი -->
+  <!-- ========================== -->
+  <h3 id="introduction">1.1 შესავალი</h3>
+  <p><strong>AI სამედიცინო ჩატბოტი</strong> ჯანდაცვის პროფესიონალებს აწვდის რეალურ დროში AI-ზე დაფუძნებულ სამედიცინო დახმარებას ინტუიციური ჩატის ინტერფეისის საშუალებით. შექმნილია EMR კლინიცისტებისთვის განკუთვნილ გარემოში, ის ინტეგრირებულია <strong>Flowise AI</strong>-სთან ინტელექტუალური პასუხებისთვის Server-Sent Events (SSE) სტრიმინგის გამოყენებით.</p>
+
+  <!-- მთავარი ჩატის ინტერფეისის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-chat-interface-ka.png" alt="AI სამედიცინო ჩატბოტის მთავარი ინტერფეისი ჩატის ფანჯრით, შეტყობინებებით და შეყვანით"
+         class="doc-screenshot-image" data-i18n-img="ai-chat-interface">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>პროდუქციის სტატუსი:</strong> ეს ფუნქცია სრულად მზადაა პროდუქციისთვის FHIR-თან თავსებადი მონაცემთა შენახვით, ორმაგი ცოდნის ბაზის მხარდაჭერით და მრავალენოვანი ხმოვანი შეყვანით (ქართული, ინგლისური, რუსული).
+    </div>
+  </div>
+
+  <!-- ძირითადი შესაძლებლობები -->
+  <h4 id="key-capabilities">ძირითადი შესაძლებლობები</h4>
+  <ul class="doc-list">
+    <li><strong>რეალურ დროში სტრიმინგის პასუხები</strong> - ტოკენ-ტოკენ AI პასუხები Server-Sent Events-ის გამოყენებით</li>
+    <li><strong>ორმაგი ცოდნის ბაზები</strong> - გადართვა კურირებულ სამედიცინო KB-სა და პირად დოკუმენტებს შორის</li>
+    <li><strong>საუბრის ისტორია</strong> - FHIR-თან თავსებადი შენახვა localStorage-ის სარეზერვო ვარიანტით</li>
+    <li><strong>დოკუმენტების მართვა</strong> - პირადი სამედიცინო დოკუმენტების ატვირთვა და მართვა</li>
+    <li><strong>პაციენტის შემთხვევის მართვა</strong> - ანონიმიზებული პაციენტის შემთხვევების განხილვა</li>
+    <li><strong>ხმოვანი შეყვანა</strong> - მეტყველებიდან ტექსტში ქართულ, ინგლისურ და რუსულ ენებზე</li>
+    <li><strong>ფაილების მიმაგრება</strong> - PDF, სურათები, Word დოკუმენტები (მაქს. 10MB) OCR + AI აღწერით</li>
+    <li><strong>წყაროების მითითებები</strong> - AI პასუხები მოიცავს ციტატებს და წყაროებს</li>
+    <li><strong>ფაქტების შემოწმება</strong> - AI მტკიცებულებების გადამოწმება სამედიცინო წყაროებთან</li>
+    <li><strong>კალკულატორის ინტეგრაცია</strong> - სამედიცინო კალკულატორების შემოთავაზებები (MDCalc)</li>
+  </ul>
+
+  <!-- ტექნოლოგიური სტეკის ცხრილი -->
+  <h4 id="technology-stack">ტექნოლოგიური სტეკი</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>კატეგორია</th>
+          <th>ტექნოლოგია</th>
+          <th>დანიშნულება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend</strong></td>
+          <td>React 19, TypeScript, Mantine UI</td>
+          <td>UI კომპონენტები და ტიპის უსაფრთხოება</td>
+        </tr>
+        <tr>
+          <td><strong>მდგომარეობის მართვა</strong></td>
+          <td>Dual Context + useReducer</td>
+          <td>ChatUIContext + ChatDataContext პატერნი</td>
+        </tr>
+        <tr>
+          <td><strong>AI Backend</strong></td>
+          <td>Flowise AI</td>
+          <td>სპეციალობის მიხედვით chatflows (კარდიოლოგია, OB/GYN)</td>
+        </tr>
+        <tr>
+          <td><strong>სტრიმინგი</strong></td>
+          <td>Server-Sent Events (SSE)</td>
+          <td>რეალურ დროში ტოკენების მიწოდება 50ms debounce-ით</td>
+        </tr>
+        <tr>
+          <td><strong>მონაცემთა შენახვა</strong></td>
+          <td>FHIR Communication + localStorage</td>
+          <td>ჰიბრიდული შენახვა ოფლაინ სარეზერვო ვარიანტით</td>
+        </tr>
+        <tr>
+          <td><strong>დოკუმენტების შენახვა</strong></td>
+          <td>FHIR DocumentReference + Binary</td>
+          <td>სამედიცინო დოკუმენტების მეტამონაცემები და ფაილები</td>
+        </tr>
+        <tr>
+          <td><strong>ვექტორული ძებნა</strong></td>
+          <td>OpenAI Vector Store</td>
+          <td>საავადმყოფოს KB + პერსონალური KB თითოეული მომხმარებლისთვის</td>
+        </tr>
+        <tr>
+          <td><strong>ხმოვანი შეყვანა</strong></td>
+          <td>Enagram STT + Google Chirp 2</td>
+          <td>ქართული, ინგლისური, რუსული ტრანსკრიფცია</td>
+        </tr>
+        <tr>
+          <td><strong>ფაილების დამუშავება</strong></td>
+          <td>Tesseract.js + Gemini Vision</td>
+          <td>OCR და AI სურათის აღწერა</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- მარშრუტის სტრუქტურა -->
+  <h4 id="route-structure">მარშრუტის სტრუქტურა</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">/emr/ai-assistant
+├── /chat                  # ჩატბოტის მთავარი ინტერფეისი (ChatbotPage)
+├── /library               # პირადი დოკუმენტების ბიბლიოთეკა (DocumentLibraryPage)
+└── /cases                 # პაციენტის შემთხვევების მართვა (CaseManagementPage)</code></pre>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 1.2 სისტემის არქიტექტურა -->
+  <!-- ========================== -->
+  <h3 id="architecture">1.2 სისტემის არქიტექტურა</h3>
+  <p>AI სამედიცინო ჩატბოტი მიჰყვება <strong>ფენოვანი არქიტექტურის პატერნს</strong> UI-ს, მდგომარეობის მართვის, hooks-ების, სერვისებისა და გარე სისტემების მკაფიო გამიჯვნით.</p>
+
+  <!-- არქიტექტურის მიმოხილვის დიაგრამა -->
+  <h4 id="architecture-overview">არქიტექტურის მიმოხილვა</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph UI["User Interface Layer (40 Components)"]
+        ChatWindow[ChatWindow]
+        MessageList[MessageList]
+        MessageInput[MessageInput]
+        HistorySidebar[HistorySidebar]
+        DocLibrary[DocumentLibrary]
+    end
+
+    subgraph State["State Management Layer"]
+        ChatProvider["ChatProvider<br/>(Dual Context)"]
+        UIContext[ChatUIContext]
+        DataContext[ChatDataContext]
+    end
+
+    subgraph Hooks["Custom Hooks Layer (9 Hooks)"]
+        useFlowise[useFlowiseChat]
+        useMessages[useChatMessages]
+        useVoice[useVoiceInput]
+        useConv[useConversations]
+    end
+
+    subgraph Services["Services Layer (14 Services)"]
+        StreamSvc[streamingService]
+        ConvSvc[conversationService]
+        DocSvc[documentService]
+        AttachSvc[chatAttachmentService]
+    end
+
+    subgraph External["External Systems"]
+        Flowise["Flowise AI<br/>(SSE Stream)"]
+        FHIR["FHIR Server<br/>(Medplum)"]
+        VectorStore["OpenAI Vector<br/>Stores (2)"]
+        Supabase["Supabase Edge<br/>Functions"]
+    end
+
+    UI --> State
+    State --> Hooks
+    Hooks --> Services
+    Services --> External
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- კომპონენტების იერარქია -->
+  <h4 id="component-hierarchy">კომპონენტების იერარქია</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">ChatbotPage
+├── ChatProvider (dual context wrapper)
+└── ChatbotContent
+    ├── ChatHeader
+    │   ├── KnowledgeBaseSelector
+    │   └── Action buttons
+    ├── HistorySidebar (collapsible)
+    │   ├── ConversationList
+    │   ├── ConversationListItem (multiple)
+    │   └── ActiveCaseBadge
+    ├── ChatArea
+    │   ├── WelcomeScreen / CaseReadyScreen (when empty)
+    │   ├── ChatErrorBanner
+    │   └── MessageList
+    │       ├── MessageItem (multiple)
+    │       │   ├── MessageActions
+    │       │   ├── SourceReferences
+    │       │   ├── FactCheckResult
+    │       │   ├── MedicalMarkdownRenderer
+    │       │   └── StreamingText
+    │       ├── PulseLoader
+    │       └── StreamingIndicator
+    └── MessageInput
+        ├── VoiceInputButton (with language popover)
+        ├── File attachment button
+        ├── QuickReplies
+        └── CalculatorSuggestions</code></pre>
+  </div>
+
+  <!-- მონაცემთა ნაკადი: შეტყობინების გაგზავნა -->
+  <h4 id="data-flow-send">მონაცემთა ნაკადი: შეტყობინების გაგზავნა</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+sequenceDiagram
+    participant U as User
+    participant MI as MessageInput
+    participant H as useFlowiseChat
+    participant SS as streamingService
+    participant F as Flowise AI
+
+    U->>MI: Type message + optional attachments
+    MI->>H: Submit message
+    H->>H: Process attachments (OCR/AI description)
+    H->>H: Create conversation if new
+    H->>H: Add user message to state
+    H->>H: Create placeholder AI message (isStreaming: true)
+    H->>SS: startStreaming()
+    SS->>F: SSE connection
+    F-->>SS: Token stream (50ms debounce)
+    SS->>H: Update AI message content
+    H->>H: Finalize message
+    H->>H: Persist to FHIR + localStorage
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- მონაცემთა ნაკადი: ისტორიის ჩატვირთვა -->
+  <h4 id="data-flow-history">მონაცემთა ნაკადი: საუბრის ისტორიის ჩატვირთვა</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[ChatProvider Init] --> B[loadConversations]
+    B --> C[localStorage]
+    C --> D[Hydrate State]
+    D --> E[User Selects Conv]
+    E --> F[loadMessages]
+    F --> G[Background FHIR Sync]
+    G --> H[Merge Data]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- FHIR რესურსების ცხრილი -->
+  <h4 id="fhir-resources">გამოყენებული FHIR რესურსები</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>რესურსი</th>
+          <th>დანიშნულება</th>
+          <th>გაფართოებები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>საუბრის მეტამონაცემები</td>
+          <td><code>session-id</code>, <code>knowledge-base</code>, <code>specialty</code>, <code>type</code>, <code>message-count</code>, <code>last-preview</code></td>
+        </tr>
+        <tr>
+          <td><strong>DocumentReference</strong></td>
+          <td>პაციენტის შემთხვევები, მომხმარებლის დოკუმენტები</td>
+          <td><code>anonymized-info</code>, <code>category</code>, <code>tags</code>, <code>vector-store-file-id</code>, <code>linked-patient-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>Binary</strong></td>
+          <td>დოკუმენტის ფაილების შენახვა</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>Practitioner</strong></td>
+          <td>მომხმარებლის ვექტორული საცავის მითითება</td>
+          <td><code>user-vector-store</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- წარმადობის ოპტიმიზაცია -->
+  <h4 id="performance">წარმადობის ოპტიმიზაცია</h4>
+  <ul class="doc-list">
+    <li><strong>ტოკენების ბუფერიზაცია</strong> - 50ms debounce ამცირებს ხელახალ რენდერებს 50-100-დან ~10-20-მდე</li>
+    <li><strong>ორმაგი კონტექსტი</strong> - ChatUIContext (ჩატვირთვა/შეცდომები) და ChatDataContext (შეტყობინებები) თავიდან აცილებს ზედმეტ ხელახალ რენდერებს</li>
+    <li><strong>ტოკენების დაჯგუფება</strong> - 100ms პარტიები ChatContext-ში ამცირებს React-ის ხელახალ რენდერებს</li>
+    <li><strong>ლაზი ჩატვირთვა</strong> - საუბრების სია ვირტუალიზებულია 100+ საუბრისთვის</li>
+    <li><strong>localStorage ქეშირება</strong> - საუბრების მყისიერი ჩატვირთვა FHIR roundtrip-ის გარეშე</li>
+    <li><strong>შეტყობინებების პაგინაცია</strong> - შეტყობინებების ჩატვირთვა 50-იან ნაწილებად</li>
+    <li><strong>AbortController</strong> - მიმდინარე მოთხოვნების გაუქმება საუბრების გადართვისას</li>
+    <li><strong>კავშირის დედუპლიკაცია</strong> - ერთდროულად მხოლოდ ერთი აქტიური SSE სესია</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 1.3 მომხმარებლის ფუნქციები -->
+  <!-- ========================== -->
+  <h3 id="features">1.3 მომხმარებლის ფუნქციები</h3>
+  <p>AI სამედიცინო ჩატბოტი უზრუნველყოფს ჯანდაცვის პროფესიონალებისთვის შექმნილ ფუნქციების ყოვლისმომცველ ნაკრებს.</p>
+
+  <!-- ცოდნის ბაზის არჩევა -->
+  <h4 id="knowledge-bases">1.3.1 ცოდნის ბაზის არჩევა</h4>
+  <p>მომხმარებლებს შეუძლიათ გადართონ ორ ცოდნის ბაზას შორის <strong>KnowledgeBaseSelector</strong>-ის გამოყენებით ჩატის header-ში:</p>
+
+  <!-- ცოდნის ბაზის ამომრჩევის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-knowledge-base-selector-ka.png" alt="ცოდნის ბაზის ამომრჩევი კურირებული და პერსონალური დოკუმენტების ვარიანტებით"
+         class="doc-screenshot-image" data-i18n-img="ai-knowledge-base-selector">
+  </div>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: var(--emr-gradient-primary);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">კურირებული სამედიცინო KB</div>
+        <div class="doc-action-desc">პროფესიონალურად კურირებული მტკიცებულებებზე დაფუძნებული სამედიცინო ცოდნა. სწრაფი, თანმიმდევრული პასუხები კონფიგურაციის გარეშე.</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: var(--emr-gradient-secondary);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">პირადი დოკუმენტები</div>
+        <div class="doc-action-desc">მომხმარებლის მიერ ატვირთული დოკუმენტები პერსონალიზებული ცოდნის მოძიებისთვის. მორგებული თქვენს სპეციალობასა და პრაქტიკაზე.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ჩემი დოკუმენტების სქრინშოტი -->
+  <p><strong>ჩემი დოკუმენტების</strong> არჩევისას შეგიძლიათ იხილოთ ყველა ატვირთული ფაილი და მათი დამუშავების სტატუსი:</p>
+  <div class="doc-screenshot-full">
+    <img src="images/ai-my-documents-ka.png" alt="ჩემი დოკუმენტების ხედი ატვირთული პირადი სამედიცინო დოკუმენტებით და მეხსიერების გამოყენებით"
+         class="doc-screenshot-image" data-i18n-img="ai-my-documents">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>კლავიატურის მალსახმობები:</strong>
+      <ul>
+        <li><kbd>Cmd/Ctrl</kbd> + <kbd>1</kbd> - გადართვა კურირებულ სამედიცინო KB-ზე</li>
+        <li><kbd>Cmd/Ctrl</kbd> + <kbd>2</kbd> - გადართვა პირად დოკუმენტებზე</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- საუბრის ისტორია -->
+  <h4 id="conversation-history">1.3.2 საუბრის ისტორია</h4>
+  <p>ყველა საუბარი ავტომატურად ინახება და შეიძლება განახლდეს <strong>HistorySidebar</strong>-დან.</p>
+
+  <!-- საუბრის ისტორიის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-conversation-history-ka.png" alt="საუბრის ისტორიის გვერდითა პანელი წარსული საუბრების სიით თარიღის მიხედვით დაჯგუფებული"
+         class="doc-screenshot-image" data-i18n-img="ai-conversation-history">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ავტო-შენახვა</strong></td>
+          <td>მყისიერად localStorage-ში, ფონური სინქრონიზაცია FHIR-თან</td>
+        </tr>
+        <tr>
+          <td><strong>მეტამონაცემები</strong></td>
+          <td>სათაური, შეტყობინებების რაოდენობა, წინასწარი ხედვა, დროის ანაბეჭდები, KB ტიპი, სპეციალობა</td>
+        </tr>
+        <tr>
+          <td><strong>ძებნა და ფილტრაცია</strong></td>
+          <td>ძებნა სათაურით ან შინაარსით, ფილტრაცია საუბრის ტიპის მიხედვით</td>
+        </tr>
+        <tr>
+          <td><strong>თარიღით დაჯგუფება</strong></td>
+          <td>დღეს, გუშინ, ბოლო 7 დღე, ბოლო 30 დღე, ძველი</td>
+        </tr>
+        <tr>
+          <td><strong>მობილური ქცევა</strong></td>
+          <td>სრულეკრანიანი overlay swipe-to-close ჟესტით</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- დოკუმენტების ბიბლიოთეკა -->
+  <h4 id="document-library">1.3.3 დოკუმენტების ბიბლიოთეკა</h4>
+  <p>მომხმარებლებს შეუძლიათ ატვირთონ და მართონ პირადი სამედიცინო დოკუმენტები <code>/emr/ai-assistant/library</code>-ზე.</p>
+
+  <!-- დოკუმენტების ბიბლიოთეკის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-document-library-ka.png" alt="დოკუმენტების ბიბლიოთეკის ბადის ხედი ატვირთული სამედიცინო დოკუმენტებით კატეგორიების მიხედვით"
+         class="doc-screenshot-image" data-i18n-img="ai-document-library">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მხარდაჭერილი ტიპი</th>
+          <th>გაფართოებები</th>
+          <th>დამუშავება</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PDF დოკუმენტები</strong></td>
+          <td>.pdf</td>
+          <td>ტექსტის ამოღება</td>
+        </tr>
+        <tr>
+          <td><strong>Word დოკუმენტები</strong></td>
+          <td>.doc, .docx</td>
+          <td>ტექსტის ამოღება</td>
+        </tr>
+        <tr>
+          <td><strong>ტექსტური ფაილები</strong></td>
+          <td>.txt, .md</td>
+          <td>პირდაპირი წაკითხვა</td>
+        </tr>
+        <tr>
+          <td><strong>სურათები</strong></td>
+          <td>.jpg, .png</td>
+          <td>OCR Gemini Vision-ით</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>დოკუმენტების კატეგორიები (10):</strong> კვლევითი ნაშრომები, კლინიკური გაიდლაინები, შემთხვევის კვლევები, სახელმძღვანელოები, პროტოკოლები, წამლების მითითებები, პაციენტის განათლება, კონფერენციის მასალები, პირადი ჩანაწერები, სხვა</p>
+
+  <!-- პაციენტის შემთხვევის მართვა -->
+  <h4 id="case-management">1.3.4 პაციენტის შემთხვევის მართვა</h4>
+  <p>შექმენით ანონიმიზებული პაციენტის შემთხვევები AI-ით დახმარებული კლინიკური დისკუსიებისთვის <code>/emr/ai-assistant/cases</code>-ზე.</p>
+
+  <!-- შემთხვევის შექმნის მოდალის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-case-creation-ka.png" alt="შემთხვევის შექმნის მოდალი ხელით შეყვანისა და პაციენტის არჩევის ჩანართებით"
+         class="doc-screenshot-image" data-i18n-img="ai-case-creation">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>გამოყენების შემთხვევა</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>რთული დიაგნოზი</strong></td>
+          <td>კომპლექსური დიაგნოსტიკური გამოწვევების განხილვა</td>
+        </tr>
+        <tr>
+          <td><strong>მკურნალობის დაგეგმვა</strong></td>
+          <td>AI-ით დახმარებული მკურნალობის რეკომენდაციები</td>
+        </tr>
+        <tr>
+          <td><strong>მეორე აზრი</strong></td>
+          <td>მეორე აზრის კონსულტაციების სიმულაცია</td>
+        </tr>
+        <tr>
+          <td><strong>საგანმანათლებლო შემთხვევები</strong></td>
+          <td>სწავლებისა და სწავლის სცენარები</td>
+        </tr>
+        <tr>
+          <td><strong>MDT დისკუსიები</strong></td>
+          <td>მულტიდისციპლინური გუნდის შეხვედრებისთვის მომზადება</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>CaseCreationModal</strong> უზრუნველყოფს ორ ჩანართს:</p>
+  <ul class="doc-list">
+    <li><strong>ხელით შეყვანა</strong> - შეავსეთ შემთხვევის სათაური, სპეციალობა და ანონიმიზებული პაციენტის ინფორმაცია</li>
+    <li><strong>პაციენტიდან</strong> - ავტომატური შევსება FHIR პაციენტის ჩანაწერებიდან შერჩეული მონაცემთა კატეგორიებით</li>
+  </ul>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>კონფიდენციალურობის დაცვა:</strong>
+      <p>პაციენტის მონაცემები ავტომატურად ანონიმიზდება AI დამუშავებამდე. წაშალეთ პაციენტების სახელები, დაბადების თარიღები, მისამართები, ტელეფონის ნომრები, MRN-ები და ანგარიშის ნომრები. გამოიყენეთ ასაკობრივი დიაპაზონები ზუსტი ასაკების ნაცვლად.</p>
+    </div>
+  </div>
+
+  <!-- ხმოვანი შეყვანა -->
+  <h4 id="voice-input">1.3.5 ხმოვანი შეყვანა</h4>
+  <p>მეტყველებიდან ტექსტში შეყვანა <strong>MediaRecorder API</strong>-ის გამოყენებით სერვერის მხარეს ტრანსკრიფციით Supabase Edge Functions-ის მეშვეობით.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ენა</th>
+          <th>კოდი</th>
+          <th>STT ძრავა</th>
+          <th>Edge Function</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ქართული</strong></td>
+          <td>ka-GE</td>
+          <td>Enagram STT (სწრაფი)</td>
+          <td><code>georgian-tts-proxy</code></td>
+        </tr>
+        <tr>
+          <td><strong>ინგლისური</strong></td>
+          <td>en-US</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+        </tr>
+        <tr>
+          <td><strong>რუსული</strong></td>
+          <td>ru-RU</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>ხმოვანი შეყვანის პაიპლაინი:</strong></p>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[Record Audio] --> B[Encode to Base64]
+    B --> C[Send to Edge Function]
+    C --> D[STT Service]
+    D --> E[Return Text]
+    E --> F[Insert into Input]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>VoiceInputButton ფუნქციები:</strong>
+      <ul>
+        <li>დააწკაპუნეთ ჩაწერის დასაწყებად, კვლავ დააწკაპუნეთ შესაჩერებლად და ტრანსკრიფციისთვის</li>
+        <li>მარჯვენა დაწკაპუნება ენის შესაცვლელად popover-ით დროშის emoji-ებით</li>
+        <li>ვიზუალური უკუკავშირი: ჩაწერის ანიმაცია და ხანგრძლივობის ტაიმერი</li>
+        <li>ავტო-გაჩერება 60 წამის შემდეგ (კონფიგურირებადი)</li>
+        <li>ენის შერჩევა შენახულია localStorage-ის მეშვეობით</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- რეალურ დროში სტრიმინგი -->
+  <h4 id="streaming">1.3.6 რეალურ დროში სტრიმინგი</h4>
+  <p>AI პასუხები სტრიმდება რეალურ დროში ვიზუალური უკუკავშირით და გლუვი ტექსტის გამოჩენით.</p>
+
+  <!-- აქტიური საუბრის სქრინშოტი -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-conversation-active-ka.png" alt="აქტიური AI საუბარი მომხმარებლის შეკითხვით და AI პასუხით დიაბეტის სიმპტომების შესახებ"
+         class="doc-screenshot-image" data-i18n-img="ai-conversation-active">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>გლუვი ტექსტის გამოჩენა</strong> - ტოკენები თანდათანობით ჩნდებიან მიღებისთანავე</li>
+    <li><strong>მოციმციმე კურსორი</strong> - ვიზუალური ინდიკატორი აქტიური სტრიმინგის დროს</li>
+    <li><strong>აკრეფის ინდიკატორი</strong> - ჩანს პირველი ტოკენის მოსვლამდე</li>
+    <li><strong>ტოკენების რაოდენობის ჩვენება</strong> - აჩვენებს პროგრესს გრძელი პასუხების დროს</li>
+    <li><strong>გასული დრო</strong> - აჩვენებს რამდენ ხანს გენერირდება პასუხი</li>
+  </ul>
+
+  <!-- ფაილების მიმაგრება -->
+  <h4 id="file-attachments">1.3.7 ფაილების მიმაგრება</h4>
+  <p>MessageInput მხარს უჭერს ფაილების მიმაგრებას ჩატის შეტყობინებებში. ფაილები მუშავდება ტექსტური შინაარსის ამოსაღებად AI კონტექსტისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფაილის ტიპი</th>
+          <th>დამუშავების მეთოდი</th>
+          <th>დეტალები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PDF</strong></td>
+          <td>OCR Gemini Vision-ით</td>
+          <td>ფაილი კონვერტირდება base64-ში, იგზავნება edge function-ში</td>
+        </tr>
+        <tr>
+          <td><strong>სურათი ტექსტით</strong></td>
+          <td>OCR Gemini Vision-ით</td>
+          <td>სურათი შეკუმშულია, ტექსტი ამოღებულია</td>
+        </tr>
+        <tr>
+          <td><strong>სურათი ტექსტის გარეშე</strong></td>
+          <td>AI აღწერა</td>
+          <td>გადაერთვება ვიზუალური შინაარსის აღწერაზე</td>
+        </tr>
+        <tr>
+          <td><strong>Word დოკუმენტი</strong></td>
+          <td>OCR Gemini Vision-ით</td>
+          <td>ფაილი კონვერტირდება base64-ში</td>
+        </tr>
+        <tr>
+          <td><strong>ტექსტი/Markdown</strong></td>
+          <td>ბუნებრივი ამოღება</td>
+          <td>პირდაპირ იკითხება File.text() API-ით</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>ფაილის მაქსიმალური ზომა:</strong> 10MB. Drag-and-drop მხარდაჭერილია Mantine-ის Dropzone კომპონენტით.</p>
+
+  <!-- შეცდომების დამუშავება -->
+  <h4 id="error-handling">1.3.8 შეცდომების დამუშავება</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ფუნქცია</th>
+          <th>ქცევა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ხელახალი ცდის ლოგიკა</strong></td>
+          <td>ექსპონენციალური backoff (2წმ - 4წმ - 8წმ, მაქს. 10წმ) წარუმატებელი SSE კავშირებისთვის</td>
+        </tr>
+        <tr>
+          <td><strong>ავტო-ხელახალი ცდა</strong></td>
+          <td>ChatErrorBanner countdown ტაიმერით და ხელით ხელახალი ცდის ოფციით</td>
+        </tr>
+        <tr>
+          <td><strong>სარეზერვო შენახვა</strong></td>
+          <td>localStorage როდესაც FHIR მიუწვდომელია</td>
+        </tr>
+        <tr>
+          <td><strong>სტრიმინგის სარეზერვო</strong></td>
+          <td>არა-სტრიმინგის JSON პასუხი თუ SSE ჩავარდება</td>
+        </tr>
+        <tr>
+          <td><strong>გრაციოზული დეგრადაცია</strong></td>
+          <td>გაგრძელება ლოკალური მდგომარეობით სერვერის შეცდომების შემთხვევაში</td>
+        </tr>
+        <tr>
+          <td><strong>კავშირის მონიტორინგი</strong></td>
+          <td>SSE გათიშვების აღმოჩენა და დამუშავება</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- უსაფრთხოების მოსაზრებები -->
+  <h4 id="security">1.3.9 უსაფრთხოების მოსაზრებები</h4>
+  <ul class="doc-list">
+    <li><strong>PHI არ არის prompts-ში</strong> - შემთხვევის კონტექსტი იყენებს ანონიმიზებულ პაციენტის მონაცემებს (ასაკობრივი დიაპაზონები, სახელების გარეშე)</li>
+    <li><strong>FHIR ავტორიზაცია</strong> - ყველა მოთხოვნა იყენებს Medplum OAuth ტოკენებს</li>
+    <li><strong>Rate Limiting</strong> - Flowise endpoints მხარს უჭერს rate limiting-ს</li>
+    <li><strong>XSS პრევენცია</strong> - Markdown renderer ასუფთავებს HTML-ს</li>
+    <li><strong>CORS კონფიგურაცია</strong> - Flowise და Supabase endpoints კონფიგურირებულია დაშვებული origins-ით</li>
+  </ul>
+
+  <!-- მობილური რეაგირებადობა -->
+  <h4 id="mobile">1.3.10 მობილური რეაგირებადობა</h4>
+
+  <!-- მობილური ჩატის სქრინშოტი -->
+  <div class="doc-screenshot-full doc-mobile-frame">
+    <img src="images/ai-mobile-chat-ka.png" alt="მობილური რესპონსიული ჩატის ინტერფეისი სრულეკრანიანი გვერდითა პანელით"
+         class="doc-screenshot-image doc-screenshot-mobile" data-i18n-img="ai-mobile-chat">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Mobile-first დიზაინი</strong> ჩასაკეცი sidebar-ით</li>
+    <li><strong>სრულეკრანიანი sidebar</strong> მობილურზე (&lt;768px)</li>
+    <li><strong>შეხებისთვის მოსახერხებელი კონტროლები</strong> (მინიმუმ 44px tap სამიზნეები)</li>
+    <li><strong>Swipe ჟესტები</strong> sidebar-ის გადართვისთვის</li>
+    <li><strong>რეაგირებადი შეტყობინებების ბუშტები</strong> რომლებიც ადაპტირდებიან ეკრანის სიგანეზე</li>
+    <li><strong>useMobileKeyboard hook</strong> კლავიატურის ხილვადობის დეტექციისთვის</li>
+  </ul>
+
+</section>

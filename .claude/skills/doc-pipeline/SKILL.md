@@ -632,10 +632,22 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
       this means scrolling or section expansion FAILED. STOP and debug before continuing.
    C. Quick language check — Glance at visible text. If obviously wrong language,
       re-click the language button, wait, and recapture.
+   D. verificationCriteria check — If the plan JSON has `verificationCriteria`:
+      - Check `mustShow` items: Are they visible in the captured image?
+      - Check `mustNotShow` items: Are they absent from the captured image?
+      - If verification fails, mark status as "needs-recapture" with reason
 
    NOTE: This is a PRELIMINARY check. Full content-vs-description validation and
    cross-image uniqueness checks happen in Phase 5 Agent C. Phase 4 marks status
    as "captured" (NOT "completed") — only Phase 5 can promote to "completed".
+
+   DUPLICATE DETECTION (Phase 4 preliminary):
+   Keep a mental note of what each screenshot shows. If the current screenshot looks
+   identical to a previous one (same UI state, same visible elements), this indicates
+   the stateSetup.interactionSequence did not execute correctly. Before continuing:
+   1. Review the plan's `differentiator` field — what should make this screenshot unique?
+   2. Re-attempt the interaction sequence to reach the correct UI state
+   3. If still showing duplicate content, mark as "needs-recapture" and continue
 
    CRITICAL: If 2+ consecutive screenshots look identical, STOP capturing and
    re-run the DOM exploration step to find working selectors. Do not continue
@@ -808,6 +820,7 @@ C. LANGUAGE VERIFICATION — check these indicators:
 D. CONTENT vs DESCRIPTION — Read the plan JSON's "description" AND "expectedDOMElements"
    fields for this basename. Use the PER-BASENAME CHECKLIST below to verify content:
 
+   **Patient Registration Screenshots:**
    | Basename | Required Visual Elements |
    |----------|------------------------|
    | hero-search | Search bar/input visible at top of page |
@@ -827,14 +840,54 @@ D. CONTENT vs DESCRIPTION — Read the plan JSON's "description" AND "expectedDO
    | encounter-creation | Form with encounter/visit fields populated |
    | screenshot | Full page overview with search + form + sidebar all visible |
 
+   **AI Chatbot Screenshots:**
+   | Basename | Required Visual Elements |
+   |----------|------------------------|
+   | ai-chat-interface | Full chat layout: header, sidebar, message area, input |
+   | ai-knowledge-base-selector | KB tabs visible (Medical Knowledge / My Documents) |
+   | ai-conversation-history | Sidebar with conversation list or empty state |
+   | ai-document-library | Document library page with upload area, category tabs |
+   | ai-case-creation | Modal open with Manual Entry / From Patient tabs |
+   | ai-mobile-chat | Mobile viewport (375px), collapsed sidebar |
+   | ai-welcome-screen | Welcome message, quick action cards visible |
+   | ai-message-input | Input area with voice button, attachment button, send button |
+
    If the image does NOT show the required visual elements → FAIL: content mismatch.
    If `knownLimitation` is set and the limitation explains the gap → WARN, not FAIL.
 
-STEP 3 — CROSS-BASENAME UNIQUENESS CHECK:
+E. verificationCriteria CHECK — If the plan JSON has `verificationCriteria` for this basename:
+   - Check each `mustShow` item: Is it visible in the image?
+   - Check each `mustNotShow` item: Is it absent from the image?
+   - If any mustShow is missing → FAIL: missing required element
+   - If any mustNotShow is present → FAIL: shows forbidden element
+
+STEP 3 — DUPLICATE DETECTION ALGORITHM:
 Compare DIFFERENT basenames within the same language.
 Each basename should show a DISTINCT feature or page state.
-If two basenames show the same content → FAIL: duplicate content.
-List ALL duplicate groups found.
+
+DUPLICATE DETECTION PROCEDURE:
+1. Group screenshots by route (same page = higher duplicate risk):
+   - /emr/ai-assistant/chat screenshots: ai-chat-interface, ai-knowledge-base-selector,
+     ai-conversation-history, ai-welcome-screen, ai-message-input
+   - /emr/ai-assistant/library: ai-document-library
+   - /emr/ai-assistant/cases: ai-case-creation
+   - Mobile viewport: ai-mobile-chat
+
+2. For each same-route group, compare pairs of images:
+   - Do they show the same major UI elements in the same positions?
+   - Is >80% of visible text the same across both images?
+   - Does the `differentiator` field in the plan describe a visible difference?
+
+3. If two basenames appear identical:
+   FLAG: "DUPLICATE: {basename1} ≈ {basename2} (both show {description})"
+   For the duplicate pair:
+   - Identify which one correctly matches its plan description
+   - Mark the OTHER as "needs-recapture" with reason: "duplicate of {basename}"
+
+4. Common duplicate patterns to catch:
+   - ai-welcome-screen ≈ ai-message-input (both show welcome state)
+   - ai-chat-interface ≈ ai-conversation-history (both show same full page)
+   → These indicate stateSetup.interactionSequence was not executed
 
 STEP 4 — FINAL INDEX RECALCULATION:
 1. For each screenshot: if all checks passed → set status to "completed"

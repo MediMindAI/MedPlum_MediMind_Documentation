@@ -1,0 +1,86 @@
+{
+  "version": "1.1",
+  "createdAt": "2026-02-06T12:00:00Z",
+  "updatedAt": "2026-02-06T17:30:00Z",
+  "sections": [
+    {
+      "sectionId": "ai-chatbot-overview",
+      "file": "ai-chatbot-overview",
+      "planFile": "ai-chatbot-overview.json",
+      "totalScreenshots": 8,
+      "screenshots": [
+        "ai-chat-interface",
+        "ai-knowledge-base-selector",
+        "ai-conversation-history",
+        "ai-document-library",
+        "ai-case-creation",
+        "ai-mobile-chat",
+        "ai-conversation-active",
+        "ai-my-documents"
+      ],
+      "status": {
+        "completed": 24,
+        "pending": 0,
+        "failed": 0
+      }
+    },
+    {
+      "sectionId": "ai-chatbot-components",
+      "file": "ai-chatbot-components",
+      "planFile": "ai-chatbot-components.json",
+      "totalScreenshots": 2,
+      "screenshots": [
+        "ai-welcome-screen",
+        "ai-message-input"
+      ],
+      "status": {
+        "completed": 6,
+        "pending": 0,
+        "failed": 0
+      }
+    }
+  ],
+  "overallStatus": {
+    "totalSections": 2,
+    "totalScreenshots": 10,
+    "totalFiles": 30,
+    "completed": 30,
+    "pending": 0,
+    "failed": 0,
+    "completionPercentage": 100
+  },
+  "capturedScreenshots": [
+    "ai-chat-interface",
+    "ai-knowledge-base-selector",
+    "ai-conversation-history",
+    "ai-document-library",
+    "ai-case-creation",
+    "ai-mobile-chat",
+    "ai-welcome-screen",
+    "ai-message-input",
+    "ai-conversation-active",
+    "ai-my-documents"
+  ],
+  "pendingScreenshots": [],
+  "needsRecaptureScreenshots": [],
+  "removedScreenshots": {
+    "reason": "require-test-data-or-live-interaction",
+    "basenames": [
+      "ai-streaming-response",
+      "ai-source-references",
+      "ai-voice-input"
+    ]
+  },
+  "validationSummary": {
+    "date": "2026-02-06T17:30:00Z",
+    "totalValidated": 24,
+    "passedAll": 24,
+    "failedContentCheck": 0,
+    "duplicatesDetected": 0,
+    "notes": [
+      "ai-knowledge-base-selector: recaptured with My Documents tab selected",
+      "ai-message-input: recaptured with text typed in input field",
+      "ai-welcome-screen: marked valid (intentionally shows welcome state)"
+    ]
+  }
+}

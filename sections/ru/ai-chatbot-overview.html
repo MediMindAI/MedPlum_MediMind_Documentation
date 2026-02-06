@@ -1,0 +1,739 @@
+<section class="doc-section" id="ai-chatbot-overview">
+  <div class="doc-section-header">
+    <div class="doc-section-icon" style="background: var(--emr-gradient-primary);">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">1</span> Обзор AI медицинского чат-бота</h2>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 1.1 Введение -->
+  <!-- ========================== -->
+  <h3 id="introduction">1.1 Введение</h3>
+  <p><strong>AI медицинский чат-бот</strong> предоставляет медицинским специалистам помощь на основе искусственного интеллекта в реальном времени через интуитивный интерфейс чата. Созданный для клинической среды EMR, он интегрируется с <strong>Flowise AI</strong> для интеллектуальных ответов с использованием потоковой передачи Server-Sent Events (SSE).</p>
+
+  <!-- Скриншот главного интерфейса чата -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-chat-interface-ru.png" alt="Главный интерфейс AI медицинского чат-бота с окном чата, сообщениями и вводом"
+         class="doc-screenshot-image" data-i18n-img="ai-chat-interface">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Статус продукта:</strong> Эта функция полностью готова к производству с FHIR-совместимым хранением данных, поддержкой двух баз знаний и многоязычным голосовым вводом (грузинский, английский, русский).
+    </div>
+  </div>
+
+  <!-- Ключевые возможности -->
+  <h4 id="key-capabilities">Ключевые возможности</h4>
+  <ul class="doc-list">
+    <li><strong>Потоковые ответы в реальном времени</strong> - Покетокенные AI ответы с использованием Server-Sent Events</li>
+    <li><strong>Двойные базы знаний</strong> - Переключение между курируемой медицинской KB и личными документами</li>
+    <li><strong>История разговоров</strong> - FHIR-совместимое хранение с резервным копированием в localStorage</li>
+    <li><strong>Управление документами</strong> - Загрузка и управление личными медицинскими документами</li>
+    <li><strong>Управление случаями пациентов</strong> - Обсуждения анонимизированных случаев пациентов</li>
+    <li><strong>Голосовой ввод</strong> - Преобразование речи в текст на грузинском, английском и русском языках</li>
+    <li><strong>Вложения файлов</strong> - PDF, изображения, документы Word (макс. 10MB) с OCR + AI описанием</li>
+    <li><strong>Ссылки на источники</strong> - AI ответы включают цитаты и источники</li>
+    <li><strong>Проверка фактов</strong> - Проверка утверждений AI по медицинским источникам</li>
+    <li><strong>Интеграция калькулятора</strong> - Предложения медицинских калькуляторов (MDCalc)</li>
+  </ul>
+
+  <!-- Таблица технологического стека -->
+  <h4 id="technology-stack">Технологический стек</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Категория</th>
+          <th>Технология</th>
+          <th>Назначение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend</strong></td>
+          <td>React 19, TypeScript, Mantine UI</td>
+          <td>UI компоненты и типобезопасность</td>
+        </tr>
+        <tr>
+          <td><strong>Управление состоянием</strong></td>
+          <td>Dual Context + useReducer</td>
+          <td>Паттерн ChatUIContext + ChatDataContext</td>
+        </tr>
+        <tr>
+          <td><strong>AI Backend</strong></td>
+          <td>Flowise AI</td>
+          <td>Chatflows по специальностям (Кардиология, OB/GYN)</td>
+        </tr>
+        <tr>
+          <td><strong>Потоковая передача</strong></td>
+          <td>Server-Sent Events (SSE)</td>
+          <td>Доставка токенов в реальном времени с debounce 50мс</td>
+        </tr>
+        <tr>
+          <td><strong>Хранение данных</strong></td>
+          <td>FHIR Communication + localStorage</td>
+          <td>Гибридное хранение с оффлайн резервом</td>
+        </tr>
+        <tr>
+          <td><strong>Хранение документов</strong></td>
+          <td>FHIR DocumentReference + Binary</td>
+          <td>Метаданные и файлы медицинских документов</td>
+        </tr>
+        <tr>
+          <td><strong>Векторный поиск</strong></td>
+          <td>OpenAI Vector Store</td>
+          <td>KB больницы + Личная KB для каждого пользователя</td>
+        </tr>
+        <tr>
+          <td><strong>Голосовой ввод</strong></td>
+          <td>Enagram STT + Google Chirp 2</td>
+          <td>Транскрипция грузинского, английского, русского</td>
+        </tr>
+        <tr>
+          <td><strong>Обработка файлов</strong></td>
+          <td>Tesseract.js + Gemini Vision</td>
+          <td>OCR и AI описание изображений</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Структура маршрутов -->
+  <h4 id="route-structure">Структура маршрутов</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">/emr/ai-assistant
+├── /chat                  # Главный интерфейс чат-бота (ChatbotPage)
+├── /library               # Библиотека личных документов (DocumentLibraryPage)
+└── /cases                 # Управление случаями пациентов (CaseManagementPage)</code></pre>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 1.2 Архитектура системы -->
+  <!-- ========================== -->
+  <h3 id="architecture">1.2 Архитектура системы</h3>
+  <p>AI медицинский чат-бот следует <strong>паттерну слоистой архитектуры</strong> с четким разделением между UI, управлением состоянием, хуками, сервисами и внешними системами.</p>
+
+  <!-- Диаграмма обзора архитектуры -->
+  <h4 id="architecture-overview">Обзор архитектуры</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph UI["User Interface Layer (40 Components)"]
+        ChatWindow[ChatWindow]
+        MessageList[MessageList]
+        MessageInput[MessageInput]
+        HistorySidebar[HistorySidebar]
+        DocLibrary[DocumentLibrary]
+    end
+
+    subgraph State["State Management Layer"]
+        ChatProvider["ChatProvider<br/>(Dual Context)"]
+        UIContext[ChatUIContext]
+        DataContext[ChatDataContext]
+    end
+
+    subgraph Hooks["Custom Hooks Layer (9 Hooks)"]
+        useFlowise[useFlowiseChat]
+        useMessages[useChatMessages]
+        useVoice[useVoiceInput]
+        useConv[useConversations]
+    end
+
+    subgraph Services["Services Layer (14 Services)"]
+        StreamSvc[streamingService]
+        ConvSvc[conversationService]
+        DocSvc[documentService]
+        AttachSvc[chatAttachmentService]
+    end
+
+    subgraph External["External Systems"]
+        Flowise["Flowise AI<br/>(SSE Stream)"]
+        FHIR["FHIR Server<br/>(Medplum)"]
+        VectorStore["OpenAI Vector<br/>Stores (2)"]
+        Supabase["Supabase Edge<br/>Functions"]
+    end
+
+    UI --> State
+    State --> Hooks
+    Hooks --> Services
+    Services --> External
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Иерархия компонентов -->
+  <h4 id="component-hierarchy">Иерархия компонентов</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">ChatbotPage
+├── ChatProvider (dual context wrapper)
+└── ChatbotContent
+    ├── ChatHeader
+    │   ├── KnowledgeBaseSelector
+    │   └── Action buttons
+    ├── HistorySidebar (collapsible)
+    │   ├── ConversationList
+    │   ├── ConversationListItem (multiple)
+    │   └── ActiveCaseBadge
+    ├── ChatArea
+    │   ├── WelcomeScreen / CaseReadyScreen (when empty)
+    │   ├── ChatErrorBanner
+    │   └── MessageList
+    │       ├── MessageItem (multiple)
+    │       │   ├── MessageActions
+    │       │   ├── SourceReferences
+    │       │   ├── FactCheckResult
+    │       │   ├── MedicalMarkdownRenderer
+    │       │   └── StreamingText
+    │       ├── PulseLoader
+    │       └── StreamingIndicator
+    └── MessageInput
+        ├── VoiceInputButton (with language popover)
+        ├── File attachment button
+        ├── QuickReplies
+        └── CalculatorSuggestions</code></pre>
+  </div>
+
+  <!-- Поток данных: Отправка сообщения -->
+  <h4 id="data-flow-send">Поток данных: Отправка сообщения</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+sequenceDiagram
+    participant U as User
+    participant MI as MessageInput
+    participant H as useFlowiseChat
+    participant SS as streamingService
+    participant F as Flowise AI
+
+    U->>MI: Type message + optional attachments
+    MI->>H: Submit message
+    H->>H: Process attachments (OCR/AI description)
+    H->>H: Create conversation if new
+    H->>H: Add user message to state
+    H->>H: Create placeholder AI message (isStreaming: true)
+    H->>SS: startStreaming()
+    SS->>F: SSE connection
+    F-->>SS: Token stream (50ms debounce)
+    SS->>H: Update AI message content
+    H->>H: Finalize message
+    H->>H: Persist to FHIR + localStorage
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Поток данных: Загрузка истории -->
+  <h4 id="data-flow-history">Поток данных: Загрузка истории разговоров</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[ChatProvider Init] --> B[loadConversations]
+    B --> C[localStorage]
+    C --> D[Hydrate State]
+    D --> E[User Selects Conv]
+    E --> F[loadMessages]
+    F --> G[Background FHIR Sync]
+    G --> H[Merge Data]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Таблица FHIR ресурсов -->
+  <h4 id="fhir-resources">Используемые FHIR ресурсы</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Ресурс</th>
+          <th>Назначение</th>
+          <th>Расширения</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>Метаданные разговора</td>
+          <td><code>session-id</code>, <code>knowledge-base</code>, <code>specialty</code>, <code>type</code>, <code>message-count</code>, <code>last-preview</code></td>
+        </tr>
+        <tr>
+          <td><strong>DocumentReference</strong></td>
+          <td>Случаи пациентов, документы пользователя</td>
+          <td><code>anonymized-info</code>, <code>category</code>, <code>tags</code>, <code>vector-store-file-id</code>, <code>linked-patient-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>Binary</strong></td>
+          <td>Хранение файлов документов</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>Practitioner</strong></td>
+          <td>Ссылка на векторное хранилище пользователя</td>
+          <td><code>user-vector-store</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Оптимизации производительности -->
+  <h4 id="performance">Оптимизации производительности</h4>
+  <ul class="doc-list">
+    <li><strong>Буферизация токенов</strong> - Debounce 50мс уменьшает перерендеры с 50-100 до ~10-20</li>
+    <li><strong>Двойной контекст</strong> - ChatUIContext (загрузка/ошибки) и ChatDataContext (сообщения) предотвращают лишние перерендеры</li>
+    <li><strong>Группировка токенов</strong> - Пакеты по 100мс в ChatContext уменьшают перерендеры React</li>
+    <li><strong>Ленивая загрузка</strong> - Список разговоров виртуализирован для 100+ разговоров</li>
+    <li><strong>Кэширование localStorage</strong> - Мгновенная загрузка разговоров без обращения к FHIR</li>
+    <li><strong>Пагинация сообщений</strong> - Загрузка сообщений порциями по 50</li>
+    <li><strong>AbortController</strong> - Отмена текущих запросов при переключении разговоров</li>
+    <li><strong>Дедупликация соединений</strong> - Одна активная SSE сессия одновременно</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 1.3 Функции пользователя -->
+  <!-- ========================== -->
+  <h3 id="features">1.3 Функции пользователя</h3>
+  <p>AI медицинский чат-бот предоставляет полный набор функций, разработанных для медицинских специалистов.</p>
+
+  <!-- Выбор базы знаний -->
+  <h4 id="knowledge-bases">1.3.1 Выбор базы знаний</h4>
+  <p>Пользователи могут переключаться между двумя базами знаний с помощью <strong>KnowledgeBaseSelector</strong> в заголовке чата:</p>
+
+  <!-- Скриншот выбора базы знаний -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-knowledge-base-selector-ru.png" alt="Селектор базы знаний с опциями курируемых и персональных документов"
+         class="doc-screenshot-image" data-i18n-img="ai-knowledge-base-selector">
+  </div>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: var(--emr-gradient-primary);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Курируемая медицинская KB</div>
+        <div class="doc-action-desc">Профессионально курируемые доказательные медицинские знания. Быстрые, последовательные ответы без настройки.</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: var(--emr-gradient-secondary);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Личные документы</div>
+        <div class="doc-action-desc">Загруженные пользователем документы для персонализированного поиска знаний. Настроены под вашу специальность и практику.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Скриншот Мои документы -->
+  <p>При выборе <strong>Мои документы</strong> вы можете увидеть все загруженные файлы и их статус обработки:</p>
+  <div class="doc-screenshot-full">
+    <img src="images/ai-my-documents-ru.png" alt="Раздел Мои документы с загруженными личными медицинскими документами и использованием хранилища"
+         class="doc-screenshot-image" data-i18n-img="ai-my-documents">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Сочетания клавиш:</strong>
+      <ul>
+        <li><kbd>Cmd/Ctrl</kbd> + <kbd>1</kbd> - Переключить на курируемую медицинскую KB</li>
+        <li><kbd>Cmd/Ctrl</kbd> + <kbd>2</kbd> - Переключить на личные документы</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- История разговоров -->
+  <h4 id="conversation-history">1.3.2 История разговоров</h4>
+  <p>Все разговоры автоматически сохраняются и могут быть возобновлены из <strong>HistorySidebar</strong>.</p>
+
+  <!-- Скриншот истории бесед -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-conversation-history-ru.png" alt="Боковая панель истории бесед со списком прошлых разговоров, сгруппированных по дате"
+         class="doc-screenshot-image" data-i18n-img="ai-conversation-history">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Функция</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Автосохранение</strong></td>
+          <td>Мгновенно в localStorage, фоновая синхронизация с FHIR</td>
+        </tr>
+        <tr>
+          <td><strong>Метаданные</strong></td>
+          <td>Заголовок, количество сообщений, предпросмотр, временные метки, тип KB, специальность</td>
+        </tr>
+        <tr>
+          <td><strong>Поиск и фильтрация</strong></td>
+          <td>Поиск по заголовку или содержимому, фильтрация по типу разговора</td>
+        </tr>
+        <tr>
+          <td><strong>Группировка по дате</strong></td>
+          <td>Сегодня, Вчера, Последние 7 дней, Последние 30 дней, Старше</td>
+        </tr>
+        <tr>
+          <td><strong>Мобильное поведение</strong></td>
+          <td>Полноэкранный оверлей с жестом свайпа для закрытия</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Библиотека документов -->
+  <h4 id="document-library">1.3.3 Библиотека документов</h4>
+  <p>Пользователи могут загружать и управлять личными медицинскими документами по адресу <code>/emr/ai-assistant/library</code>.</p>
+
+  <!-- Скриншот библиотеки документов -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-document-library-ru.png" alt="Сетка библиотеки документов с загруженными медицинскими документами по категориям"
+         class="doc-screenshot-image" data-i18n-img="ai-document-library">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поддерживаемый тип</th>
+          <th>Расширения</th>
+          <th>Обработка</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PDF документы</strong></td>
+          <td>.pdf</td>
+          <td>Извлечение текста</td>
+        </tr>
+        <tr>
+          <td><strong>Word документы</strong></td>
+          <td>.doc, .docx</td>
+          <td>Извлечение текста</td>
+        </tr>
+        <tr>
+          <td><strong>Текстовые файлы</strong></td>
+          <td>.txt, .md</td>
+          <td>Прямое чтение</td>
+        </tr>
+        <tr>
+          <td><strong>Изображения</strong></td>
+          <td>.jpg, .png</td>
+          <td>OCR через Gemini Vision</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Категории документов (10):</strong> Исследовательские работы, Клинические рекомендации, Описания случаев, Учебники, Протоколы, Справочники по лекарствам, Обучение пациентов, Материалы конференций, Личные заметки, Другое</p>
+
+  <!-- Управление случаями пациентов -->
+  <h4 id="case-management">1.3.4 Управление случаями пациентов</h4>
+  <p>Создавайте анонимизированные случаи пациентов для клинических обсуждений с помощью AI по адресу <code>/emr/ai-assistant/cases</code>.</p>
+
+  <!-- Скриншот создания кейса -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-case-creation-ru.png" alt="Модальное окно создания кейса с вкладками ручного ввода и выбора пациента"
+         class="doc-screenshot-image" data-i18n-img="ai-case-creation">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Сценарий использования</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Сложный диагноз</strong></td>
+          <td>Обсуждение сложных диагностических задач</td>
+        </tr>
+        <tr>
+          <td><strong>Планирование лечения</strong></td>
+          <td>Рекомендации по лечению с помощью AI</td>
+        </tr>
+        <tr>
+          <td><strong>Второе мнение</strong></td>
+          <td>Симуляция консультаций для второго мнения</td>
+        </tr>
+        <tr>
+          <td><strong>Учебные случаи</strong></td>
+          <td>Сценарии обучения и преподавания</td>
+        </tr>
+        <tr>
+          <td><strong>Обсуждения MDT</strong></td>
+          <td>Подготовка к заседаниям мультидисциплинарной команды</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>CaseCreationModal</strong> предоставляет две вкладки:</p>
+  <ul class="doc-list">
+    <li><strong>Ручной ввод</strong> - Заполните название случая, специальность и анонимизированную информацию о пациенте</li>
+    <li><strong>Из пациента</strong> - Автоматическое заполнение из записей FHIR пациента с выбором категорий данных</li>
+  </ul>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Защита конфиденциальности:</strong>
+      <p>Данные пациента автоматически анонимизируются перед обработкой AI. Удалите имена пациентов, даты рождения, адреса, номера телефонов, MRN и номера счетов. Используйте возрастные диапазоны вместо точного возраста.</p>
+    </div>
+  </div>
+
+  <!-- Голосовой ввод -->
+  <h4 id="voice-input">1.3.5 Голосовой ввод</h4>
+  <p>Преобразование речи в текст с использованием <strong>MediaRecorder API</strong> с серверной транскрипцией через Supabase Edge Functions.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Язык</th>
+          <th>Код</th>
+          <th>STT движок</th>
+          <th>Edge Function</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Грузинский</strong></td>
+          <td>ka-GE</td>
+          <td>Enagram STT (Быстрый)</td>
+          <td><code>georgian-tts-proxy</code></td>
+        </tr>
+        <tr>
+          <td><strong>Английский</strong></td>
+          <td>en-US</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+        </tr>
+        <tr>
+          <td><strong>Русский</strong></td>
+          <td>ru-RU</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Конвейер голосового ввода:</strong></p>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[Record Audio] --> B[Encode to Base64]
+    B --> C[Send to Edge Function]
+    C --> D[STT Service]
+    D --> E[Return Text]
+    E --> F[Insert into Input]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Функции VoiceInputButton:</strong>
+      <ul>
+        <li>Нажмите для начала записи, нажмите снова для остановки и транскрипции</li>
+        <li>Правый клик для смены языка через всплывающее окно с эмодзи флагов</li>
+        <li>Визуальная обратная связь: анимация записи и таймер длительности</li>
+        <li>Автоостановка после 60 секунд (настраивается)</li>
+        <li>Выбор языка сохраняется через localStorage</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Потоковая передача в реальном времени -->
+  <h4 id="streaming">1.3.6 Потоковая передача в реальном времени</h4>
+  <p>AI ответы передаются в реальном времени с визуальной обратной связью и плавным появлением текста.</p>
+
+  <!-- Скриншот активного разговора -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-conversation-active-ru.png" alt="Активный AI разговор с вопросом пользователя и потоковым ответом AI о симптомах диабета"
+         class="doc-screenshot-image" data-i18n-img="ai-conversation-active">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Плавное появление текста</strong> - Токены появляются постепенно по мере поступления</li>
+    <li><strong>Мигающий курсор</strong> - Визуальный индикатор во время активной потоковой передачи</li>
+    <li><strong>Индикатор набора</strong> - Отображается до прихода первого токена</li>
+    <li><strong>Отображение количества токенов</strong> - Показывает прогресс при длинных ответах</li>
+    <li><strong>Прошедшее время</strong> - Показывает, сколько времени генерируется ответ</li>
+  </ul>
+
+  <!-- Вложения файлов -->
+  <h4 id="file-attachments">1.3.7 Вложения файлов</h4>
+  <p>MessageInput поддерживает вложения файлов в сообщениях чата. Файлы обрабатываются для извлечения текстового содержимого для контекста AI.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Тип файла</th>
+          <th>Метод обработки</th>
+          <th>Детали</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PDF</strong></td>
+          <td>OCR через Gemini Vision</td>
+          <td>Файл конвертируется в base64, отправляется в edge function</td>
+        </tr>
+        <tr>
+          <td><strong>Изображение с текстом</strong></td>
+          <td>OCR через Gemini Vision</td>
+          <td>Изображение сжимается, текст извлекается</td>
+        </tr>
+        <tr>
+          <td><strong>Изображение без текста</strong></td>
+          <td>AI описание</td>
+          <td>Переключается на описание визуального содержимого</td>
+        </tr>
+        <tr>
+          <td><strong>Word документ</strong></td>
+          <td>OCR через Gemini Vision</td>
+          <td>Файл конвертируется в base64</td>
+        </tr>
+        <tr>
+          <td><strong>Текст/Markdown</strong></td>
+          <td>Нативное извлечение</td>
+          <td>Читается напрямую через File.text() API</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Максимальный размер файла:</strong> 10MB. Поддерживается перетаскивание через компонент Dropzone от Mantine.</p>
+
+  <!-- Обработка ошибок -->
+  <h4 id="error-handling">1.3.8 Обработка ошибок</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Функция</th>
+          <th>Поведение</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Логика повтора</strong></td>
+          <td>Экспоненциальный backoff (2с - 4с - 8с, макс. 10с) для неудачных SSE соединений</td>
+        </tr>
+        <tr>
+          <td><strong>Автоповтор</strong></td>
+          <td>ChatErrorBanner с таймером обратного отсчета и ручным повтором</td>
+        </tr>
+        <tr>
+          <td><strong>Резервное хранение</strong></td>
+          <td>localStorage когда FHIR недоступен</td>
+        </tr>
+        <tr>
+          <td><strong>Резерв потоковой передачи</strong></td>
+          <td>Непотоковый JSON ответ если SSE не работает</td>
+        </tr>
+        <tr>
+          <td><strong>Плавная деградация</strong></td>
+          <td>Продолжение с локальным состоянием при ошибках сервера</td>
+        </tr>
+        <tr>
+          <td><strong>Мониторинг соединения</strong></td>
+          <td>Обнаружение и обработка отключений SSE</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Соображения безопасности -->
+  <h4 id="security">1.3.9 Соображения безопасности</h4>
+  <ul class="doc-list">
+    <li><strong>Нет PHI в промптах</strong> - Контекст случая использует анонимизированные данные пациента (возрастные диапазоны, без имен)</li>
+    <li><strong>FHIR авторизация</strong> - Все запросы используют OAuth токены Medplum</li>
+    <li><strong>Rate Limiting</strong> - Конечные точки Flowise поддерживают ограничение скорости</li>
+    <li><strong>Предотвращение XSS</strong> - Markdown рендерер санитизирует HTML</li>
+    <li><strong>Конфигурация CORS</strong> - Конечные точки Flowise и Supabase настроены с разрешенными origins</li>
+  </ul>
+
+  <!-- Мобильная отзывчивость -->
+  <h4 id="mobile">1.3.10 Мобильная отзывчивость</h4>
+  <!-- Скриншот мобильного чата -->
+  <div class="doc-screenshot-full doc-mobile-frame">
+    <img src="images/ai-mobile-chat-ru.png" alt="Мобильный адаптивный интерфейс чата с полноэкранной боковой панелью"
+         class="doc-screenshot-image doc-screenshot-mobile" data-i18n-img="ai-mobile-chat">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Mobile-first дизайн</strong> со сворачиваемой боковой панелью</li>
+    <li><strong>Полноэкранная боковая панель</strong> на мобильных (&lt;768px)</li>
+    <li><strong>Элементы управления для касания</strong> (минимум 44px целевые области)</li>
+    <li><strong>Жесты свайпа</strong> для переключения боковой панели</li>
+    <li><strong>Адаптивные пузыри сообщений</strong> которые подстраиваются под ширину экрана</li>
+    <li><strong>useMobileKeyboard hook</strong> для определения видимости клавиатуры</li>
+  </ul>
+
+</section>

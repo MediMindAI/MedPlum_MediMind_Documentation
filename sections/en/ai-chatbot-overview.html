@@ -1,0 +1,740 @@
+<section class="doc-section" id="ai-chatbot-overview">
+  <div class="doc-section-header">
+    <div class="doc-section-icon" style="background: var(--emr-gradient-primary);">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">1</span> AI Medical Chatbot Overview</h2>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 1.1 Introduction -->
+  <!-- ========================== -->
+  <h3 id="introduction">1.1 Introduction</h3>
+  <p>The <strong>AI Medical Chatbot</strong> provides healthcare professionals with real-time AI-powered medical assistance through an intuitive chat interface. Built for the EMR clinician-facing environment, it integrates with <strong>Flowise AI</strong> for intelligent responses using Server-Sent Events (SSE) streaming.</p>
+
+  <!-- Main Chat Interface Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-chat-interface-en.png" alt="AI Medical Chatbot main interface showing chat window with messages and input"
+         class="doc-screenshot-image" data-i18n-img="ai-chat-interface">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Production Status:</strong> This feature is fully production-ready with FHIR-compliant data persistence, dual knowledge base support, and multi-language voice input (Georgian, English, Russian).
+    </div>
+  </div>
+
+  <!-- Key Capabilities -->
+  <h4 id="key-capabilities">Key Capabilities</h4>
+  <ul class="doc-list">
+    <li><strong>Real-time Streaming Responses</strong> - Token-by-token AI responses using Server-Sent Events</li>
+    <li><strong>Dual Knowledge Bases</strong> - Switch between curated medical KB and personal documents</li>
+    <li><strong>Conversation History</strong> - FHIR-compliant persistence with localStorage fallback</li>
+    <li><strong>Document Management</strong> - Upload and manage personal medical documents</li>
+    <li><strong>Patient Case Management</strong> - Anonymized patient case discussions</li>
+    <li><strong>Voice Input</strong> - Speech-to-text in Georgian, English, and Russian</li>
+    <li><strong>File Attachments</strong> - PDF, images, Word docs (10MB max) with OCR + AI description</li>
+    <li><strong>Source References</strong> - AI responses include citations and sources</li>
+    <li><strong>Fact Checking</strong> - Verify AI claims against medical sources</li>
+    <li><strong>Calculator Integration</strong> - Suggestions for medical calculators (MDCalc)</li>
+  </ul>
+
+  <!-- Technology Stack Table -->
+  <h4 id="technology-stack">Technology Stack</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Technology</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend</strong></td>
+          <td>React 19, TypeScript, Mantine UI</td>
+          <td>UI components and type safety</td>
+        </tr>
+        <tr>
+          <td><strong>State Management</strong></td>
+          <td>Dual Context + useReducer</td>
+          <td>ChatUIContext + ChatDataContext pattern</td>
+        </tr>
+        <tr>
+          <td><strong>AI Backend</strong></td>
+          <td>Flowise AI</td>
+          <td>Specialty-specific chatflows (Cardiology, OB/GYN)</td>
+        </tr>
+        <tr>
+          <td><strong>Streaming</strong></td>
+          <td>Server-Sent Events (SSE)</td>
+          <td>Real-time token delivery with 50ms debounce</td>
+        </tr>
+        <tr>
+          <td><strong>Data Persistence</strong></td>
+          <td>FHIR Communication + localStorage</td>
+          <td>Hybrid storage with offline fallback</td>
+        </tr>
+        <tr>
+          <td><strong>Document Storage</strong></td>
+          <td>FHIR DocumentReference + Binary</td>
+          <td>Medical document metadata and files</td>
+        </tr>
+        <tr>
+          <td><strong>Vector Search</strong></td>
+          <td>OpenAI Vector Store</td>
+          <td>Hospital KB + Personal KB per user</td>
+        </tr>
+        <tr>
+          <td><strong>Voice Input</strong></td>
+          <td>Enagram STT + Google Chirp 2</td>
+          <td>Georgian, English, Russian transcription</td>
+        </tr>
+        <tr>
+          <td><strong>File Processing</strong></td>
+          <td>Tesseract.js + Gemini Vision</td>
+          <td>OCR and AI image description</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Route Structure -->
+  <h4 id="route-structure">Route Structure</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">/emr/ai-assistant
+├── /chat                  # Main chatbot interface (ChatbotPage)
+├── /library               # Personal document library (DocumentLibraryPage)
+└── /cases                 # Patient case management (CaseManagementPage)</code></pre>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 1.2 System Architecture -->
+  <!-- ========================== -->
+  <h3 id="architecture">1.2 System Architecture</h3>
+  <p>The AI Medical Chatbot follows a <strong>layered architecture pattern</strong> with clear separation between UI, state management, hooks, services, and external systems.</p>
+
+  <!-- Architecture Overview Diagram -->
+  <h4 id="architecture-overview">Architecture Overview</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph UI["User Interface Layer (40 Components)"]
+        ChatWindow[ChatWindow]
+        MessageList[MessageList]
+        MessageInput[MessageInput]
+        HistorySidebar[HistorySidebar]
+        DocLibrary[DocumentLibrary]
+    end
+
+    subgraph State["State Management Layer"]
+        ChatProvider["ChatProvider<br/>(Dual Context)"]
+        UIContext[ChatUIContext]
+        DataContext[ChatDataContext]
+    end
+
+    subgraph Hooks["Custom Hooks Layer (9 Hooks)"]
+        useFlowise[useFlowiseChat]
+        useMessages[useChatMessages]
+        useVoice[useVoiceInput]
+        useConv[useConversations]
+    end
+
+    subgraph Services["Services Layer (14 Services)"]
+        StreamSvc[streamingService]
+        ConvSvc[conversationService]
+        DocSvc[documentService]
+        AttachSvc[chatAttachmentService]
+    end
+
+    subgraph External["External Systems"]
+        Flowise["Flowise AI<br/>(SSE Stream)"]
+        FHIR["FHIR Server<br/>(Medplum)"]
+        VectorStore["OpenAI Vector<br/>Stores (2)"]
+        Supabase["Supabase Edge<br/>Functions"]
+    end
+
+    UI --> State
+    State --> Hooks
+    Hooks --> Services
+    Services --> External
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Component Hierarchy -->
+  <h4 id="component-hierarchy">Component Hierarchy</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-text">ChatbotPage
+├── ChatProvider (dual context wrapper)
+└── ChatbotContent
+    ├── ChatHeader
+    │   ├── KnowledgeBaseSelector
+    │   └── Action buttons
+    ├── HistorySidebar (collapsible)
+    │   ├── ConversationList
+    │   ├── ConversationListItem (multiple)
+    │   └── ActiveCaseBadge
+    ├── ChatArea
+    │   ├── WelcomeScreen / CaseReadyScreen (when empty)
+    │   ├── ChatErrorBanner
+    │   └── MessageList
+    │       ├── MessageItem (multiple)
+    │       │   ├── MessageActions
+    │       │   ├── SourceReferences
+    │       │   ├── FactCheckResult
+    │       │   ├── MedicalMarkdownRenderer
+    │       │   └── StreamingText
+    │       ├── PulseLoader
+    │       └── StreamingIndicator
+    └── MessageInput
+        ├── VoiceInputButton (with language popover)
+        ├── File attachment button
+        ├── QuickReplies
+        └── CalculatorSuggestions</code></pre>
+  </div>
+
+  <!-- Data Flow: Sending a Message -->
+  <h4 id="data-flow-send">Data Flow: Sending a Message</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+sequenceDiagram
+    participant U as User
+    participant MI as MessageInput
+    participant H as useFlowiseChat
+    participant SS as streamingService
+    participant F as Flowise AI
+
+    U->>MI: Type message + optional attachments
+    MI->>H: Submit message
+    H->>H: Process attachments (OCR/AI description)
+    H->>H: Create conversation if new
+    H->>H: Add user message to state
+    H->>H: Create placeholder AI message (isStreaming: true)
+    H->>SS: startStreaming()
+    SS->>F: SSE connection
+    F-->>SS: Token stream (50ms debounce)
+    SS->>H: Update AI message content
+    H->>H: Finalize message
+    H->>H: Persist to FHIR + localStorage
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Data Flow: Loading History -->
+  <h4 id="data-flow-history">Data Flow: Loading Conversation History</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[ChatProvider Init] --> B[loadConversations]
+    B --> C[localStorage]
+    C --> D[Hydrate State]
+    D --> E[User Selects Conv]
+    E --> F[loadMessages]
+    F --> G[Background FHIR Sync]
+    G --> H[Merge Data]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- FHIR Resources Table -->
+  <h4 id="fhir-resources">FHIR Resources Used</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Purpose</th>
+          <th>Extensions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>Conversation metadata</td>
+          <td><code>session-id</code>, <code>knowledge-base</code>, <code>specialty</code>, <code>type</code>, <code>message-count</code>, <code>last-preview</code></td>
+        </tr>
+        <tr>
+          <td><strong>DocumentReference</strong></td>
+          <td>Patient cases, user documents</td>
+          <td><code>anonymized-info</code>, <code>category</code>, <code>tags</code>, <code>vector-store-file-id</code>, <code>linked-patient-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>Binary</strong></td>
+          <td>Document file storage</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>Practitioner</strong></td>
+          <td>User vector store reference</td>
+          <td><code>user-vector-store</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Performance Optimizations -->
+  <h4 id="performance">Performance Optimizations</h4>
+  <ul class="doc-list">
+    <li><strong>Token Buffering</strong> - 50ms debounce reduces re-renders from 50-100 to ~10-20</li>
+    <li><strong>Dual Context</strong> - ChatUIContext (loading/errors) and ChatDataContext (messages) prevent unnecessary re-renders</li>
+    <li><strong>Token Batching</strong> - 100ms batches in ChatContext reduce React re-renders</li>
+    <li><strong>Lazy Loading</strong> - Conversation list virtualized for 100+ conversations</li>
+    <li><strong>localStorage Caching</strong> - Instant conversation load without FHIR roundtrip</li>
+    <li><strong>Message Pagination</strong> - Loads messages in chunks of 50</li>
+    <li><strong>AbortController</strong> - Cancels in-flight requests when switching conversations</li>
+    <li><strong>Connection Deduplication</strong> - One active SSE session at a time</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 1.3 User Features -->
+  <!-- ========================== -->
+  <h3 id="features">1.3 User Features</h3>
+  <p>The AI Medical Chatbot provides a comprehensive set of features designed for healthcare professionals.</p>
+
+  <!-- Knowledge Base Selection -->
+  <h4 id="knowledge-bases">1.3.1 Knowledge Base Selection</h4>
+  <p>Users can switch between two knowledge bases using the <strong>KnowledgeBaseSelector</strong> in the chat header:</p>
+
+  <!-- Knowledge Base Selector Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-knowledge-base-selector-en.png" alt="Knowledge base selector showing curated and personal document options"
+         class="doc-screenshot-image" data-i18n-img="ai-knowledge-base-selector">
+  </div>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: var(--emr-gradient-primary);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Curated Medical KB</div>
+        <div class="doc-action-desc">Professionally curated evidence-based medical knowledge. Fast, consistent responses with no setup required.</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: var(--emr-gradient-secondary);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Personal Documents</div>
+        <div class="doc-action-desc">User-uploaded documents for personalized knowledge retrieval. Customized to your specialty and practice.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Documents Screenshot -->
+  <p>When you select <strong>My Documents</strong>, you can see all your uploaded files and their processing status:</p>
+  <div class="doc-screenshot-full">
+    <img src="images/ai-my-documents-en.png" alt="My Documents view showing uploaded personal medical documents with storage usage"
+         class="doc-screenshot-image" data-i18n-img="ai-my-documents">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Keyboard Shortcuts:</strong>
+      <ul>
+        <li><kbd>Cmd/Ctrl</kbd> + <kbd>1</kbd> - Switch to Curated Medical KB</li>
+        <li><kbd>Cmd/Ctrl</kbd> + <kbd>2</kbd> - Switch to Personal Documents</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Conversation History -->
+  <h4 id="conversation-history">1.3.2 Conversation History</h4>
+  <p>All conversations are automatically saved and can be resumed from the <strong>HistorySidebar</strong>.</p>
+
+  <!-- Conversation History Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-conversation-history-en.png" alt="Conversation history sidebar showing list of past conversations grouped by date"
+         class="doc-screenshot-image" data-i18n-img="ai-conversation-history">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Auto-Save</strong></td>
+          <td>Immediately to localStorage, background sync to FHIR</td>
+        </tr>
+        <tr>
+          <td><strong>Metadata</strong></td>
+          <td>Title, message count, preview, timestamps, KB type, specialty</td>
+        </tr>
+        <tr>
+          <td><strong>Search & Filter</strong></td>
+          <td>Search by title or content, filter by conversation type</td>
+        </tr>
+        <tr>
+          <td><strong>Date Grouping</strong></td>
+          <td>Today, Yesterday, Last 7 days, Last 30 days, Older</td>
+        </tr>
+        <tr>
+          <td><strong>Mobile Behavior</strong></td>
+          <td>Full-screen overlay with swipe-to-close gesture</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Document Library -->
+  <h4 id="document-library">1.3.3 Document Library</h4>
+  <p>Users can upload and manage personal medical documents at <code>/emr/ai-assistant/library</code>.</p>
+
+  <!-- Document Library Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-document-library-en.png" alt="Document library grid view showing uploaded medical documents with categories"
+         class="doc-screenshot-image" data-i18n-img="ai-document-library">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Supported Type</th>
+          <th>Extensions</th>
+          <th>Processing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PDF Documents</strong></td>
+          <td>.pdf</td>
+          <td>Text extraction</td>
+        </tr>
+        <tr>
+          <td><strong>Word Documents</strong></td>
+          <td>.doc, .docx</td>
+          <td>Text extraction</td>
+        </tr>
+        <tr>
+          <td><strong>Text Files</strong></td>
+          <td>.txt, .md</td>
+          <td>Direct reading</td>
+        </tr>
+        <tr>
+          <td><strong>Images</strong></td>
+          <td>.jpg, .png</td>
+          <td>OCR via Gemini Vision</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Document Categories (10):</strong> Research Papers, Clinical Guidelines, Case Studies, Textbooks, Protocols, Drug References, Patient Education, Conference Materials, Personal Notes, Other</p>
+
+  <!-- Patient Case Management -->
+  <h4 id="case-management">1.3.4 Patient Case Management</h4>
+  <p>Create anonymized patient cases for AI-assisted clinical discussions at <code>/emr/ai-assistant/cases</code>.</p>
+
+  <!-- Case Creation Modal Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-case-creation-en.png" alt="Case creation modal with manual entry and patient selection tabs"
+         class="doc-screenshot-image" data-i18n-img="ai-case-creation">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Use Case</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Difficult Diagnosis</strong></td>
+          <td>Discuss complex diagnostic challenges</td>
+        </tr>
+        <tr>
+          <td><strong>Treatment Planning</strong></td>
+          <td>AI-assisted treatment recommendations</td>
+        </tr>
+        <tr>
+          <td><strong>Second Opinion</strong></td>
+          <td>Simulate second opinion consultations</td>
+        </tr>
+        <tr>
+          <td><strong>Educational Cases</strong></td>
+          <td>Teaching and learning scenarios</td>
+        </tr>
+        <tr>
+          <td><strong>MDT Discussions</strong></td>
+          <td>Prepare for multidisciplinary team meetings</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The <strong>CaseCreationModal</strong> provides two tabs:</p>
+  <ul class="doc-list">
+    <li><strong>Manual Entry</strong> - Fill in case title, specialty, and anonymized patient information</li>
+    <li><strong>From Patient</strong> - Auto-populate from FHIR patient records with selective data categories</li>
+  </ul>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Privacy Protection:</strong>
+      <p>Patient data is automatically anonymized before AI processing. Remove patient names, dates of birth, addresses, phone numbers, MRNs, and account numbers. Use age ranges instead of exact ages.</p>
+    </div>
+  </div>
+
+  <!-- Voice Input -->
+  <h4 id="voice-input">1.3.5 Voice Input</h4>
+  <p>Speech-to-text input using the <strong>MediaRecorder API</strong> with server-side transcription via Supabase Edge Functions.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Language</th>
+          <th>Code</th>
+          <th>STT Engine</th>
+          <th>Edge Function</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Georgian</strong></td>
+          <td>ka-GE</td>
+          <td>Enagram STT (Fast)</td>
+          <td><code>georgian-tts-proxy</code></td>
+        </tr>
+        <tr>
+          <td><strong>English</strong></td>
+          <td>en-US</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+        </tr>
+        <tr>
+          <td><strong>Russian</strong></td>
+          <td>ru-RU</td>
+          <td>Google Chirp 2</td>
+          <td><code>google-stt-proxy</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Voice Input Pipeline:</strong></p>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[Record Audio] --> B[Encode to Base64]
+    B --> C[Send to Edge Function]
+    C --> D[STT Service]
+    D --> E[Return Text]
+    E --> F[Insert into Input]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>VoiceInputButton Features:</strong>
+      <ul>
+        <li>Click to start recording, click again to stop and transcribe</li>
+        <li>Right-click to change language via popover with flag emojis</li>
+        <li>Visual feedback: recording animation and duration timer</li>
+        <li>Auto-stop after 60 seconds (configurable)</li>
+        <li>Language selection persisted via localStorage</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Real-time Streaming -->
+  <h4 id="streaming">1.3.6 Real-time Streaming</h4>
+  <p>AI responses stream in real-time with visual feedback and smooth text appearance.</p>
+
+  <!-- Active Conversation Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-conversation-active-en.png" alt="Active AI conversation showing user question and streaming AI response about diabetes symptoms"
+         class="doc-screenshot-image" data-i18n-img="ai-conversation-active">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Smooth Text Appearance</strong> - Tokens appear progressively as they arrive</li>
+    <li><strong>Blinking Cursor</strong> - Visual indicator during active streaming</li>
+    <li><strong>Typing Indicator</strong> - Shows before first token arrives</li>
+    <li><strong>Token Count Display</strong> - Shows progress during long responses</li>
+    <li><strong>Elapsed Time</strong> - Displays how long the response has been generating</li>
+  </ul>
+
+  <!-- File Attachments -->
+  <h4 id="file-attachments">1.3.7 File Attachments</h4>
+  <p>The MessageInput supports file attachments in chat messages. Files are processed to extract text content for AI context.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>File Type</th>
+          <th>Processing Method</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PDF</strong></td>
+          <td>OCR via Gemini Vision</td>
+          <td>File converted to base64, sent to edge function</td>
+        </tr>
+        <tr>
+          <td><strong>Image with text</strong></td>
+          <td>OCR via Gemini Vision</td>
+          <td>Image compressed, text extracted</td>
+        </tr>
+        <tr>
+          <td><strong>Image without text</strong></td>
+          <td>AI Description</td>
+          <td>Falls back to visual content description</td>
+        </tr>
+        <tr>
+          <td><strong>Word Document</strong></td>
+          <td>OCR via Gemini Vision</td>
+          <td>File converted to base64</td>
+        </tr>
+        <tr>
+          <td><strong>Text/Markdown</strong></td>
+          <td>Native extraction</td>
+          <td>Read directly via File.text() API</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Maximum file size:</strong> 10MB. Drag-and-drop supported via Mantine's Dropzone component.</p>
+
+  <!-- Error Handling -->
+  <h4 id="error-handling">1.3.8 Error Handling</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Retry Logic</strong></td>
+          <td>Exponential backoff (2s - 4s - 8s, max 10s) for failed SSE connections</td>
+        </tr>
+        <tr>
+          <td><strong>Auto-Retry</strong></td>
+          <td>ChatErrorBanner with countdown timer and manual retry option</td>
+        </tr>
+        <tr>
+          <td><strong>Fallback Persistence</strong></td>
+          <td>localStorage when FHIR unavailable</td>
+        </tr>
+        <tr>
+          <td><strong>Streaming Fallback</strong></td>
+          <td>Non-streaming JSON response if SSE fails</td>
+        </tr>
+        <tr>
+          <td><strong>Graceful Degradation</strong></td>
+          <td>Continues with local state if server errors</td>
+        </tr>
+        <tr>
+          <td><strong>Connection Monitoring</strong></td>
+          <td>Detects and handles SSE disconnections</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Security Considerations -->
+  <h4 id="security">1.3.9 Security Considerations</h4>
+  <ul class="doc-list">
+    <li><strong>No PHI in prompts</strong> - Case context uses anonymized patient data (age ranges, no names)</li>
+    <li><strong>FHIR Authorization</strong> - All requests use Medplum OAuth tokens</li>
+    <li><strong>Rate Limiting</strong> - Flowise endpoints support rate limiting</li>
+    <li><strong>XSS Prevention</strong> - Markdown renderer sanitizes HTML</li>
+    <li><strong>CORS Configuration</strong> - Flowise and Supabase endpoints configured with allowed origins</li>
+  </ul>
+
+  <!-- Mobile Responsiveness -->
+  <h4 id="mobile">1.3.10 Mobile Responsiveness</h4>
+
+  <!-- Mobile Chat Screenshot -->
+  <div class="doc-screenshot-full doc-mobile-frame">
+    <img src="images/ai-mobile-chat-en.png" alt="Mobile responsive chat interface with full-screen sidebar"
+         class="doc-screenshot-image doc-screenshot-mobile" data-i18n-img="ai-mobile-chat">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Mobile-first design</strong> with collapsible sidebar</li>
+    <li><strong>Full-screen sidebar</strong> on mobile (&lt;768px)</li>
+    <li><strong>Touch-friendly controls</strong> (44px minimum tap targets)</li>
+    <li><strong>Swipe gestures</strong> for sidebar toggle</li>
+    <li><strong>Responsive message bubbles</strong> that adapt to screen width</li>
+    <li><strong>useMobileKeyboard hook</strong> for keyboard visibility detection</li>
+  </ul>
+
+</section>

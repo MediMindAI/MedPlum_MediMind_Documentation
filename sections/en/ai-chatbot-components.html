@@ -1,0 +1,1602 @@
+<section class="doc-section" id="ai-chatbot-components">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">6</span> AI Chatbot Components & State Management</h2>
+  </div>
+
+  <p>This section documents the <strong>40 production React components</strong> (76 files: 40 TSX + 36 CSS modules), the dual-context state management architecture, and the 9 custom hooks that power the AI Medical Chatbot interface.</p>
+
+  <!-- ========================== -->
+  <!-- 6.1 Components Overview -->
+  <!-- ========================== -->
+  <h3 id="components-overview">6.1 Components Overview</h3>
+  <p>The AI chatbot components are organized into <strong>8 functional categories</strong>. All components follow mobile-first responsive design patterns and use CSS Modules for scoped styling.</p>
+
+  <!-- Component Architecture Diagram -->
+  <h4 id="component-architecture">Component Architecture</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    subgraph Root["ChatbotPage (Route)"]
+        CP[ChatProvider]
+    end
+
+    subgraph UI["UI Components"]
+        CH[ChatHeader]
+        HS[HistorySidebar]
+        ML[MessageList]
+        MI[MessageInput]
+        WS[WelcomeScreen]
+    end
+
+    subgraph Enhancement["Enhancement Components"]
+        MMR[MedicalMarkdownRenderer]
+        SR[SourceReferences]
+        FC[FactCheckResult]
+        MA[MessageActions]
+    end
+
+    subgraph Streaming["Streaming Components"]
+        SI[StreamingIndicator]
+        ST[StreamingText]
+        TI[TypingIndicator]
+    end
+
+    CP --> CH
+    CP --> HS
+    CP --> ML
+    CP --> MI
+    CP --> WS
+    ML --> Enhancement
+    ML --> Streaming
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Component Category Summary -->
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Component Location:</strong>
+      <code>packages/app/src/emr/components/ai-assistant/</code>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.1 Chat Interface -->
+  <!-- ========================== -->
+  <h4 id="chat-interface">6.1.1 Chat Interface Components</h4>
+  <p>Core components that make up the main chat window and message display.</p>
+
+  <!-- Welcome Screen Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-welcome-screen-en.png" alt="Welcome screen with quick action cards and getting started prompts"
+         class="doc-screenshot-image" data-i18n-img="ai-welcome-screen">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ChatWindow</strong></td>
+          <td><code>ChatWindow.tsx</code></td>
+          <td>Main container for entire chat interface</td>
+        </tr>
+        <tr>
+          <td><strong>ChatHeader</strong></td>
+          <td><code>ChatHeader.tsx</code></td>
+          <td>Top navigation with KB selector and actions</td>
+        </tr>
+        <tr>
+          <td><strong>MessageList</strong></td>
+          <td><code>MessageList.tsx</code></td>
+          <td>Scrollable message list with auto-scroll</td>
+        </tr>
+        <tr>
+          <td><strong>MessageItem</strong></td>
+          <td><code>MessageItem.tsx</code></td>
+          <td>Individual message bubble (user or AI)</td>
+        </tr>
+        <tr>
+          <td><strong>WelcomeScreen</strong></td>
+          <td><code>WelcomeScreen.tsx</code></td>
+          <td>Initial screen with quick actions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ChatWindow Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ChatWindow</strong> - Main container for the chat interface
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ChatWindowProps {
+  onNewChat: () => void;
+  onOpenHistory: () => void;
+  sidebarOpen: boolean;
+}</code></pre>
+      </div>
+      <p><strong>Features:</strong></p>
+      <ul class="doc-list">
+        <li>Manages layout between header, message area, and input</li>
+        <li>Handles sidebar visibility state</li>
+        <li>Coordinates between child components</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ChatHeader Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ChatHeader</strong> - Top navigation bar
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ChatHeaderProps {
+  onNewChat?: () => void;
+  onNewCase?: () => void;
+  onOpenHistory?: () => void;
+  onOpenCases?: () => void;
+  personalDocCount?: number;
+  historyCount?: number;
+  casesCount?: number;
+  sidebarOpen?: boolean;
+}</code></pre>
+      </div>
+      <p><strong>Features:</strong></p>
+      <ul class="doc-list">
+        <li>Knowledge base switcher (curated vs personal)</li>
+        <li>New chat button</li>
+        <li>History toggle with counter badge</li>
+        <li>Cases button with counter</li>
+        <li>Mobile-responsive hamburger menu</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- MessageList Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageList</strong> - Scrollable message container
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageListProps {
+  messages: Message[];
+  streamingMessageId: string | null;
+  onFactCheck?: (messageId: string) => Promise&lt;FactCheckResult&gt;;
+}</code></pre>
+      </div>
+      <p><strong>Behavior:</strong></p>
+      <ul class="doc-list">
+        <li><strong>Scrolls to bottom</strong> when: new message added, streaming active</li>
+        <li><strong>Preserves scroll</strong> when: viewing old messages, user scrolling up</li>
+        <li>Groups messages by date</li>
+        <li>Handles streaming indicators</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- MessageItem Details -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageItem</strong> - Individual message bubble
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageItemProps {
+  message: Message;
+  isStreaming?: boolean;
+  onFactCheck?: (messageId: string) => Promise&lt;FactCheckResult&gt;;
+}</code></pre>
+      </div>
+      <p><strong>Features:</strong></p>
+      <ul class="doc-list">
+        <li>Different styling for user vs AI messages</li>
+        <li>Streaming cursor animation for AI messages</li>
+        <li>Timestamp display</li>
+        <li>Message actions (copy, regenerate)</li>
+        <li>Source references display</li>
+        <li>Fact-check button and results</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.2 Conversation Management -->
+  <!-- ========================== -->
+  <h4 id="conversation-management">6.1.2 Conversation Management Components</h4>
+  <p>Components for managing conversation history and navigation.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>HistorySidebar</strong></td>
+          <td><code>HistorySidebar.tsx</code></td>
+          <td>Collapsible sidebar with conversation history</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationList</strong></td>
+          <td><code>ConversationList.tsx</code></td>
+          <td>Virtualized list of conversations</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationListItem</strong></td>
+          <td><code>ConversationListItem.tsx</code></td>
+          <td>Single conversation item in list</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>HistorySidebar</strong> - Conversation history panel
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface HistorySidebarProps {
+  onNewChat: () => void;
+  onNewCase: () => void;
+  onRefresh: () => void;
+  onClose: () => void;
+  onSelectConversation?: () => void;
+}</code></pre>
+      </div>
+      <p><strong>Mobile Behavior:</strong></p>
+      <ul class="doc-list">
+        <li>Full-screen overlay</li>
+        <li>Swipe to close gesture</li>
+        <li>Backdrop click to close</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ConversationList</strong> - Virtualized conversation list
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface ConversationListProps {
+  conversations: Conversation[];
+  activeConversationId: string | null;
+  onSelect: (conversationId: string) => void;
+  onDelete?: (conversationId: string) => void;
+}</code></pre>
+      </div>
+      <p><strong>Features:</strong></p>
+      <ul class="doc-list">
+        <li>Virtual scrolling for 100+ conversations</li>
+        <li>Active conversation highlighting</li>
+        <li>Delete confirmation</li>
+        <li>Grouped by date (Today, Yesterday, Last 7 days)</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.3 Input Components -->
+  <!-- ========================== -->
+  <h4 id="input-components">6.1.3 Input Components</h4>
+  <p>Components for message input, voice recording, and quick actions.</p>
+
+  <!-- Message Input Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/ai-message-input-en.png" alt="Message input component with voice recording and file attachment buttons"
+         class="doc-screenshot-image" data-i18n-img="ai-message-input">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MessageInput</strong></td>
+          <td><code>MessageInput.tsx</code></td>
+          <td>Multi-line input with voice and file attachment</td>
+        </tr>
+        <tr>
+          <td><strong>VoiceInputButton</strong></td>
+          <td><code>VoiceInputButton.tsx</code></td>
+          <td>Voice recording with language-specific STT</td>
+        </tr>
+        <tr>
+          <td><strong>QuickReplies</strong></td>
+          <td><code>QuickReplies.tsx</code></td>
+          <td>Suggested prompts and quick actions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MessageInput</strong> - Main input component
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MessageInputProps {
+  onSend: (message: string) => Promise&lt;void&gt;;
+  onStop?: () => void;
+  isGenerating?: boolean;
+  placeholder?: string;
+  maxLength?: number;
+}</code></pre>
+      </div>
+      <p><strong>Features:</strong></p>
+      <ul class="doc-list">
+        <li>Multi-line text input (auto-resize up to 5 lines)</li>
+        <li>Voice recording button</li>
+        <li>File attachment button (PDF, images, Word docs - 10MB max)</li>
+        <li>Send button (disabled when empty or generating)</li>
+        <li>Stop generation button (when streaming)</li>
+        <li>Keyboard shortcuts (<kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for newline)</li>
+      </ul>
+      <p><strong>States:</strong></p>
+      <ul class="doc-list">
+        <li><strong>Idle:</strong> Ready for input</li>
+        <li><strong>Typing:</strong> User typing message</li>
+        <li><strong>Generating:</strong> AI responding (shows stop button)</li>
+        <li><strong>Recording:</strong> Voice input active</li>
+        <li><strong>Attaching:</strong> File being processed</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>VoiceInputButton</strong> - Speech-to-text recording
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface VoiceInputButtonProps {
+  onTranscript: (text: string) => void;
+  onError?: (error: Error) => void;
+}</code></pre>
+      </div>
+      <p><strong>STT Backend by Language:</strong></p>
+      <div class="doc-table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Language</th>
+              <th>Code</th>
+              <th>STT Backend</th>
+              <th>Edge Function</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Georgian</td>
+              <td><code>ka</code></td>
+              <td>Enagram STT (Fast)</td>
+              <td><code>georgian-tts-proxy</code></td>
+            </tr>
+            <tr>
+              <td>English</td>
+              <td><code>en</code></td>
+              <td>Google Chirp 2</td>
+              <td><code>google-stt-proxy</code></td>
+            </tr>
+            <tr>
+              <td>Russian</td>
+              <td><code>ru</code></td>
+              <td>Google Chirp 2</td>
+              <td><code>google-stt-proxy</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>States:</strong> Idle, Language Select, Recording, Processing, Error</p>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.4 Message Enhancement -->
+  <!-- ========================== -->
+  <h4 id="message-enhancement">6.1.4 Message Enhancement Components</h4>
+  <p>Components for rendering AI responses with medical formatting and source citations.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MedicalMarkdownRenderer</strong></td>
+          <td><code>MedicalMarkdownRenderer.tsx</code></td>
+          <td>Render AI responses with medical formatting</td>
+        </tr>
+        <tr>
+          <td><strong>SourceReferences</strong></td>
+          <td><code>SourceReferences.tsx</code></td>
+          <td>Display source citations from AI response</td>
+        </tr>
+        <tr>
+          <td><strong>FactCheckResult</strong></td>
+          <td><code>FactCheckResult.tsx</code></td>
+          <td>Display fact-checking results</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>MedicalMarkdownRenderer</strong> - Medical content formatting
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface MedicalMarkdownRendererProps {
+  content: string;
+  components?: Record&lt;string, React.ComponentType&gt;;
+}</code></pre>
+      </div>
+      <p><strong>Custom Renderers:</strong></p>
+      <ul class="doc-list">
+        <li><strong>Drug names:</strong> styled with monospace font</li>
+        <li><strong>Lab values:</strong> highlighted with color coding</li>
+        <li><strong>Medical abbreviations:</strong> with tooltips</li>
+      </ul>
+      <p><strong>Features:</strong> Syntax highlighting for medical terms, tables for lab values, ordered/unordered lists for differential diagnoses, HTML sanitization to prevent XSS</p>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>FactCheckResult</strong> - Fact verification display
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface FactCheckResultProps {
+  status: 'verified' | 'unverified' | 'partially-verified';
+  sources: SourceReference[];
+  confidence?: number;
+}</code></pre>
+      </div>
+      <p><strong>Status Colors:</strong></p>
+      <div class="doc-status-badges">
+        <div class="doc-status-badge doc-status-finished">
+          <span class="doc-status-dot"></span>
+          Verified (Green)
+        </div>
+        <div class="doc-status-badge doc-status-arrived">
+          <span class="doc-status-dot"></span>
+          Partially Verified (Orange)
+        </div>
+        <div class="doc-status-badge doc-status-planned">
+          <span class="doc-status-dot"></span>
+          Unverified (Gray)
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.5 Streaming & Status -->
+  <!-- ========================== -->
+  <h4 id="streaming-status">6.1.5 Streaming & Status Components</h4>
+  <p>Components for displaying loading states and streaming text animations.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>StreamingIndicator</strong></td>
+          <td><code>StreamingIndicator.tsx</code></td>
+          <td>Shows when AI is generating response</td>
+        </tr>
+        <tr>
+          <td><strong>StreamingText</strong></td>
+          <td><code>StreamingText.tsx</code></td>
+          <td>Animated token-by-token text display</td>
+        </tr>
+        <tr>
+          <td><strong>StreamingCursor</strong></td>
+          <td><code>StreamingCursor.tsx</code></td>
+          <td>Blinking cursor at end of streaming message</td>
+        </tr>
+        <tr>
+          <td><strong>TypingIndicator</strong></td>
+          <td><code>TypingIndicator.tsx</code></td>
+          <td>Shows when AI is "thinking"</td>
+        </tr>
+        <tr>
+          <td><strong>PulseLoader</strong></td>
+          <td><code>PulseLoader.tsx</code></td>
+          <td>Pulsing dot animation during streaming</td>
+        </tr>
+        <tr>
+          <td><strong>ContentSkeleton</strong></td>
+          <td><code>ContentSkeleton.tsx</code></td>
+          <td>Skeleton loading placeholder</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.6 Document Library -->
+  <!-- ========================== -->
+  <h4 id="document-library">6.1.6 Document Library Components</h4>
+  <p>Components for managing personal document uploads and library.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DocumentLibrary</strong></td>
+          <td><code>DocumentLibrary.tsx</code></td>
+          <td>Grid view of personal documents</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentCard</strong></td>
+          <td><code>DocumentCard.tsx</code></td>
+          <td>Individual document card in grid</td>
+        </tr>
+        <tr>
+          <td><strong>DocumentUpload</strong></td>
+          <td><code>DocumentUpload.tsx</code></td>
+          <td>File upload with drag-and-drop</td>
+        </tr>
+        <tr>
+          <td><strong>CaseFileUpload</strong></td>
+          <td><code>CaseFileUpload.tsx</code></td>
+          <td>File upload for case attachments</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.1.7 Case Management -->
+  <!-- ========================== -->
+  <h4 id="case-management">6.1.7 Case Management Components</h4>
+  <p>Components for managing patient cases and discussions.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>CaseList</strong></td>
+          <td><code>CaseList.tsx</code></td>
+          <td>Grid of patient cases</td>
+        </tr>
+        <tr>
+          <td><strong>CaseCard</strong></td>
+          <td><code>CaseCard.tsx</code></td>
+          <td>Individual patient case card</td>
+        </tr>
+        <tr>
+          <td><strong>CaseCreationModal</strong></td>
+          <td><code>CaseCreationModal.tsx</code></td>
+          <td>Modal for creating new patient case</td>
+        </tr>
+        <tr>
+          <td><strong>CaseReadyScreen</strong></td>
+          <td><code>CaseReadyScreen.tsx</code></td>
+          <td>Screen shown when case selected</td>
+        </tr>
+        <tr>
+          <td><strong>PatientSelector</strong></td>
+          <td><code>PatientSelector.tsx</code></td>
+          <td>Select patient from FHIR registry</td>
+        </tr>
+        <tr>
+          <td><strong>EncounterSelector</strong></td>
+          <td><code>EncounterSelector.tsx</code></td>
+          <td>Select encounter for case creation</td>
+        </tr>
+        <tr>
+          <td><strong>PatientSummaryPanel</strong></td>
+          <td><code>PatientSummaryPanel.tsx</code></td>
+          <td>Anonymized patient context summary</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationSidebar</strong></td>
+          <td><code>ConversationSidebar.tsx</code></td>
+          <td>Tabbed sidebar for history and cases</td>
+        </tr>
+        <tr>
+          <td><strong>ActiveCaseBadge</strong></td>
+          <td><code>ActiveCaseBadge.tsx</code></td>
+          <td>Active case indicator in sidebar</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>CaseCreationModal</strong> - Two-tab case creation
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">interface CaseCreationModalProps {
+  opened: boolean;
+  onClose: () => void;
+  onCreate: (caseData: CreateCaseInput) => void;
+}</code></pre>
+      </div>
+      <p><strong>Tab 1 - Manual Entry:</strong></p>
+      <ul class="doc-list">
+        <li>Title input</li>
+        <li>Specialty selector</li>
+        <li>Complexity selector (low, medium, high)</li>
+        <li>Anonymized patient info textarea</li>
+        <li>Tags input</li>
+      </ul>
+      <p><strong>Tab 2 - From Patient:</strong></p>
+      <ul class="doc-list">
+        <li><code>PatientSelector</code> - search and select patient from FHIR</li>
+        <li><code>EncounterSelector</code> - select encounter for chosen patient</li>
+        <li><code>PatientSummaryPanel</code> - anonymized preview of patient context</li>
+        <li>Data category checkboxes: Demographics, Conditions, Medications, Allergies, Vitals, Labs</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ========================== -->
+  <!-- 6.1.8 Utility Components -->
+  <!-- ========================== -->
+  <h4 id="utility-components">6.1.8 Utility Components</h4>
+  <p>Helper components for knowledge base selection and medical calculators.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>KnowledgeBaseSelector</strong></td>
+          <td><code>KnowledgeBaseSelector.tsx</code></td>
+          <td>Toggle between curated and personal KB</td>
+        </tr>
+        <tr>
+          <td><strong>CalculatorSuggestions</strong></td>
+          <td><code>CalculatorSuggestions.tsx</code></td>
+          <td>Suggest medical calculators based on context</td>
+        </tr>
+        <tr>
+          <td><strong>QuickActionCard</strong></td>
+          <td><code>QuickActionCard.tsx</code></td>
+          <td>Large action button cards</td>
+        </tr>
+        <tr>
+          <td><strong>SourceReferenceCard</strong></td>
+          <td><code>SourceReferenceCard.tsx</code></td>
+          <td>Individual source citation card</td>
+        </tr>
+        <tr>
+          <td><strong>MessageActions</strong></td>
+          <td><code>MessageActions.tsx</code></td>
+          <td>Action buttons for messages</td>
+        </tr>
+        <tr>
+          <td><strong>ChatErrorBanner</strong></td>
+          <td><code>ChatErrorBanner.tsx</code></td>
+          <td>Error display with auto-retry</td>
+        </tr>
+        <tr>
+          <td><strong>ConversationListItem</strong></td>
+          <td><code>ConversationListItem.tsx</code></td>
+          <td>Single conversation item</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Component Relationship Diagram -->
+  <h4 id="component-relationships">Component Relationships</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    A[ChatbotPage] --> B[ChatProvider]
+    B --> C[ChatbotContent]
+    C --> D[ChatHeader]
+    C --> E[HistorySidebar]
+    C --> F[Chat Area]
+    C --> G[MessageInput]
+
+    D --> D1[KnowledgeBaseSelector]
+
+    E --> E1[ConversationSidebar]
+    E1 --> E2[ConversationList]
+    E2 --> E3[ConversationListItem]
+    E3 --> E4[ActiveCaseBadge]
+
+    F --> F1[WelcomeScreen]
+    F --> F2[CaseReadyScreen]
+    F --> F3[MessageList]
+
+    F3 --> F4[MessageItem]
+    F4 --> F5[MedicalMarkdownRenderer]
+    F5 --> F6[StreamingText]
+    F4 --> F7[SourceReferences]
+    F4 --> F8[FactCheckResult]
+    F4 --> F9[MessageActions]
+
+    F3 --> F10[StreamingIndicator]
+    F3 --> F11[TypingIndicator]
+
+    G --> G1[VoiceInputButton]
+    G --> G2[QuickReplies]
+    G --> G3[CalculatorSuggestions]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 6.2 State Management -->
+  <!-- ========================== -->
+  <h3 id="state-management">6.2 State Management</h3>
+  <p>The AI chatbot uses a <strong>dual-context architecture</strong> with React Context + useReducer for predictable state management. Two separate contexts minimize unnecessary re-renders.</p>
+
+  <!-- Dual Context Diagram -->
+  <h4 id="dual-context-architecture">Dual-Context Architecture</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TB
+    A[ChatProvider] --> B[ChatUIProvider]
+    A --> C[ChatDataProvider]
+    B --> D[ChatUIContext]
+    C --> E[ChatDataContext]
+    E --> F[ChatContextBridge]
+
+    G[Components] --> H{Context Hook}
+    H -->|useChatContext| F
+    H -->|useChatUIContext| D
+    H -->|useChatDataContext| E
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Token Batching Optimization:</strong>
+      <p>The ChatDataProvider accumulates streaming tokens in <strong>100ms batches</strong> to reduce React re-renders from 50-100 per response to ~10-20. This is separate from the 50ms SSE token buffer in streamingHelpers.</p>
+    </div>
+  </div>
+
+  <!-- State Shape -->
+  <h4 id="state-shape">State Shape</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface ChatState {
+  // Messages in active conversation
+  messages: Message[];
+
+  // All user conversations
+  conversations: Conversation[];
+
+  // Active conversation ID
+  activeConversationId: string | null;
+
+  // Selected knowledge base
+  selectedKnowledgeBase: KnowledgeBaseType;
+
+  // Case context for case-study conversations
+  caseContext: CaseContext | null;
+
+  // Streaming state
+  streamingState: StreamingState;
+
+  // Loading state
+  isLoading: boolean;
+
+  // Error state
+  error: string | null;
+}</code></pre>
+  </div>
+
+  <!-- Initial State -->
+  <h4 id="initial-state">Initial State</h4>
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">const initialChatState: ChatState = {
+  messages: [],
+  conversations: [],
+  activeConversationId: null,
+  selectedKnowledgeBase: 'curated',
+  caseContext: null,
+  streamingState: {
+    isStreaming: false,
+    currentMessageId: null,
+    tokens: [],
+    connectionId: null,
+    error: null,
+    startTime: null,
+  },
+  isLoading: false,
+  error: null,
+};</code></pre>
+  </div>
+
+  <!-- Action Types -->
+  <h4 id="action-types">Action Types</h4>
+  <p>All state modifications go through typed actions:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Message Actions</strong></td>
+          <td><code>SET_MESSAGES</code>, <code>ADD_MESSAGE</code>, <code>UPDATE_MESSAGE</code>, <code>DELETE_MESSAGE</code></td>
+        </tr>
+        <tr>
+          <td><strong>Conversation Actions</strong></td>
+          <td><code>SET_CONVERSATIONS</code>, <code>ADD_CONVERSATION</code>, <code>UPDATE_CONVERSATION</code>, <code>DELETE_CONVERSATION</code>, <code>SET_ACTIVE_CONVERSATION</code></td>
+        </tr>
+        <tr>
+          <td><strong>Knowledge Base</strong></td>
+          <td><code>SET_KNOWLEDGE_BASE</code></td>
+        </tr>
+        <tr>
+          <td><strong>Streaming Actions</strong></td>
+          <td><code>SET_STREAMING_STATE</code>, <code>APPEND_STREAMING_TOKEN</code>, <code>FLUSH_TOKENS</code>, <code>COMPLETE_STREAMING</code></td>
+        </tr>
+        <tr>
+          <td><strong>Case Context</strong></td>
+          <td><code>SET_CASE_CONTEXT</code></td>
+        </tr>
+        <tr>
+          <td><strong>UI State</strong></td>
+          <td><code>SET_LOADING</code>, <code>SET_ERROR</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Action Type Definition -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Full ChatAction Type Definition</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">type ChatAction =
+  // Message actions
+  | { type: 'SET_MESSAGES'; payload: Message[] }
+  | { type: 'ADD_MESSAGE'; payload: Message }
+  | { type: 'UPDATE_MESSAGE'; payload: { id: string; updates: Partial&lt;Message&gt; } }
+  | { type: 'DELETE_MESSAGE'; payload: string }
+
+  // Conversation actions
+  | { type: 'SET_CONVERSATIONS'; payload: Conversation[] }
+  | { type: 'ADD_CONVERSATION'; payload: Conversation }
+  | { type: 'UPDATE_CONVERSATION'; payload: { id: string; updates: Partial&lt;Conversation&gt; } }
+  | { type: 'DELETE_CONVERSATION'; payload: string }
+  | { type: 'SET_ACTIVE_CONVERSATION'; payload: string | null }
+
+  // Knowledge base actions
+  | { type: 'SET_KNOWLEDGE_BASE'; payload: KnowledgeBaseType }
+
+  // Streaming actions
+  | { type: 'SET_STREAMING_STATE'; payload: Partial&lt;StreamingState&gt; }
+  | { type: 'APPEND_STREAMING_TOKEN'; payload: string }
+  | { type: 'FLUSH_TOKENS'; payload: string[] }
+  | { type: 'COMPLETE_STREAMING'; payload: { messageId: string; finalContent: string } }
+
+  // Case context actions
+  | { type: 'SET_CASE_CONTEXT'; payload: CaseContext | null }
+
+  // UI state actions
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Context Hooks -->
+  <h4 id="context-hooks">Context Hooks</h4>
+  <p>Use specific selector hooks for optimized re-renders:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">// Main context hook (legacy combined)
+function useChatContext(): ChatContextValue;
+
+// Optimized selector hooks
+function useMessages(): Message[];
+function useConversations(): Conversation[];
+function useActiveConversation(): Conversation | undefined;
+function useStreamingState(): StreamingState;
+function useKnowledgeBase(): KnowledgeBaseType;</code></pre>
+  </div>
+
+  <!-- Usage Patterns -->
+  <h4 id="context-usage">Context Usage Patterns</h4>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Basic Usage Example</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatComponent() {
+  const { state, dispatch, addMessage } = useChatContext();
+
+  const handleSend = (content: string) => {
+    addMessage({
+      id: generateId(),
+      content,
+      type: 'user',
+      timestamp: new Date(),
+      status: 'sent',
+    });
+  };
+
+  return (
+    &lt;div&gt;
+      {state.messages.map(msg => &lt;MessageItem key={msg.id} {...msg} /&gt;)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Optimized Usage with Selectors</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function MessageList() {
+  // Only re-renders when messages change
+  const messages = useMessages();
+
+  return (
+    &lt;div&gt;
+      {messages.map(msg => &lt;MessageItem key={msg.id} {...msg} /&gt;)}
+    &lt;/div&gt;
+  );
+}
+
+function ConversationSidebarComponent() {
+  // Only re-renders when conversations change
+  const conversations = useConversations();
+
+  return (
+    &lt;div&gt;
+      {conversations.map(conv => &lt;ConversationItem key={conv.id} {...conv} /&gt;)}
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Streaming Example</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatInput() {
+  const {
+    dispatch, addMessage, startStreaming,
+    appendToken, completeStreaming
+  } = useChatContext();
+
+  const handleSend = async (content: string) => {
+    // Add user message
+    addMessage({ id: 'user-1', content, type: 'user', ... });
+
+    // Add placeholder AI message
+    const aiMsgId = 'ai-1';
+    addMessage({ id: aiMsgId, content: '', type: 'ai', isStreaming: true, ... });
+
+    // Start streaming
+    startStreaming(aiMsgId);
+
+    // Simulate streaming tokens
+    const tokens = ['Based', ' on', ' current', ' guidelines', '...'];
+    for (const token of tokens) {
+      appendToken(token);
+      await new Promise(r => setTimeout(r, 50));
+    }
+
+    // Complete streaming
+    completeStreaming(aiMsgId, 'Based on current guidelines...');
+  };
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Performance Optimizations -->
+  <h4 id="performance-optimizations">Performance Optimizations</h4>
+  <ul class="doc-list">
+    <li><strong>useMemo for Context Value</strong> - Prevents unnecessary re-renders</li>
+    <li><strong>Selector Hooks</strong> - Components subscribe only to needed state</li>
+    <li><strong>useCallback for Methods</strong> - Stable function references</li>
+    <li><strong>Batched Updates</strong> - Multiple actions in one render cycle</li>
+    <li><strong>Lazy Hydration</strong> - Load localStorage data asynchronously</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 6.3 Custom Hooks -->
+  <!-- ========================== -->
+  <h3 id="hooks">6.3 Custom Hooks</h3>
+  <p>Custom React hooks encapsulate complex chatbot logic and provide clean interfaces to components. Location: <code>packages/app/src/emr/hooks/chat/</code></p>
+
+  <!-- Hook Index Table -->
+  <h4 id="hook-index">Hook Index</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Hook</th>
+          <th>Purpose</th>
+          <th>Dependencies</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>useFlowiseChat</strong></td>
+          <td>Main chat orchestration + Flowise</td>
+          <td>MedplumClient, ChatContext, useChatMessages</td>
+        </tr>
+        <tr>
+          <td><strong>useChatMessages</strong></td>
+          <td>Message state management</td>
+          <td>ChatContext</td>
+        </tr>
+        <tr>
+          <td><strong>useConversations</strong></td>
+          <td>Conversation CRUD</td>
+          <td>MedplumClient, ChatContext</td>
+        </tr>
+        <tr>
+          <td><strong>useDocumentLibrary</strong></td>
+          <td>Document management</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><strong>usePatientCases</strong></td>
+          <td>Patient case CRUD</td>
+          <td>MedplumClient</td>
+        </tr>
+        <tr>
+          <td><strong>useVoiceInput</strong></td>
+          <td>Speech-to-text recording</td>
+          <td>MediaRecorder + Supabase STT</td>
+        </tr>
+        <tr>
+          <td><strong>useFactCheck</strong></td>
+          <td>Fact-checking integration</td>
+          <td>factCheckService</td>
+        </tr>
+        <tr>
+          <td><strong>useCalculatorIntegration</strong></td>
+          <td>Calculator suggestions</td>
+          <td>calculatorRecommendation</td>
+        </tr>
+        <tr>
+          <td><strong>useMobileKeyboard</strong></td>
+          <td>Mobile keyboard visibility</td>
+          <td>window resize events</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- useFlowiseChat -->
+  <h4 id="useFlowiseChat">useFlowiseChat</h4>
+  <p><strong>File:</strong> <code>useFlowiseChat.ts</code></p>
+  <p>Orchestrates the entire chat flow from message send to AI response completion.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseFlowiseChatOptions {
+  specialty?: string;              // Medical specialty for endpoint selection
+  onError?: (error: Error) => void; // Error callback
+  retryConfig?: RetryConfig;       // Retry configuration (optional)
+}
+
+interface RetryConfig {
+  maxRetries?: number;             // Max retry attempts (default: 3)
+  baseDelay?: number;              // Initial delay in ms (default: 2000)
+  maxDelay?: number;               // Maximum delay in ms (default: 10000)
+  backoffMultiplier?: number;      // Exponential backoff (default: 2)
+}
+
+interface UseFlowiseChatReturn {
+  sendMessage: (content: string, files?: File[]) => Promise&lt;void&gt;;
+  stopGeneration: () => void;
+  isGenerating: boolean;
+  error: string | null;
+  retryState: RetryState;
+  retry: () => void;
+  dismissError: () => void;
+  cancelAutoRetry: () => void;
+}</code></pre>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Usage Example</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">function ChatInterface() {
+  const {
+    sendMessage,
+    stopGeneration,
+    isGenerating,
+    error,
+    retryState,
+    retry,
+    dismissError,
+    cancelAutoRetry,
+  } = useFlowiseChat({
+    specialty: 'cardiology',
+    onError: (err) => console.error('Chat error:', err),
+  });
+
+  return (
+    &lt;&gt;
+      &lt;MessageInput
+        onSend={(content, files) => sendMessage(content, files)}
+        onStop={stopGeneration}
+        isGenerating={isGenerating}
+      /&gt;
+      {error && (
+        &lt;ChatErrorBanner
+          error={error}
+          retryState={retryState}
+          onRetry={retry}
+          onDismiss={dismissError}
+          onCancelAutoRetry={cancelAutoRetry}
+        /&gt;
+      )}
+    &lt;/&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Internal Flow</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <ol class="doc-list">
+        <li><strong>Message Submission</strong> - User sends message via <code>sendMessage()</code></li>
+        <li><strong>Case Context Injection</strong> - If first message with case, prepends case context</li>
+        <li><strong>Auto-Create Conversation</strong> - Creates new conversation if none exists</li>
+        <li><strong>Add Messages to State</strong> - Adds user message and streaming AI placeholder</li>
+        <li><strong>Start Streaming</strong> - Begins token streaming from Flowise endpoint</li>
+        <li><strong>Error Handling</strong> - Catches and sets error state, completes with error message</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- useChatMessages -->
+  <h4 id="useChatMessages">useChatMessages</h4>
+  <p><strong>File:</strong> <code>useChatMessages.ts</code></p>
+  <p>Provides message CRUD operations with proper typing.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseChatMessagesReturn {
+  messages: Message[];
+  isStreaming: boolean;
+  streamingMessageId: string | null;
+  addUserMessage: (content: string) => Message;
+  addAIMessage: (content: string, isStreaming?: boolean) => Message;
+  updateMessageContent: (id: string, content: string) => void;
+  updateMessageStatus: (id: string, status: MessageStatus) => void;
+  completeStreaming: (id: string, finalContent: string) => void;
+  deleteMessage: (id: string) => void;
+  clearMessages: () => void;
+}</code></pre>
+  </div>
+
+  <!-- useConversations -->
+  <h4 id="useConversations">useConversations</h4>
+  <p><strong>File:</strong> <code>useConversations.ts</code></p>
+  <p>Manages conversation list and persistence with hybrid localStorage/FHIR sync.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseConversationsReturn {
+  conversations: Conversation[];
+  activeConversation: Conversation | undefined;
+  isLoading: boolean;
+  error: string | null;
+  createConversation: (data: CreateConversationInput) => Promise&lt;Conversation&gt;;
+  selectConversation: (id: string) => void;
+  deleteConversation: (id: string) => Promise&lt;void&gt;;
+  refreshConversations: () => Promise&lt;void&gt;;
+}</code></pre>
+  </div>
+
+  <!-- useDocumentLibrary -->
+  <h4 id="useDocumentLibrary">useDocumentLibrary</h4>
+  <p><strong>File:</strong> <code>useDocumentLibrary.ts</code></p>
+  <p>Manages personal document library with upload and search.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseDocumentLibraryReturn {
+  documents: UserDocument[];
+  isLoading: boolean;
+  error: string | null;
+  uploadDocument: (file: File, metadata: DocumentMetadata) => Promise&lt;UserDocument&gt;;
+  deleteDocument: (id: string) => Promise&lt;void&gt;;
+  refreshDocuments: () => Promise&lt;void&gt;;
+  searchDocuments: (query: string) => UserDocument[];
+  filterByCategory: (category: DocumentCategory) => UserDocument[];
+}</code></pre>
+  </div>
+
+  <!-- usePatientCases -->
+  <h4 id="usePatientCases">usePatientCases</h4>
+  <p><strong>File:</strong> <code>usePatientCases.ts</code></p>
+  <p>Manages patient cases for AI discussions with filtering.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UsePatientCasesReturn {
+  cases: PatientCase[];
+  isLoading: boolean;
+  error: string | null;
+  createCase: (data: CreateCaseInput) => Promise&lt;PatientCase&gt;;
+  selectCase: (id: string) => void;
+  deleteCase: (id: string) => Promise&lt;void&gt;;
+  filterBySpecialty: (specialty: string) => PatientCase[];
+  filterByComplexity: (complexity: CaseComplexity) => PatientCase[];
+}</code></pre>
+  </div>
+
+  <!-- useVoiceInput -->
+  <h4 id="useVoiceInput">useVoiceInput</h4>
+  <p><strong>File:</strong> <code>useVoiceInput.ts</code></p>
+  <p>Speech-to-text recording using MediaRecorder API with Supabase Edge Function backends.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseVoiceInputReturn {
+  isRecording: boolean;
+  transcript: string;
+  error: string | null;
+  startRecording: () => void;
+  stopRecording: () => void;
+  clearTranscript: () => void;
+  selectedLanguage: 'ka' | 'en' | 'ru';
+  setLanguage: (lang: 'ka' | 'en' | 'ru') => void;
+}</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Voice Input Flow:</strong>
+      <ol>
+        <li><strong>Start Recording</strong> - Requests microphone access via MediaRecorder API</li>
+        <li><strong>Stop Recording</strong> - Stops recorder, converts audio to base64</li>
+        <li><strong>Send to STT Proxy</strong> - POSTs to appropriate Supabase Edge Function</li>
+        <li><strong>Receive Transcript</strong> - Edge Function returns transcribed text</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- useFactCheck -->
+  <h4 id="useFactCheck">useFactCheck</h4>
+  <p><strong>File:</strong> <code>useFactCheck.ts</code></p>
+  <p>Verify AI claims with fact-checking service.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseFactCheckReturn {
+  isChecking: boolean;
+  results: Map&lt;string, FactCheckResult&gt;; // messageId -> result
+  verify: (messageId: string, content: string) => Promise&lt;FactCheckResult&gt;;
+  clearResult: (messageId: string) => void;
+}</code></pre>
+  </div>
+
+  <!-- useCalculatorIntegration -->
+  <h4 id="useCalculatorIntegration">useCalculatorIntegration</h4>
+  <p><strong>File:</strong> <code>useCalculatorIntegration.ts</code></p>
+  <p>Suggest medical calculators based on conversation context (MDCalc integration).</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseCalculatorIntegrationReturn {
+  suggestions: Calculator[];
+  getSuggestions: (message: string) => Calculator[];
+  openCalculator: (calculator: Calculator) => void;
+}</code></pre>
+  </div>
+
+  <!-- useMobileKeyboard -->
+  <h4 id="useMobileKeyboard">useMobileKeyboard</h4>
+  <p><strong>File:</strong> <code>useMobileKeyboard.ts</code></p>
+  <p>Detects mobile keyboard visibility to adjust chat layout.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-typescript">interface UseMobileKeyboardReturn {
+  isKeyboardVisible: boolean;
+}</code></pre>
+  </div>
+
+  <!-- Hook Testing Patterns -->
+  <h4 id="hook-testing">Hook Testing Patterns</h4>
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Testing Setup & Example</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <div class="doc-code-block">
+        <pre><code class="language-typescript">import { renderHook, act } from '@testing-library/react';
+import { MedplumProvider } from '@medplum/react';
+import { ChatProvider } from '../../contexts/ChatContext';
+
+const wrapper = ({ children }) => (
+  &lt;MedplumProvider medplum={mockMedplum}&gt;
+    &lt;ChatProvider&gt;
+      {children}
+    &lt;/ChatProvider&gt;
+  &lt;/MedplumProvider&gt;
+);
+
+describe('useChatMessages', () => {
+  it('adds user message correctly', () => {
+    const { result } = renderHook(() => useChatMessages(), { wrapper });
+
+    act(() => {
+      const message = result.current.addUserMessage('Test message');
+      expect(message.type).toBe('user');
+      expect(message.content).toBe('Test message');
+    });
+
+    expect(result.current.messages).toHaveLength(1);
+  });
+
+  it('handles streaming message updates', () => {
+    const { result } = renderHook(() => useChatMessages(), { wrapper });
+    let aiMsgId: string;
+
+    act(() => {
+      const aiMsg = result.current.addAIMessage('', true);
+      aiMsgId = aiMsg.id;
+    });
+
+    act(() => {
+      result.current.updateMessageContent(aiMsgId, 'Based on');
+    });
+
+    expect(result.current.messages[0].content).toBe('Based on');
+
+    act(() => {
+      result.current.completeStreaming(aiMsgId, 'Based on current guidelines...');
+    });
+
+    expect(result.current.messages[0].isStreaming).toBe(false);
+    expect(result.current.messages[0].status).toBe('sent');
+  });
+});</code></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- Styling Patterns -->
+  <h3 id="styling-patterns">6.4 Styling Patterns</h3>
+  <p>All components use consistent styling patterns:</p>
+
+  <ul class="doc-list">
+    <li><strong>CSS Modules</strong> for scoped styles</li>
+    <li><strong>EMR Theme Variables</strong> from <code>theme.css</code></li>
+    <li><strong>Mantine Components</strong> for base UI</li>
+    <li><strong>Mobile-first</strong> responsive design</li>
+  </ul>
+
+  <div class="doc-code-block">
+    <pre><code class="language-css">/* Common CSS variables used */
+var(--emr-bg-card)          /* Card backgrounds */
+var(--emr-text-primary)     /* Primary text */
+var(--emr-border-color)     /* Borders */
+var(--emr-primary)          /* Primary actions */
+var(--emr-gradient-primary) /* Buttons */
+var(--emr-shadow-md)        /* Card shadows */</code></pre>
+  </div>
+
+  <!-- Accessibility -->
+  <h3 id="accessibility">6.5 Accessibility</h3>
+  <p>All components implement:</p>
+
+  <ul class="doc-list">
+    <li><strong>Keyboard navigation</strong> (<kbd>Tab</kbd>, <kbd>Enter</kbd>, <kbd>Escape</kbd>)</li>
+    <li><strong>ARIA labels</strong> for screen readers</li>
+    <li><strong>Focus management</strong> for modals and overlays</li>
+    <li><strong>Color contrast</strong> (WCAG AA minimum)</li>
+    <li><strong>Touch targets</strong> (44px minimum)</li>
+  </ul>
+
+</section>
