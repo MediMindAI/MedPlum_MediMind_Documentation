@@ -30,20 +30,6 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   height: 20px;
 }
 
-#platform-overview-accordion .doc-section-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  color: white;
-  margin-right: 8px;
-}
-
 /* Search Modal Styles */
 .search-modal {
   display: none;

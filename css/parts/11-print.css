@@ -102,12 +102,6 @@
     page-break-after: avoid;
   }
 
-  .doc-section-number {
-    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
   .doc-section-icon {
     background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%) !important;
     -webkit-print-color-adjust: exact !important;

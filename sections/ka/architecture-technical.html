@@ -4,7 +4,7 @@
 
 <div class="architecture-technical-docs">
 
-  <h3 id="technical-overview">ტექნიკური მიმოხილვა</h3>
+  <h3 id="arch-technical-overview">ტექნიკური მიმოხილვა</h3>
   <p>
     რეგისტრაციის მოდული აგებულია <strong>Layer-based არქიტექტურაზე</strong>, სადაც თითოეული ფენა
     პასუხისმგებელია კონკრეტულ ფუნქციონალზე და კომუნიკაცია მიმდინარეობს მხოლოდ მეზობელ ფენებს შორის.
@@ -436,7 +436,7 @@
     <li>თავიდან აცილებული იქნება დუბლიკატი ჩანაწერები</li>
   </ul>
 
-  <h3 id="data-flow">მონაცემთა ნაკადი (Data Flow)</h3>
+  <h3 id="arch-data-flow">მონაცემთა ნაკადი (Data Flow)</h3>
   <p>
     მონაცემთა მოძრაობა მიმდინარეობს <strong>ერთმიმართულებიანად</strong>:
   </p>
@@ -453,7 +453,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><strong>ფორმის შევსება</strong></td>
+          <td><strong>ფორმის რედაქტირება</strong></td>
           <td>UI → Hook</td>
           <td><code>onChange</code> → <code>setFormData</code> state update</td>
         </tr>
@@ -481,7 +481,7 @@
     ბოლო <strong>10</strong> მონახულებული პაციენტი ინახება localStorage-ში <code>recentPatientsService</code>-ის მეშვეობით (FIFO - First In First Out).
   </div>
 
-  <h3 id="fhir-resources">FHIR რესურსების სტრუქტურა</h3>
+  <h3 id="arch-fhir-resources">FHIR რესურსების სტრუქტურა</h3>
   <p>
     სისტემა იყენებს <strong>FHIR R4</strong> სტანდარტს. ძირითადი რესურსები:
   </p>

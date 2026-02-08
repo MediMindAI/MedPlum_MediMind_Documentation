@@ -102,10 +102,20 @@ const I18n = {
     }
   },
 
+  // Track loading attempts to prevent infinite recursion
+  _loadingAttempts: new Set(),
+
   /**
    * Load legacy single-file language (fallback)
    */
   _loadLegacyLanguage: async function(lang) {
+    // Recursion guard: prevent infinite loops
+    if (this._loadingAttempts.has(lang)) {
+      console.warn(`Already attempted to load ${lang}, stopping recursion`);
+      return null;
+    }
+    this._loadingAttempts.add(lang);
+
     try {
       const response = await fetch(`${this.config.i18nPath}${lang}.json`);
       if (!response.ok) {
@@ -118,10 +128,13 @@ const I18n = {
     } catch (error) {
       console.error(`Error loading legacy language ${lang}:`, error);
       // Fallback to default language if not already trying it
-      if (lang !== this.config.defaultLang) {
+      if (lang !== this.config.defaultLang && !this._loadingAttempts.has(this.config.defaultLang)) {
         return this.loadLanguage(this.config.defaultLang);
       }
       return null;
+    } finally {
+      // Clear after a delay to allow retries later
+      setTimeout(() => this._loadingAttempts.delete(lang), 5000);
     }
   },
 

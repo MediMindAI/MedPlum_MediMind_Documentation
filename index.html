@@ -5,8 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MediMind EMR - საწარმოო დოკუმენტაცია</title>
 
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="MediMind EMR System Documentation - Comprehensive guide for patient registration, visit management, and healthcare workflow automation built on FHIR/Medplum.">
+  <meta name="keywords" content="MediMind, EMR, EHR, FHIR, Medplum, patient registration, healthcare, documentation">
+  <meta name="author" content="MediMind">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MediMind EMR Documentation">
+  <meta property="og:description" content="Production documentation for MediMind EMR System - patient registration and healthcare workflow management.">
+  <meta property="og:locale" content="ka_GE">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="ru_RU">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='3' width='18' height='18' rx='3' fill='%231a365d'/%3E%3Cpath d='M12 7V17M7 12H17' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <!-- Resource Hints -->
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
   <!-- External CSS -->
-  <link rel="stylesheet" href="css/docs.css">
   <link rel="stylesheet" href="css/parts/01-variables.css">
   <link rel="stylesheet" href="css/parts/02-header.css">
   <link rel="stylesheet" href="css/parts/03-sidebar.css">
@@ -28,8 +48,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Mermaid.js for diagrams -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- Mermaid.js for diagrams (pinned version) -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js" crossorigin="anonymous"></script>
 
   <!-- Sidebar push content styles -->
   <style>
@@ -40,17 +60,30 @@
     .doc-content {
       transition: margin-left 0.4s ease !important;
     }
+    /* Accessibility: visually hidden but accessible to screen readers */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   </style>
 </head>
 <body>
   <!-- Search Modal (Ctrl+K) -->
-  <div class="search-modal" id="searchModal">
+  <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-labelledby="searchInputLabel">
     <div class="search-container">
       <div class="search-header">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
-        <input type="text" class="search-input" id="searchInput" data-i18n="search.placeholder" data-i18n-attr="placeholder" placeholder="ძებნა დოკუმენტაციაში...">
+        <label id="searchInputLabel" class="visually-hidden" for="searchInput">Search documentation</label>
+        <input type="text" class="search-input" id="searchInput" data-i18n="search.placeholder" data-i18n-attr="placeholder" placeholder="ძებნა დოკუმენტაციაში..." aria-describedby="searchInputLabel">
         <span class="search-shortcut" data-i18n="search.escHint">ESC</span>
       </div>
       <div class="search-results" id="searchResults">
@@ -60,7 +93,7 @@
   </div>
 
   <!-- Header -->
-  <header class="doc-header">
+  <header class="doc-header" role="banner">
     <div class="doc-header-container">
       <a href="index.html" class="doc-header-brand">
         <div class="doc-logo-icon">
@@ -109,7 +142,7 @@
   </div>
 
   <!-- Sidebar -->
-  <aside class="doc-sidebar" id="sidebar">
+  <aside class="doc-sidebar" id="sidebar" role="navigation" aria-label="Documentation navigation">
     <div class="doc-sidebar-inner">
       <!-- TOC Header -->
       <div class="toc-header">
@@ -154,7 +187,7 @@
   </button>
 
   <!-- Main Content -->
-  <main class="doc-content">
+  <main class="doc-content" role="main">
     <div class="doc-content-inner">
 
       <!-- Hero Section -->

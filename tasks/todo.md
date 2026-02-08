@@ -1,121 +1,81 @@
-# Screenshot Pipeline Validation & State Management Improvements
+# Production-Readiness Optimization
 
-## Problem Summary
-Current pipeline produces **duplicate/generic screenshots** because:
-1. `captureSteps` in plan JSONs are ignored - agents do basic navigate+screenshot
-2. No UI state setup - multiple screenshots show identical default state
-3. No validation - screenshots marked "completed" without verifying content matches description
-4. No duplicate detection - same content captured under different basenames
+## Summary
+Optimize the MediMind documentation site for production deployment by fixing JavaScript memory leaks, CSS cleanup, and adding security/SEO improvements.
 
-## Todo Items
+---
 
-### Step 1: Update Plan JSON Schema & Remove Bad Screenshots
-- [x] Remove ai-streaming-response, ai-source-references, ai-voice-input from plans
-- [x] Update HTML files to remove corresponding data-i18n-img attributes
-- [x] Add verificationCriteria, stateSetup, differentiator fields to remaining screenshots
-- [x] Update ai-chatbot-overview.json with proper interaction sequences
-- [x] Update ai-chatbot-components.json
+## Phase 1: Critical JavaScript Fixes
 
-### Step 2: Update SKILL.md Phase 4 (Capture Instructions)
-- [x] Add structured execution loop that READS and EXECUTES captureSteps
-- [x] Add immediate post-capture validation requirement
-- [x] Add duplicate comparison against previous screenshots
-- [x] Add "needs-recapture" status for failed validation
+- [x] **1.1** Consolidate scroll handlers in `page.js` (3 handlers -> 1 throttled)
+- [x] **1.2** Add event listener cleanup in `page.js` and `docs.js`
+- [x] **1.3** Fix I18n recursion guard in `i18n.js`
+- [x] **1.4** Fix/remove dead IntersectionObserver in `section-loader.js`
+- [x] **1.5** Add debounce to resize handler in `docs.js`
 
-### Step 3: Update SKILL.md Phase 5 (Validation Instructions)
-- [x] Add Agent C duplicate detection algorithm
-- [x] Add content-to-description validation checklist per basename
-- [x] Add mandatory image reading (no sampling)
-- [x] Add "needs-recapture" vs "completed" decision logic
+## Phase 2: CSS Cleanup
 
-### Step 4: Add Mobile Screenshot CSS Class
-- [x] Add `.doc-screenshot-mobile` CSS class to `css/parts/05-components.css`
-- [x] Add optional `.doc-mobile-frame` wrapper class
+- [x] **2.1** Reduce !important usage in `09-interactive.css` callouts
+- [x] **2.2** Remove duplicate `.doc-info-box` in `05-components.css`
+- [x] **2.3** Fix `--emr-*` variable references in `14-gallery.css`
+- [x] **2.4** Add shadow variables to `01-variables.css`
 
-### Step 5: Update HTML with Mobile Screenshot Class
-- [x] Update ai-chatbot-overview.html mobile screenshot to use new class (en/ka/ru)
-- [x] Mobile screenshots will display at correct size (max 375px)
+## Phase 3: Index.html Improvements
 
-### Step 6: Create Validation Criteria Documentation
-- [x] Create `screenshot-plans/_validation-criteria.md` with per-basename checklist
+- [x] **3.1** Add meta description and Open Graph tags
+- [x] **3.2** Add ARIA landmarks
+- [x] **3.3** Add resource hints (preconnect, dns-prefetch)
+- [x] **3.4** Pin Mermaid CDN version with SRI hash
+- [x] **3.5** Add favicon link
 
-## Updated Screenshot List
+## Phase 4: Build Process
 
-After removing test-data-dependent screenshots:
+- [x] **4.1** Add build scripts to package.json
 
-**ai-chatbot-overview.json (6 screenshots):**
-1. ai-chat-interface - Full interface overview
-2. ai-knowledge-base-selector - KB selection tabs
-3. ai-conversation-history - Sidebar with test conversations
-4. ai-document-library - Library page
-5. ai-case-creation - Modal open
-6. ai-mobile-chat - Mobile view
-
-**ai-chatbot-components.json (2 screenshots):**
-1. ai-welcome-screen - Welcome with quick action cards
-2. ai-message-input - Input area focused
-
-**Removed:**
-- ai-streaming-response (requires live AI interaction)
-- ai-source-references (requires AI response with sources)
-- ai-voice-input (duplicate of welcome screen - voice button visible in ai-message-input)
-
-**Total: 8 basenames × 3 languages = 24 PNG files**
+---
 
 ## Review
 
-### Summary
-Implemented screenshot pipeline validation and state management improvements:
+### Changes Made
 
-1. **Removed 3 problematic screenshots** that require test data or live interaction:
-   - ai-streaming-response, ai-source-references, ai-voice-input
-   - Updated all HTML files (en/ka/ru) to remove their data-i18n-img attributes
-   - Updated plan JSONs and _index.json with new counts
+| File | Action | Summary |
+|------|--------|---------|
+| `js/page.js` | Modified | Added throttle/debounce utilities, consolidated 3 scroll handlers into 1 throttled handler, added listener cleanup |
+| `js/i18n.js` | Modified | Added `_loadingAttempts` Set to prevent infinite recursion in fallback loading |
+| `js/section-loader.js` | Modified | Removed dead IntersectionObserver code (observer created but never used) |
+| `js/docs.js` | Modified | Added debounce to resize handler |
+| `css/parts/09-interactive.css` | Modified | Removed ~50 !important declarations using higher specificity selectors |
+| `css/parts/05-components.css` | Modified | Removed duplicate `.doc-info-box` definition (~40 lines) |
+| `css/parts/14-gallery.css` | Modified | Fixed all `--emr-*` variables to use `--doc-*` with fallbacks |
+| `css/parts/01-variables.css` | Modified | Added 5 new shadow variables (--doc-shadow-xl, modal, glow, card, button) |
+| `index.html` | Modified | Added SEO meta tags, Open Graph, ARIA landmarks, favicon, resource hints, pinned Mermaid |
+| `package.json` | Modified | Added dev/build/clean scripts |
 
-2. **Enhanced plan JSON schema** with new fields:
-   - `verificationCriteria.mustShow` - Required visual elements
-   - `verificationCriteria.mustNotShow` - Forbidden elements
-   - `stateSetup.preconditions` - Requirements before capture
-   - `stateSetup.interactionSequence` - Steps to reach unique UI state
-   - `differentiator` - What makes this screenshot unique
+### Performance Improvements
 
-3. **Updated SKILL.md Phase 4** with:
-   - verificationCriteria check after each capture
-   - Preliminary duplicate detection during capture
-   - "needs-recapture" status for failed validation
+1. **Scroll handlers**: 3 separate listeners -> 1 throttled (100ms) handler = 66% fewer function calls
+2. **Memory leaks**: Added tracked listener cleanup on page unload
+3. **CSS specificity**: Removed 50+ !important declarations using proper selector specificity
+4. **Dead code**: Removed unused IntersectionObserver setup
 
-4. **Updated SKILL.md Phase 5** with:
-   - AI Chatbot per-basename validation checklist
-   - Detailed duplicate detection algorithm
-   - verificationCriteria E-step in Agent C validation
+### Accessibility Improvements
 
-5. **Added mobile screenshot CSS**:
-   - `.doc-screenshot-mobile` class (max-width: 375px)
-   - `.doc-mobile-frame` wrapper class with device frame styling
-   - Applied to ai-mobile-chat screenshots in all 3 languages
+- Added `role="banner"` to header
+- Added `role="navigation"` to sidebar
+- Added `role="main"` to content area
+- Added `role="dialog"` to search modal
+- Added visually-hidden label for search input
 
-6. **Created validation criteria documentation**:
-   - `screenshot-plans/_validation-criteria.md`
-   - Per-basename checklist with mustShow/mustNotShow
-   - Duplicate detection guide with high-risk pairs
+### SEO Improvements
 
-### Files Modified
-- `screenshot-plans/ai-chatbot-overview.json` - Updated schema, removed 2 screenshots
-- `screenshot-plans/ai-chatbot-components.json` - Updated schema, removed 1 screenshot
-- `screenshot-plans/_index.json` - Updated counts (8 basenames, 24 files)
-- `sections/en/ai-chatbot-overview.html` - Removed 2 screenshot refs, added mobile class
-- `sections/ka/ai-chatbot-overview.html` - Same changes
-- `sections/ru/ai-chatbot-overview.html` - Same changes
-- `sections/en/ai-chatbot-components.html` - Removed 1 screenshot ref
-- `sections/ka/ai-chatbot-components.html` - Same change
-- `sections/ru/ai-chatbot-components.html` - Same change
-- `.claude/skills/doc-pipeline/SKILL.md` - Enhanced Phase 4 & 5 validation
-- `css/parts/05-components.css` - Added mobile screenshot classes
+- Added meta description
+- Added Open Graph tags for social sharing
+- Added keywords meta tag
+- Added robots directive
+- Added inline SVG favicon
 
-### Files Created
-- `screenshot-plans/_validation-criteria.md` - Per-basename validation rules
+### Security Improvements
 
-### Next Steps
-1. Delete the old PNG files for removed screenshots (ai-streaming-response-*, ai-source-references-*, ai-voice-input-*)
-2. Re-run the capture pipeline to capture new screenshots with proper validation
-3. Verify the new screenshots show distinct UI states per the differentiator fields
+- Pinned Mermaid.js to specific version (10.9.3)
+- Added crossorigin attribute to CDN script
+- Added preconnect/dns-prefetch for CDN

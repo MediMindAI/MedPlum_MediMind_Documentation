@@ -78,7 +78,12 @@ const TocGenerator = {
       // Collapsible category with children
       const button = document.createElement('button');
       button.className = 'toc-toggle';
-      button.onclick = () => this._toggleItem(button);
+      button.onclick = () => {
+        if (typeof Router !== 'undefined') {
+          Router.navigate(Router.buildRoute(category.id));
+        }
+        this._toggleItem(button);
+      };
       button.innerHTML = `
         <svg class="toc-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -193,6 +198,7 @@ const TocGenerator = {
 
     link.onclick = (e) => {
       e.preventDefault();
+      if (typeof suppressScrollSpy === 'function') suppressScrollSpy(800);
       Router.navigate(Router.buildRoute(categoryId, parentSection.id, anchor));
     };
 
@@ -212,6 +218,7 @@ const TocGenerator = {
 
     link.onclick = (e) => {
       e.preventDefault();
+      if (typeof suppressScrollSpy === 'function') suppressScrollSpy(800);
       Router.navigate(Router.buildRoute(categoryId, section.id));
     };
 
@@ -232,7 +239,7 @@ const TocGenerator = {
   updateActiveState: function() {
     if (!this.container || !this.currentRoute) return;
 
-    // Remove all active states
+    // Remove all active states and collapse all categories
     this.container.querySelectorAll('.toc-link.active').forEach(link => {
       link.classList.remove('active');
     });
@@ -240,6 +247,8 @@ const TocGenerator = {
     this.container.querySelectorAll('.toc-item.active').forEach(item => {
       item.classList.remove('active');
     });
+
+    this.collapseAll();
 
     // Find and activate current section
     const { category, section, anchor } = this.currentRoute;

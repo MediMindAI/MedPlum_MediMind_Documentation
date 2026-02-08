@@ -129,18 +129,14 @@ rm -f screenshot-plans/_doc-report-*.md
 | Section ID | File | Category | Notes |
 |------------|------|----------|-------|
 | technical-overview | technical-overview | platform | Has children: why-fhir, medplum-platform, tech-stack |
-| overview | overview | patient-registration | Has children: statistics, zones, key-features, architecture-preview |
+| overview | overview | patient-registration | Has children: statistics, zones, key-features |
 | registration | features | patient-registration | SHARES file with visit-management |
 | visit-management | features | patient-registration | SHARES file with registration |
-| architecture | architecture | technical-reference | Has 13 children + 1 sub-section |
-| troubleshooting | troubleshooting | troubleshooting | Has children: common-issues, error-codes |
+| architecture | architecture | patient-registration | Has children: architecture-overview, fhir-flow, fhir-resources, data-flow |
+| troubleshooting | troubleshooting | patient-registration | Has children: common-issues, error-codes |
+| ai-chatbot-overview | ai-chatbot-overview | ai-assistant | Has children: ai-introduction, ai-features |
+| ai-chatbot-integration | ai-chatbot-integration | ai-assistant | Has children: ai-fhir, ai-backend |
 | contact | contact | additional | No children |
-
-**Sub-sections (have their OWN file — loaded into a container in parent):**
-
-| Sub-section ID | File | Parent | Container ID |
-|----------------|------|--------|-------------|
-| architecture-technical | architecture-technical | architecture | architecture-technical |
 
 **Child sections (have `anchor` only — resolve to parent's file):**
 
@@ -158,29 +154,24 @@ rm -f screenshot-plans/_doc-report-*.md
 | statistics | overview | overview |
 | zones | overview | overview |
 | key-features | overview | overview |
-| architecture-preview | overview | overview |
 | why-fhir | technical-overview | technical-overview |
 | medplum-platform | technical-overview | technical-overview |
 | tech-stack | technical-overview | technical-overview |
 | architecture-overview | architecture | architecture |
-| component-hierarchy | architecture | architecture |
-| hooks-reference | architecture | architecture |
-| services-reference | architecture | architecture |
 | fhir-flow | architecture | architecture |
-| technical-overview-detail | architecture | architecture |
-| ui-components-detail | architecture | architecture |
-| validation-system | architecture | architecture |
-| data-flow | architecture | architecture |
 | fhir-resources | architecture | architecture |
-| services-functionality | architecture | architecture |
-| authentication | architecture | architecture |
-| unknown-patient | architecture | architecture |
+| data-flow | architecture | architecture |
 | common-issues | troubleshooting | troubleshooting |
 | error-codes | troubleshooting | troubleshooting |
+| ai-introduction | ai-chatbot-overview | ai-chatbot-overview |
+| ai-features | ai-chatbot-overview | ai-chatbot-overview |
+| ai-fhir | ai-chatbot-integration | ai-chatbot-integration |
+| ai-backend | ai-chatbot-integration | ai-chatbot-integration |
 
 When user mentions a child section name, resolve to the parent's file. Example: "patient search" → child `search` → parent `registration` → file `features`.
 
-When user mentions a category like "technical-reference", expand to ALL sections in that category (architecture + architecture-technical).
+When user mentions a category like "patient-registration", expand to ALL sections in that category (overview, registration, visit-management, architecture, troubleshooting).
+When user mentions "ai-assistant", expand to ALL sections: ai-chatbot-overview, ai-chatbot-integration.
 
 ---
 
@@ -239,7 +230,7 @@ If a planner fails or produces invalid JSON:
 
 ## Phase 3: DOCUMENT
 
-**Who:** Agents launched via Task tool (`subagent_type: "general-purpose"`) — one per UNIQUE FILE.
+**Who:** Agents launched via Task tool (`subagent_type: "medimind-doc-writer"`) — one per UNIQUE FILE.
 
 This phase handles ALL non-browser work: HTML creation/updates, i18n keys, manifest entries.
 
@@ -253,7 +244,7 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
 
    For each unique file, launch a Task:
    ```
-   Task(subagent_type: "general-purpose", prompt: "...")
+   Task(subagent_type: "medimind-doc-writer", prompt: "...")
    ```
 
    The prompt for each agent:
@@ -272,12 +263,27 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
         * Complex section with tables/screenshots: see sections/en/features.html
         * Medium section: see sections/en/overview.html
         * Simple section: see sections/en/contact.html
-   3. Ensure all UI features described have data-i18n-img attributes:
+   3. Read the EMR source code to understand the real UI before writing docs.
+      Source code is at: /Users/toko/Desktop/medplum_medimind/packages/app/src/emr/
+      Use this pattern to find files for the feature you're documenting:
+        - View component: views/{feature-name}/*.tsx
+        - Child components: components/{feature-name}/*.tsx
+        - Section wrapper: sections/{FeatureName}Section.tsx
+      Extract: field names, form structure, button labels, FHIR resource mappings,
+      validation rules, and conditional UI states. Use these real details in the docs.
+   4. Place screenshot image tags using the plan JSON as the guide.
+      Read screenshot-plans/{file}.json FIRST. For each screenshot entry:
+        - Find the `anchorId` field — this is the <h3 id="..."> where the image belongs
+        - Place the <img> tag DIRECTLY AFTER the content paragraph that describes that feature
+        - The image must be INSIDE or immediately after the subsection with matching anchor ID
+        - Use this HTML structure:
       <div class="doc-screenshot-full">
-        <img src="images/basename-en.png" alt="Description"
-             class="doc-screenshot-image" data-i18n-img="basename">
+        <img src="images/{name}-en.png" alt="{description}"
+             class="doc-screenshot-image" data-i18n-img="{name}">
       </div>
-   4. Create/update sections/ka/{file}.html:
+      If no plan JSON exists for this file, place images based on the doc content —
+      add a screenshot after each major UI feature described.
+   5. Create/update sections/ka/{file}.html:
       - Copy SAME HTML structure as the English file
       - Translate ALL visible text content to Georgian (headings, paragraphs, table cells,
         list items, alt text). Do NOT translate CSS classes, IDs, data-* attributes, or code.
@@ -287,10 +293,10 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
         is cosmetic — the docs site works correctly either way.)
       - Translate directly in your response. If Georgian quality is uncertain,
         mark those strings with <!-- NEEDS-REVIEW --> for manual verification.
-   5. Create/update sections/ru/{file}.html:
+   6. Create/update sections/ru/{file}.html:
       - Same process as Georgian but translate to Russian
       - Optionally change image src paths to -ru.png suffix
-   6. DO NOT modify config/manifest.json or i18n/*/toc.json directly.
+   7. DO NOT modify config/manifest.json or i18n/*/toc.json directly.
       Instead, write needed changes to: screenshot-plans/_doc-report-{file}.md
       Use this EXACT format:
 
@@ -867,11 +873,16 @@ Each basename should show a DISTINCT feature or page state.
 
 DUPLICATE DETECTION PROCEDURE:
 1. Group screenshots by route (same page = higher duplicate risk):
+   - /emr/registration/registration screenshots: hero-search, advanced-filters,
+     patient-lookup, unified-form, draft-indicator, document-upload, desktop-sidebar,
+     registration-section, insurance-section, demographics-section, search-results,
+     patient-found, encounter-creation, screenshot, active-visit-warning
+   - Mobile viewport (registration): mobile-wizard
    - /emr/ai-assistant/chat screenshots: ai-chat-interface, ai-knowledge-base-selector,
      ai-conversation-history, ai-welcome-screen, ai-message-input
    - /emr/ai-assistant/library: ai-document-library
    - /emr/ai-assistant/cases: ai-case-creation
-   - Mobile viewport: ai-mobile-chat
+   - Mobile viewport (ai): ai-mobile-chat
 
 2. For each same-route group, compare pairs of images:
    - Do they show the same major UI elements in the same positions?
@@ -962,8 +973,10 @@ End-to-end test of the documentation site itself.
       | #/platform/technical-overview | technical-overview |
       | #/patient-registration/overview | overview |
       | #/patient-registration/registration | features |
-      | #/technical-reference/architecture | architecture |
-      | #/troubleshooting/troubleshooting | troubleshooting |
+      | #/patient-registration/architecture | architecture |
+      | #/patient-registration/troubleshooting | troubleshooting |
+      | #/ai-assistant/ai-chatbot-overview | ai-chatbot-overview |
+      | #/ai-assistant/ai-chatbot-integration | ai-chatbot-integration |
       | #/additional/contact | contact |
 
       For each documented section:

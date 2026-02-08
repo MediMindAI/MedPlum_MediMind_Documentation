@@ -1,0 +1,94 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-07T13:05:00Z",
+  "sourceSection": {
+    "id": "overview",
+    "file": "sections/en/overview.html",
+    "titleKey": "toc.overview"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/registration/registration"
+  },
+  "screenshots": [
+    {
+      "id": "screenshot",
+      "name": "screenshot",
+      "description": "Full page overview of the registration interface showing all three zones: hero search bar at top, unified registration form in the center, and desktop sidebar with Today's Visits and Recent Patients on the right",
+      "type": "static",
+      "anchorId": "main-screenshot",
+      "docReference": "Overview section - main screenshot after introduction",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".registration-search-hero-section",
+        ".registration-form-section",
+        ".registration-sidebar-section"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Only full-page screenshot — shows all 3 zones (search, form, sidebar) simultaneously",
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-07T17:23:00Z",
+        "ka": "2026-02-07T17:50:00Z",
+        "ru": "2026-02-07T17:55:00Z"
+      },
+      "captureSteps": [
+        {
+          "action": "comment",
+          "text": "Navigate to registration page — shows full desktop layout with all 3 zones"
+        },
+        {
+          "action": "navigate",
+          "url": "{url}/emr/registration/registration"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "evaluate",
+          "script": "document.querySelector('.registration-search-hero-section') !== null && document.querySelector('.registration-sidebar-section') !== null"
+        },
+        {
+          "action": "screenshot",
+          "name": "screenshot"
+        }
+      ],
+      "verificationCriteria": {
+        "mustShow": [
+          "Search bar/input at top of page",
+          "Registration form with collapsible sections",
+          "Desktop sidebar with Today's Visits or Recent Patients"
+        ],
+        "mustNotShow": [
+          "Login page",
+          "Error page",
+          "Loading spinner only"
+        ]
+      }
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=\u0420\u0423\u0421",
+      "ka": "text=\u10e5\u10d0\u10e0"
+    },
+    "waitAfterSwitch": 2000
+  },
+  "summary": {
+    "totalScreenshots": 1,
+    "totalFiles": 3,
+    "staticScreenshots": 1,
+    "multiStepFlows": 0,
+    "stateBased": 0
+  }
+}

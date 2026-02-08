@@ -1,10 +1,15 @@
 {
   "name": "medplum_medimind_documentation-main",
   "version": "1.0.0",
-  "description": "",
+  "description": "MediMind EMR Documentation Site",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "python3 -m http.server 8000",
+    "build:css": "cat css/parts/*.css > dist/main.css",
+    "build:js": "esbuild js/core/*.js js/*.js --bundle --minify --outfile=dist/app.min.js --format=iife",
+    "build": "mkdir -p dist && npm run build:css && npm run build:js",
+    "clean": "rm -rf dist"
   },
   "repository": {
     "type": "git",

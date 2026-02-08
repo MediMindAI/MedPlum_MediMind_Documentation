@@ -204,3 +204,244 @@
   width: 24px;
   height: 24px;
 }
+
+/* ================================
+   Callout Boxes - Dark Style with Icon Box
+   ================================ */
+.doc-callout {
+  border-radius: 16px;
+  padding: 24px;
+  margin: var(--doc-space-lg) 0;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  /* Dark blue gradient - fully opaque */
+  background: linear-gradient(135deg, #1a365d 0%, #234165 100%);
+  border: 1px solid rgba(75, 180, 230, 0.25);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.doc-callout:hover {
+  transform: translateY(-4px);
+  border-color: rgba(75, 180, 230, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Icon box with label */
+.doc-callout-icon-box {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.doc-callout-icon {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+}
+
+.doc-callout-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke-width: 1.5;
+}
+
+.doc-callout-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.doc-callout-content {
+  flex: 1;
+  padding-top: 4px;
+}
+
+.doc-callout-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.doc-callout-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #ffffff;
+}
+
+.doc-callout-text strong {
+  color: #ffffff;
+}
+
+/* Info Callout - Blue accent */
+.doc-callout-info .doc-callout-icon {
+  background: linear-gradient(145deg, #1a365d 0%, #2b6cb0 100%);
+}
+
+.doc-callout-info .doc-callout-icon svg {
+  color: #63b3ed;
+}
+
+.doc-callout-info .doc-callout-label {
+  color: #63b3ed;
+  background: rgba(99, 179, 237, 0.15);
+}
+
+.doc-callout-info .doc-callout-title {
+  color: #63b3ed;
+}
+
+/* Tip/Success Callout - Blue accent (same as info) */
+.doc-callout-tip .doc-callout-icon {
+  background: linear-gradient(145deg, #1a365d 0%, #2b6cb0 100%);
+}
+
+.doc-callout-tip .doc-callout-icon svg {
+  color: #63b3ed;
+}
+
+.doc-callout-tip .doc-callout-label {
+  color: #63b3ed;
+  background: rgba(99, 179, 237, 0.15);
+}
+
+.doc-callout-tip .doc-callout-title {
+  color: #63b3ed;
+}
+
+/* Warning Callout - Blue accent (same as info) */
+.doc-callout-warning .doc-callout-icon {
+  background: linear-gradient(145deg, #1a365d 0%, #2b6cb0 100%);
+}
+
+.doc-callout-warning .doc-callout-icon svg {
+  color: #63b3ed;
+}
+
+.doc-callout-warning .doc-callout-label {
+  color: #63b3ed;
+  background: rgba(99, 179, 237, 0.15);
+}
+
+.doc-callout-warning .doc-callout-title {
+  color: #63b3ed;
+}
+
+/* Mobile responsive */
+@media (max-width: 576px) {
+  .doc-callout {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .doc-callout-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .doc-callout-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* ================================
+   Simple Callout Format
+   Use: class="doc-callout doc-callout-info doc-callout-simple"
+   Higher specificity used instead of !important
+   ================================ */
+
+.doc-callout.doc-callout-simple {
+  display: block;
+  padding: 20px 24px;
+  color: #e5e7eb;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.doc-callout.doc-callout-simple > strong:first-child {
+  display: block;
+  color: #63b3ed;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(99, 179, 237, 0.3);
+  letter-spacing: 0.02em;
+}
+
+.doc-callout.doc-callout-simple code {
+  display: inline;
+  background: rgba(99, 179, 237, 0.25);
+  color: #bee3f8;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(99, 179, 237, 0.35);
+  white-space: nowrap;
+}
+
+.doc-callout.doc-callout-simple strong:not(:first-child) {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.doc-callout.doc-callout-simple > ul {
+  margin: 14px 0 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.doc-callout.doc-callout-simple > ul li {
+  color: #e5e7eb;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  padding-left: 20px;
+  position: relative;
+}
+
+.doc-callout.doc-callout-simple > ul li::before {
+  content: "\2022";
+  position: absolute;
+  left: 0;
+  color: #63b3ed;
+  font-weight: bold;
+}
+
+.doc-callout.doc-callout-simple > ul li strong {
+  color: #bee3f8;
+}
+
+/* Warning simple callout */
+.doc-callout.doc-callout-warning.doc-callout-simple {
+  background: linear-gradient(135deg, #3d2f0f 0%, #4a3a1a 100%);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.doc-callout.doc-callout-warning.doc-callout-simple > strong:first-child {
+  color: #fbbf24;
+  border-bottom-color: rgba(251, 191, 36, 0.3);
+}
+
+.doc-callout.doc-callout-warning.doc-callout-simple code {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.doc-callout.doc-callout-warning.doc-callout-simple strong:not(:first-child) {
+  color: #fcd34d;
+}

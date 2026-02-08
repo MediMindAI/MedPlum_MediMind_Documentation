@@ -59,9 +59,104 @@ Read sections/en/features.html
 Read config/manifest.json
 ```
 
+### Phase 1.5: SOURCE CODE ANALYSIS
+
+**Read the actual EMR source code** to extract real selectors, DOM structure, and component hierarchy. This prevents generating guessed selectors that fail at capture time.
+
+#### Route-to-Source Mapping
+
+Use this table to find the source files for each EMR page:
+
+| EMR Route | View Component | Key Child Components Dir |
+|-----------|---------------|--------------------------|
+| `/emr/registration/registration` | `views/registration/UnifiedRegistrationView.tsx` | `components/registration/` |
+| `/emr/registration/edit/:id` | `views/registration/PatientEditView.tsx` | `components/registration/` |
+| `/emr/ai-assistant/chat` | `views/ai-assistant/ChatbotPage.tsx` | `components/ai-assistant/` |
+| `/emr/ai-assistant/library` | `views/ai-assistant/DocumentLibraryPage.tsx` | `components/ai-assistant/` |
+| `/emr/ai-assistant/cases` | `views/ai-assistant/CaseManagementPage.tsx` | `components/ai-assistant/` |
+
+All paths are relative to: `/Users/toko/Desktop/medplum_medimind/packages/app/src/emr/`
+
+#### Registration Page — Key Source Files
+
+| Component | File (relative to `.../src/emr/`) | What to Extract |
+|-----------|-----------------------------------|-----------------|
+| Main page | `views/registration/UnifiedRegistrationView.tsx` | Page layout, sidebar structure, search placement |
+| Search | `components/registration/UnifiedPatientSearch.tsx` | Search input selectors, result display |
+| Search panel | `components/registration/SearchPanel.tsx` | Advanced filter fields, class names |
+| Main form | `components/registration/UnifiedPatientRegistrationForm.tsx` | Form section ordering, scroll container |
+| Patient lookup | `components/registration/sections/PatientLookupSection.tsx` | ID input field, patient card display |
+| Personal info | `components/registration/sections/PersonalInfoSection.tsx` | Form fields, class names |
+| Contact info | `components/registration/sections/ContactInfoSection.tsx` | Phone input, address fields |
+| Demographics | `components/registration/sections/DemographicsSection.tsx` | Region dropdown, referral fields |
+| Insurance | `components/registration/sections/InsuranceSection.tsx` | Insurance company selector, policy fields |
+| Registration/visit | `components/registration/sections/RegistrationSection.tsx` | Visit type dropdown, department |
+| Guarantee | `components/registration/sections/GuaranteeSection.tsx` | Guarantee fields |
+| Guardian | `components/registration/sections/GuardianInfoSection.tsx` | Guardian form fields |
+| Additional | `components/registration/sections/AdditionalDetailsSection.tsx` | Extra fields |
+| Visit modal | `components/registration/RegistrationVisitModal.tsx` | Modal selectors, encounter creation |
+| Duplicate warning | `components/registration/DuplicateWarningModal.tsx` | Warning dialog selectors |
+| Patient table | `components/registration/PatientTable.tsx` | Table structure, row actions |
+| Mobile card | `components/registration/PatientMobileCard.tsx` | Mobile layout structure |
+
+#### AI Assistant — Key Source Files
+
+| Component | File (relative to `.../src/emr/`) | What to Extract |
+|-----------|-----------------------------------|-----------------|
+| Chat page | `views/ai-assistant/ChatbotPage.tsx` | Chat layout, sidebar + main area |
+| Chat window | `components/ai-assistant/ChatWindow.tsx` | Message area, input placement |
+| Message input | `components/ai-assistant/MessageInput.tsx` | Input field, voice/attach buttons |
+| History sidebar | `components/ai-assistant/HistorySidebar.tsx` | Conversation list, sidebar toggle |
+| Welcome screen | `components/ai-assistant/WelcomeScreen.tsx` | Quick action cards, welcome text |
+| Case creation | `components/ai-assistant/CaseCreationModal.tsx` | Modal structure, tabs |
+| Document library | `components/ai-assistant/DocumentLibrary.tsx` | Upload area, category tabs |
+| Document upload | `components/ai-assistant/DocumentUpload.tsx` | Upload zone selectors |
+| Chat header | `components/ai-assistant/ChatHeader.tsx` | KB selector tabs |
+| Conversation list | `components/ai-assistant/ConversationList.tsx` | History items |
+| Patient selector | `components/ai-assistant/PatientSelector.tsx` | Patient search in chat |
+
+#### What to Extract from Source Code
+
+When reading each component file, look for:
+
+1. **CSS class names** — stable classes used in JSX (`className="emr-form-section"`, `className={styles.sidebar}`)
+2. **HTML structure** — element nesting, what wraps what (div > form > section)
+3. **ARIA attributes** — `role`, `aria-label`, `data-testid` (best for selectors)
+4. **Input field attributes** — `name`, `type`, `placeholder`, `id`
+5. **Conditional rendering** — what triggers modals, warnings, expanded states
+6. **CSS module imports** — if using `styles.xyz`, note the class pattern but use `[class*="xyz"]` in plans
+
+#### Steps
+
+```bash
+# 1. Determine which EMR route this section documents
+#    (from manifest category + doc HTML content)
+
+# 2. Read the view component
+Read /Users/toko/Desktop/medplum_medimind/packages/app/src/emr/views/registration/UnifiedRegistrationView.tsx
+
+# 3. Read the specific child components referenced in the doc HTML
+#    (e.g., if doc describes insurance section, read InsuranceSection.tsx)
+Read /Users/toko/Desktop/medplum_medimind/packages/app/src/emr/components/registration/sections/InsuranceSection.tsx
+
+# 4. Extract: class names, input selectors, DOM structure, modal triggers
+#    Use these REAL selectors in Phase 3 captureSteps instead of guessing
+```
+
+**Output of this phase:** A list of verified selectors and DOM facts to use in Phase 3 plan generation. Example:
+
+```
+Registration page verified selectors:
+- Search input: input[placeholder='name@domain.com'] (from UnifiedPatientSearch.tsx)
+- Form sections: .emr-form-section-header-left (from UnifiedPatientRegistrationForm.tsx)
+- Scroll container: div with CSS module class *transitionContainer* (from layout)
+- Insurance toggle: found via InsuranceSection.tsx conditional render
+- Visit modal: [role='dialog'] triggered by submit with createVisit=true
+```
+
 ### Phase 2: ANALYZE
 
-Extract from the HTML:
+Extract from the HTML AND the source code analysis above:
 
 **UI Components** (detected via keywords/patterns):
 | Pattern | Component Type |
@@ -93,7 +188,7 @@ Extract from the HTML:
 
 ### Phase 3: PLAN
 
-Generate specifications for each screenshot:
+Generate specifications for each screenshot. **Always use real selectors from Phase 1.5 source code analysis.** Only fall back to keyword-guessed selectors if the source code was unavailable or the component file couldn't be found.
 
 **Static Screenshot:**
 ```json

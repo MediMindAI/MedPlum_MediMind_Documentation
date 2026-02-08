@@ -4,7 +4,7 @@
 
 <div class="architecture-technical-docs">
 
-  <h3 id="technical-overview">Техническое описание</h3>
+  <h3 id="arch-technical-overview">Техническое описание</h3>
   <p>
     Модуль регистрации построен на <strong>Layer-based архитектуре</strong>, где каждый уровень
     отвечает за конкретный функционал и коммуникация происходит только между соседними уровнями.
@@ -436,7 +436,7 @@
     <li>Предотвращаются дублирующиеся записи</li>
   </ul>
 
-  <h3 id="data-flow">Поток данных (Data Flow)</h3>
+  <h3 id="arch-data-flow">Поток данных (Data Flow)</h3>
   <p>
     Движение данных происходит <strong>однонаправленно</strong>:
   </p>
@@ -481,7 +481,7 @@
     Последние <strong>10</strong> посещённых пациентов сохраняются в localStorage с помощью <code>recentPatientsService</code> (FIFO - First In First Out).
   </div>
 
-  <h3 id="fhir-resources">Структура FHIR ресурсов</h3>
+  <h3 id="arch-fhir-resources">Структура FHIR ресурсов</h3>
   <p>
     Система использует стандарт <strong>FHIR R4</strong>. Основные ресурсы:
   </p>

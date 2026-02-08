@@ -1,353 +1,175 @@
-# AI Chatbot Documentation HTML Verification Report
+# HTML Verification Report
 
-## Verification Date
-Generated on 2026-02-06
+**Generated:** 2026-02-07
+**Agent:** Phase 5 Agent A - HTML Verification
+**Scope:** features.html and overview.html across all 3 languages (en, ka, ru)
+
+---
 
 ## Summary
-All three AI chatbot documentation files have been verified for structural consistency across English (en), Georgian (ka), and Russian (ru) languages.
 
-**Status: PASSED** ✓ All checks successful
+- **Total unique basenames (features.html):** 15
+- **Total unique basenames (overview.html):** 1
+- **Grand total unique basenames:** 16
+- **Expected PNG files (16 basenames x 3 languages):** 48
+- **Actual PNG files found:** 48
+- **Screenshot plan count (features.json):** 15
+- **Screenshot plan count (overview.json):** 1
+- **Screenshot plan total:** 16
 
----
-
-## File Verification
-
-### 1. File Existence
-All required files exist in their respective language directories:
-
-| File | Location | Status |
-|------|----------|--------|
-| ai-chatbot-overview.html | sections/en/ | ✓ Exists |
-| ai-chatbot-overview.html | sections/ka/ | ✓ Exists |
-| ai-chatbot-overview.html | sections/ru/ | ✓ Exists |
-| ai-chatbot-components.html | sections/en/ | ✓ Exists |
-| ai-chatbot-components.html | sections/ka/ | ✓ Exists |
-| ai-chatbot-components.html | sections/ru/ | ✓ Exists |
-| ai-chatbot-integration.html | sections/en/ | ✓ Exists |
-| ai-chatbot-integration.html | sections/ka/ | ✓ Exists |
-| ai-chatbot-integration.html | sections/ru/ | ✓ Exists |
+**Overall Status: PASS** -- All HTML references, data-i18n-img attributes, and PNG files are consistent across all 3 languages.
 
 ---
 
-## 2. Section ID Consistency
+## Verification Details
 
-### ai-chatbot-overview.html
-All three language versions have identical section IDs:
+### 1. features.html - data-i18n-img Attributes
 
-**Main Section:**
-- `id="ai-chatbot-overview"` - Main container
+All three language versions (EN, KA, RU) contain identical `data-i18n-img` basenames in the same order:
 
-**Subsection IDs (h3 elements):**
-- `id="introduction"` (1.1)
-- `id="architecture"` (1.2)
-- `id="features"` (1.3)
+| # | Basename | EN HTML | KA HTML | RU HTML | EN PNG | KA PNG | RU PNG | Status |
+|---|----------|---------|---------|---------|--------|--------|--------|--------|
+| 1 | `hero-search` | YES | YES | YES | YES | YES | YES | PASS |
+| 2 | `advanced-filters` | YES | YES | YES | YES | YES | YES | PASS |
+| 3 | `search-results` | YES | YES | YES | YES | YES | YES | PASS |
+| 4 | `patient-lookup` | YES | YES | YES | YES | YES | YES | PASS |
+| 5 | `patient-found` | YES | YES | YES | YES | YES | YES | PASS |
+| 6 | `unified-form` | YES | YES | YES | YES | YES | YES | PASS |
+| 7 | `draft-indicator` | YES | YES | YES | YES | YES | YES | PASS |
+| 8 | `encounter-creation` | YES | YES | YES | YES | YES | YES | PASS |
+| 9 | `registration-section` | YES | YES | YES | YES | YES | YES | PASS |
+| 10 | `insurance-section` | YES | YES | YES | YES | YES | YES | PASS |
+| 11 | `document-upload` | YES | YES | YES | YES | YES | YES | PASS |
+| 12 | `demographics-section` | YES | YES | YES | YES | YES | YES | PASS |
+| 13 | `active-visit-warning` | YES | YES | YES | YES | YES | YES | PASS |
+| 14 | `desktop-sidebar` | YES | YES | YES | YES | YES | YES | PASS |
+| 15 | `mobile-wizard` | YES | YES | YES | YES | YES | YES | PASS |
 
-**Anchor IDs (h4 elements):** ✓ Complete Match
-- introduction
-- key-capabilities
-- technology-stack
-- route-structure
-- architecture (section)
-- architecture-overview
-- component-hierarchy
-- data-flow-send
-- data-flow-history
-- fhir-resources
-- performance
-- features (section)
-- knowledge-bases
-- conversation-history
-- document-library
-- case-management
-- voice-input
-- streaming
-- file-attachments
-- error-handling
-- security
-- mobile
+### 2. overview.html - data-i18n-img Attributes
 
-**Result:** ✓ All 23 anchor IDs match across en, ka, ru
+| # | Basename | EN HTML | KA HTML | RU HTML | EN PNG | KA PNG | RU PNG | Status |
+|---|----------|---------|---------|---------|--------|--------|--------|--------|
+| 1 | `screenshot` | YES | YES | YES | YES | YES | YES | PASS |
 
 ---
 
-### ai-chatbot-components.html
-All three language versions have identical section IDs:
+## Detailed Checks
 
-**Main Section:**
-- `id="ai-chatbot-components"` - Main container
+### Check A: data-i18n-img Attribute Presence
 
-**Subsection IDs (h3 elements):**
-- `id="components-overview"` (6.1)
-- `id="state-management"` (6.2)
-- `id="hooks"` (6.3)
-- `id="styling-patterns"` (6.4)
-- `id="accessibility"` (6.5)
+All `<img class="doc-screenshot-image">` tags in all 6 files have a `data-i18n-img` attribute.
 
-**Anchor IDs (h4 elements):** ✓ Complete Match
-- component-architecture
-- chat-interface
-- message-enhancement
-- streaming-status
-- document-library
-- case-management
-- utility-components
-- component-relationships
-- dual-context-architecture
-- state-shape
-- initial-state
-- action-types
-- context-hooks
-- context-usage
-- performance-optimizations
-- hook-index
-- useFlowiseChat
-- useChatMessages
-- useConversations
-- useDocumentLibrary
-- usePatientCases
-- useVoiceInput
-- useFactCheck
-- useCalculatorIntegration
-- useMobileKeyboard
-- hook-testing
-- styling-patterns (section)
-- accessibility (section)
+- `sections/en/features.html`: 15 img tags, 15 with data-i18n-img -- PASS
+- `sections/ka/features.html`: 15 img tags, 15 with data-i18n-img -- PASS
+- `sections/ru/features.html`: 15 img tags, 15 with data-i18n-img -- PASS
+- `sections/en/overview.html`: 1 img tag, 1 with data-i18n-img -- PASS
+- `sections/ka/overview.html`: 1 img tag, 1 with data-i18n-img -- PASS
+- `sections/ru/overview.html`: 1 img tag, 1 with data-i18n-img -- PASS
 
-**Result:** ✓ All 28+ anchor IDs match across en, ka, ru
+### Check B: Default src Values
 
----
+The `src` attribute on each `<img>` tag should default to `images/{basename}-en.png` in the EN files. The i18n system swaps images dynamically based on the active language.
 
-### ai-chatbot-integration.html
-All three language versions have identical section IDs:
+**EN files:**
+- `sections/en/features.html`: All 15 img src values follow pattern `images/{basename}-en.png` -- PASS
+- `sections/en/overview.html`: src=`images/screenshot-en.png` -- PASS
 
-**Main Section:**
-- `id="ai-chatbot-integration"` - Main container
+**KA files:**
+- `sections/ka/features.html`: All 15 img src values use `images/{basename}-en.png` (the i18n module will swap to `-ka.png` at runtime) -- PASS
+- `sections/ka/overview.html`: src=`images/screenshot-ka.png` -- NOTE: hardcoded to `-ka.png` (differs from convention but still valid since this is the KA-specific file)
 
-**Subsection IDs (h3 elements):**
-- `id="services"` (5.1)
+**RU files:**
+- `sections/ru/features.html`: All 15 img src values use `images/{basename}-en.png` (the i18n module will swap to `-ru.png` at runtime) -- PASS
+- `sections/ru/overview.html`: src=`images/screenshot-ru.png` -- NOTE: hardcoded to `-ru.png` (differs from convention but still valid since this is the RU-specific file)
 
-**Anchor IDs (h4 elements):** ✓ Complete Match
-- service-categories
-- service-index
-- (and additional subsections documented in implementation)
+**Observation:** The KA and RU overview.html files hardcode the src to the language-specific PNG (`-ka.png` and `-ru.png` respectively) rather than defaulting to `-en.png`. This is a minor inconsistency with the features.html pattern (where all languages default to `-en.png`) but is functionally acceptable since the i18n module overrides the src at runtime using the `data-i18n-img` attribute. No functional issue.
 
-**Result:** ✓ All anchor IDs match across en, ka, ru
+### Check C: PNG Files on Disk
 
----
+All 48 expected PNG files exist on disk:
 
-## 3. HTML Structure Consistency
+**EN (16 files):**
+- `images/screenshot-en.png`
+- `images/hero-search-en.png`
+- `images/advanced-filters-en.png`
+- `images/search-results-en.png`
+- `images/patient-lookup-en.png`
+- `images/patient-found-en.png`
+- `images/unified-form-en.png`
+- `images/draft-indicator-en.png`
+- `images/encounter-creation-en.png`
+- `images/registration-section-en.png`
+- `images/insurance-section-en.png`
+- `images/document-upload-en.png`
+- `images/demographics-section-en.png`
+- `images/active-visit-warning-en.png`
+- `images/desktop-sidebar-en.png`
+- `images/mobile-wizard-en.png`
 
-### ai-chatbot-overview.html
+**KA (16 files):**
+- `images/screenshot-ka.png`
+- `images/hero-search-ka.png`
+- `images/advanced-filters-ka.png`
+- `images/search-results-ka.png`
+- `images/patient-lookup-ka.png`
+- `images/patient-found-ka.png`
+- `images/unified-form-ka.png`
+- `images/draft-indicator-ka.png`
+- `images/encounter-creation-ka.png`
+- `images/registration-section-ka.png`
+- `images/insurance-section-ka.png`
+- `images/document-upload-ka.png`
+- `images/demographics-section-ka.png`
+- `images/active-visit-warning-ka.png`
+- `images/desktop-sidebar-ka.png`
+- `images/mobile-wizard-ka.png`
 
-| Element Type | en | ka | ru | Status |
-|--------------|----|----|-------|--------|
-| `<table>` elements | 8 | 8 | 8 | ✓ Match |
-| `<li>` elements | 43 | 43 | 43 | ✓ Match |
-| `.mermaid-container` | 4 | 4 | 4 | ✓ Match |
-| Line count | 690 | 690 | 690 | ✓ Match |
+**RU (16 files):**
+- `images/screenshot-ru.png`
+- `images/hero-search-ru.png`
+- `images/advanced-filters-ru.png`
+- `images/search-results-ru.png`
+- `images/patient-lookup-ru.png`
+- `images/patient-found-ru.png`
+- `images/unified-form-ru.png`
+- `images/draft-indicator-ru.png`
+- `images/encounter-creation-ru.png`
+- `images/registration-section-ru.png`
+- `images/insurance-section-ru.png`
+- `images/document-upload-ru.png`
+- `images/demographics-section-ru.png`
+- `images/active-visit-warning-ru.png`
+- `images/desktop-sidebar-ru.png`
+- `images/mobile-wizard-ru.png`
 
-**Diagram Details:**
-- Architecture Overview (Mermaid flowchart TB)
-- Data Flow: Sending a Message (Sequence diagram)
-- Data Flow: Loading History (Flowchart LR)
-- Voice Input Pipeline (Flowchart LR)
+### Check D: Cross-reference with Screenshot Plans
 
----
+**features.json:**
+- Plan declares 15 screenshots: hero-search, advanced-filters, search-results, patient-lookup, patient-found, unified-form, draft-indicator, encounter-creation, registration-section, insurance-section, document-upload, demographics-section, active-visit-warning, desktop-sidebar, mobile-wizard
+- HTML `data-i18n-img` count: 15
+- Match: PASS
 
-### ai-chatbot-components.html
+**overview.json:**
+- Plan declares 1 screenshot: screenshot
+- HTML `data-i18n-img` count: 1
+- Match: PASS
 
-| Element Type | en | ka | ru | Status |
-|--------------|----|----|-------|--------|
-| `<table>` elements | 11 | 11 | 11 | ✓ Match |
-| `<li>` elements | 72 | 72 | 72 | ✓ Match |
-| `.mermaid-container` | 3 | 3 | 3 | ✓ Match |
-
-**Diagram Details:**
-- Component Architecture (Flowchart TB)
-- Dual-Context Architecture (Flowchart TB)
-- Component Relationships (Flowchart TD)
-
----
-
-### ai-chatbot-integration.html
-
-| Element Type | en | ka | ru | Status |
-|--------------|----|----|-------|--------|
-| `<table>` elements | 15 | 15 | 15 | ✓ Match |
-
----
-
-## 4. Screenshot Image Verification (NEW)
-
-### Data-i18n-img Attributes
-All screenshot images in both AI chatbot documentation files have proper `data-i18n-img` attributes for multi-language image loading.
-
-#### ai-chatbot-overview.html
-| Language | Basename References | Status |
-|----------|-------------------|--------|
-| English (en) | 6 basenames | ✓ All have data-i18n-img |
-| Georgian (ka) | 6 basenames | ✓ All have data-i18n-img |
-| Russian (ru) | 6 basenames | ✓ All have data-i18n-img |
-
-**Basenames in Overview:**
-1. ai-chat-interface (line 20)
-2. ai-knowledge-base-selector (line 334)
-3. ai-conversation-history (line 384)
-4. ai-document-library (line 427)
-5. ai-case-creation (line 473)
-6. ai-mobile-chat (line 715)
-
-#### ai-chatbot-components.html
-| Language | Basename References | Status |
-|----------|-------------------|--------|
-| English (en) | 2 basenames | ✓ All have data-i18n-img |
-| Georgian (ka) | 2 basenames | ✓ All have data-i18n-img |
-| Russian (ru) | 2 basenames | ✓ All have data-i18n-img |
-
-**Basenames in Components:**
-1. ai-welcome-screen (line 90)
-2. ai-message-input (line 351)
-
-### Image File Coverage
-All 8 unique basenames have complete multi-language image coverage:
-
-| Basename | en.png | ka.png | ru.png | Status |
-|----------|--------|--------|--------|--------|
-| ai-chat-interface | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-| ai-knowledge-base-selector | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-| ai-conversation-history | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-| ai-document-library | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-| ai-case-creation | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-| ai-mobile-chat | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-| ai-welcome-screen | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-| ai-message-input | ✓ Exists | ✓ Exists | ✓ Exists | PASS |
-
-**Total Image Files:** 24/24 verified ✓
-
-### Summary of Screenshot Verification
-- **Total data-i18n-img attributes found:** 24 across all 6 files
-- **Missing data-i18n-img attributes:** None
-- **Missing image files:** None
-- **Multi-language coverage:** 100% (all 8 basenames have 3 language variants)
-- **Image location:** `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/images/`
-- **Naming convention:** `{basename}-{lang}.png` where lang ∈ {en, ka, ru}
+**Combined plan total:** 16 screenshots x 3 languages = 48 PNG files expected
+**Actual PNG files found:** 48
+**Match: PASS**
 
 ---
 
-## 5. Specific Content Elements
+## Notes / Observations
 
-### Tables Verified
-All tables have consistent:
-- **Column headers** - Same number across languages
-- **Row structure** - Same data layout
-- **Cell content** - Technical terms preserved (code elements, class names, etc.)
+1. **Minor src inconsistency in overview.html:** The KA and RU versions of `overview.html` hardcode the img src to the language-specific PNG (`screenshot-ka.png` and `screenshot-ru.png`) instead of defaulting to `screenshot-en.png` like all other files. This is functionally harmless because the `data-i18n-img="screenshot"` attribute still allows the i18n module to dynamically swap images. However, for consistency, all files could default to `-en.png`.
 
-Examples of verified table structures:
-- Technology Stack table (8 rows, 3 columns)
-- Component Category Summary (8 cards)
-- State Management Action Types (6 categories)
-- Hook Index (9 hooks)
-- STT Backend configuration (3 language options)
+2. **AI Chatbot screenshots (out of scope):** The `sections/en/ai-chatbot-overview.html` file references 10 additional `data-i18n-img` basenames (ai-chat-interface, ai-welcome-screen, ai-knowledge-base-selector, ai-my-documents, ai-conversation-history, ai-document-library, ai-case-creation, ai-message-input, ai-conversation-active, ai-mobile-chat). The corresponding PNG files do NOT exist on disk (they appear deleted per git status). This is outside the scope of this verification (features.html + overview.html only) but flagged for awareness.
 
-### Lists Verified
-All numbered and bulleted lists match in:
-- **Count** - Same number of items
-- **Structure** - Consistent nesting levels
-- **Content** - Technical specifications preserved
-
-### Mermaid Diagrams Verified
-All diagrams include:
-- **Same layout direction** (TB, LR, TD, etc.)
-- **Same number of nodes** in flowcharts
-- **Same connections/relationships**
-- **Zoom controls** (mermaid-controls present)
+3. **All screenshot plan statuses show "captured"** for all 3 languages across all 16 basenames.
 
 ---
 
-## 5. Code Blocks
+## Verdict
 
-All language versions contain identical:
-- TypeScript interface definitions
-- Component type signatures
-- Hook return types
-- Service interface specs
-- CSS variable references
-
-Example preserved across all languages:
-```typescript
-interface ChatWindowProps {
-  onNewChat: () => void;
-  onOpenHistory: () => void;
-  sidebarOpen: boolean;
-}
-```
-
----
-
-## 6. Detectable Issues
-
-### None Found ✓
-- No missing anchors
-- No structural differences
-- No table count discrepancies
-- No diagram differences
-- No list count variations
-- No language-specific HTML structure deviations
-
----
-
-## 7. Validation Checklist
-
-- [x] All 3 files exist in en/, ka/, ru/ directories
-- [x] Main section IDs match (ai-chatbot-overview, ai-chatbot-components, ai-chatbot-integration)
-- [x] All h3 anchor IDs identical across languages
-- [x] All h4 anchor IDs identical across languages
-- [x] Table counts match: Overview (8), Components (11), Integration (15)
-- [x] List item counts match across languages
-- [x] Mermaid diagram counts consistent
-- [x] Code blocks identical across languages
-- [x] HTML structure line counts match where expected
-- [x] No orphaned anchor IDs
-- [x] No missing elements in any language version
-- [x] All screenshot images have data-i18n-img attributes (24/24)
-- [x] All referenced image basenames have complete multi-language coverage
-- [x] All image files exist in images/ directory (24 PNG files)
-
----
-
-## 8. Recommendations
-
-**All Files Verified Successfully**
-
-No structural inconsistencies detected. The documentation is properly localized with:
-- Consistent HTML structure across all languages
-- Identical anchor IDs for consistent hash-based routing
-- Matching element counts (tables, lists, diagrams)
-- Preserved technical content (code blocks, class names)
-- Multi-language support without structural deviation
-
-**Next Steps for Documentation Team:**
-1. Continue to maintain parallel structure across language versions
-2. When updating anchors, update all 3 language versions simultaneously
-3. Verify table/list counts remain consistent when adding content
-4. Ensure new code blocks are added to all language versions
-
----
-
-## File Paths
-
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/en/ai-chatbot-overview.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/ka/ai-chatbot-overview.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/ru/ai-chatbot-overview.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/en/ai-chatbot-components.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/ka/ai-chatbot-components.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/ru/ai-chatbot-components.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/en/ai-chatbot-integration.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/ka/ai-chatbot-integration.html`
-- `/Users/toko/Desktop/MedPlum_MediMind_Documentation-main/sections/ru/ai-chatbot-integration.html`
-
----
-
-**Report Generated:** 2026-02-06
-**Verification Method:** Automated HTML structure analysis
-**Result Status:** ✓ PASSED
+**PASS** -- All 16 basenames across features.html and overview.html are properly configured with `data-i18n-img` attributes in all 3 language versions, and all 48 corresponding PNG files exist on disk. The screenshot plans match the HTML references exactly.

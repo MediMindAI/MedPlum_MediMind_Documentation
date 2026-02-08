@@ -9,13 +9,14 @@
   width: 300px;
   background: var(--gradient-sidebar);
   position: fixed;
-  top: 64px;
+  top: 80px;
   left: 0;
   bottom: 0;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 80px);
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 100;
+  padding-top: 16px;
   transform: translateX(-100%);
   transition: transform 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth);
   box-shadow: none;

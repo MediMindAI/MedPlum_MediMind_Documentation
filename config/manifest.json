@@ -32,7 +32,7 @@
             { "id": "statistics", "titleKey": "toc.statistics", "anchor": "statistics" },
             { "id": "zones", "titleKey": "toc.interfaceZones", "anchor": "zones" },
             { "id": "key-features", "titleKey": "toc.keyFeatures", "anchor": "key-features" },
-            { "id": "architecture-preview", "titleKey": "toc.architecturePreview", "anchor": "architecture-preview" }
+            { "id": "workflow-overview", "titleKey": "toc.workflowOverview", "anchor": "workflow-overview" }
           ]
         },
         {
@@ -52,9 +52,9 @@
               "anchor": "form-sections"
             },
             {
-              "id": "document-upload",
-              "titleKey": "toc.documentUpload",
-              "anchor": "document-upload"
+              "id": "visit-management",
+              "titleKey": "toc.visitManagement",
+              "anchor": "visit-management"
             },
             {
               "id": "desktop-sidebar",
@@ -65,33 +65,6 @@
               "id": "mobile-wizard",
               "titleKey": "toc.mobileWizard",
               "anchor": "mobile-wizard"
-            }
-          ]
-        },
-        {
-          "id": "visit-management",
-          "titleKey": "toc.visitManagement",
-          "file": "features",
-          "children": [
-            {
-              "id": "registration-section",
-              "titleKey": "toc.registrationSection",
-              "anchor": "registration-section"
-            },
-            {
-              "id": "insurance",
-              "titleKey": "toc.insurance",
-              "anchor": "insurance"
-            },
-            {
-              "id": "active-visit-warning",
-              "titleKey": "toc.activeVisitWarning",
-              "anchor": "active-visit-warning"
-            },
-            {
-              "id": "demographics",
-              "titleKey": "toc.demographics",
-              "anchor": "demographics"
             }
           ]
         },
@@ -107,44 +80,9 @@
               "anchor": "architecture-overview"
             },
             {
-              "id": "component-hierarchy",
-              "titleKey": "toc.componentHierarchy",
-              "anchor": "component-hierarchy"
-            },
-            {
-              "id": "hooks-reference",
-              "titleKey": "toc.hooksReference",
-              "anchor": "hooks-reference"
-            },
-            {
-              "id": "services-reference",
-              "titleKey": "toc.servicesReference",
-              "anchor": "services-reference"
-            },
-            {
               "id": "fhir-flow",
               "titleKey": "toc.fhirFlow",
               "anchor": "fhir-flow"
-            },
-            {
-              "id": "technical-overview-detail",
-              "titleKey": "toc.technicalOverviewDetail",
-              "anchor": "technical-overview"
-            },
-            {
-              "id": "ui-components-detail",
-              "titleKey": "toc.uiComponents",
-              "anchor": "ui-components-detail"
-            },
-            {
-              "id": "validation-system",
-              "titleKey": "toc.validationSystem",
-              "anchor": "validation-system"
-            },
-            {
-              "id": "data-flow",
-              "titleKey": "toc.dataFlow",
-              "anchor": "data-flow"
             },
             {
               "id": "fhir-resources",
@@ -152,26 +90,9 @@
               "anchor": "fhir-resources"
             },
             {
-              "id": "services-functionality",
-              "titleKey": "toc.services",
-              "anchor": "services-functionality"
-            },
-            {
-              "id": "authentication",
-              "titleKey": "toc.authentication",
-              "anchor": "authentication"
-            },
-            {
-              "id": "unknown-patient",
-              "titleKey": "toc.unknownPatient",
-              "anchor": "unknown-patient"
-            }
-          ],
-          "subSections": [
-            {
-              "id": "architecture-technical",
-              "file": "architecture-technical",
-              "containerId": "architecture-technical-container"
+              "id": "data-flow",
+              "titleKey": "toc.dataFlow",
+              "anchor": "data-flow"
             }
           ]
         },
@@ -198,19 +119,7 @@
           "priority": "high",
           "children": [
             { "id": "ai-introduction", "titleKey": "toc.aiIntroduction", "anchor": "introduction" },
-            { "id": "ai-architecture", "titleKey": "toc.aiArchitecture", "anchor": "architecture" },
-            { "id": "ai-features", "titleKey": "toc.aiFeatures", "anchor": "features" }
-          ]
-        },
-        {
-          "id": "ai-chatbot-components",
-          "titleKey": "toc.aiChatbotComponents",
-          "file": "ai-chatbot-components",
-          "priority": "medium",
-          "children": [
-            { "id": "ai-components-overview", "titleKey": "toc.aiComponentsOverview", "anchor": "components-overview" },
-            { "id": "ai-state-management", "titleKey": "toc.aiStateManagement", "anchor": "state-management" },
-            { "id": "ai-hooks", "titleKey": "toc.aiHooks", "anchor": "hooks" }
+            { "id": "ai-features", "titleKey": "toc.aiFeatures", "anchor": "ai-user-features" }
           ]
         },
         {
@@ -219,9 +128,7 @@
           "file": "ai-chatbot-integration",
           "priority": "medium",
           "children": [
-            { "id": "ai-services", "titleKey": "toc.aiServices", "anchor": "services" },
             { "id": "ai-fhir", "titleKey": "toc.aiFhir", "anchor": "fhir" },
-            { "id": "ai-flowise", "titleKey": "toc.aiFlowise", "anchor": "flowise" },
             { "id": "ai-backend", "titleKey": "toc.aiBackend", "anchor": "backend" }
           ]
         }

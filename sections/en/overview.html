@@ -5,21 +5,21 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
     </div>
-    <h2><span class="doc-section-number">2</span> Overview</h2>
+    <h2>Overview</h2>
   </div>
 
   <p>The Patient Registration module is a <strong>central component of the MediMind EMR system</strong> that allows you to:</p>
 
   <ul class="doc-list">
     <li><strong>Search patients</strong> using unified hero search with keyboard shortcuts (Cmd/Ctrl+K)</li>
-    <li><strong>Register new patients</strong> with comprehensive data collection across 8 form sections</li>
+    <li><strong>Register new patients</strong> with comprehensive data collection across 9 form sections</li>
     <li><strong>Create visits</strong> optionally as part of patient registration</li>
     <li><strong>View today's appointments</strong> and recent patients in the desktop sidebar</li>
     <li><strong>Upload documents</strong> including guarantee letters with attachments</li>
     <li><strong>Auto-save drafts</strong> to prevent data loss during registration</li>
   </ul>
 
-  <p>The module is designed for <strong>reception staff</strong> and <strong>medical registrars</strong>, with a responsive interface that adapts to desktop and mobile devices.</p>
+  <p>The module is designed for <strong>registration staff</strong>, with a responsive interface that adapts to desktop and mobile devices.</p>
 
   <!-- Screenshot -->
   <div class="doc-screenshot-full" id="main-screenshot">
@@ -36,11 +36,11 @@
   <h3 id="statistics">Quick Statistics</h3>
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">60+</span>
+      <span class="doc-stat-inline-number">120+</span>
       <span class="doc-stat-inline-label">Fields</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">8</span>
+      <span class="doc-stat-inline-number">9</span>
       <span class="doc-stat-inline-label">Form Sections</span>
     </div>
     <div class="doc-stat-inline">
@@ -50,10 +50,6 @@
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
       <span class="doc-stat-inline-label">Visit Types</span>
-    </div>
-    <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">5</span>
-      <span class="doc-stat-inline-label">FHIR Resources</span>
     </div>
   </div>
 
@@ -70,7 +66,6 @@
         Hero Search
       </div>
       <div class="doc-zone-content">
-        <p><strong>UnifiedPatientSearch</strong></p>
         <p>Quick search by name or ID</p>
         <p>Keyboard shortcut: Cmd/Ctrl+K</p>
         <p>Advanced filters panel</p>
@@ -84,7 +79,7 @@
         Unified Form
       </div>
       <div class="doc-zone-content">
-        <p><strong>8 Collapsible Sections</strong></p>
+        <p><strong>9 Collapsible Sections</strong></p>
         <p>Patient data entry</p>
         <p>Optional visit creation</p>
         <p>Draft auto-save</p>
@@ -125,7 +120,7 @@
         </svg>
       </div>
       <div class="doc-feature-title">Patient Lookup</div>
-      <div class="doc-feature-desc">11-digit personal ID lookup with real-time validation and patient card display</div>
+      <div class="doc-feature-desc">Personal ID lookup with real-time validation and patient card display</div>
     </div>
     <div class="doc-feature-card">
       <div class="doc-feature-icon">
@@ -134,7 +129,7 @@
         </svg>
       </div>
       <div class="doc-feature-title">Draft Auto-Save</div>
-      <div class="doc-feature-desc">localStorage persistence with 1-second debounce prevents data loss</div>
+      <div class="doc-feature-desc">Automatically saves your work to prevent data loss during registration</div>
     </div>
     <div class="doc-feature-card">
       <div class="doc-feature-icon">
@@ -163,31 +158,50 @@
       <div class="doc-feature-title">Today's Visits</div>
       <div class="doc-feature-desc">Desktop sidebar showing current day's encounters with status badges</div>
     </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Unknown Patient</div>
+      <div class="doc-feature-desc">Register emergency patients without personal ID using auto-generated identifiers</div>
+    </div>
   </div>
 
-  <!-- Architecture Preview -->
-  <h3 id="architecture-preview">Component Architecture</h3>
-  <p>The registration module uses a modern React component architecture:</p>
+  <!-- Workflow Overview -->
+  <h3 id="workflow-overview">Workflow Overview</h3>
+  <p>A typical patient registration follows these steps:</p>
 
-  <div class="doc-code-block">
-    <pre><code>UnifiedRegistrationView
-├── UnifiedPatientSearch (Hero)
-│   ├── Quick search input
-│   ├── Advanced filters panel
-│   └── Search results with dual actions
-├── UnifiedPatientRegistrationForm (Desktop)
-│   ├── PatientLookupSection
-│   ├── PersonalInformation
-│   ├── ContactInformation
-│   ├── AdditionalDetails
-│   ├── GuardianSection
-│   ├── RegistrationSection (optional)
-│   ├── InsuranceSection
-│   └── GuaranteeSection
-├── UnifiedRegistrationWizard (Mobile)
-│   └── 5-step wizard
-└── Desktop Sidebar
-    ├── Today's Visits
-    └── Recent Patients</code></pre>
+  <div class="doc-wizard-steps">
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">1</div>
+      <div>
+        <div class="doc-wizard-step-label">Search</div>
+        <div class="doc-wizard-step-desc">Look up patient by personal ID or name using hero search or advanced filters</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">2</div>
+      <div>
+        <div class="doc-wizard-step-label">Fill Form</div>
+        <div class="doc-wizard-step-desc">Enter patient data across 9 collapsible sections (auto-filled if patient exists)</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">3</div>
+      <div>
+        <div class="doc-wizard-step-label">Visit Details</div>
+        <div class="doc-wizard-step-desc">Optionally enable visit creation to add visit type, insurance, and guarantee</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">4</div>
+      <div>
+        <div class="doc-wizard-step-label">Submit</div>
+        <div class="doc-wizard-step-desc">System creates FHIR resources (Patient, Encounter, Coverage) and redirects to patient record</div>
+      </div>
+    </div>
   </div>
+
 </section>

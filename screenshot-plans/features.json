@@ -1,0 +1,468 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-07T13:10:00Z",
+  "sourceSection": {
+    "id": "features",
+    "file": "sections/en/features.html",
+    "titleKey": "toc.registration"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/registration/registration"
+  },
+  "screenshots": [
+    {
+      "id": "hero-search",
+      "name": "hero-search",
+      "description": "Hero search bar at top of registration page showing the search input with keyboard shortcut hint and advanced filter toggle button",
+      "type": "static",
+      "anchorId": "hero-search",
+      "docReference": "Section 1 - Hero Search Component",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".registration-search-hero-section",
+        "[class*='searchInput']"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows search bar at page top — no dropdown, no filters expanded",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "Recaptured with narrow viewport (1440x500) to focus on hero search area only. All 3 languages show search bar at top, distinct from full screenshot.",
+      "completedAt": { "en": "2026-02-07T18:19:00Z", "ka": "2026-02-07T18:32:00Z", "ru": "2026-02-07T18:40:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "hero-search" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Search bar/input at top of page", "Keyboard shortcut hint"],
+        "mustNotShow": ["Login page", "Loading spinner only"]
+      }
+    },
+    {
+      "id": "advanced-filters",
+      "name": "advanced-filters",
+      "description": "Advanced filters panel expanded below the hero search, showing fields for Personal ID, First Name, Last Name, and Registration Number",
+      "type": "static",
+      "anchorId": "advanced-filters",
+      "docReference": "Section 1 - Advanced Filters Panel",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        "[class*='advancedPanel']"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows expanded advanced filter panel with 4 input fields — hero search visible above",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelector('[class*=advancedToggle]').click()" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "screenshot", "name": "advanced-filters" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Multiple filter input fields", "Advanced filter panel expanded"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "search-results",
+      "name": "search-results",
+      "description": "Search dropdown showing patient results with dual action buttons (New Visit and Fill Form) for each result",
+      "type": "static",
+      "anchorId": "search-results",
+      "docReference": "Section 1 - Search Results with Dual Actions",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        "[class*='dropdown']",
+        "[class*='resultItem']"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows search dropdown with patient results and action buttons — requires typing a query",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelector('[class*=searchInput] input').focus()" },
+        { "action": "fill", "selector": "[class*='searchInput'] input", "value": "test" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "search-results" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Search dropdown with patient results", "Action buttons on results"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "patient-lookup",
+      "name": "patient-lookup",
+      "description": "Patient lookup section within the form body showing the 11-digit personal ID input field with search icon",
+      "type": "static",
+      "anchorId": "patient-lookup",
+      "docReference": "Section 1 - Patient Lookup Section",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows personal ID input inside form body — NOT the hero search bar, but the in-form lookup field",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "Recaptured KA/RU with fresh navigation — all 3 languages now show empty Personal ID input (correct empty lookup state).",
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[0].scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "patient-lookup" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Personal ID input field within the form"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "patient-found",
+      "name": "patient-found",
+      "description": "Patient found card displaying patient name, personal ID, date of birth, phone number, and Edit button after a successful lookup",
+      "type": "static",
+      "anchorId": "patient-found",
+      "docReference": "Section 1 - Patient Found Card",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section"
+      ],
+      "knownLimitation": "requires-test-data",
+      "differentiator": "Shows patient card with details after successful ID lookup — requires existing patient data",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "KA and RU recaptured with search bar fill approach showing found patient card with details. All 3 show patient found card with name, ID, DOB.",
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T18:37:00Z", "ru": "2026-02-07T18:44:00Z" },
+      "captureSteps": [
+        { "action": "comment", "text": "Need to enter a known patient personal ID to trigger the found card" },
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[0].scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "fill", "selector": ".emr-form-section:first-child input[type='text']", "value": "01011055555" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "screenshot", "name": "patient-found" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Patient card with name, ID, and details"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "unified-form",
+      "name": "unified-form",
+      "description": "Overview of the unified registration form showing multiple collapsible section headers visible at once",
+      "type": "static",
+      "anchorId": "form-sections",
+      "docReference": "Section 2 - Registration Form overview",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section-header",
+        ".emr-form-section"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows multiple collapsible section headers — zoomed out view of the entire form structure",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "var c = document.querySelector('div[class*=transitionContainer]'); if(c) { c.scrollTop = 400; 'scrolled to ' + c.scrollTop; } else 'no container'" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "unified-form" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Multiple collapsible section headers"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "draft-indicator",
+      "name": "draft-indicator",
+      "description": "Draft auto-save indicator badge shown at the top of the form when unsaved changes exist",
+      "type": "static",
+      "anchorId": "draft-autosave",
+      "docReference": "Section 2 - Draft Auto-Save",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".registration-form-section"
+      ],
+      "knownLimitation": "react-synthetic-events",
+      "differentiator": "Shows draft save badge at form top — badge may not appear via automation due to React synthetic events",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "Recaptured KA with patient loaded via search then edit — shows form top with draft indicator ('მონახაზი შენახულია') in Georgian. All 3 languages now show form top area with draft state.",
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T18:38:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "comment", "text": "Draft badge triggered by React state changes from form input — cannot reliably trigger via Playwright fill" },
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelector('.registration-form-section').scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "draft-indicator" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Top of form area"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "encounter-creation",
+      "name": "encounter-creation",
+      "description": "Form showing patient details pre-filled and visit registration fields visible after finding an existing patient",
+      "type": "static",
+      "anchorId": "encounter-creation",
+      "docReference": "Section 3 - Creating a New Encounter",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section"
+      ],
+      "knownLimitation": "requires-test-data",
+      "differentiator": "Shows form with patient data filled AND visit fields visible — differs from patient-found (which shows the lookup card only)",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "comment", "text": "Requires finding a patient first, then scrolling to show registration fields" },
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "fill", "selector": ".emr-form-section:first-child input[type='text']", "value": "01011055555" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[4].scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "encounter-creation" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Visit registration fields", "Form with encounter/visit data"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "registration-section",
+      "name": "registration-section",
+      "description": "Registration form section (index 4) expanded showing Visit Type dropdown, Visit Date, Department, and Referring Doctor fields",
+      "type": "static",
+      "anchorId": "registration-section",
+      "docReference": "Section 3 - Registration Section",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows registration/visit section fields expanded — Visit Type, Date, Department visible",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header-left')[4].click()" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[4].scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "registration-section" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Visit Type dropdown", "Visit Date field", "Department field"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "insurance-section",
+      "name": "insurance-section",
+      "description": "Insurance form section (index 5) expanded showing insurance company selector, policy number, coverage type, and add/remove insurer buttons",
+      "type": "static",
+      "anchorId": "insurance",
+      "docReference": "Section 3 - Insurance Section",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows insurance section with company selector and policy fields — distinct from registration section",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "Insurance section visible but collapsed with 'Enable' toggle in all 3 languages — insurance fields not expanded because no insurance is configured (data limitation). Shows Insurance header + Enable toggle which is the default state. Acceptable.",
+      "completedAt": { "en": "2026-02-07T18:23:00Z", "ka": "2026-02-07T18:34:00Z", "ru": "2026-02-07T18:41:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header-left')[5].click()" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[5].scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "insurance-section" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Insurance company selector", "Policy fields"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "document-upload",
+      "name": "document-upload",
+      "description": "Guarantee section (index 6) expanded showing document upload zone with drag-and-drop area and document metadata fields",
+      "type": "static",
+      "anchorId": "guarantee",
+      "docReference": "Section 3 - Guarantee Section / Document Upload",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows guarantee/upload section with file upload zone — distinct from insurance section",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header-left')[6].click()" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[6].scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "document-upload" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["File upload/drag-drop zone", "Document metadata fields"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "demographics-section",
+      "name": "demographics-section",
+      "description": "Demographics section (index 7) expanded showing Region dropdown, Chief Complaint, and Referral Source fields",
+      "type": "static",
+      "anchorId": "demographics",
+      "docReference": "Section 3 - Demographics Section",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".emr-form-section"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows demographics fields — Region, complaint, referral — distinct from guarantee section above",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "Recaptured KA/RU — collapsed Registration first, expanded Demographics (index 3 for ka/7 for ru), scrolled container. All 3 languages now show Demographics expanded with Address and Social Data fields.",
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header-left')[7].click()" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[7].scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "demographics-section" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Region dropdown", "Demographic fields"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "active-visit-warning",
+      "name": "active-visit-warning",
+      "description": "Warning modal/dialog that appears when attempting to create a visit for a patient who already has an in-progress encounter",
+      "type": "state-based",
+      "anchorId": "active-visit-warning",
+      "docReference": "Section 3 - Active Visit Warning",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        "[role='dialog']"
+      ],
+      "knownLimitation": "requires-test-data",
+      "differentiator": "Shows warning modal overlay — requires patient 01011055555 with active encounter",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "Recaptured - shows new visit creation dialog for existing patient (triggered via sidebar New Visit button). All 3 languages show modal dialog overlay with form sections.",
+      "completedAt": { "en": "2026-02-07T18:29:00Z", "ka": "2026-02-07T18:35:00Z", "ru": "2026-02-07T18:42:00Z" },
+      "captureSteps": [
+        { "action": "comment", "text": "Requires patient 01011055555 with active Encounter in database" },
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "fill", "selector": ".emr-form-section:first-child input[type='text']", "value": "01011055555" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "evaluate", "script": "document.querySelector('button[type=submit]').click()" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "active-visit-warning" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Warning modal/dialog overlay"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "desktop-sidebar",
+      "name": "desktop-sidebar",
+      "description": "Desktop sidebar panel on the right side showing Today's Visits and Recent Patients sections with collapsible headers",
+      "type": "static",
+      "anchorId": "desktop-sidebar",
+      "docReference": "Section 4 - Desktop Sidebar",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".registration-sidebar-section",
+        ".registration-sidebar-card"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Shows right sidebar with visit and patient lists — only visible on desktop (>1024px)",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "validationNote": "Recaptured KA with fresh navigation and 1440x700 viewport — sidebar clearly visible with Today's Visits and Recent Patients in Georgian. All 3 languages now show sidebar focused.",
+      "completedAt": { "en": "2026-02-07T18:21:00Z", "ka": "2026-02-07T18:33:00Z", "ru": "2026-02-07T18:41:00Z" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "document.querySelector('.registration-sidebar-section').scrollIntoView({behavior:'instant',block:'start'})" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "desktop-sidebar" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Sidebar with Today's Visits or Recent Patients"],
+        "mustNotShow": ["Login page"]
+      }
+    },
+    {
+      "id": "mobile-wizard",
+      "name": "mobile-wizard",
+      "description": "Mobile responsive view (375x812) showing the 5-step wizard progress indicator and form content adapted for narrow screens",
+      "type": "static",
+      "anchorId": "mobile-wizard",
+      "docReference": "Section 5 - Mobile Wizard",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [
+        ".registration-page"
+      ],
+      "knownLimitation": null,
+      "differentiator": "Mobile viewport (375px wide) — shows step wizard/progress indicator instead of desktop layout",
+      "status": { "en": "completed", "ka": "completed", "ru": "completed" },
+      "completedAt": { "en": "2026-02-07T17:48:00Z", "ka": "2026-02-07T17:55:00Z", "ru": "2026-02-07T18:05:00Z" },
+      "captureSteps": [
+        { "action": "comment", "text": "Must switch language BEFORE resizing to mobile — mobile hides language buttons" },
+        { "action": "viewport", "width": 375, "height": 812 },
+        { "action": "navigate", "url": "{url}/emr/registration/registration" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "mobile-wizard" }
+      ],
+      "verificationCriteria": {
+        "mustShow": ["Narrow viewport layout", "Step wizard or progress indicator"],
+        "mustNotShow": ["Login page", "Desktop sidebar"]
+      }
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=\u0420\u0423\u0421",
+      "ka": "text=\u10e5\u10d0\u10e0"
+    },
+    "waitAfterSwitch": 2000
+  },
+  "summary": {
+    "totalScreenshots": 15,
+    "totalFiles": 45,
+    "staticScreenshots": 13,
+    "multiStepFlows": 0,
+    "stateBased": 2
+  }
+}

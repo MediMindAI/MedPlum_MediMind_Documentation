@@ -16,6 +16,7 @@ const SectionLoader = {
 
   // State
   manifest: null,
+  activeCategory: null,
   loadedSections: new Set(),
   loadingPromises: new Map(),
   observer: null,
@@ -99,7 +100,9 @@ const SectionLoader = {
     }
 
     // Reload sections
-    if (this.useManifest) {
+    if (this.useManifest && this.activeCategory) {
+      await this.loadCategory(this.activeCategory);
+    } else if (this.useManifest) {
       await this._loadInitialSections();
     } else {
       await this.loadAllSections();
@@ -107,35 +110,58 @@ const SectionLoader = {
   },
 
   /**
-   * Load initial high-priority sections
+   * Load initial sections based on current route's category
    */
   _loadInitialSections: async function() {
+    const route = (typeof Router !== 'undefined') ? Router.getCurrentRoute() : null;
+    const categoryId = (route && route.category) || 'platform';
+    await this.loadCategory(categoryId);
+  },
+
+  /**
+   * Load a specific category's sections exclusively
+   */
+  loadCategory: async function(categoryId) {
     const container = document.getElementById('sectionsContainer');
-    if (!container) return;
+    if (!container || !this.manifest) return;
+
+    // Find category in manifest
+    const category = this.manifest.categories.find(c => c.id === categoryId);
+    if (!category) {
+      console.warn('Category not found:', categoryId);
+      return;
+    }
+
+    this.activeCategory = categoryId;
+
+    // Collect unique file names for this category
+    const filesToLoad = new Set();
+    for (const section of category.sections) {
+      if (section.file) filesToLoad.add(section.file);
+    }
 
     // Show loading skeleton
     container.innerHTML = this._createSkeletonHTML();
 
     try {
-      // Get high priority sections or first few sections
-      const highPriority = this.useManifest
-        ? ManifestLoader.getHighPrioritySections()
-        : this.sections.slice(0, 3);
+      // Fetch all files in parallel
+      const fileList = Array.from(filesToLoad);
+      const results = await Promise.all(fileList.map(f => this.fetchSection(f)));
 
-      // Get unique files to load
-      const filesToLoad = new Set();
-      highPriority.forEach(section => {
-        const file = section.file || section;
-        filesToLoad.add(file);
-      });
-
-      // Load in parallel
-      const loadPromises = Array.from(filesToLoad).map(file => this.fetchSection(file));
-      const results = await Promise.all(loadPromises);
-
-      // Build content
+      // Replace container content with category title (only for multi-section categories) + sections
       container.innerHTML = '';
-      results.forEach((html, index) => {
+      if (fileList.length > 1) {
+        const title = (typeof I18n !== 'undefined' && I18n.initialized)
+          ? I18n.t(category.titleKey)
+          : category.titleKey.split('.').pop();
+        const h1 = document.createElement('h1');
+        h1.className = 'chapter-title';
+        h1.setAttribute('data-i18n', category.titleKey);
+        h1.textContent = title;
+        container.appendChild(h1);
+      }
+
+      results.forEach(html => {
         if (html) {
           const wrapper = document.createElement('div');
           wrapper.className = 'section-fade-in';
@@ -144,70 +170,40 @@ const SectionLoader = {
         }
       });
 
-      // Track loaded sections
-      filesToLoad.forEach(file => this.loadedSections.add(file));
+      // Reset loaded sections to only current files
+      this.loadedSections.clear();
+      fileList.forEach(f => this.loadedSections.add(f));
 
-      // Initialize interactive features
+      // Initialize interactive features and sub-sections
       this.initializeInteractiveFeatures();
-
-      // Load sub-sections
       await this.loadSubSections();
 
-      // Preload remaining sections in background
-      this._preloadRemainingSections(Array.from(filesToLoad));
-
     } catch (error) {
-      console.error('Error loading initial sections:', error);
+      console.error('Error loading category:', categoryId, error);
       container.innerHTML = this._createErrorHTML();
     }
   },
 
   /**
-   * Handle route change
+   * Handle route change — swap category if needed, else scroll
    */
   _handleRouteChange: async function(route) {
-    if (!this.useManifest || !route.section) return;
+    if (!this.useManifest) return;
 
-    // Find section info
-    const sectionInfo = Router.findSection(route);
-    if (!sectionInfo || !sectionInfo.section) return;
+    const categoryId = route.category;
+    if (!categoryId) return;
 
-    const file = sectionInfo.section.file;
-    if (!file || this.loadedSections.has(file)) {
-      // Section already loaded, just scroll to anchor
+    if (categoryId !== this.activeCategory) {
+      // Different category — load it
+      await this.loadCategory(categoryId);
+
+      // Scroll to anchor after new content loads
       if (route.anchor) {
-        this._scrollToAnchor(route.anchor);
+        setTimeout(() => this._scrollToAnchor(route.anchor), 300);
       }
-      return;
-    }
-
-    // Load the section
-    await this._loadSectionFile(file);
-
-    // Scroll to anchor if present
-    if (route.anchor) {
-      setTimeout(() => this._scrollToAnchor(route.anchor), 300);
-    }
-  },
-
-  /**
-   * Load a specific section file and append to container
-   */
-  _loadSectionFile: async function(fileName) {
-    const container = document.getElementById('sectionsContainer');
-    if (!container) return;
-
-    const html = await this.fetchSection(fileName);
-    if (html) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'section-fade-in';
-      wrapper.innerHTML = html;
-      container.appendChild(wrapper.firstElementChild || wrapper);
-      this.loadedSections.add(fileName);
-      this.initializeInteractiveFeatures();
-
-      // Load any sub-sections (e.g., architecture-technical into architecture)
-      await this.loadSubSections();
+    } else if (route.anchor) {
+      // Same category — just scroll to anchor
+      this._scrollToAnchor(route.anchor);
     }
   },
 
@@ -361,42 +357,11 @@ const SectionLoader = {
 
   /**
    * Setup intersection observer for lazy loading
+   * Note: Currently sections are preloaded eagerly. Observer kept for future use.
    */
   _setupIntersectionObserver: function() {
-    if (!('IntersectionObserver' in window)) return;
-
-    this.observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const sectionId = entry.target.getAttribute('data-section-id');
-            if (sectionId && !this.loadedSections.has(sectionId)) {
-              this._loadSectionFile(sectionId);
-            }
-          }
-        });
-      },
-      {
-        rootMargin: '100px 0px',
-        threshold: 0.1
-      }
-    );
-  },
-
-  /**
-   * Preload remaining sections in background
-   */
-  _preloadRemainingSections: function(loadedFiles) {
-    const remainingFiles = this.sections.filter(f => !loadedFiles.includes(f));
-
-    // Preload with delay to not block main thread
-    remainingFiles.forEach((file, index) => {
-      setTimeout(() => {
-        if (!this.loadedSections.has(file)) {
-          this.fetchSection(file); // Just cache it
-        }
-      }, 1000 + (index * 500));
-    });
+    // IntersectionObserver available for future lazy-loading implementation
+    // Currently sections are loaded on init and preloaded in background
   },
 
   /**

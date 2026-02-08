@@ -45,12 +45,16 @@ function initMobileNav() {
     }
   });
 
-  // Close nav on window resize to desktop
+  // Close nav on window resize to desktop (debounced)
+  let resizeTimeout;
   window.addEventListener('resize', function() {
-    if (window.innerWidth > 768) {
-      navLinks.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      if (window.innerWidth > 768) {
+        navLinks.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    }, 150);
   });
 }
 

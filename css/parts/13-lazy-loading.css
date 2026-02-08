@@ -203,6 +203,16 @@
   opacity: 0.9;
 }
 
+/* Chapter title shown at top of each category page */
+.chapter-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--emr-primary);
+  margin: 0 0 var(--doc-space-lg) 0;
+  padding-bottom: var(--doc-space-md);
+  border-bottom: 2px solid var(--emr-accent);
+}
+
 /* Fade in animation for loaded content */
 .section-fade-in {
   animation: fadeIn 0.3s ease-out;

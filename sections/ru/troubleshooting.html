@@ -5,7 +5,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
     </div>
-    <h2><span class="doc-section-number">8</span> Устранение неполадок</h2>
+    <h2>Устранение неполадок</h2>
   </div>
 
   <h3 id="common-issues">Распространённые проблемы</h3>
@@ -55,6 +55,42 @@
       <strong>Описание:</strong> Пустой dropdown в секции страхования<br>
       <strong>Причина:</strong> Ресурсы Organization не загружены<br>
       <strong>Решение:</strong> Проверьте интернет-соединение, обновите страницу
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Проблема</span>
+      <span class="error-code-title">Поля опекуна не отображаются</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Описание:</strong> Секция опекуна остается скрытой<br>
+      <strong>Причина:</strong> Дата рождения пациента указывает на возраст 18 лет или старше<br>
+      <strong>Решение:</strong> Секция опекуна отображается только для пациентов младше 18 лет. Проверьте дату рождения.
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Проблема</span>
+      <span class="error-code-title">Секции визита не видны</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Описание:</strong> Секции Регистрация, Страхование, Гарантия и Демография скрыты<br>
+      <strong>Причина:</strong> Переключатель «Создать визит» выключен<br>
+      <strong>Решение:</strong> Включите переключатель в секции Личная информация для отображения полей визита
+    </div>
+  </div>
+
+  <div class="error-code-card">
+    <div class="error-code-header">
+      <span class="error-code-badge">Проблема</span>
+      <span class="error-code-title">Поля неизвестного пациента только для чтения</span>
+    </div>
+    <div class="error-code-solution">
+      <strong>Описание:</strong> Поля имени и личного номера нельзя редактировать<br>
+      <strong>Причина:</strong> Режим Неизвестного пациента автогенерирует эти значения<br>
+      <strong>Решение:</strong> Отключите переключатель Неизвестного пациента для ручного ввода данных
     </div>
   </div>
 

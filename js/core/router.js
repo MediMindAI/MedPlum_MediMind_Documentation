@@ -192,9 +192,13 @@ const Router = {
       }
     });
 
-    // Scroll to anchor if present and not skipping
-    if (!this._skipNextScroll && route.anchor) {
-      this._scrollToAnchor(route.anchor);
+    // Scroll to anchor if present, or scroll to top for category-only routes
+    if (!this._skipNextScroll) {
+      if (route.anchor) {
+        this._scrollToAnchor(route.anchor);
+      } else if (route.category && !route.section) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
     this._skipNextScroll = false;
   },

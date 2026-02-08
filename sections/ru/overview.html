@@ -5,21 +5,21 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
     </div>
-    <h2><span class="doc-section-number">2</span> Обзор</h2>
+    <h2>Обзор</h2>
   </div>
 
   <p>Модуль регистрации пациентов является <strong>центральным компонентом системы MediMind EMR</strong>, который позволяет:</p>
 
   <ul class="doc-list">
     <li><strong>Искать пациентов</strong> с помощью единого поиска с клавиатурными сочетаниями (Cmd/Ctrl+K)</li>
-    <li><strong>Регистрировать новых пациентов</strong> со сбором данных в 8 секциях формы</li>
+    <li><strong>Регистрировать новых пациентов</strong> со сбором данных в 9 секциях формы</li>
     <li><strong>Создавать визиты</strong> опционально как часть регистрации пациента</li>
     <li><strong>Просматривать сегодняшние записи</strong> и недавних пациентов в боковой панели</li>
     <li><strong>Загружать документы</strong> включая гарантийные письма с вложениями</li>
     <li><strong>Автосохранять черновики</strong> для предотвращения потери данных</li>
   </ul>
 
-  <p>Модуль предназначен для <strong>сотрудников ресепшн</strong> и <strong>медицинских регистраторов</strong>, с адаптивным интерфейсом для настольных и мобильных устройств.</p>
+  <p>Модуль предназначен для <strong>регистрационного персонала</strong>, с адаптивным интерфейсом для настольных и мобильных устройств.</p>
 
   <!-- Screenshot -->
   <div class="doc-screenshot-full" id="main-screenshot">
@@ -36,11 +36,11 @@
   <h3 id="statistics">Краткая статистика</h3>
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">60+</span>
+      <span class="doc-stat-inline-number">120+</span>
       <span class="doc-stat-inline-label">полей</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">8</span>
+      <span class="doc-stat-inline-number">9</span>
       <span class="doc-stat-inline-label">секций формы</span>
     </div>
     <div class="doc-stat-inline">
@@ -50,10 +50,6 @@
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
       <span class="doc-stat-inline-label">типа визита</span>
-    </div>
-    <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">5</span>
-      <span class="doc-stat-inline-label">FHIR ресурсов</span>
     </div>
   </div>
 
@@ -70,7 +66,6 @@
         Главный поиск
       </div>
       <div class="doc-zone-content">
-        <p><strong>UnifiedPatientSearch</strong></p>
         <p>Быстрый поиск по имени или ИИН</p>
         <p>Клавиша: Cmd/Ctrl+K</p>
         <p>Панель расширенных фильтров</p>
@@ -84,7 +79,7 @@
         Единая форма
       </div>
       <div class="doc-zone-content">
-        <p><strong>8 сворачиваемых секций</strong></p>
+        <p><strong>9 сворачиваемых секций</strong></p>
         <p>Ввод данных пациента</p>
         <p>Опциональное создание визита</p>
         <p>Автосохранение черновика</p>
@@ -125,7 +120,7 @@
         </svg>
       </div>
       <div class="doc-feature-title">Поиск по ИИН</div>
-      <div class="doc-feature-desc">Поиск по 11-значному личному номеру с валидацией и отображением карточки</div>
+      <div class="doc-feature-desc">Поиск по личному номеру с валидацией и отображением карточки</div>
     </div>
     <div class="doc-feature-card">
       <div class="doc-feature-icon">
@@ -134,7 +129,7 @@
         </svg>
       </div>
       <div class="doc-feature-title">Автосохранение черновика</div>
-      <div class="doc-feature-desc">Сохранение в localStorage с задержкой 1 секунда предотвращает потерю данных</div>
+      <div class="doc-feature-desc">Автоматически сохраняет ваш прогресс по мере заполнения, предотвращая потерю данных</div>
     </div>
     <div class="doc-feature-card">
       <div class="doc-feature-icon">
@@ -163,31 +158,50 @@
       <div class="doc-feature-title">Сегодняшние визиты</div>
       <div class="doc-feature-desc">Боковая панель с записями текущего дня и статусными бейджами</div>
     </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Неизвестный пациент</div>
+      <div class="doc-feature-desc">Регистрация экстренных пациентов без личного номера с автогенерируемыми идентификаторами</div>
+    </div>
   </div>
 
-  <!-- Architecture Preview -->
-  <h3 id="architecture-preview">Архитектура компонентов</h3>
-  <p>Модуль регистрации использует современную архитектуру React-компонентов:</p>
+  <!-- Обзор рабочего процесса -->
+  <h3 id="workflow-overview">Обзор рабочего процесса</h3>
+  <p>Типичная регистрация пациента включает следующие шаги:</p>
 
-  <div class="doc-code-block">
-    <pre><code>UnifiedRegistrationView
-├── UnifiedPatientSearch (Главный)
-│   ├── Быстрый поиск
-│   ├── Панель расширенных фильтров
-│   └── Результаты с двойными действиями
-├── UnifiedPatientRegistrationForm (Десктоп)
-│   ├── PatientLookupSection
-│   ├── PersonalInformation
-│   ├── ContactInformation
-│   ├── AdditionalDetails
-│   ├── GuardianSection
-│   ├── RegistrationSection (опционально)
-│   ├── InsuranceSection
-│   └── GuaranteeSection
-├── UnifiedRegistrationWizard (Мобильный)
-│   └── 5-шаговый мастер
-└── Боковая панель (Десктоп)
-    ├── Сегодняшние визиты
-    └── Недавние пациенты</code></pre>
+  <div class="doc-wizard-steps">
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">1</div>
+      <div>
+        <div class="doc-wizard-step-label">Поиск</div>
+        <div class="doc-wizard-step-desc">Найдите пациента по личному номеру или имени через главный поиск или расширенные фильтры</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">2</div>
+      <div>
+        <div class="doc-wizard-step-label">Заполнение формы</div>
+        <div class="doc-wizard-step-desc">Введите данные пациента в 9 сворачиваемых секциях (автозаполнение если пациент существует)</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">3</div>
+      <div>
+        <div class="doc-wizard-step-label">Детали визита</div>
+        <div class="doc-wizard-step-desc">Опционально включите создание визита для добавления типа визита, страхования и гарантии</div>
+      </div>
+    </div>
+    <div class="doc-wizard-step">
+      <div class="doc-wizard-step-number">4</div>
+      <div>
+        <div class="doc-wizard-step-label">Отправка</div>
+        <div class="doc-wizard-step-desc">Система создает FHIR-ресурсы (Patient, Encounter, Coverage) и перенаправляет на карточку пациента</div>
+      </div>
+    </div>
   </div>
+
 </section>

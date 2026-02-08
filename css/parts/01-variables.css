@@ -7,6 +7,81 @@
    Enhanced CSS Variables
    ================================ */
 :root {
+  /* Primary Colors */
+  --doc-primary: #1a365d;
+  --doc-secondary: #2b6cb0;
+  --doc-accent: #3182ce;
+  --doc-gradient: linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%);
+
+  /* Backgrounds */
+  --doc-bg-page: #f9fafb;
+  --doc-bg-card: #ffffff;
+  --doc-bg-hero: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+  --doc-bg-code: #f3f4f6;
+
+  /* Text Colors */
+  --doc-text-primary: #1f2937;
+  --doc-text-secondary: #6b7280;
+  --doc-text-inverse: #ffffff;
+  --doc-text-muted: #9ca3af;
+
+  /* Borders */
+  --doc-border-color: #e5e7eb;
+  --doc-border-light: #f3f4f6;
+
+  /* Callout Colors */
+  --doc-info-bg: #bee3f8;
+  --doc-info-border: #2b6cb0;
+  --doc-info-text: #1a365d;
+  --doc-tip-bg: #f0fdf4;
+  --doc-tip-border: #22c55e;
+  --doc-tip-text: #166534;
+  --doc-warning-bg: #fffbeb;
+  --doc-warning-border: #f59e0b;
+  --doc-warning-text: #92400e;
+
+  /* Shadows - Standardized profiles */
+  --doc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --doc-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --doc-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --doc-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --doc-shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  --doc-shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --doc-shadow-glow: 0 0 20px rgba(43, 108, 176, 0.3);
+  --doc-shadow-card: 0 4px 20px rgba(26, 54, 93, 0.1);
+  --doc-shadow-button: 0 4px 12px rgba(26, 54, 93, 0.3);
+
+  /* Typography */
+  --doc-font-family: 'BPG Nino Mtavruli', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --doc-font-mono: 'SF Mono', 'Consolas', monospace;
+  --doc-font-xs: 0.75rem;
+  --doc-font-sm: 0.875rem;
+  --doc-font-base: 1rem;
+  --doc-font-lg: 1.125rem;
+  --doc-font-xl: 1.25rem;
+  --doc-font-2xl: 1.5rem;
+  --doc-font-3xl: 1.875rem;
+  --doc-font-4xl: 2.25rem;
+
+  /* Spacing */
+  --doc-space-xs: 0.25rem;
+  --doc-space-sm: 0.5rem;
+  --doc-space-md: 1rem;
+  --doc-space-lg: 1.5rem;
+  --doc-space-xl: 2rem;
+  --doc-space-2xl: 3rem;
+  --doc-space-3xl: 4rem;
+
+  /* Border Radius */
+  --doc-radius-sm: 6px;
+  --doc-radius-md: 8px;
+  --doc-radius-lg: 12px;
+  --doc-radius-xl: 16px;
+
+  /* Transitions */
+  --doc-transition: all 0.2s ease;
+  --doc-transition-slow: all 0.3s ease;
+
   /* Glow Colors */
   --glow-primary: rgba(43, 108, 176, 0.5);
   --glow-secondary: rgba(43, 108, 176, 0.4);

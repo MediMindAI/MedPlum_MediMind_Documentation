@@ -1,7 +1,7 @@
 ---
 name: screenshot-planner
 description: "Use this agent when you need to analyze documentation sections and generate screenshot capture plans for the medimind-doc-writer. This agent reads documentation HTML, identifies UI components and user flows described, and outputs structured JSON plans specifying exactly what screenshots to capture, including multi-step flows and state-based screenshots.\n\nExamples:\n\n<example>\nContext: User wants to plan screenshots for a documentation section.\nuser: \"Plan screenshots for the features section\"\nassistant: \"I'll use the screenshot-planner agent to analyze the features documentation and generate a capture plan.\"\n<Task tool call to launch screenshot-planner agent>\n</example>\n\n<example>\nContext: User wants to audit existing documentation for missing screenshots.\nuser: \"Check what screenshots are needed for overview\"\nassistant: \"I'll launch the screenshot-planner agent to analyze the overview section and identify any missing screenshots.\"\n<Task tool call to launch screenshot-planner agent>\n</example>\n\n<example>\nContext: User is preparing to document a new feature.\nuser: \"I need to capture screenshots for the patient lookup flow\"\nassistant: \"I'll use the screenshot-planner agent to create a detailed capture plan for the patient lookup flow, including all intermediate states.\"\n<Task tool call to launch screenshot-planner agent>\n</example>"
-model: sonnet
+model: opus
 color: blue
 memory: project
 ---

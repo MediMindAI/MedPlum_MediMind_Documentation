@@ -1,6 +1,43 @@
 // Page-specific JavaScript for Registration Documentation
 console.log('page.js loaded');
 
+// Utility: Throttle function to limit execution rate
+function throttle(func, limit) {
+  let inThrottle;
+  return function(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+
+// Utility: Debounce function to delay execution
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+// Event listener tracking for cleanup
+const trackedListeners = [];
+function addTrackedListener(target, event, handler, options) {
+  target.addEventListener(event, handler, options);
+  trackedListeners.push({ target, event, handler, options });
+}
+
+// Cleanup function for page unload
+function cleanupListeners() {
+  trackedListeners.forEach(({ target, event, handler, options }) => {
+    target.removeEventListener(event, handler, options);
+  });
+  trackedListeners.length = 0;
+}
+window.addEventListener('beforeunload', cleanupListeners);
+
 // Initialize Mermaid with Premium Dark Theme
 mermaid.initialize({
   startOnLoad: true,
@@ -234,13 +271,108 @@ searchModal.addEventListener('click', (e) => {
   if (e.target === searchModal) closeSearch();
 });
 
-// Progress bar
-window.addEventListener('scroll', function() {
+// Consolidated scroll handler (throttled for performance)
+function updateProgressBar() {
   const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
   const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
   const scrolled = (winScroll / height) * 100;
-  document.getElementById('progressBar').style.width = scrolled + '%';
-});
+  const progressBar = document.getElementById('progressBar');
+  if (progressBar) progressBar.style.width = scrolled + '%';
+}
+
+function updateBackToTopVisibility() {
+  const backToTopBtn = document.getElementById('backToTop');
+  if (!backToTopBtn) return;
+  if (window.scrollY > 300) {
+    backToTopBtn.classList.add('visible');
+  } else {
+    backToTopBtn.classList.remove('visible');
+  }
+}
+
+// Track previous category to detect section changes
+let previousCategory = null;
+
+// Scroll spy suppression: after TOC click, ignore scroll events briefly
+let scrollSpySuppressed = false;
+function suppressScrollSpy(ms) {
+  scrollSpySuppressed = true;
+  setTimeout(() => { scrollSpySuppressed = false; }, ms || 800);
+}
+window.suppressScrollSpy = suppressScrollSpy;
+
+function updateActiveNavLink() {
+  if (scrollSpySuppressed) return;
+
+  const sections = window.documentSections || document.querySelectorAll('section[id], h3[id], h4[id]');
+  let current = '';
+
+  // Use getBoundingClientRect for accurate position with dynamic content
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= 120) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  // Remove all active states and aria-current
+  document.querySelectorAll('.toc-item.active, .toc-link.active').forEach(el => {
+    el.classList.remove('active');
+    if (el.classList.contains('toc-link')) {
+      el.removeAttribute('aria-current');
+    }
+  });
+
+  if (!current) return;
+
+  // Find TOC item by data-section attribute
+  const tocItem = document.querySelector(`.toc-item[data-section="${current}"]`);
+  if (!tocItem) return;
+
+  // Find the top-level category for this item
+  const category = tocItem.closest('.toc-item[data-category]');
+  const categoryId = category?.getAttribute('data-category');
+
+  // If category changed, collapse all sections first
+  if (categoryId && categoryId !== previousCategory) {
+    document.querySelectorAll('.toc-item.open').forEach(item => {
+      item.classList.remove('open');
+    });
+    previousCategory = categoryId;
+  }
+
+  // Add active state
+  tocItem.classList.add('active');
+  const link = tocItem.querySelector('.toc-link');
+  if (link) {
+    link.classList.add('active');
+    link.setAttribute('aria-current', 'true');
+  }
+
+  // Open parent items (path to active item)
+  let parent = tocItem.parentElement;
+  while (parent) {
+    if (parent.classList.contains('toc-item')) {
+      parent.classList.add('open');
+    }
+    parent = parent.parentElement;
+  }
+
+  // Auto-scroll sidebar to keep active item visible
+  const sidebar = document.querySelector('.toc-tree');
+  if (sidebar && link) {
+    link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// Single consolidated scroll handler
+const handleScroll = throttle(function() {
+  updateProgressBar();
+  updateBackToTopVisibility();
+  updateActiveNavLink();
+}, 100);
+
+addTrackedListener(window, 'scroll', handleScroll, { passive: true });
 
 // Sidebar toggle
 const sidebarToggle = document.getElementById('sidebarToggle');
@@ -266,19 +398,13 @@ if (sidebarOverlay) {
   });
 }
 
-// Back to top
+// Back to top click handler
 const backToTop = document.getElementById('backToTop');
-window.addEventListener('scroll', function() {
-  if (window.scrollY > 300) {
-    backToTop.classList.add('visible');
-  } else {
-    backToTop.classList.remove('visible');
-  }
-});
-
-backToTop.addEventListener('click', function() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+if (backToTop) {
+  backToTop.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
 
 // TOC Toggle Function
 function toggleTocItem(button) {
@@ -291,26 +417,7 @@ window.openSearch = openSearch;
 window.closeSearch = closeSearch;
 window.toggleZoom = toggleZoom;
 
-// Active nav link
-const sections = document.querySelectorAll('section[id], h3[id], h4[id]');
-const navLinks = document.querySelectorAll('.toc-link');
-
-window.addEventListener('scroll', function() {
-  let current = '';
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop;
-    if (scrollY >= sectionTop - 100) {
-      current = section.getAttribute('id');
-    }
-  });
-
-  navLinks.forEach(link => {
-    link.classList.remove('active');
-    if (link.getAttribute('href') === '#' + current) {
-      link.classList.add('active');
-    }
-  });
-});
+// Active nav link - sections cached for scroll spy (updated by section-loader)
 
 // Smooth scroll - delegate to router when available
 function handleAnchorClick(e) {

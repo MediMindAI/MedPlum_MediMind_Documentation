@@ -5,14 +5,16 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
       </svg>
     </div>
-    <h2><span class="doc-section-number">2</span> Features</h2>
+    <h2>Features</h2>
   </div>
 
+  <p><strong>Patient</strong> refers to the permanent medical record, while a <strong>Visit</strong> (encounter) represents a single hospital interaction. You can register a patient on its own, or register a patient and create a visit at the same time.</p>
+
   <!-- ========================== -->
-  <!-- 2.1 Patient Search System -->
+  <!-- 1. Finding a Patient -->
   <!-- ========================== -->
-  <h3 id="search">2.1 Patient Search System</h3>
-  <p>The registration module features a powerful <strong>UnifiedPatientSearch</strong> component that serves as the primary way to find existing patients.</p>
+  <h3 id="search">1. Finding a Patient</h3>
+  <p>The registration module features a powerful search system that serves as the primary way to find existing patients.</p>
 
   <!-- Hero Search -->
   <h4 id="hero-search">Hero Search Component</h4>
@@ -70,7 +72,7 @@
   </div>
 
   <ul class="doc-list">
-    <li><strong>Personal ID</strong> - 11-digit Georgian personal number</li>
+    <li><strong>Personal ID</strong> - Personal ID number (or passport number for foreign nationals)</li>
     <li><strong>First Name</strong> - Patient's given name</li>
     <li><strong>Last Name</strong> - Patient's family name</li>
     <li><strong>Registration Number</strong> - Internal EMR registration number</li>
@@ -88,7 +90,7 @@
 
   <div class="doc-action-cards">
     <div class="doc-action-card">
-      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
@@ -113,7 +115,7 @@
 
   <!-- Patient Lookup Section -->
   <h4 id="patient-lookup">Patient Lookup Section</h4>
-  <p>Within the form, the <strong>PatientLookupSection</strong> provides a dedicated field for looking up patients by their 11-digit personal ID:</p>
+  <p>Within the form, a dedicated field lets you look up patients by their personal ID:</p>
 
   <div class="doc-screenshot-full">
     <img src="images/patient-lookup-en.png" alt="Patient Lookup Section" class="doc-screenshot-image" data-i18n-img="patient-lookup">
@@ -128,11 +130,10 @@
     <div class="doc-info-content">
       <strong>How Patient Lookup Works:</strong>
       <ul>
-        <li>Enter an 11-digit personal ID</li>
-        <li>System searches with 300ms debounce</li>
-        <li>If found: displays patient card with name, DOB, visit count</li>
+        <li>Enter the patient's personal ID</li>
+        <li>The system searches automatically as you type</li>
+        <li>If found: displays patient card with name, date of birth, and visit count</li>
         <li>If not found: allows new patient registration</li>
-        <li>When patient found: form sections auto-collapse</li>
       </ul>
     </div>
   </div>
@@ -145,23 +146,45 @@
     <img src="images/patient-found-en.png" alt="Patient Found Card" class="doc-screenshot-image" data-i18n-img="patient-found">
   </div>
 
+  <!-- Duplicate Detection -->
+  <h4 id="duplicate-detection">Duplicate Detection</h4>
+  <p>If you attempt to register a patient with a personal ID that already exists in the system, a duplicate detection modal appears:</p>
+
+  <ul class="doc-list">
+    <li><strong>Automatic check</strong> - Triggered when personal ID is entered and matches an existing record</li>
+    <li><strong>Patient card preview</strong> - Shows the existing patient's name, DOB, and visit history</li>
+    <li><strong>Options</strong> - View existing patient, fill form with their data, or proceed with new registration</li>
+  </ul>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Preventing Duplicates:</strong>
+      <p>The system uses the 11-digit Georgian personal ID as a unique identifier. When a match is found, you are encouraged to use the existing record rather than creating a duplicate.</p>
+    </div>
+  </div>
+
   <!-- ========================== -->
-  <!-- 2.2 Unified Registration Form -->
+  <!-- 2. Registration Form -->
   <!-- ========================== -->
-  <h3 id="form-sections">2.2 Unified Registration Form</h3>
-  <p>The registration form is organized into <strong>8 collapsible sections</strong>. Each section can be expanded or collapsed to focus on relevant fields.</p>
+  <h3 id="form-sections">2. Registration Form</h3>
+  <p>The registration form is organized into <strong>9 collapsible sections</strong>. Each section can be expanded or collapsed to focus on relevant fields.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/unified-form-en.png" alt="Unified Registration Form" class="doc-screenshot-image" data-i18n-img="unified-form">
   </div>
 
-  <!-- 8 Form Sections Grid -->
+  <!-- 9 Form Sections Grid -->
   <div class="doc-form-sections-grid-8">
     <div class="doc-form-section-card">
       <div class="doc-form-section-number">1</div>
       <div class="doc-form-section-content">
         <div class="doc-form-section-title">Patient Lookup</div>
-        <div class="doc-form-section-desc">11-digit ID search with patient card</div>
+        <div class="doc-form-section-desc">Personal ID search with patient card</div>
       </div>
     </div>
     <div class="doc-form-section-card">
@@ -213,6 +236,208 @@
         <div class="doc-form-section-desc">Letters with document upload</div>
       </div>
     </div>
+    <div class="doc-form-section-card">
+      <div class="doc-form-section-number">9</div>
+      <div class="doc-form-section-content">
+        <div class="doc-form-section-title">Demographics</div>
+        <div class="doc-form-section-desc">Region, complaint, referral source</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Information -->
+  <h4 id="personal-information">Personal Information Section</h4>
+  <p>The core patient data fields collected in this section:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Required</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>First Name</strong></td>
+          <td>Text</td>
+          <td>Yes</td>
+          <td>Patient's given name</td>
+        </tr>
+        <tr>
+          <td><strong>Last Name</strong></td>
+          <td>Text</td>
+          <td>Yes</td>
+          <td>Patient's family name</td>
+        </tr>
+        <tr>
+          <td><strong>Gender</strong></td>
+          <td>Select</td>
+          <td>Yes</td>
+          <td>Male / Female / Other / Unknown</td>
+        </tr>
+        <tr>
+          <td><strong>Date of Birth</strong></td>
+          <td>Date</td>
+          <td>Yes</td>
+          <td>Must be in the past</td>
+        </tr>
+        <tr>
+          <td><strong>Create Visit</strong></td>
+          <td>Toggle</td>
+          <td>No</td>
+          <td>Shows/hides visit-related sections</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Unknown Patient -->
+  <h4 id="unknown-patient">Unknown Patient Mode</h4>
+  <p>For emergency situations where a patient's identity cannot be established, the <strong>Unknown Patient</strong> toggle allows registration without a personal ID:</p>
+
+  <ul class="doc-list">
+    <li><strong>Toggle location</strong> - Available in the Patient Lookup section</li>
+    <li><strong>Auto-generated name</strong> - System assigns a temporary name (e.g., "Unknown Patient #12345")</li>
+    <li><strong>Auto-generated ID</strong> - A temporary personal ID is created automatically</li>
+    <li><strong>Later identification</strong> - Record can be updated when patient identity is confirmed</li>
+  </ul>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>When to use Unknown Patient:</strong>
+      <ul>
+        <li>Emergency admissions where patient is unconscious or unable to communicate</li>
+        <li>Temporary registration pending identity verification</li>
+        <li>Foreign nationals without Georgian personal ID (before passport entry)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Contact Information -->
+  <h4 id="contact-information">Contact Information Section</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Required</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Phone Number</strong></td>
+          <td>Tel</td>
+          <td>No</td>
+          <td>Format: +995XXXXXXXXX</td>
+        </tr>
+        <tr>
+          <td><strong>Email</strong></td>
+          <td>Email</td>
+          <td>No</td>
+          <td>Standard email format</td>
+        </tr>
+        <tr>
+          <td><strong>Address</strong></td>
+          <td>Text</td>
+          <td>No</td>
+          <td>Full residential address</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Additional Details -->
+  <h4 id="additional-details">Additional Details Section</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Required</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Citizenship</strong></td>
+          <td>Select</td>
+          <td>No</td>
+          <td>Country of citizenship</td>
+        </tr>
+        <tr>
+          <td><strong>Marital Status</strong></td>
+          <td>Select</td>
+          <td>No</td>
+          <td>Single, Married, Divorced, Widowed</td>
+        </tr>
+        <tr>
+          <td><strong>Workplace</strong></td>
+          <td>Text</td>
+          <td>No</td>
+          <td>Current employer or occupation</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Guardian -->
+  <h4 id="guardian">Guardian / Representative Section</h4>
+  <p>Required when the patient is under 18 years old. The system auto-detects this based on the date of birth.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Required</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Guardian First Name</strong></td>
+          <td>Text</td>
+          <td>Yes*</td>
+          <td>*Required for minors</td>
+        </tr>
+        <tr>
+          <td><strong>Guardian Last Name</strong></td>
+          <td>Text</td>
+          <td>Yes*</td>
+          <td>*Required for minors</td>
+        </tr>
+        <tr>
+          <td><strong>Guardian Personal ID</strong></td>
+          <td>Text</td>
+          <td>Yes*</td>
+          <td>11-digit personal ID</td>
+        </tr>
+        <tr>
+          <td><strong>Relationship</strong></td>
+          <td>Select</td>
+          <td>Yes*</td>
+          <td>Parent, Legal Guardian, etc.</td>
+        </tr>
+        <tr>
+          <td><strong>Guardian Phone</strong></td>
+          <td>Tel</td>
+          <td>No</td>
+          <td>Contact number</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- createVisit Toggle -->
@@ -226,7 +451,7 @@
       </svg>
       <div>
         <strong>Create Visit: ON</strong>
-        <p>Patient + Visit created together. Registration, Insurance, and Guarantee sections visible.</p>
+        <p>Patient + Visit created together. Registration, Insurance, Guarantee, and Demographics sections visible.</p>
       </div>
     </div>
     <div class="doc-toggle-option">
@@ -238,6 +463,39 @@
         <p>Patient only created. Visit-related sections hidden.</p>
       </div>
     </div>
+  </div>
+
+  <!-- Draft Auto-Save -->
+  <h4 id="draft-autosave">Draft Auto-Save</h4>
+  <p>The form automatically saves your progress as you type:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/draft-indicator-en.png" alt="Draft Save Indicator" class="doc-screenshot-image" data-i18n-img="draft-indicator">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Auto-Save Interval</strong></td>
+          <td>1-second debounce after any field change</td>
+        </tr>
+        <tr>
+          <td><strong>Draft Indicator</strong></td>
+          <td>Shows "Draft saved" badge when unsaved changes exist</td>
+        </tr>
+        <tr>
+          <td><strong>Clear Draft</strong></td>
+          <td>Button to discard saved draft and reset form</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- Registration Flow Diagram -->
@@ -269,54 +527,116 @@ flowchart TD
     </div>
   </div>
 
-  <!-- Draft Auto-Save -->
-  <h4 id="draft-autosave">Draft Auto-Save</h4>
-  <p>The form automatically saves your progress to localStorage:</p>
+  <!-- ========================== -->
+  <!-- 3. Visit Details -->
+  <!-- ========================== -->
+  <h3 id="visit-management">3. Visit Details</h3>
+  <p>When the visit creation option is enabled, visit-related sections become available in the form:</p>
+
+  <!-- Encounter Creation -->
+  <h4 id="encounter-creation">Creating a New Encounter</h4>
+  <p>After finding an existing patient, the form shows their details and the visit registration fields for creating a new encounter:</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/draft-indicator-en.png" alt="Draft Save Indicator" class="doc-screenshot-image" data-i18n-img="draft-indicator">
+    <img src="images/encounter-creation-en.png" alt="Encounter Creation" class="doc-screenshot-image" data-i18n-img="encounter-creation">
+  </div>
+
+  <!-- Registration Section -->
+  <h4 id="registration-section">Registration Section</h4>
+  <div class="doc-screenshot-full">
+    <img src="images/registration-section-en.png" alt="Registration Section" class="doc-screenshot-image" data-i18n-img="registration-section">
   </div>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Feature</th>
-          <th>Behavior</th>
+          <th>Field</th>
+          <th>Description</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Auto-Save Interval</strong></td>
-          <td>1-second debounce after any field change</td>
+          <td><strong>Visit Type</strong></td>
+          <td>Outpatient, Inpatient, or Emergency</td>
         </tr>
         <tr>
-          <td><strong>Draft Indicator</strong></td>
-          <td>Shows "Draft saved" badge when unsaved changes exist</td>
+          <td><strong>Visit Date</strong></td>
+          <td>Date of the visit</td>
         </tr>
         <tr>
-          <td><strong>Clear Draft</strong></td>
-          <td>Button to discard saved draft and reset form</td>
+          <td><strong>Department</strong></td>
+          <td>Target department/service</td>
         </tr>
         <tr>
-          <td><strong>Storage Key</strong></td>
-          <td><code>medimind-registration-draft</code></td>
+          <td><strong>Referring Doctor</strong></td>
+          <td>Doctor who referred the patient (optional)</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- ========================== -->
-  <!-- 2.3 Document Upload -->
-  <!-- ========================== -->
-  <h3 id="document-upload">2.3 Document Upload</h3>
-  <p>The Guarantee section includes a document upload feature for attaching guarantee letters and supporting documents:</p>
+  <!-- Visit Types -->
+  <h4 id="visit-types">Visit Types</h4>
+  <p>The system supports three visit types, each with different workflows:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>FHIR Code</th>
+          <th>Description</th>
+          <th>Conditional Fields</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Outpatient</strong></td>
+          <td><code>AMB</code></td>
+          <td>Scheduled or walk-in visit, patient returns home same day</td>
+          <td>Department, Referring Doctor</td>
+        </tr>
+        <tr>
+          <td><strong>Inpatient</strong></td>
+          <td><code>PLAN_STAT</code></td>
+          <td>Planned hospital admission for treatment or surgery</td>
+          <td>Department, Bed assignment, Expected duration</td>
+        </tr>
+        <tr>
+          <td><strong>Emergency</strong></td>
+          <td><code>EMER_STAT</code></td>
+          <td>Urgent unplanned admission via emergency department</td>
+          <td>Department, Triage level</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Insurance Section -->
+  <h4 id="insurance">Insurance Section</h4>
+  <p>Add up to <strong>3 insurance companies</strong> per visit:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/insurance-section-en.png" alt="Insurance Section" class="doc-screenshot-image" data-i18n-img="insurance-section">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Insurance Company</strong> - Select from registered insurers</li>
+    <li><strong>Policy Number</strong> - Patient's policy number</li>
+    <li><strong>Coverage Type</strong> - Full, partial, or specific coverage</li>
+    <li><strong>Add/Remove Buttons</strong> - Manage multiple insurers</li>
+  </ul>
+
+  <!-- Guarantee & Document Upload -->
+  <h4 id="guarantee">Guarantee Section</h4>
+  <p>The Guarantee section includes document upload for attaching guarantee letters and supporting documents:</p>
 
   <div class="doc-screenshot-full">
     <img src="images/document-upload-en.png" alt="Document Upload" class="doc-screenshot-image" data-i18n-img="document-upload">
   </div>
 
-  <h4 id="upload-features">Upload Features</h4>
+  <h5 id="document-upload">Document Upload Features</h5>
   <ul class="doc-list">
     <li><strong>Drag & Drop</strong> - Drag files directly onto the upload zone</li>
     <li><strong>Click to Browse</strong> - Click the zone to open file picker</li>
@@ -325,7 +645,6 @@ flowchart TD
     <li><strong>Document Metadata</strong> - Name, date, author, document number</li>
   </ul>
 
-  <h4 id="document-fields">Document Fields</h4>
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
@@ -365,25 +684,49 @@ flowchart TD
     </table>
   </div>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">
+  <!-- Demographics -->
+  <h4 id="demographics">Demographics Section</h4>
+  <p>Additional demographic data collected during visit registration:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/demographics-section-en.png" alt="Demographics Section" class="doc-screenshot-image" data-i18n-img="demographics-section">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Region</strong> - Patient's residential region</li>
+    <li><strong>Chief Complaint</strong> - Primary reason for visit</li>
+    <li><strong>Referral Source</strong> - How patient was referred</li>
+  </ul>
+
+  <!-- Active Visit Warning -->
+  <h4 id="active-visit-warning">Active Visit Warning</h4>
+  <p>If a patient already has an in-progress visit, a warning modal appears:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/active-visit-warning-en.png" alt="Active Visit Warning" class="doc-screenshot-image" data-i18n-img="active-visit-warning">
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
       </svg>
     </div>
-    <div class="doc-info-content">
-      <strong>FHIR Resources Created:</strong>
+    <div class="doc-warning-content">
+      <strong>Active Visit Detection:</strong>
+      <p>The system prevents duplicate encounters by detecting in-progress visits. You can choose to:</p>
       <ul>
-        <li><strong>Binary</strong> - Stores the actual file content</li>
-        <li><strong>DocumentReference</strong> - Contains metadata and links to Binary</li>
+        <li>View the existing active visit</li>
+        <li>Create a new visit anyway (with confirmation)</li>
+        <li>Cancel and return to the form</li>
       </ul>
     </div>
   </div>
 
   <!-- ========================== -->
-  <!-- 2.4 Desktop Sidebar -->
+  <!-- 4. Desktop Sidebar -->
   <!-- ========================== -->
-  <h3 id="desktop-sidebar">2.4 Desktop Sidebar</h3>
+  <h3 id="desktop-sidebar">4. Desktop Sidebar</h3>
   <p>On screens wider than 1024px, a sidebar appears with two collapsible sections:</p>
 
   <div class="doc-screenshot-full">
@@ -456,9 +799,9 @@ flowchart TD
   </ul>
 
   <!-- ========================== -->
-  <!-- 2.5 Mobile Wizard -->
+  <!-- 5. Mobile Wizard -->
   <!-- ========================== -->
-  <h3 id="mobile-wizard">2.5 Mobile Wizard</h3>
+  <h3 id="mobile-wizard">5. Mobile Wizard</h3>
   <p>On screens narrower than 768px, the form transforms into a <strong>5-step wizard</strong> for easier mobile navigation:</p>
 
   <div class="doc-screenshot-full doc-screenshot-mobile">
@@ -484,14 +827,14 @@ flowchart TD
       <div class="doc-wizard-step-number">3</div>
       <div>
         <div class="doc-wizard-step-label">Visit</div>
-        <div class="doc-wizard-step-desc">Registration details (if createVisit=true)</div>
+        <div class="doc-wizard-step-desc">Registration details (if visit creation is enabled)</div>
       </div>
     </div>
     <div class="doc-wizard-step">
       <div class="doc-wizard-step-number">4</div>
       <div>
         <div class="doc-wizard-step-label">Insurance</div>
-        <div class="doc-wizard-step-desc">Insurance + Guarantee (if createVisit=true)</div>
+        <div class="doc-wizard-step-desc">Insurance + Guarantee (if visit creation is enabled)</div>
       </div>
     </div>
     <div class="doc-wizard-step">
@@ -533,114 +876,12 @@ flowchart LR
     <div class="doc-info-content">
       <strong>Mobile Wizard Behavior:</strong>
       <ul>
-        <li>Steps 3 and 4 are hidden when <code>createVisit</code> toggle is OFF</li>
+        <li>On mobile devices, the 9 form sections are grouped into 5 steps for easier navigation</li>
+        <li>Steps 3 and 4 are hidden when the visit creation toggle is OFF</li>
         <li>Progress indicator shows current step</li>
         <li>Back/Next buttons navigate between steps</li>
         <li>Draft auto-save works across all steps</li>
       </ul>
     </div>
   </div>
-
-  <!-- ========================== -->
-  <!-- 2.6 Visit Management -->
-  <!-- ========================== -->
-  <h3 id="visit-management">2.6 Visit Management</h3>
-  <p>When the <code>createVisit</code> toggle is enabled, visit-related sections become available in the form:</p>
-
-  <!-- Encounter Creation -->
-  <h4 id="encounter-creation">Creating a New Encounter</h4>
-  <p>After finding an existing patient, the form shows their details and the visit registration fields for creating a new encounter:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/encounter-creation-en.png" alt="Encounter Creation" class="doc-screenshot-image" data-i18n-img="encounter-creation">
-  </div>
-
-  <!-- Registration Section -->
-  <h4 id="registration-section">Registration Section</h4>
-  <div class="doc-screenshot-full">
-    <img src="images/registration-section-en.png" alt="Registration Section" class="doc-screenshot-image" data-i18n-img="registration-section">
-  </div>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Field</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Visit Type</strong></td>
-          <td>Outpatient, Inpatient, or Emergency</td>
-        </tr>
-        <tr>
-          <td><strong>Visit Date</strong></td>
-          <td>Date of the visit</td>
-        </tr>
-        <tr>
-          <td><strong>Department</strong></td>
-          <td>Target department/service</td>
-        </tr>
-        <tr>
-          <td><strong>Referring Doctor</strong></td>
-          <td>Doctor who referred the patient (optional)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Insurance Section -->
-  <h4 id="insurance">Insurance Section</h4>
-  <p>Add up to <strong>3 insurance companies</strong> per visit:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/insurance-section-en.png" alt="Insurance Section" class="doc-screenshot-image" data-i18n-img="insurance-section">
-  </div>
-
-  <ul class="doc-list">
-    <li><strong>Insurance Company</strong> - Select from registered insurers</li>
-    <li><strong>Policy Number</strong> - Patient's policy number</li>
-    <li><strong>Coverage Type</strong> - Full, partial, or specific coverage</li>
-    <li><strong>Add/Remove Buttons</strong> - Manage multiple insurers</li>
-  </ul>
-
-  <!-- Active Visit Warning -->
-  <h4 id="active-visit-warning">Active Visit Warning</h4>
-  <p>If a patient already has an in-progress visit, a warning modal appears:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/active-visit-warning-en.png" alt="Active Visit Warning" class="doc-screenshot-image" data-i18n-img="active-visit-warning">
-  </div>
-
-  <div class="doc-warning-box">
-    <div class="doc-warning-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-      </svg>
-    </div>
-    <div class="doc-warning-content">
-      <strong>Active Visit Detection:</strong>
-      <p>The system prevents duplicate encounters by detecting in-progress visits. You can choose to:</p>
-      <ul>
-        <li>View the existing active visit</li>
-        <li>Create a new visit anyway (with confirmation)</li>
-        <li>Cancel and return to the form</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Demographics -->
-  <h4 id="demographics">Demographics Section</h4>
-  <p>Additional demographic data collected during visit registration:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/demographics-section-en.png" alt="Demographics Section" class="doc-screenshot-image" data-i18n-img="demographics-section">
-  </div>
-
-  <ul class="doc-list">
-    <li><strong>Region</strong> - Patient's residential region</li>
-    <li><strong>Chief Complaint</strong> - Primary reason for visit</li>
-    <li><strong>Referral Source</strong> - How patient was referred</li>
-  </ul>
 </section>
