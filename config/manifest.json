@@ -30,9 +30,8 @@
           "priority": "high",
           "children": [
             { "id": "statistics", "titleKey": "toc.statistics", "anchor": "statistics" },
-            { "id": "zones", "titleKey": "toc.interfaceZones", "anchor": "zones" },
-            { "id": "key-features", "titleKey": "toc.keyFeatures", "anchor": "key-features" },
-            { "id": "workflow-overview", "titleKey": "toc.workflowOverview", "anchor": "workflow-overview" }
+            { "id": "zones", "titleKey": "toc.zones", "anchor": "zones" },
+            { "id": "key-features", "titleKey": "toc.keyFeatures", "anchor": "key-features" }
           ]
         },
         {
@@ -41,31 +40,23 @@
           "file": "features",
           "priority": "high",
           "children": [
-            {
-              "id": "search",
-              "titleKey": "toc.searchSystem",
-              "anchor": "search"
-            },
-            {
-              "id": "form-sections",
-              "titleKey": "toc.formSections",
-              "anchor": "form-sections"
-            },
-            {
-              "id": "visit-management",
-              "titleKey": "toc.visitManagement",
-              "anchor": "visit-management"
-            },
-            {
-              "id": "desktop-sidebar",
-              "titleKey": "toc.desktopSidebar",
-              "anchor": "desktop-sidebar"
-            },
-            {
-              "id": "mobile-wizard",
-              "titleKey": "toc.mobileWizard",
-              "anchor": "mobile-wizard"
-            }
+            { "id": "search", "titleKey": "toc.search", "anchor": "search" },
+            { "id": "form-sections", "titleKey": "toc.formSections", "anchor": "form-sections" },
+            { "id": "additional-details", "titleKey": "toc.additionalDetails", "anchor": "additional-details" },
+            { "id": "desktop-sidebar", "titleKey": "toc.desktopSidebar", "anchor": "desktop-sidebar" },
+            { "id": "mobile-wizard", "titleKey": "toc.mobileWizard", "anchor": "mobile-wizard" }
+          ]
+        },
+        {
+          "id": "visit-management",
+          "titleKey": "toc.visitManagement",
+          "file": "features",
+          "priority": "high",
+          "children": [
+            { "id": "registration-section", "titleKey": "toc.registrationSection", "anchor": "registration-section" },
+            { "id": "insurance", "titleKey": "toc.insurance", "anchor": "insurance" },
+            { "id": "active-visit-warning", "titleKey": "toc.activeVisitWarning", "anchor": "active-visit-warning" },
+            { "id": "demographics", "titleKey": "toc.demographics", "anchor": "demographics" }
           ]
         },
         {
@@ -74,26 +65,10 @@
           "file": "architecture",
           "priority": "medium",
           "children": [
-            {
-              "id": "architecture-overview",
-              "titleKey": "toc.architectureOverview",
-              "anchor": "architecture-overview"
-            },
-            {
-              "id": "fhir-flow",
-              "titleKey": "toc.fhirFlow",
-              "anchor": "fhir-flow"
-            },
-            {
-              "id": "fhir-resources",
-              "titleKey": "toc.fhirResources",
-              "anchor": "fhir-resources"
-            },
-            {
-              "id": "data-flow",
-              "titleKey": "toc.dataFlow",
-              "anchor": "data-flow"
-            }
+            { "id": "architecture-overview", "titleKey": "toc.architectureOverview", "anchor": "architecture-overview" },
+            { "id": "fhir-flow", "titleKey": "toc.fhirFlow", "anchor": "fhir-flow" },
+            { "id": "fhir-resources", "titleKey": "toc.fhirResources", "anchor": "fhir-resources" },
+            { "id": "data-flow", "titleKey": "toc.dataFlow", "anchor": "data-flow" }
           ]
         },
         {
@@ -105,44 +80,6 @@
             { "id": "common-issues", "titleKey": "toc.commonIssues", "anchor": "common-issues" },
             { "id": "error-codes", "titleKey": "toc.errorCodes", "anchor": "error-codes" }
           ]
-        }
-      ]
-    },
-    {
-      "id": "ai-assistant",
-      "titleKey": "toc.aiMedicalAssistant",
-      "sections": [
-        {
-          "id": "ai-chatbot-overview",
-          "titleKey": "toc.aiChatbotOverview",
-          "file": "ai-chatbot-overview",
-          "priority": "high",
-          "children": [
-            { "id": "ai-introduction", "titleKey": "toc.aiIntroduction", "anchor": "introduction" },
-            { "id": "ai-features", "titleKey": "toc.aiFeatures", "anchor": "ai-user-features" }
-          ]
-        },
-        {
-          "id": "ai-chatbot-integration",
-          "titleKey": "toc.aiChatbotIntegration",
-          "file": "ai-chatbot-integration",
-          "priority": "medium",
-          "children": [
-            { "id": "ai-fhir", "titleKey": "toc.aiFhir", "anchor": "fhir" },
-            { "id": "ai-backend", "titleKey": "toc.aiBackend", "anchor": "backend" }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "additional",
-      "titleKey": "toc.additional",
-      "sections": [
-        {
-          "id": "contact",
-          "titleKey": "toc.support",
-          "file": "contact",
-          "priority": "low"
         }
       ]
     }

@@ -18,7 +18,10 @@
   },
   "zoom": {
     "zoomIn": "გადიდება",
-    "zoomOut": "შემცირება"
+    "zoomOut": "შემცირება",
+    "reset": "აღდგენა",
+    "fullscreen": "სრული ეკრანი",
+    "exitFullscreen": "სრული ეკრანიდან გასვლა"
   },
   "buttons": {
     "viewOnInterface": "ნახე ინტერფეისზე",

@@ -139,7 +139,7 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   border-radius: 20px;
   padding: 32px;
   margin: 24px 0;
-  overflow-x: auto;
+  overflow: hidden;
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.3),
     0 10px 40px rgba(0, 0, 0, 0.4),
@@ -364,44 +364,110 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   border-left-color: transparent;
 }
 
-/* Zoom controls */
-.mermaid-controls {
+/* Diagram Viewer Toolbar */
+.mermaid-toolbar {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
-.mermaid-zoom-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+.mermaid-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 2px;
+}
+.mermaid-tb-btn {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
   color: #9ca3af;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  min-width: 32px;
+  line-height: 1;
 }
-.mermaid-zoom-btn:hover {
+.mermaid-tb-btn:hover {
+  background: rgba(43, 108, 176, 0.25);
+  color: #63b3ed;
+}
+.mermaid-tb-btn:active {
+  background: rgba(43, 108, 176, 0.4);
+}
+.mermaid-zoom-level {
+  color: #9ca3af;
+  font-size: 12px;
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+/* Inter-diagram navigation */
+.mermaid-diagram-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 16px 0;
+  position: sticky;
+  top: 64px;
+  z-index: 5;
+}
+.mermaid-nav-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: #9ca3af;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.mermaid-nav-pill:hover {
   background: rgba(43, 108, 176, 0.2);
   color: #63b3ed;
   border-color: rgba(43, 108, 176, 0.4);
 }
-.mermaid-zoom-btn svg {
-  width: 14px;
-  height: 14px;
+.mermaid-nav-pill.active {
+  background: linear-gradient(135deg, #1a365d, #2b6cb0);
+  color: #ffffff;
+  border-color: #2b6cb0;
 }
 
 /* Zoomable diagram */
 .mermaid-zoomable {
-  transition: transform 0.3s ease;
-  cursor: zoom-in;
+  transform-origin: 0 0;
+  cursor: grab;
+  transition: none;
+  user-select: none;
 }
-.mermaid-zoomable.zoomed {
-  transform: scale(1.5);
-  cursor: zoom-out;
+.mermaid-zoomable.dragging {
+  cursor: grabbing;
+}
+.mermaid-container {
+  overflow: hidden;
+}
+
+/* Fullscreen diagram */
+.mermaid-container:fullscreen {
+  background: #0f1f38;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+.mermaid-container:fullscreen .mermaid-zoomable {
+  flex: 1;
 }
 
 /* SAP-Style Hierarchical Sidebar */
@@ -922,14 +988,14 @@ p code {
     overflow-x: auto;
   }
 
-  .mermaid-controls {
+  .mermaid-toolbar {
     justify-content: center;
     margin-bottom: 8px;
   }
 
-  .mermaid-zoom-btn {
-    padding: 10px 16px;
-    font-size: 13px;
+  .mermaid-diagram-nav {
+    flex-wrap: wrap;
+    position: static;
   }
 
   /* Flow diagram mobile */

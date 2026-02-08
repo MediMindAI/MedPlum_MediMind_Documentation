@@ -5,160 +5,561 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
       </svg>
     </div>
-    <h2>არქიტექტურა</h2>
+    <h2><span class="doc-section-number">3</span> არქიტექტურა</h2>
   </div>
 
-  <!-- არქიტექტურის მიმოხილვა (გამარტივებული Mermaid) -->
-  <h4 id="architecture-overview">არქიტექტურის მიმოხილვა</h4>
-  <p>რეგისტრაციის მოდული მიჰყვება ფენოვანი არქიტექტურის შაბლონს:</p>
+  <p>MediMind პაციენტის რეგისტრაციის მოდული აგებულია <strong>კომპონენტზე დაფუძნებული არქიტექტურით</strong>, რომელიც იყენებს React-ს, TypeScript-ს და Medplum FHIR პლატფორმას. ეს განყოფილება გთავაზობთ სისტემის სტრუქტურის, მონაცემთა ნაკადისა და FHIR რესურსების ინტეგრაციის ტექნიკურ მიმოხილვას.</p>
+
+  <!-- Architecture Overview -->
+  <h3 id="architecture-overview">არქიტექტურის მიმოხილვა</h3>
+
+  <p>რეგისტრაციის მოდული მოიცავს <strong>სამდონიან რესპონსიულ განლაგებას</strong>, რომელიც ადაპტირდება სხვადასხვა ეკრანის ზომებზე, შეინარჩუნებს კომპონენტების ერთიან იერარქიას.</p>
 
   <div class="mermaid-container">
     <div class="mermaid mermaid-zoomable">
-flowchart TB
-    subgraph UI["UI Components"]
-        UnifiedReg[UnifiedRegistrationView]
-        PatientForm[PatientForm]
-        VisitModal[VisitModal]
-        SearchPanel[SearchPanel]
-    end
+graph TD
+    A[UnifiedRegistrationView] --> B[EMRPageHeader]
+    A --> C[UnifiedPatientSearch]
+    A --> D[UnifiedPatientRegistrationForm]
+    A --> E[Desktop Sidebar]
+    A --> F[Mobile Patient Table]
 
-    subgraph Hooks["React Hooks"]
-        useRegForm[useRegistrationVisitForm]
-        useDept[useDepartments]
-        useIns[useInsuranceData]
-    end
+    C --> C1[ძიების შეყვანა Cmd+K-ით]
+    C --> C2[დამატებითი ფილტრები]
+    C --> C3[ძიების შედეგები]
 
-    subgraph Services["Services Layer"]
-        EncSvc[encounterService]
-        MedClient[MedplumClient]
-        DeptSvc[departmentService]
-    end
+    D --> D1[FormSectionProgress]
+    D --> D2[PatientLookupSection]
+    D --> D3[PersonalInfoSection]
+    D --> D4[ContactInfoSection]
+    D --> D5[AdditionalDetailsSection]
+    D --> D6[GuardianInfoSection]
+    D --> D7[RegistrationSection]
+    D --> D8[InsuranceSection]
+    D --> D9[GuaranteeSection]
+    D --> D10[DemographicsSection]
 
-    subgraph FHIR["Medplum Cloud"]
-        DB[(FHIR R4 API)]
-    end
+    E --> E1[დღევანდელი ვიზიტები]
+    E --> E2[ბოლო პაციენტები]
 
-    UI --> Hooks
-    Hooks --> Services
-    Services --> FHIR
-    </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
+    style A fill:#1a365d,color:#ffffff,stroke:#2b6cb0
+    style D fill:#2b6cb0,color:#ffffff,stroke:#63b3ed
+    style C fill:#63b3ed,color:#1f2937,stroke:#2b6cb0
     </div>
   </div>
 
+  <h4>კომპონენტების სტრუქტურა</h4>
 
-  <!-- FHIR რესურსები -->
-  <h3 id="fhir-resources">FHIR რესურსები</h3>
-  <p>რეგისტრაციის მოდული ქმნის და მართავს შემდეგ FHIR R4 რესურსებს:</p>
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>კომპონენტი</th>
+        <th>დანიშნულება</th>
+        <th>მთავარი ფუნქციები</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>UnifiedRegistrationView</strong></td>
+        <td>მთავარი გვერდის კონტეინერი</td>
+        <td>რესპონსიული განლაგების ორკესტრაცია, მარშრუტიზაცია</td>
+      </tr>
+      <tr>
+        <td><strong>UnifiedPatientSearch</strong></td>
+        <td>ძიების მთავარი სექცია</td>
+        <td>კლავიატურის მალსახმობები (Cmd/Ctrl+K), დამატებითი ფილტრები, ორმაგი მოქმედებების შედეგები</td>
+      </tr>
+      <tr>
+        <td><strong>UnifiedPatientRegistrationForm</strong></td>
+        <td>მთავარი რეგისტრაციის ფორმა</td>
+        <td>9 აკორდეონის სექცია, ავტო-შენახვა, დრაფტის აღდგენა, პროგრესის თვალთვალი</td>
+      </tr>
+      <tr>
+        <td><strong>Desktop Sidebar</strong></td>
+        <td>სწრაფი წვდომის პანელი</td>
+        <td>დღევანდელი ვიზიტები, ბოლო პაციენტები (მხოლოდ დესკტოპზე, >1024px)</td>
+      </tr>
+      <tr>
+        <td><strong>Mobile Patient Table</strong></td>
+        <td>პაციენტების სიის ხედვა</td>
+        <td>პაციენტების სრული სია (მხოლოდ მობილურ/ტაბლეტზე, <1024px)</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>რესურსი</th>
-          <th>დანიშნულება</th>
-          <th>იქმნება როდესაც</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Patient</strong></td>
-          <td>პაციენტის დემოგრაფიული ჩანაწერი</td>
-          <td>ყოველი რეგისტრაციისას</td>
-        </tr>
-        <tr>
-          <td><strong>Encounter</strong></td>
-          <td>საავადმყოფოს ვიზიტის ჩანაწერი</td>
-          <td>"ვიზიტის შექმნა" ჩართულია</td>
-        </tr>
-        <tr>
-          <td><strong>Coverage</strong></td>
-          <td>სადაზღვევო დაფარვის დეტალები</td>
-          <td>დაზღვევის დამატებისას</td>
-        </tr>
-        <tr>
-          <td><strong>RelatedPerson</strong></td>
-          <td>მეურვის / წარმომადგენლის ინფორმაცია</td>
-          <td>მეურვის შეყვანისას</td>
-        </tr>
-        <tr>
-          <td><strong>DocumentReference</strong></td>
-          <td>ატვირთული საგარანტიო დოკუმენტები</td>
-          <td>ფაილების დამაგრებისას</td>
-        </tr>
-      </tbody>
-    </table>
+  <h4>რესპონსიული განლაგების სტრატეგია</h4>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">&lt;768px</span>
+      <span class="doc-stat-inline-label">მობილური: ერთი სვეტი + ოსტატი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">768-1024px</span>
+      <span class="doc-stat-inline-label">ტაბლეტი: ორსვეტიანი ფორმა</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">&gt;1024px</span>
+      <span class="doc-stat-inline-label">დესკტოპი: მრავალსვეტიანი + გვერდითი პანელი</span>
+    </div>
   </div>
 
-  <!-- FHIR რესურსის შექმნის ნაკადი -->
-  <h3 id="fhir-flow">FHIR რესურსის შექმნის ნაკადი</h3>
-  <p>რეგისტრაციის გაგზავნისას იქმნება შემდეგი FHIR რესურსები:</p>
+  <ul class="doc-list">
+    <li><strong>მობილური (&lt;768px):</strong> ერთსვეტიანი განლაგება დასაკეცი სექციებით, 5-ნაბიჯიანი ოსტატის ნავიგაცია, მიმაგრებული გაგზავნის ღილაკი, პაციენტების სრული ცხრილი ფორმის ქვემოთ</li>
+    <li><strong>ტაბლეტი (768-1024px):</strong> ორსვეტიანი ფორმის განლაგება, გაფართოებული სექციები, ინლაინ გაგზავნის ღილაკი</li>
+    <li><strong>დესკტოპი (&gt;1024px):</strong> მრავალსვეტიანი განლაგება მარჯვენა გვერდით პანელით, რომელიც აჩვენებს დღევანდელ ვიზიტებს და ბოლო პაციენტებს სწრაფი წვდომისთვის</li>
+  </ul>
+
+  <!-- FHIR Workflow -->
+  <h3 id="fhir-flow">FHIR სამუშაო პროცესი</h3>
+
+  <p>პაციენტის რეგისტრაციის პროცესი მოიცავს <strong>მრავალეტაპიან FHIR რესურსების შექმნის სამუშაო ნაკადს</strong>, რომელიც აერთიანებს ძიებას, ფორმის გაგზავნასა და ვიზიტის შექმნას.</p>
 
   <div class="mermaid-container">
     <div class="mermaid mermaid-zoomable">
 sequenceDiagram
-    participant U as User
-    participant F as Form
-    participant S as Service
-    participant M as Medplum
+    participant User as მომხმარებელი
+    participant SearchHero as ძიების პანელი
+    participant Form as ფორმა
+    participant Hook as useRegistrationForm
+    participant Service as patientDataBindingService
+    participant API as Medplum FHIR API
+    participant Storage as localStorage
 
-    U->>F: Submit Registration
-    F->>S: createPatient()
-    S->>M: POST /Patient
-    M-->>S: Patient ID
-    F->>S: createEncounter()
-    S->>M: POST /Encounter
-    M-->>S: Encounter ID
-    F->>S: createCoverage()
-    S->>M: POST /Coverage
-    M-->>S: Coverage ID
-    S-->>F: Success
-    F-->>U: Registration Complete
-    </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
+    User->>SearchHero: შეიყვანეთ პირადი ნომერი ან სახელი
+    SearchHero->>API: GET /Patient?identifier=01011055555
+    API-->>SearchHero: Patient[] (არსებული პაციენტები)
+
+    alt პაციენტი ნაპოვნია
+        SearchHero->>Form: პაციენტის მონაცემების ავტო-შევსება
+        Form->>User: "აქტიური ვიზიტის გაფრთხილება" თუ Encounter.status=in-progress
+    else პაციენტი არ არის ნაპოვნი
+        SearchHero->>Form: ყველა სექციის გაშლა (ახალი რეგისტრაცია)
+    end
+
+    User->>Form: რეგისტრაციის ველების შევსება
+    Form->>Storage: დრაფტის ავტო-შენახვა (1 წამიანი დებაუნსით)
+
+    User->>Form: გაგზავნის დაჭერა
+    Form->>Hook: ვალიდაცია და ფორმის დამუშავება
+    Hook->>Service: 101+ GoodKey კოდის დაკავშირება
+    Service->>API: POST /Patient (შექმნა/განახლება)
+    API-->>Service: Patient რესურსი
+
+    opt ვიზიტის შექმნა = true
+        Service->>API: POST /Encounter
+        API-->>Service: Encounter რესურსი
+
+        opt აქვს დაზღვევა
+            Service->>API: POST /Coverage (თითოეული დამზღველისთვის)
+            API-->>Service: Coverage[]
+        end
+
+        opt აქვს მეურვე
+            Service->>API: POST /RelatedPerson
+            API-->>Service: RelatedPerson რესურსი
+        end
+    end
+
+    Service->>Storage: დრაფტის გასუფთავება
+    Service-->>User: წარმატების შეტყობინება + პაციენტის ისტორიაზე გადასვლა
     </div>
   </div>
 
-  <!-- მონაცემთა ნაკადის დიაგრამა -->
+  <h4>სამუშაო პროცესის ნაბიჯები</h4>
+
+  <ol class="doc-list">
+    <li><strong>ძიების ფაზა:</strong> მომხმარებელი შეაქვს პირადი ნომერი ან სახელი → სისტემა ეძებს არსებულ პაციენტებს FHIR სერვერზე</li>
+    <li><strong>პაციენტის ძიება:</strong> თუ ნაპოვნია, ავტომატურად ივსება პაციენტის მონაცემები და ამოწმებს აქტიურ ვიზიტებს; თუ არ არის ნაპოვნი, იშლება ყველა ფორმის სექცია ახალი რეგისტრაციისთვის</li>
+    <li><strong>ფორმის შევსება:</strong> მომხმარებელი ავსებს 9 აკორდეონის სექციას ავტო-შენახვით localStorage-ში (1-წამიანი დებაუნსი)</li>
+    <li><strong>ვალიდაცია:</strong> სისტემა ამოწმებს პირად ნომერს (11-ციფრიანი Luhn ჩეკსამი), საჭირო ველებსა და ბიზნეს წესებს</li>
+    <li><strong>FHIR რესურსის შექმნა:</strong> გაგზავნისას ქმნის Patient რესურსს 101+ GoodKey მონაცემთა დაკავშირების კოდებით</li>
+    <li><strong>ვიზიტის შექმნა (არჩევითი):</strong> თუ "ვიზიტის შექმნა" გადამრთველი ჩართულია, ქმნის Encounter-ს, Coverage-ს (თუ დაზღვეულია) და RelatedPerson-ს (თუ მეურვე არსებობს)</li>
+    <li><strong>დრაფტის გასუფთავება:</strong> ასუფთავებს localStorage დრაფტს და გადადის პაციენტის ისტორიის ხედვაზე</li>
+  </ol>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>აქტიური ვიზიტის გაფრთხილება:</strong>
+    თუ პაციენტს უკვე აქვს <code>Encounter.status='in-progress'</code>, სისტემა აჩვენებს გაფრთხილების მოდალს დუბლიკატი აქტიური ვიზიტების თავიდან ასაცილებლად.
+  </div>
+
+  <!-- FHIR Resources -->
+  <h3 id="fhir-resources">FHIR რესურსები</h3>
+
+  <p>რეგისტრაციის მოდული ქმნის და მართავს შემდეგ <strong>FHIR R4 რესურსებს</strong> ქართული სპეციფიური გაფართოებებით.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>რესურსი</th>
+        <th>დანიშნულება</th>
+        <th>მთავარი ველები</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Patient</strong></td>
+        <td>ძირითადი პაციენტის დემოგრაფიული მონაცემები</td>
+        <td>
+          <code>identifier</code> (პირადი ნომერი),
+          <code>name</code> (სახელი მამის სახელით),
+          <code>gender</code> (სქესი),
+          <code>birthDate</code> (დაბადების თარიღი),
+          <code>telecom</code> (ტელეფონი, ელფოსტა),
+          <code>address</code> (მისამართი),
+          <code>extension:citizenship</code> (მოქალაქეობა),
+          <code>extension:unknown-patient</code> (უცნობი პაციენტი)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Encounter</strong></td>
+        <td>პაციენტის ვიზიტის/შეხვედრის ჩანაწერი</td>
+        <td>
+          <code>status</code> (დაგეგმილი, მიმდინარე, დასრულებული),
+          <code>class</code> (ამბულატორიული, სტაციონარული, გადაუდებელი),
+          <code>type</code> (ვიზიტის ტიპი),
+          <code>subject</code> (მიმართვა Patient-ზე),
+          <code>participant</code> (პრაქტიკოსები),
+          <code>period</code> (ვიზიტის თარიღი/დრო)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Coverage</strong></td>
+        <td>დაზღვევის პოლისის ინფორმაცია</td>
+        <td>
+          <code>payor</code> (სადაზღვევო კომპანიის მიმართვა),
+          <code>beneficiary</code> (მიმართვა Patient-ზე),
+          <code>relationship</code> (საკუთარი, ოჯახური),
+          <code>period</code> (პოლისის ვალიდობა),
+          <code>identifier</code> (პოლისის ნომერი)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>RelatedPerson</strong></td>
+        <td>მეურვე/წარმომადგენელი არასრულწლოვანი ან უუნარო პაციენტებისთვის</td>
+        <td>
+          <code>patient</code> (მიმართვა Patient-ზე),
+          <code>relationship</code> (მშობელი, მეურვე, მეუღლე),
+          <code>name</code> (სახელი),
+          <code>telecom</code> (საკონტაქტო ინფო),
+          <code>address</code> (მისამართი)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Organization</strong></td>
+        <td>საავადმყოფოს განყოფილებები, სადაზღვევო კომპანიები</td>
+        <td>
+          <code>identifier</code> (იდენტიფიკატორი),
+          <code>name</code> (სახელი),
+          <code>type</code> (dept, prov, ins),
+          <code>telecom</code> (ტელეფონი),
+          <code>address</code> (მისამართი)
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ქართული სპეციფიური FHIR გაფართოებები</h4>
+
+  <p>MediMind აფართოებს FHIR R4-ს ქართული ჯანდაცვის მოთხოვნების მხარდასაჭერად:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>გაფართოების URL</th>
+        <th>გამოიყენება</th>
+        <th>დანიშნულება</th>
+        <th>მაგალითი მნიშვნელობა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>medimind:patronymic</code></td>
+        <td>Patient.name</td>
+        <td>მამის სახელი (შუა სახელი ქართულ სახელდებაში)</td>
+        <td>"გიორგის" (გიორგის ძე)</td>
+      </tr>
+      <tr>
+        <td><code>medimind:citizenship</code></td>
+        <td>Patient</td>
+        <td>მოქალაქეობის სტატუსი (მოქალაქე, უცხოელი, მოუქალაქო)</td>
+        <td>"citizen", "foreigner"</td>
+      </tr>
+      <tr>
+        <td><code>medimind:unknown-patient</code></td>
+        <td>Patient</td>
+        <td>გადაუდებელი პაციენტი იდენტიფიკაციის გარეშე (დროებითი ID-ის მინიჭებით)</td>
+        <td><code>true</code> / <code>false</code></td>
+      </tr>
+      <tr>
+        <td><code>medimind:data-binding</code></td>
+        <td>Patient, Encounter</td>
+        <td>101+ GoodKey კოდები ელექტრონული ჯანმრთელობის ჩანაწერების მონაცემთა სტანდარტიზაციისთვის</td>
+        <td>კოდი "010101" = სახელი</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>მამის სახელის გაფართოება:</strong>
+    ქართული სახელდების კონვენცია მოიცავს მამის სახელს ნათესაობით ბრუნვაში (მაგ., "ნინო გიორგის ასათიანი" = ნინო, გიორგის ასული, ასათიანი). ეს ინახება <code>Patient.name.given</code>-ზე გაფართოებად.
+  </div>
+
+  <!-- Data Flow -->
   <h3 id="data-flow">მონაცემთა ნაკადი</h3>
-  <p>მონაცემები მოძრაობს ფენებს შორის, localStorage უზრუნველყოფს მონახაზის შენახვას:</p>
+
+  <p>რეგისტრაციის მოდული იყენებს <strong>ერთმიმართულებიან მონაცემთა ნაკადს</strong> ფორმის შეყვანიდან FHIR რესურსებამდე, ავტო-შენახვისა და დრაფტის აღდგენის მექანიზმებით.</p>
 
   <div class="mermaid-container">
     <div class="mermaid mermaid-zoomable">
-flowchart TD
-    UI[UI Layer] -->|Props & Events| H[Hooks Layer]
-    H -->|API Calls| S[Services Layer]
-    S -->|FHIR Operations| F[Medplum Cloud]
-    F -->|Resources| S
-    S -->|Data| H
-    H -->|State| UI
+graph LR
+    A[ფორმის შეყვანა] --> B[React State]
+    B --> C[useRegistrationForm Hook]
+    C --> D[ვალიდაციის შრე]
+    D --> E{ვალიდურია?}
 
-    LS[(localStorage)] -.->|Draft| UI
-    UI -.->|Auto-save| LS
-    </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
+    E -->|არა| F[შეცდომების ჩვენება]
+    F --> A
+
+    E -->|კი| G[patientDataBindingService]
+    G --> H[101+ GoodKey კოდების გამოყენება]
+    H --> I[FHIR რესურსების აგება]
+    I --> J[Medplum SDK]
+    J --> K[POST FHIR API-ზე]
+    K --> L[FHIR სერვერი]
+
+    B --> M[ავტო-შენახვა]
+    M --> N[localStorage დრაფტი]
+    N --> O[დრაფტის აღდგენა გადატვირთვაზე]
+    O --> A
+
+    style C fill:#2b6cb0,color:#ffffff,stroke:#63b3ed
+    style G fill:#63b3ed,color:#1f2937,stroke:#2b6cb0
+    style L fill:#1a365d,color:#ffffff,stroke:#2b6cb0
     </div>
   </div>
+
+  <h4>მონაცემთა დაკავშირება GoodKey კოდებით</h4>
+
+  <p>MediMind იყენებს <strong>101+ GoodKey მონაცემთა დაკავშირების კოდებს</strong> პაციენტის მონაცემების სტანდარტიზაციისთვის მთელ ელექტრონული ჯანმრთელობის ჩანაწერების სისტემაში. თითოეული ფორმის ველი აიმაპება კონკრეტულ კოდზე:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ფორმის ველი</th>
+        <th>GoodKey კოდი</th>
+        <th>FHIR გზა</th>
+        <th>მონაცემთა ტიპი</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>პირადი ნომერი</td>
+        <td>010100</td>
+        <td>Patient.identifier[0].value</td>
+        <td>string (11 ციფრი)</td>
+      </tr>
+      <tr>
+        <td>სახელი</td>
+        <td>010101</td>
+        <td>Patient.name[0].given[0]</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>გვარი</td>
+        <td>010102</td>
+        <td>Patient.name[0].family</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>მამის სახელი (შუა სახელი)</td>
+        <td>010103</td>
+        <td>Patient.name[0].extension:patronymic</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>დაბადების თარიღი</td>
+        <td>010104</td>
+        <td>Patient.birthDate</td>
+        <td>date (YYYY-MM-DD)</td>
+      </tr>
+      <tr>
+        <td>სქესი</td>
+        <td>010105</td>
+        <td>Patient.gender</td>
+        <td>code (male, female, other, unknown)</td>
+      </tr>
+      <tr>
+        <td>ტელეფონის ნომერი</td>
+        <td>010201</td>
+        <td>Patient.telecom[0].value</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>ელფოსტა</td>
+        <td>010202</td>
+        <td>Patient.telecom[1].value</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>მისამართი</td>
+        <td>010301</td>
+        <td>Patient.address[0].text</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>მოქალაქეობა</td>
+        <td>010401</td>
+        <td>Patient.extension:citizenship</td>
+        <td>code (citizen, foreigner, stateless)</td>
+      </tr>
+      <tr>
+        <td>პროფესია</td>
+        <td>010402</td>
+        <td>Patient.extension:occupation</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>ვიზიტის ტიპი</td>
+        <td>020101</td>
+        <td>Encounter.type[0].coding[0].code</td>
+        <td>code (outpatient, inpatient, emergency)</td>
+      </tr>
+      <tr>
+        <td>განყოფილება</td>
+        <td>020102</td>
+        <td>Encounter.serviceProvider</td>
+        <td>reference (Organization)</td>
+      </tr>
+      <tr>
+        <td>სადაზღვევო კომპანია</td>
+        <td>030101</td>
+        <td>Coverage.payor[0]</td>
+        <td>reference (Organization)</td>
+      </tr>
+      <tr>
+        <td>პოლისის ნომერი</td>
+        <td>030102</td>
+        <td>Coverage.identifier[0].value</td>
+        <td>string</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ავტო-შენახვა და დრაფტის აღდგენა</h4>
+
+  <p>რეგისტრაციის ფორმა მოიცავს <strong>ინტელექტუალურ ავტო-შენახვას</strong> მონაცემების დაკარგვის თავიდან ასაცილებლად:</p>
+
+  <ul class="doc-list">
+    <li><strong>ტრიგერი:</strong> ავტო-შენახვა აქტივირდება 1 წამის შემდეგ, რაც მომხმარებელი წყვეტს აკრეფას (დებაუნსით)</li>
+    <li><strong>შენახვა:</strong> დრაფტის მონაცემები ინახება <code>localStorage</code>-ში პაციენტის პირადი ნომრის გასაღებით</li>
+    <li><strong>დრაფტის ნიშანი:</strong> ვიზუალური ინდიკატორი ჩნდება პროგრესის ტრეკერში, როდესაც დრაფტი შენახულია</li>
+    <li><strong>აღდგენა:</strong> გვერდის გადატვირთვისას, სისტემა აღმოაჩენს დრაფტებს და სთხოვს მომხმარებელს აღადგინოს ან წაშალოს</li>
+    <li><strong>გასუფთავება:</strong> დრაფტები ავტომატურად იშლება წარმატებული ფორმის გაგზავნის შემდეგ</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>ბიზნეს წესი:</strong>
+    არასრულწლოვანი პაციენტები (&lt;18 წლის) ავტომატურად აქტივებს მეურვის სექციას, რომელიც ხდება აუცილებელი. სისტემა განსაზღვრავს ასაკს შეყვანილი დაბადების თარიღის საფუძველზე.
+  </div>
+
+  <h4>ვალიდაციის წესები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ველი</th>
+        <th>ვალიდაციის წესი</th>
+        <th>შეცდომის შეტყობინება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>პირადი ნომერი</td>
+        <td>11 ციფრი + Luhn ჩეკსამის ალგორითმი</td>
+        <td>"პირადი ნომრის არასწორი ფორმატი ან ჩეკსამა"</td>
+      </tr>
+      <tr>
+        <td>სახელი, გვარი</td>
+        <td>აუცილებელი (გარდა უცნობი პაციენტის რეჟიმისა)</td>
+        <td>"ეს ველი აუცილებელია"</td>
+      </tr>
+      <tr>
+        <td>დაბადების თარიღი</td>
+        <td>თარიღი წარსულში, არა მომავალში</td>
+        <td>"დაბადების თარიღი არ შეიძლება იყოს მომავალში"</td>
+      </tr>
+      <tr>
+        <td>ტელეფონის ნომერი</td>
+        <td>ქართული ფორმატი: +995XXXXXXXXX ან 5XXXXXXXX</td>
+        <td>"ტელეფონის ნომრის არასწორი ფორმატი"</td>
+      </tr>
+      <tr>
+        <td>ელფოსტა</td>
+        <td>RFC 5322 ელფოსტის ფორმატი</td>
+        <td>"არასწორი ელფოსტის მისამართი"</td>
+      </tr>
+      <tr>
+        <td>მეურვე (თუ &lt;18 წლის)</td>
+        <td>სულ მცირე ერთი მეურვის კონტაქტი აუცილებელია</td>
+        <td>"მეურვის ინფორმაცია აუცილებელია არასრულწლოვნებისთვის"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>სერვისები და ჰუკები</h4>
+
+  <p>მოდული იყენებს სპეციალიზებულ React ჰუკებსა და სერვისებს ბიზნეს ლოგიკისთვის:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ჰუკი/სერვისი</th>
+        <th>პასუხისმგებლობა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>useUnifiedRegistrationForm</code></td>
+        <td>ფორმის მდგომარეობის მართვა, ვალიდაცია, გაგზავნის ორკესტრაცია</td>
+      </tr>
+      <tr>
+        <td><code>useRegistrationStatuses</code></td>
+        <td>რეგისტრაციის სტატუსის კოდების ჩამოტვირთვა FHIR სერვერიდან</td>
+      </tr>
+      <tr>
+        <td><code>useInsuranceData</code></td>
+        <td>სადაზღვევო კომპანიების ჩატვირთვა (Organization რესურსები type=ins)</td>
+      </tr>
+      <tr>
+        <td><code>useDepartments</code></td>
+        <td>საავადმყოფოს განყოფილებების ჩატვირთვა, ფილტრირებული ვიზიტის ტიპით</td>
+      </tr>
+      <tr>
+        <td><code>useAutoSave</code></td>
+        <td>დებაუნსებული ავტო-შენახვა localStorage-ში</td>
+      </tr>
+      <tr>
+        <td><code>useDraftRecovery</code></td>
+        <td>დრაფტების აღმოჩენა და აღდგენა კომპონენტის მონტირებისას</td>
+      </tr>
+      <tr>
+        <td><code>patientDataBindingService</code></td>
+        <td>GoodKey კოდების გამოყენება, FHIR რესურსების აგება ფორმის მონაცემებიდან</td>
+      </tr>
+      <tr>
+        <td><code>registrationStatusService</code></td>
+        <td>რეგისტრაციის სამუშაო პროცესის მდგომარეობების მართვა</td>
+      </tr>
+      <tr>
+        <td><code>encounterService</code></td>
+        <td>Encounter რესურსების შექმნა და განახლება</td>
+      </tr>
+      <tr>
+        <td><code>unknownPatientService</code></td>
+        <td>დროებითი ID-ების გენერირება გადაუდებელი პაციენტებისთვის იდენტიფიკაციის გარეშე</td>
+      </tr>
+    </tbody>
+  </table>
 
 </section>

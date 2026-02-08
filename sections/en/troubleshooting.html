@@ -2,160 +2,477 @@
   <div class="doc-section-header">
     <div class="doc-section-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
       </svg>
     </div>
+    <div class="doc-section-number">4</div>
     <h2>Troubleshooting</h2>
   </div>
 
+  <p>This section covers common issues you may encounter while using the patient registration module and their solutions.</p>
+
+  <!-- Common Issues -->
   <h3 id="common-issues">Common Issues</h3>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Issue</span>
-      <span class="error-code-title">"Patient ID already exists"</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Description:</strong> Red error after clicking save button<br>
-      <strong>Cause:</strong> Duplicate Georgian personal ID detected<br>
-      <strong>Solution:</strong> First search for existing patient in the search field
-    </div>
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Quick Tip:</strong> Most registration issues are related to validation rules or required fields. Check the form for red error indicators before submitting.
   </div>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Issue</span>
-      <span class="error-code-title">"Active visit already exists"</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Description:</strong> Visit form doesn't open<br>
-      <strong>Cause:</strong> Patient has an Encounter with status="in-progress"<br>
-      <strong>Solution:</strong> Close existing visit or navigate to it
-    </div>
-  </div>
+  <!-- Issue 1: Patient Not Found -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Patient Not Found by Personal ID</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Problem:</strong> Searching for a patient by personal ID returns no results, even though the patient should exist in the system.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Issue</span>
-      <span class="error-code-title">Validation error - Personal ID</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Description:</strong> "Invalid personal ID" message<br>
-      <strong>Cause:</strong> Luhn algorithm validation failed<br>
-      <strong>Solution:</strong> Verify 11 digits are entered correctly. For testing: <code>26001014632</code>
-    </div>
-  </div>
+      <p><strong>Possible Causes:</strong></p>
+      <ul class="doc-list">
+        <li>Personal ID format is incorrect (must be exactly 11 digits)</li>
+        <li>Personal ID entered does not pass Luhn checksum validation</li>
+        <li>Patient was registered with a different ID or as an unknown patient</li>
+        <li>Patient record exists but with typos in the ID field</li>
+      </ul>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Issue</span>
-      <span class="error-code-title">Insurance company not found</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Description:</strong> Empty dropdown in insurance section<br>
-      <strong>Cause:</strong> Organization resources are not loaded<br>
-      <strong>Solution:</strong> Check internet connection, refresh the page
-    </div>
-  </div>
+      <p><strong>Solution:</strong></p>
+      <ol class="doc-list">
+        <li><strong>Verify Personal ID Format:</strong> Georgian personal IDs must be exactly 11 digits. Remove any spaces or hyphens.</li>
+        <li><strong>Check Luhn Algorithm:</strong> The system validates the checksum. Use a valid Georgian personal ID.</li>
+        <li><strong>Try Alternative Search:</strong> Use the advanced search filters to search by name, birth date, or phone number.</li>
+        <li><strong>Check Unknown Patients:</strong> If the patient was registered in an emergency, they may have a temporary system-generated ID.</li>
+      </ol>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Issue</span>
-      <span class="error-code-title">Guardian fields not showing</span>
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>Note:</strong> The auto-search triggers only after entering exactly 11 digits. If you enter fewer or more digits, the search will not execute.
+      </div>
     </div>
-    <div class="error-code-solution">
-      <strong>Description:</strong> Guardian section remains hidden<br>
-      <strong>Cause:</strong> Patient date of birth indicates age 18 or older<br>
-      <strong>Solution:</strong> Guardian section only appears when patient is under 18. Verify the date of birth is correct.
-    </div>
-  </div>
+  </details>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Issue</span>
-      <span class="error-code-title">Visit sections not visible</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Description:</strong> Registration, Insurance, Guarantee, and Demographics sections are hidden<br>
-      <strong>Cause:</strong> The "Create Visit" toggle is turned OFF<br>
-      <strong>Solution:</strong> Enable the toggle in the Personal Information section to show visit-related fields
-    </div>
-  </div>
+  <!-- Issue 2: Form Validation Errors -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Form Validation Errors</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Problem:</strong> The registration form displays validation errors and prevents submission.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Issue</span>
-      <span class="error-code-title">Unknown Patient fields are read-only</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Description:</strong> Name and personal ID fields cannot be edited<br>
-      <strong>Cause:</strong> Unknown Patient mode auto-generates these values<br>
-      <strong>Solution:</strong> Turn off the Unknown Patient toggle to enter data manually
-    </div>
-  </div>
+      <p><strong>Common Validation Issues:</strong></p>
 
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Validation Rule</th>
+            <th>Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>First Name</strong></td>
+            <td>Required (unless Unknown Patient)</td>
+            <td>Enter patient's first name or enable "Unknown Patient" toggle</td>
+          </tr>
+          <tr>
+            <td><strong>Personal ID</strong></td>
+            <td>11 digits with Luhn checksum</td>
+            <td>Enter valid 11-digit Georgian personal ID</td>
+          </tr>
+          <tr>
+            <td><strong>Birth Date</strong></td>
+            <td>Cannot be in the future</td>
+            <td>Select a valid past date</td>
+          </tr>
+          <tr>
+            <td><strong>Phone</strong></td>
+            <td>International format required</td>
+            <td>Include country code (e.g., +995)</td>
+          </tr>
+          <tr>
+            <td><strong>Guardian Info</strong></td>
+            <td>Required for patients under 18</td>
+            <td>Fill all guardian fields for minors</td>
+          </tr>
+          <tr>
+            <td><strong>Department</strong></td>
+            <td>Must match visit type</td>
+            <td>Select a department filtered by the chosen visit type</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Solution:</strong></p>
+      <ol class="doc-list">
+        <li>Scroll through the form and look for fields highlighted in red.</li>
+        <li>Review error messages displayed below invalid fields.</li>
+        <li>Correct all validation errors before attempting to submit again.</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- Issue 3: Active Visit Conflict -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Active Visit Warning</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Problem:</strong> When selecting a patient, a warning appears: "Patient has an active visit."</p>
+
+      <p><strong>Cause:</strong> The system detects an existing <code>Encounter</code> resource with <code>status='in-progress'</code> for this patient. FHIR best practices discourage creating multiple active visits simultaneously.</p>
+
+      <p><strong>Solution:</strong></p>
+      <ol class="doc-list">
+        <li><strong>Verify Active Visit:</strong> Check if the patient is currently receiving care in another department.</li>
+        <li><strong>Close Previous Visit:</strong> If the previous visit has ended, close it in the system first.</li>
+        <li><strong>Override Warning:</strong> If creating a new visit is medically necessary (e.g., emergency), you may proceed by clicking "Continue Anyway" in the modal.</li>
+        <li><strong>Contact IT Support:</strong> If the warning appears incorrectly, the previous Encounter may need administrative correction.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>Important:</strong> Creating duplicate active visits can cause data integrity issues. Always verify before overriding this warning.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 4: Draft Recovery Issues -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Draft Not Saving or Recovering</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Problem:</strong> Form drafts are not auto-saving, or previously saved drafts are not loading when returning to the registration page.</p>
+
+      <p><strong>Possible Causes:</strong></p>
+      <ul class="doc-list">
+        <li>Browser localStorage is disabled or full</li>
+        <li>Incognito/private browsing mode is active</li>
+        <li>Browser cache has been cleared</li>
+        <li>Different browser or device being used</li>
+        <li>Draft exceeded localStorage size limit (typically 5-10MB)</li>
+      </ul>
+
+      <p><strong>Solution:</strong></p>
+      <ol class="doc-list">
+        <li><strong>Check Browser Settings:</strong> Enable localStorage in your browser privacy settings.</li>
+        <li><strong>Avoid Private Mode:</strong> Use a regular browser window for registration tasks.</li>
+        <li><strong>Clear Old Drafts:</strong> If localStorage is full, manually delete old drafts from the draft recovery modal.</li>
+        <li><strong>Use Same Device:</strong> Drafts are stored locally and do not sync across devices.</li>
+        <li><strong>Submit Regularly:</strong> Don't rely solely on auto-save—submit registrations when complete.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>Auto-Save Frequency:</strong> Drafts are saved automatically after 1 second of inactivity. Look for the "Draft Saved" indicator at the top of the form.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 5: Insurance Section Not Showing -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Insurance Section Not Visible</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Problem:</strong> The Insurance section is collapsed or grayed out and cannot be filled in.</p>
+
+      <p><strong>Cause:</strong> The Insurance section is only enabled when the <strong>"Create Visit"</strong> toggle in the Registration section is turned ON. Without a visit, insurance information cannot be linked to an Encounter.</p>
+
+      <p><strong>Solution:</strong></p>
+      <ol class="doc-list">
+        <li>Scroll to the <strong>Registration</strong> section.</li>
+        <li>Find the <strong>"Create Visit"</strong> toggle switch.</li>
+        <li>Toggle it to <strong>ON</strong>.</li>
+        <li>The Insurance section will become active and editable.</li>
+      </ol>
+
+      <p><strong>FHIR Context:</strong> Insurance is stored as a <code>Coverage</code> resource linked to an <code>Encounter</code>. No visit means no Coverage can be created.</p>
+    </div>
+  </details>
+
+  <!-- Issue 6: Department Dropdown Empty -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Department Dropdown is Empty</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Problem:</strong> The Department dropdown in the Registration section shows no options.</p>
+
+      <p><strong>Cause:</strong> Departments are dynamically filtered based on the selected <strong>Visit Type</strong>. If no visit type is selected, or no departments match the selected type, the dropdown will be empty.</p>
+
+      <p><strong>Solution:</strong></p>
+      <ol class="doc-list">
+        <li>Ensure you have selected a <strong>Visit Type</strong> (Ambulatory, Stationary, or Emergency).</li>
+        <li>Wait for the dropdown to reload with filtered departments.</li>
+        <li>If still empty, contact IT—departments may need to be configured for this visit type.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>Note:</strong> The department list is filtered by the <code>useDepartments</code> hook based on the selected visit type. Ensure visit types are correctly mapped in the system configuration.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 7: Mobile Wizard Navigation Issues -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Mobile Wizard Not Advancing</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Problem:</strong> On mobile devices, the step wizard does not advance to the next step, or the "Next" button is disabled.</p>
+
+      <p><strong>Possible Causes:</strong></p>
+      <ul class="doc-list">
+        <li>Required fields in the current step are not filled</li>
+        <li>Validation errors exist in the current step</li>
+        <li>JavaScript error in the mobile view</li>
+      </ul>
+
+      <p><strong>Solution:</strong></p>
+      <ol class="doc-list">
+        <li>Check for validation errors in the current step (red fields or error messages).</li>
+        <li>Ensure all required fields are completed.</li>
+        <li>Scroll through the step to verify all sections are visible and filled.</li>
+        <li>If the issue persists, try switching to desktop view or refreshing the page.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>Mobile Limitation:</strong> Some complex form interactions work better on desktop. For intensive registration tasks, consider using a desktop or tablet device.
+      </div>
+    </div>
+  </details>
+
+  <!-- Error Codes -->
   <h3 id="error-codes">Error Codes</h3>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Code</th>
-          <th>Message</th>
-          <th>Solution</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ERR_001</code></td>
-          <td>Invalid personal ID</td>
-          <td>Check 11 digits, Luhn validation</td>
-        </tr>
-        <tr>
-          <td><code>ERR_002</code></td>
-          <td>Active visit exists</td>
-          <td>Close existing visit</td>
-        </tr>
-        <tr>
-          <td><code>ERR_003</code></td>
-          <td>Required field is empty</td>
-          <td>Fill in name, surname, gender</td>
-        </tr>
-        <tr>
-          <td><code>ERR_004</code></td>
-          <td>Duplicate patient</td>
-          <td>Use existing or create new</td>
-        </tr>
-        <tr>
-          <td><code>ERR_005</code></td>
-          <td>Invalid phone format</td>
-          <td>Use +995XXXXXXXXX format</td>
-        </tr>
-        <tr>
-          <td><code>ERR_006</code></td>
-          <td>Invalid email format</td>
-          <td>Check @ symbol and domain</td>
-        </tr>
-        <tr>
-          <td><code>ERR_007</code></td>
-          <td>Birth date is in future</td>
-          <td>Enter a past date</td>
-        </tr>
-        <tr>
-          <td><code>ERR_008</code></td>
-          <td>Insurance has expired</td>
-          <td>Update policy validity</td>
-        </tr>
-        <tr>
-          <td><code>ERR_009</code></td>
-          <td>Department not selected</td>
-          <td>Select department from dropdown</td>
-        </tr>
-        <tr>
-          <td><code>ERR_010</code></td>
-          <td>API connection error</td>
-          <td>Check internet, try again</td>
-        </tr>
-      </tbody>
-    </table>
+
+  <p>The registration system uses FHIR <strong>OperationOutcome</strong> resources to communicate errors. Below are common error codes you may encounter:</p>
+
+  <h4>FHIR OperationOutcome Error Codes</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Severity</th>
+        <th>Description</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>invalid</code></td>
+        <td>Error</td>
+        <td>Resource content is invalid</td>
+        <td>Check field formats and required fields</td>
+      </tr>
+      <tr>
+        <td><code>structure</code></td>
+        <td>Error</td>
+        <td>Structural issue with FHIR resource</td>
+        <td>Contact IT support—data binding issue</td>
+      </tr>
+      <tr>
+        <td><code>required</code></td>
+        <td>Error</td>
+        <td>Required field is missing</td>
+        <td>Fill in the indicated required field</td>
+      </tr>
+      <tr>
+        <td><code>value</code></td>
+        <td>Error</td>
+        <td>Value is outside allowed range</td>
+        <td>Check date ranges, numeric limits, or enum values</td>
+      </tr>
+      <tr>
+        <td><code>invariant</code></td>
+        <td>Error</td>
+        <td>Business rule violation</td>
+        <td>Review business logic (e.g., guardian required for minors)</td>
+      </tr>
+      <tr>
+        <td><code>security</code></td>
+        <td>Error</td>
+        <td>Authorization failed</td>
+        <td>Check user permissions or re-authenticate</td>
+      </tr>
+      <tr>
+        <td><code>login</code></td>
+        <td>Error</td>
+        <td>Session expired</td>
+        <td>Log in again</td>
+      </tr>
+      <tr>
+        <td><code>conflict</code></td>
+        <td>Error</td>
+        <td>Resource conflict (e.g., duplicate)</td>
+        <td>Check for existing patient records or active visits</td>
+      </tr>
+      <tr>
+        <td><code>transient</code></td>
+        <td>Warning</td>
+        <td>Temporary server issue</td>
+        <td>Retry the operation</td>
+      </tr>
+      <tr>
+        <td><code>informational</code></td>
+        <td>Information</td>
+        <td>Informational message</td>
+        <td>No action needed</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>HTTP Status Codes</h4>
+
+  <p>When interacting with the FHIR API, you may encounter standard HTTP status codes:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Status Code</th>
+        <th>Meaning</th>
+        <th>Common Causes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>200 OK</code></td>
+        <td>Success</td>
+        <td>Request completed successfully</td>
+      </tr>
+      <tr>
+        <td><code>201 Created</code></td>
+        <td>Resource created</td>
+        <td>New patient or visit successfully created</td>
+      </tr>
+      <tr>
+        <td><code>400 Bad Request</code></td>
+        <td>Invalid request</td>
+        <td>Validation error or malformed data</td>
+      </tr>
+      <tr>
+        <td><code>401 Unauthorized</code></td>
+        <td>Authentication required</td>
+        <td>User is not logged in or session expired</td>
+      </tr>
+      <tr>
+        <td><code>403 Forbidden</code></td>
+        <td>Access denied</td>
+        <td>User lacks permission for this operation</td>
+      </tr>
+      <tr>
+        <td><code>404 Not Found</code></td>
+        <td>Resource not found</td>
+        <td>Patient or resource does not exist</td>
+      </tr>
+      <tr>
+        <td><code>409 Conflict</code></td>
+        <td>Resource conflict</td>
+        <td>Duplicate patient or active visit conflict</td>
+      </tr>
+      <tr>
+        <td><code>422 Unprocessable Entity</code></td>
+        <td>Validation failed</td>
+        <td>Business rule violation (e.g., guardian required for minor)</td>
+      </tr>
+      <tr>
+        <td><code>500 Internal Server Error</code></td>
+        <td>Server error</td>
+        <td>Contact IT support—server-side issue</td>
+      </tr>
+      <tr>
+        <td><code>503 Service Unavailable</code></td>
+        <td>Service down</td>
+        <td>Server maintenance or temporary outage</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Form Validation Messages</h4>
+
+  <p>In addition to FHIR errors, the registration form displays client-side validation messages:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Message</th>
+        <th>Trigger</th>
+        <th>Fix</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>"Personal ID must be 11 digits"</td>
+        <td>Personal ID length ≠ 11</td>
+        <td>Enter exactly 11 digits</td>
+      </tr>
+      <tr>
+        <td>"Invalid Personal ID checksum"</td>
+        <td>Luhn algorithm validation fails</td>
+        <td>Use a valid Georgian personal ID</td>
+      </tr>
+      <tr>
+        <td>"First name is required"</td>
+        <td>First name empty and "Unknown Patient" is OFF</td>
+        <td>Fill first name or enable "Unknown Patient"</td>
+      </tr>
+      <tr>
+        <td>"Guardian information required for minors"</td>
+        <td>Patient age < 18 and guardian fields empty</td>
+        <td>Fill all guardian fields</td>
+      </tr>
+      <tr>
+        <td>"Phone number format invalid"</td>
+        <td>Phone missing country code</td>
+        <td>Include country code (e.g., +995)</td>
+      </tr>
+      <tr>
+        <td>"Birth date cannot be in the future"</td>
+        <td>Birth date > today</td>
+        <td>Select a past date</td>
+      </tr>
+      <tr>
+        <td>"Department is required"</td>
+        <td>Visit type selected but no department</td>
+        <td>Select a department from the dropdown</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Need More Help?</strong> If you encounter an error not listed here, contact your IT support team with the exact error message and the steps you were performing.
   </div>
+
 </section>

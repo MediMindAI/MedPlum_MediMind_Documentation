@@ -59,6 +59,18 @@ Read sections/en/features.html
 Read config/manifest.json
 ```
 
+**Optional: Read discover plan screenshot seeds.**
+If Phase 0 (DISCOVER) ran before this planner, a discover plan may contain pre-suggested screenshots:
+```bash
+# Check for discover plan seeds
+Glob screenshot-plans/_discover/*-section-plan.json
+```
+If a discover plan exists and has a `"screenshots"` array, use those entries as seeds:
+- Pre-populate the plan with suggested basenames and descriptions
+- Merge with screenshots found via HTML `data-i18n-img` analysis
+- Discover seeds take priority for new sections (no existing HTML)
+- Existing `data-i18n-img` attributes take priority for existing sections
+
 ### Phase 1.5: SOURCE CODE ANALYSIS
 
 **Read the actual EMR source code** to extract real selectors, DOM structure, and component hierarchy. This prevents generating guessed selectors that fail at capture time.
@@ -196,6 +208,9 @@ Generate specifications for each screenshot. **Always use real selectors from Ph
   "id": "insurance-section",
   "name": "insurance-section",
   "description": "Insurance coverage form section",
+  "desiredState": "Insurance form section expanded with coverage fields visible",
+  "differentiator": "Shows the insurance form fields — not the default collapsed section header",
+  "stateSetup": null,
   "type": "static",
   "anchorId": "insurance",
   "docReference": "Section 2.6 - Insurance",
@@ -216,12 +231,20 @@ Generate specifications for each screenshot. **Always use real selectors from Ph
 }
 ```
 
+> **Note:** `verification` is planner-level guidance (human-readable hints for what to check). `verificationCriteria` (defined in schema above) is a separate, machine-readable field consumed by the pipeline capture/verify agents with structured `mustShow`/`mustNotShow` arrays. Both are optional. Use `verification` for descriptive hints, `verificationCriteria` for automated checks.
+
 **Multi-Step Flow Screenshot:**
 ```json
 {
   "id": "patient-lookup-flow",
   "name": "patient-lookup",
   "description": "Patient lookup by personal ID with result states",
+  "desiredState": "Patient lookup flow from empty field to found patient card",
+  "differentiator": "Multi-step flow showing progressive states — not a single static view",
+  "stateSetup": null,
+  "sectionHeaderText": "Patient Lookup",
+  "expectedDOMElements": ["input[name*='personalId' i]", "[class*='patient-lookup' i]"],
+  "knownLimitation": null,
   "type": "multi-step-flow",
   "anchorId": "patient-lookup",
   "docReference": "Section 2.1 - Patient Lookup",
@@ -275,6 +298,12 @@ Generate specifications for each screenshot. **Always use real selectors from Ph
   "id": "active-visit-warning",
   "name": "active-visit-warning",
   "description": "Warning modal when patient has existing visit",
+  "desiredState": "Warning modal visible with message about patient having an existing active visit",
+  "differentiator": "Shows a modal overlay — not the normal registration form state",
+  "stateSetup": null,
+  "sectionHeaderText": null,
+  "expectedDOMElements": ["[role='dialog']"],
+  "knownLimitation": "requires-test-data",
   "type": "state-based",
   "anchorId": "active-visit-warning",
   "triggerCondition": "Patient has Encounter with status='in-progress'",
@@ -344,7 +373,8 @@ Create or update the master index to track all planned sections:
 }
 ```
 
-**Status values:** `pending` | `in_progress` | `completed`
+**Section-level status values:** `pending` | `in_progress` | `completed`
+**Screenshot-level status values:** `pending` | `captured` | `completed` | `failed` | `blocked` | `needs-recapture`
 
 #### Screenshot Status Tracking
 
@@ -355,6 +385,7 @@ Each screenshot in the JSON plan includes a `status` field:
 
 ```json
 {
+  "number": 1,
   "id": "hero-search",
   "name": "hero-search",
   "status": {
@@ -499,8 +530,13 @@ For multi-step flows, generate gallery HTML that doc-writer can insert:
 | `evaluate` | script | `{ "action": "evaluate", "script": "..." }` |
 | `viewport` | width, height | `{ "action": "viewport", "width": 375, "height": 812 }` |
 | `comment` | text | `{ "action": "comment", "text": "Note for human" }` |
+| `select-first-option` | selector | `{ "action": "select-first-option", "selector": "select.company" }` |
 
-### Selector Rules for captureSteps
+**`fallback` parameter:** Any action with a `selector` can include an optional `"fallback": "..."` field — an alternative selector to try if the primary selector fails. Used in both `captureSteps` and `stateSetup.interactionSequence`.
+
+### Selector Rules for captureSteps and stateSetup
+
+These rules apply to ALL selectors in the plan JSON — both `captureSteps` and `stateSetup.interactionSequence` / `stateSetup.sampleData`.
 
 1. **Use language-NEUTRAL selectors.** The capture agent switches language before running captureSteps.
    Good: `input[type='text']`, `[role='dialog']`, `button[type='submit']`, `form >> input >> nth=2`
@@ -518,13 +554,75 @@ For multi-step flows, generate gallery HTML that doc-writer can insert:
 
 ### New Schema Fields (Required on Every Screenshot Entry)
 
-Every screenshot entry MUST include these 3 fields:
+Every screenshot entry MUST include these fields:
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `number` | `integer` | **Required.** Sequential number (1, 2, 3...) for easy reference. Auto-assigned in order of appearance. |
 | `sectionHeaderText` | `string \| null` | English text of the section header for scroll targeting. `null` if no scroll needed. |
 | `expectedDOMElements` | `string[]` | 1-3 CSS selectors that MUST be visible on screen for a correct capture. Used by capture agent to verify content before screenshot. |
-| `knownLimitation` | `null \| "react-synthetic-events" \| "requires-test-data"` | `null` for normal captures. Set when the screenshot has a known automation limitation. |
+| `knownLimitation` | `null \| "react-synthetic-events" \| "requires-test-data" \| "feature-not-found"` | `null` for normal captures. Set when the screenshot has a known automation limitation. Use `"feature-not-found"` when source code analysis cannot find the UI element described in the docs. |
+| `verificationCriteria` | `object \| null` | Optional post-capture checks. Contains `mustShow` (array of strings describing elements that MUST be visible) and `mustNotShow` (array of strings describing elements that must NOT appear). Not required — omit or set to `null` for most screenshots. |
+
+### State Setup Fields (Required on Every Screenshot Entry)
+
+Every screenshot entry MUST include these 3 additional fields:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `desiredState` | `string` | **Yes** | Plain English description of what the screenshot MUST show. The capture agent uses this as the ground truth. |
+| `differentiator` | `string` | **Yes** | What makes this screenshot visually distinct from all other screenshots of the same page. |
+| `stateSetup` | `object \| null` | **Yes** | Field is always required. Set to `null` if no interaction needed beyond scroll. Set to an object with `interactionSequence` and optional `sampleData` if the desired state requires interactions. |
+| `stateSetup.interactionSequence` | `array` | If stateSetup set | Ordered steps to reach the desired UI state BEFORE the screenshot capture steps run. Same action format as `captureSteps`. |
+| `stateSetup.sampleData` | `array \| null` | Optional | Field values to fill for a realistic appearance. Each `sampleData` entry MUST have one of these formats: **Fill format:** `{ "action": "fill", "selector": "...", "value": "...", "fallback": "..." }` — **Select format:** `{ "action": "select-first-option", "selector": "..." }` — **Descriptive format:** `{ "field": "Human-readable label", "value": "...", "action": "..." }`. When using descriptive format (no selector), the capture agent uses `field` as a hint to locate the element via DOM exploration. This is a FALLBACK — prefer explicit selectors. |
+
+**Example with stateSetup (insurance — smart toggle + enable checkbox):**
+```json
+{
+  "number": 13,
+  "id": "insurance-section",
+  "name": "insurance-section",
+  "description": "Insurance form with company selector and policy fields",
+  "desiredState": "Section expanded, insurance ENABLED via checkbox, company dropdown visible with first option selected",
+  "differentiator": "Shows active insurance form with company fields — not the default empty 'Enable' toggle",
+  "stateSetup": {
+    "description": "Conditionally open Insurance section, click Enable checkbox, select company",
+    "interactionSequence": [
+      { "action": "evaluate", "script": "var s=document.querySelectorAll('.emr-form-section')[5]; if(!s.classList.contains('open')){document.querySelectorAll('.emr-form-section-header-left')[5].click();} 'ok'" },
+      { "action": "wait", "ms": 1000 },
+      { "action": "evaluate", "script": "document.querySelectorAll('.emr-form-section-header')[5].scrollIntoView({behavior:'instant',block:'start'})" },
+      { "action": "wait", "ms": 500 },
+      { "action": "evaluate", "script": "var cb=document.querySelector('.emr-form-section:nth-of-type(6) input[type=\"checkbox\"]'); if(cb && !cb.checked){cb.click();} 'insurance-enabled'" },
+      { "action": "wait", "ms": 1500 }
+    ],
+    "sampleData": [
+      { "action": "select-first-option", "selector": ".emr-form-section:nth-of-type(6) select:first-of-type" }
+    ]
+  },
+  "sectionHeaderText": "Insurance",
+  "expectedDOMElements": [".emr-form-section", "input[type='checkbox']"],
+  "knownLimitation": null
+}
+```
+
+### Screenshot State Quality Rules
+
+Every screenshot plan MUST specify a `desiredState` that answers: "What should the user SEE in this image?"
+
+**BAD desiredState examples:**
+- "Insurance section" (too vague — collapsed? expanded? filled?)
+- "Registration form" (which state? empty? with data?)
+
+**GOOD desiredState examples:**
+- "Insurance section expanded, enable toggle ON, company dropdown visible with at least one option, policy number field showing sample value POL-2024-00123"
+- "Registration form with Visit Type set to 'Outpatient', Department dropdown showing first option, Visit Date filled with today's date"
+
+**Rules for stateSetup:**
+1. If the screenshot's `desiredState` requires ANY interaction beyond scrolling → `stateSetup` MUST be non-null
+2. Form section screenshots SHOULD show fields with sample data, not empty defaults
+3. Toggle/checkbox screenshots MUST show the ACTIVE state (enabled), not the default disabled
+4. Dropdown screenshots SHOULD show a selected value, not the placeholder
+5. If the desired state requires test data that may not exist → set `knownLimitation: "requires-test-data"` AND still provide the `stateSetup` (capture agent tries it; if data missing, falls back gracefully)
 
 ### Selector Quality Rules
 
@@ -542,16 +640,33 @@ If any generated selector violates these rules, fix it before writing the plan f
 
 The registration page form has 8 collapsible sections inside a scroll container:
 
-| Index | Section | Class | Click Target | Default |
-|-------|---------|-------|-------------|---------|
-| 0 | Personal Information | `.emr-form-section` | `.emr-form-section-header-left` | Open |
-| 1 | Contact Information | `.emr-form-section` | `.emr-form-section-header-left` | Closed |
-| 2 | Additional Details | `.emr-form-section` | `.emr-form-section-header-left` | Closed |
-| 3 | Guardian/Representative | `.emr-form-section` | `.emr-form-section-header-left` | Closed |
-| 4 | Registration (რეგისტრაცია) | `.emr-form-section` | `.emr-form-section-header-left` | Open |
-| 5 | Insurance (დაზღვევა) | `.emr-form-section` | `.emr-form-section-header-left` | Open (empty) |
-| 6 | Guarantee (საგარანტიო) | `.emr-form-section` | `.emr-form-section-header-left` | Closed |
-| 7 | Demographics (დემოგრაფია) | `.emr-form-section` | `.emr-form-section-header-left` | Open |
+| Index | Section | Class | Click Target | Default | Notes |
+|-------|---------|-------|-------------|---------|-------|
+| 0 | Personal Information | `.emr-form-section` | `.emr-form-section-header-left` | Open | |
+| 1 | Contact Information | `.emr-form-section` | `.emr-form-section-header-left` | Closed | |
+| 2 | Additional Details | `.emr-form-section` | `.emr-form-section-header-left` | Closed | |
+| 3 | Guardian/Representative | `.emr-form-section` | `.emr-form-section-header-left` | Closed | |
+| 4 | Registration (რეგისტრაცია) | `.emr-form-section` | `.emr-form-section-header-left` | Open | When createVisit=true |
+| 5 | Insurance (დაზღვევა) | `.emr-form-section` | `.emr-form-section-header-left` | Open (empty) | Header open, fields hidden behind Enable checkbox |
+| 6 | Guarantee (საგარანტიო) | `.emr-form-section` | `.emr-form-section-header-left` | Closed | |
+| 7 | Demographics (დემოგრაფია) | `.emr-form-section` | `.emr-form-section-header-left` | Open | When createVisit=true |
+
+**Smart Toggle Rule:** When generating stateSetup for a section, check its default state:
+- **Default Open sections (0, 4, 5, 7):** Generate CONDITIONAL evaluate (check open first, click only if closed):
+  ```json
+  {"action":"evaluate","script":"var s=document.querySelectorAll('.emr-form-section')[INDEX]; if(!s.classList.contains('open')){document.querySelectorAll('.emr-form-section-header-left')[INDEX].click();} 'ok'"}
+  ```
+- **Default Closed sections (1, 2, 3, 6):** Generate normal click (safe — these are always closed initially):
+  ```json
+  {"action":"evaluate","script":"document.querySelectorAll('.emr-form-section-header-left')[INDEX].click()"}
+  ```
+  Though conditional toggle is also acceptable for these.
+
+**Insurance Section Special Case:** Insurance section (index 5) is open by default BUT its form fields are hidden behind an Enable checkbox. To capture insurance fields, the stateSetup MUST:
+1. Conditionally open the section header (smart toggle)
+2. Click the Enable checkbox: `var cb=document.querySelector('.emr-form-section:nth-of-type(6) input[type="checkbox"]'); if(cb && !cb.checked){cb.click();}`
+3. Wait for fields to render (1500ms)
+4. Optionally select first insurance company from dropdown
 
 **Key facts for plan generation:**
 - Scroll container: `div[class*="transitionContainer"]` (scrollHeight ~2377px, viewportHeight ~764px)
@@ -565,15 +680,15 @@ When generating captureSteps for form section screenshots, use this pattern:
 ```json
 {
   "action": "evaluate",
-  "params": "document.querySelectorAll('.emr-form-section-header-left')[INDEX].click()"
+  "script": "document.querySelectorAll('.emr-form-section-header-left')[INDEX].click()"
 },
 {
   "action": "wait",
-  "params": 1000
+  "ms": 1000
 },
 {
   "action": "evaluate",
-  "params": "document.querySelectorAll('.emr-form-section-header')[INDEX].scrollIntoView({behavior:'instant',block:'start'})"
+  "script": "document.querySelectorAll('.emr-form-section-header')[INDEX].scrollIntoView({behavior:'instant',block:'start'})"
 }
 ```
 

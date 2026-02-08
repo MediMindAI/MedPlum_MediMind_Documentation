@@ -5,159 +5,561 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
       </svg>
     </div>
-    <h2>Архитектура</h2>
+    <h2><span class="doc-section-number">3</span> Архитектура</h2>
   </div>
 
-  <!-- Обзор архитектуры (упрощённый Mermaid) -->
-  <h4 id="architecture-overview">Обзор архитектуры</h4>
-  <p>Модуль регистрации следует паттерну слоистой архитектуры:</p>
+  <p>Модуль регистрации пациентов MediMind построен на основе <strong>компонентной архитектуры</strong> с использованием React, TypeScript и платформы Medplum FHIR. Этот раздел предоставляет технический обзор структуры системы, потока данных и интеграции с ресурсами FHIR.</p>
+
+  <!-- Architecture Overview -->
+  <h3 id="architecture-overview">Обзор архитектуры</h3>
+
+  <p>Модуль регистрации следует <strong>трехуровневой адаптивной компоновке</strong>, которая адаптируется к различным размерам экранов, сохраняя единую иерархию компонентов.</p>
 
   <div class="mermaid-container">
     <div class="mermaid mermaid-zoomable">
-flowchart TB
-    subgraph UI["UI Components"]
-        UnifiedReg[UnifiedRegistrationView]
-        PatientForm[PatientForm]
-        VisitModal[VisitModal]
-        SearchPanel[SearchPanel]
-    end
+graph TD
+    A[UnifiedRegistrationView] --> B[EMRPageHeader]
+    A --> C[UnifiedPatientSearch]
+    A --> D[UnifiedPatientRegistrationForm]
+    A --> E[Desktop Sidebar]
+    A --> F[Mobile Patient Table]
 
-    subgraph Hooks["React Hooks"]
-        useRegForm[useRegistrationVisitForm]
-        useDept[useDepartments]
-        useIns[useInsuranceData]
-    end
+    C --> C1[Поиск с Cmd+K]
+    C --> C2[Расширенные фильтры]
+    C --> C3[Результаты поиска]
 
-    subgraph Services["Services Layer"]
-        EncSvc[encounterService]
-        MedClient[MedplumClient]
-        DeptSvc[departmentService]
-    end
+    D --> D1[FormSectionProgress]
+    D --> D2[PatientLookupSection]
+    D --> D3[PersonalInfoSection]
+    D --> D4[ContactInfoSection]
+    D --> D5[AdditionalDetailsSection]
+    D --> D6[GuardianInfoSection]
+    D --> D7[RegistrationSection]
+    D --> D8[InsuranceSection]
+    D --> D9[GuaranteeSection]
+    D --> D10[DemographicsSection]
 
-    subgraph FHIR["Medplum Cloud"]
-        DB[(FHIR R4 API)]
-    end
+    E --> E1[Визиты сегодня]
+    E --> E2[Последние пациенты]
 
-    UI --> Hooks
-    Hooks --> Services
-    Services --> FHIR
-    </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
+    style A fill:#1a365d,color:#ffffff,stroke:#2b6cb0
+    style D fill:#2b6cb0,color:#ffffff,stroke:#63b3ed
+    style C fill:#63b3ed,color:#1f2937,stroke:#2b6cb0
     </div>
   </div>
 
-  <!-- FHIR-ресурсы -->
-  <h3 id="fhir-resources">FHIR-ресурсы</h3>
-  <p>Модуль регистрации создает и управляет следующими FHIR R4 ресурсами:</p>
+  <h4>Структура компонентов</h4>
 
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Ресурс</th>
-          <th>Назначение</th>
-          <th>Создается когда</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Patient</strong></td>
-          <td>Основная демографическая запись пациента</td>
-          <td>При каждой регистрации</td>
-        </tr>
-        <tr>
-          <td><strong>Encounter</strong></td>
-          <td>Запись о визите / посещении</td>
-          <td>Когда «Создать визит» ВКЛ</td>
-        </tr>
-        <tr>
-          <td><strong>Coverage</strong></td>
-          <td>Данные страхового покрытия</td>
-          <td>При добавлении страхования</td>
-        </tr>
-        <tr>
-          <td><strong>RelatedPerson</strong></td>
-          <td>Информация об опекуне / представителе</td>
-          <td>При вводе данных опекуна</td>
-        </tr>
-        <tr>
-          <td><strong>DocumentReference</strong></td>
-          <td>Загруженные гарантийные документы</td>
-          <td>При прикреплении файлов</td>
-        </tr>
-      </tbody>
-    </table>
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Компонент</th>
+        <th>Назначение</th>
+        <th>Ключевые функции</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>UnifiedRegistrationView</strong></td>
+        <td>Контейнер страницы верхнего уровня</td>
+        <td>Управление адаптивной компоновкой, маршрутизация</td>
+      </tr>
+      <tr>
+        <td><strong>UnifiedPatientSearch</strong></td>
+        <td>Главная секция поиска</td>
+        <td>Горячие клавиши (Cmd/Ctrl+K), расширенные фильтры, результаты с двойным действием</td>
+      </tr>
+      <tr>
+        <td><strong>UnifiedPatientRegistrationForm</strong></td>
+        <td>Основная форма регистрации</td>
+        <td>9 секций-аккордеонов, автосохранение, восстановление черновиков, отслеживание прогресса</td>
+      </tr>
+      <tr>
+        <td><strong>Desktop Sidebar</strong></td>
+        <td>Панель быстрого доступа</td>
+        <td>Визиты сегодня, последние пациенты (только на рабочем столе, >1024px)</td>
+      </tr>
+      <tr>
+        <td><strong>Mobile Patient Table</strong></td>
+        <td>Представление списка пациентов</td>
+        <td>Полный список пациентов (только мобильные/планшеты, <1024px)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Стратегия адаптивной компоновки</h4>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">&lt;768px</span>
+      <span class="doc-stat-inline-label">Мобильный: Один столбец + мастер</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">768-1024px</span>
+      <span class="doc-stat-inline-label">Планшет: Двухколоночная форма</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">&gt;1024px</span>
+      <span class="doc-stat-inline-label">Рабочий стол: Многоколоночная + боковая панель</span>
+    </div>
   </div>
 
-  <!-- Поток создания FHIR-ресурсов -->
-  <h3 id="fhir-flow">Поток создания FHIR-ресурсов</h3>
-  <p>При отправке регистрации создаются следующие FHIR-ресурсы:</p>
+  <ul class="doc-list">
+    <li><strong>Мобильный (&lt;768px):</strong> Одноколоночная компоновка со складываемыми секциями, навигация мастером из 5 шагов, фиксированная кнопка отправки, полная таблица пациентов под формой</li>
+    <li><strong>Планшет (768-1024px):</strong> Двухколоночная компоновка формы, развернутые секции, встроенная кнопка отправки</li>
+    <li><strong>Рабочий стол (&gt;1024px):</strong> Многоколоночная компоновка с правой боковой панелью, показывающей визиты сегодня и последних пациентов для быстрого доступа</li>
+  </ul>
+
+  <!-- FHIR Workflow -->
+  <h3 id="fhir-flow">Рабочий процесс FHIR</h3>
+
+  <p>Процесс регистрации пациентов следует <strong>многоэтапному рабочему процессу создания ресурсов FHIR</strong>, который интегрирует поиск, отправку формы и создание визита.</p>
 
   <div class="mermaid-container">
     <div class="mermaid mermaid-zoomable">
 sequenceDiagram
-    participant U as User
-    participant F as Form
-    participant S as Service
-    participant M as Medplum
+    participant User as Пользователь
+    participant SearchHero as Панель поиска
+    participant Form as Форма
+    participant Hook as useRegistrationForm
+    participant Service as patientDataBindingService
+    participant API as Medplum FHIR API
+    participant Storage as localStorage
 
-    U->>F: Submit Registration
-    F->>S: createPatient()
-    S->>M: POST /Patient
-    M-->>S: Patient ID
-    F->>S: createEncounter()
-    S->>M: POST /Encounter
-    M-->>S: Encounter ID
-    F->>S: createCoverage()
-    S->>M: POST /Coverage
-    M-->>S: Coverage ID
-    S-->>F: Success
-    F-->>U: Registration Complete
-    </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
+    User->>SearchHero: Ввести личный номер или имя
+    SearchHero->>API: GET /Patient?identifier=01011055555
+    API-->>SearchHero: Patient[] (существующие пациенты)
+
+    alt Пациент найден
+        SearchHero->>Form: Автозаполнение данных пациента
+        Form->>User: "Предупреждение об активном визите" если Encounter.status=in-progress
+    else Пациент не найден
+        SearchHero->>Form: Развернуть все секции (Новая регистрация)
+    end
+
+    User->>Form: Заполнить поля регистрации
+    Form->>Storage: Автосохранение черновика (с задержкой 1 сек)
+
+    User->>Form: Нажать отправить
+    Form->>Hook: Проверка и обработка данных формы
+    Hook->>Service: Привязка 101+ кодов GoodKey
+    Service->>API: POST /Patient (создать/обновить)
+    API-->>Service: Ресурс Patient
+
+    opt Создать визит = true
+        Service->>API: POST /Encounter
+        API-->>Service: Ресурс Encounter
+
+        opt Есть страховка
+            Service->>API: POST /Coverage (для каждого страховщика)
+            API-->>Service: Coverage[]
+        end
+
+        opt Есть опекун
+            Service->>API: POST /RelatedPerson
+            API-->>Service: Ресурс RelatedPerson
+        end
+    end
+
+    Service->>Storage: Очистка черновика
+    Service-->>User: Сообщение об успехе + Переход к истории пациента
     </div>
   </div>
 
-  <!-- Диаграмма потока данных -->
+  <h4>Этапы рабочего процесса</h4>
+
+  <ol class="doc-list">
+    <li><strong>Фаза поиска:</strong> Пользователь вводит личный номер или имя → Система запрашивает существующих пациентов на сервере FHIR</li>
+    <li><strong>Поиск пациента:</strong> Если найден, автозаполняет данные пациента и проверяет активные визиты; если не найден, разворачивает все секции формы для новой регистрации</li>
+    <li><strong>Заполнение формы:</strong> Пользователь заполняет 9 секций-аккордеонов с автосохранением в localStorage (задержка 1 секунда)</li>
+    <li><strong>Проверка:</strong> Система проверяет личный номер (11-значная контрольная сумма Луна), обязательные поля и бизнес-правила</li>
+    <li><strong>Создание ресурса FHIR:</strong> При отправке создает ресурс Patient с 101+ кодами привязки данных GoodKey</li>
+    <li><strong>Создание визита (опционально):</strong> Если переключатель "Создать визит" включен, создает Encounter, Coverage (если застрахован) и RelatedPerson (если присутствует опекун)</li>
+    <li><strong>Очистка черновика:</strong> Очищает черновик localStorage и переходит к представлению истории пациента</li>
+  </ol>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Предупреждение об активном визите:</strong>
+    Если у пациента уже есть <code>Encounter.status='in-progress'</code>, система отображает модальное окно предупреждения для предотвращения дублирования активных визитов.
+  </div>
+
+  <!-- FHIR Resources -->
+  <h3 id="fhir-resources">Ресурсы FHIR</h3>
+
+  <p>Модуль регистрации создает и управляет следующими <strong>ресурсами FHIR R4</strong> с грузинскими расширениями.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Ресурс</th>
+        <th>Назначение</th>
+        <th>Ключевые поля</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Patient</strong></td>
+        <td>Основные демографические данные пациента</td>
+        <td>
+          <code>identifier</code> (Личный номер),
+          <code>name</code> (Имя с отчеством),
+          <code>gender</code> (Пол),
+          <code>birthDate</code> (Дата рождения),
+          <code>telecom</code> (Телефон, email),
+          <code>address</code> (Адрес),
+          <code>extension:citizenship</code> (Гражданство),
+          <code>extension:unknown-patient</code> (Неизвестный пациент)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Encounter</strong></td>
+        <td>Запись визита/встречи пациента</td>
+        <td>
+          <code>status</code> (Запланирован, в процессе, завершен),
+          <code>class</code> (Амбулаторный, стационарный, неотложный),
+          <code>type</code> (Тип визита),
+          <code>subject</code> (Ссылка на Patient),
+          <code>participant</code> (Практикующие врачи),
+          <code>period</code> (Дата/время визита)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Coverage</strong></td>
+        <td>Информация о страховом полисе</td>
+        <td>
+          <code>payor</code> (Ссылка на страховую компанию),
+          <code>beneficiary</code> (Ссылка на Patient),
+          <code>relationship</code> (Сам, семья),
+          <code>period</code> (Действительность полиса),
+          <code>identifier</code> (Номер полиса)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>RelatedPerson</strong></td>
+        <td>Опекун/представитель для несовершеннолетних или недееспособных пациентов</td>
+        <td>
+          <code>patient</code> (Ссылка на Patient),
+          <code>relationship</code> (Родитель, опекун, супруг),
+          <code>name</code> (Имя),
+          <code>telecom</code> (Контактная информация),
+          <code>address</code> (Адрес)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Organization</strong></td>
+        <td>Отделения больницы, страховые компании</td>
+        <td>
+          <code>identifier</code> (Идентификатор),
+          <code>name</code> (Название),
+          <code>type</code> (dept, prov, ins),
+          <code>telecom</code> (Телефон),
+          <code>address</code> (Адрес)
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Грузинские расширения FHIR</h4>
+
+  <p>MediMind расширяет FHIR R4 для поддержки требований грузинского здравоохранения:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>URL расширения</th>
+        <th>Применяется к</th>
+        <th>Назначение</th>
+        <th>Пример значения</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>medimind:patronymic</code></td>
+        <td>Patient.name</td>
+        <td>Имя отца (среднее имя в грузинском именовании)</td>
+        <td>"გიორგის" (сын Гиорги)</td>
+      </tr>
+      <tr>
+        <td><code>medimind:citizenship</code></td>
+        <td>Patient</td>
+        <td>Статус гражданства (гражданин, иностранец, лицо без гражданства)</td>
+        <td>"citizen", "foreigner"</td>
+      </tr>
+      <tr>
+        <td><code>medimind:unknown-patient</code></td>
+        <td>Patient</td>
+        <td>Неотложный пациент без идентификации (присвоен временный ID)</td>
+        <td><code>true</code> / <code>false</code></td>
+      </tr>
+      <tr>
+        <td><code>medimind:data-binding</code></td>
+        <td>Patient, Encounter</td>
+        <td>101+ кодов GoodKey для стандартизации данных электронных медицинских карт</td>
+        <td>Код "010101" = Имя</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Расширение отчества:</strong>
+    Грузинская конвенция именования включает имя отца в родительном падеже (например, "ნინო გიორგის ასათიანი" = Нино, дочь Гиорги, Асатиани). Это сохраняется как расширение в <code>Patient.name.given</code>.
+  </div>
+
+  <!-- Data Flow -->
   <h3 id="data-flow">Поток данных</h3>
-  <p>Данные перемещаются между слоями, localStorage обеспечивает сохранение черновика:</p>
+
+  <p>Модуль регистрации использует <strong>однонаправленный поток данных</strong> от ввода формы до ресурсов FHIR с механизмами автосохранения и восстановления черновиков.</p>
 
   <div class="mermaid-container">
     <div class="mermaid mermaid-zoomable">
-flowchart TD
-    UI[UI Layer] -->|Props & Events| H[Hooks Layer]
-    H -->|API Calls| S[Services Layer]
-    S -->|FHIR Operations| F[Medplum Cloud]
-    F -->|Resources| S
-    S -->|Data| H
-    H -->|State| UI
+graph LR
+    A[Ввод формы] --> B[React State]
+    B --> C[useRegistrationForm Hook]
+    C --> D[Слой проверки]
+    D --> E{Валидно?}
 
-    LS[(localStorage)] -.->|Draft| UI
-    UI -.->|Auto-save| LS
-    </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
+    E -->|Нет| F[Показать ошибки]
+    F --> A
+
+    E -->|Да| G[patientDataBindingService]
+    G --> H[Применить 101+ кодов GoodKey]
+    H --> I[Построить ресурсы FHIR]
+    I --> J[Medplum SDK]
+    J --> K[POST в FHIR API]
+    K --> L[Сервер FHIR]
+
+    B --> M[Автосохранение]
+    M --> N[Черновик localStorage]
+    N --> O[Восстановление черновика при перезагрузке]
+    O --> A
+
+    style C fill:#2b6cb0,color:#ffffff,stroke:#63b3ed
+    style G fill:#63b3ed,color:#1f2937,stroke:#2b6cb0
+    style L fill:#1a365d,color:#ffffff,stroke:#2b6cb0
     </div>
   </div>
+
+  <h4>Привязка данных с кодами GoodKey</h4>
+
+  <p>MediMind использует <strong>101+ кодов привязки данных GoodKey</strong> для стандартизации данных пациентов во всей системе электронных медицинских карт. Каждое поле формы сопоставляется с конкретным кодом:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Поле формы</th>
+        <th>Код GoodKey</th>
+        <th>Путь FHIR</th>
+        <th>Тип данных</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Личный номер</td>
+        <td>010100</td>
+        <td>Patient.identifier[0].value</td>
+        <td>string (11 цифр)</td>
+      </tr>
+      <tr>
+        <td>Имя</td>
+        <td>010101</td>
+        <td>Patient.name[0].given[0]</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>Фамилия</td>
+        <td>010102</td>
+        <td>Patient.name[0].family</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>Отчество (Среднее имя)</td>
+        <td>010103</td>
+        <td>Patient.name[0].extension:patronymic</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>Дата рождения</td>
+        <td>010104</td>
+        <td>Patient.birthDate</td>
+        <td>date (YYYY-MM-DD)</td>
+      </tr>
+      <tr>
+        <td>Пол</td>
+        <td>010105</td>
+        <td>Patient.gender</td>
+        <td>code (male, female, other, unknown)</td>
+      </tr>
+      <tr>
+        <td>Номер телефона</td>
+        <td>010201</td>
+        <td>Patient.telecom[0].value</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>010202</td>
+        <td>Patient.telecom[1].value</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>Адрес</td>
+        <td>010301</td>
+        <td>Patient.address[0].text</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>Гражданство</td>
+        <td>010401</td>
+        <td>Patient.extension:citizenship</td>
+        <td>code (citizen, foreigner, stateless)</td>
+      </tr>
+      <tr>
+        <td>Профессия</td>
+        <td>010402</td>
+        <td>Patient.extension:occupation</td>
+        <td>string</td>
+      </tr>
+      <tr>
+        <td>Тип визита</td>
+        <td>020101</td>
+        <td>Encounter.type[0].coding[0].code</td>
+        <td>code (outpatient, inpatient, emergency)</td>
+      </tr>
+      <tr>
+        <td>Отделение</td>
+        <td>020102</td>
+        <td>Encounter.serviceProvider</td>
+        <td>reference (Organization)</td>
+      </tr>
+      <tr>
+        <td>Страховая компания</td>
+        <td>030101</td>
+        <td>Coverage.payor[0]</td>
+        <td>reference (Organization)</td>
+      </tr>
+      <tr>
+        <td>Номер полиса</td>
+        <td>030102</td>
+        <td>Coverage.identifier[0].value</td>
+        <td>string</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Автосохранение и восстановление черновиков</h4>
+
+  <p>Форма регистрации включает <strong>интеллектуальное автосохранение</strong> для предотвращения потери данных:</p>
+
+  <ul class="doc-list">
+    <li><strong>Триггер:</strong> Автосохранение активируется через 1 секунду после того, как пользователь прекращает набор (с задержкой)</li>
+    <li><strong>Хранение:</strong> Данные черновика сохраняются в <code>localStorage</code> с ключом по личному номеру пациента</li>
+    <li><strong>Значок черновика:</strong> Визуальный индикатор появляется в трекере прогресса при сохранении черновика</li>
+    <li><strong>Восстановление:</strong> При перезагрузке страницы система обнаруживает черновики и предлагает пользователю восстановить или удалить</li>
+    <li><strong>Очистка:</strong> Черновики автоматически удаляются после успешной отправки формы</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Бизнес-правило:</strong>
+    Несовершеннолетние пациенты (&lt;18 лет) автоматически активируют секцию опекуна, которая становится обязательной. Система определяет возраст на основе введенной даты рождения.
+  </div>
+
+  <h4>Правила проверки</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Поле</th>
+        <th>Правило проверки</th>
+        <th>Сообщение об ошибке</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Личный номер</td>
+        <td>11 цифр + алгоритм контрольной суммы Луна</td>
+        <td>"Неверный формат или контрольная сумма личного номера"</td>
+      </tr>
+      <tr>
+        <td>Имя, Фамилия</td>
+        <td>Обязательно (кроме режима неизвестного пациента)</td>
+        <td>"Это поле обязательно"</td>
+      </tr>
+      <tr>
+        <td>Дата рождения</td>
+        <td>Дата в прошлом, не в будущем</td>
+        <td>"Дата рождения не может быть в будущем"</td>
+      </tr>
+      <tr>
+        <td>Номер телефона</td>
+        <td>Грузинский формат: +995XXXXXXXXX или 5XXXXXXXX</td>
+        <td>"Неверный формат номера телефона"</td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>Формат email RFC 5322</td>
+        <td>"Неверный адрес электронной почты"</td>
+      </tr>
+      <tr>
+        <td>Опекун (если &lt;18 лет)</td>
+        <td>Требуется хотя бы один контакт опекуна</td>
+        <td>"Информация об опекуне обязательна для несовершеннолетних"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Сервисы и хуки</h4>
+
+  <p>Модуль использует специализированные хуки React и сервисы для бизнес-логики:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Хук/Сервис</th>
+        <th>Ответственность</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>useUnifiedRegistrationForm</code></td>
+        <td>Управление состоянием формы, проверка, управление отправкой</td>
+      </tr>
+      <tr>
+        <td><code>useRegistrationStatuses</code></td>
+        <td>Получает доступные коды статусов регистрации с сервера FHIR</td>
+      </tr>
+      <tr>
+        <td><code>useInsuranceData</code></td>
+        <td>Загружает страховые компании (ресурсы Organization с type=ins)</td>
+      </tr>
+      <tr>
+        <td><code>useDepartments</code></td>
+        <td>Загружает отделения больницы, отфильтрованные по типу визита</td>
+      </tr>
+      <tr>
+        <td><code>useAutoSave</code></td>
+        <td>Автосохранение с задержкой в localStorage</td>
+      </tr>
+      <tr>
+        <td><code>useDraftRecovery</code></td>
+        <td>Обнаруживает и восстанавливает черновики при монтировании компонента</td>
+      </tr>
+      <tr>
+        <td><code>patientDataBindingService</code></td>
+        <td>Применяет коды GoodKey, строит ресурсы FHIR из данных формы</td>
+      </tr>
+      <tr>
+        <td><code>registrationStatusService</code></td>
+        <td>Управляет состояниями рабочего процесса регистрации</td>
+      </tr>
+      <tr>
+        <td><code>encounterService</code></td>
+        <td>Создает и обновляет ресурсы Encounter</td>
+      </tr>
+      <tr>
+        <td><code>unknownPatientService</code></td>
+        <td>Генерирует временные ID для неотложных пациентов без идентификации</td>
+      </tr>
+    </tbody>
+  </table>
 
 </section>

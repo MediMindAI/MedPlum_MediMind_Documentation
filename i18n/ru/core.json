@@ -18,7 +18,10 @@
   },
   "zoom": {
     "zoomIn": "Увеличить",
-    "zoomOut": "Уменьшить"
+    "zoomOut": "Уменьшить",
+    "reset": "Сброс",
+    "fullscreen": "Полный экран",
+    "exitFullscreen": "Выход из полного экрана"
   },
   "buttons": {
     "viewOnInterface": "Посмотреть интерфейс",

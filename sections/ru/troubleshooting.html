@@ -2,160 +2,477 @@
   <div class="doc-section-header">
     <div class="doc-section-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
       </svg>
     </div>
+    <div class="doc-section-number">4</div>
     <h2>Устранение неполадок</h2>
   </div>
 
-  <h3 id="common-issues">Распространённые проблемы</h3>
+  <p>В этом разделе рассматриваются распространенные проблемы, с которыми вы можете столкнуться при использовании модуля регистрации пациентов, и их решения.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Проблема</span>
-      <span class="error-code-title">«ID пациента уже существует»</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Описание:</strong> Красная ошибка после нажатия кнопки сохранения<br>
-      <strong>Причина:</strong> Обнаружен дубликат грузинского ИИН<br>
-      <strong>Решение:</strong> Сначала найдите существующего пациента в поле поиска
-    </div>
+  <!-- Common Issues -->
+  <h3 id="common-issues">Частые проблемы</h3>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Быстрый совет:</strong> Большинство проблем с регистрацией связаны с правилами валидации или обязательными полями. Проверьте форму на наличие красных индикаторов ошибок перед отправкой.
   </div>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Проблема</span>
-      <span class="error-code-title">«Активный визит уже существует»</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Описание:</strong> Форма визита не открывается<br>
-      <strong>Причина:</strong> У пациента есть Encounter со status="in-progress"<br>
-      <strong>Решение:</strong> Закройте существующий визит или перейдите к нему
-    </div>
-  </div>
+  <!-- Issue 1: Patient Not Found -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Пациент не найден по личному номеру</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Проблема:</strong> Поиск пациента по личному номеру не возвращает результатов, хотя пациент должен существовать в системе.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Проблема</span>
-      <span class="error-code-title">Ошибка валидации — личный номер</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Описание:</strong> Сообщение «Неверный личный номер»<br>
-      <strong>Причина:</strong> Валидация алгоритма Luhn не пройдена<br>
-      <strong>Решение:</strong> Проверьте, что введены 11 цифр правильно. Для теста: <code>26001014632</code>
-    </div>
-  </div>
+      <p><strong>Возможные причины:</strong></p>
+      <ul class="doc-list">
+        <li>Неправильный формат личного номера (должно быть ровно 11 цифр)</li>
+        <li>Введенный личный номер не проходит валидацию контрольной суммы Luhn</li>
+        <li>Пациент был зарегистрирован с другим ID или как неизвестный пациент</li>
+        <li>Запись пациента существует, но с опечатками в поле ID</li>
+      </ul>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Проблема</span>
-      <span class="error-code-title">Страховая компания не найдена</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Описание:</strong> Пустой dropdown в секции страхования<br>
-      <strong>Причина:</strong> Ресурсы Organization не загружены<br>
-      <strong>Решение:</strong> Проверьте интернет-соединение, обновите страницу
-    </div>
-  </div>
+      <p><strong>Решение:</strong></p>
+      <ol class="doc-list">
+        <li><strong>Проверьте формат личного номера:</strong> Грузинский личный номер должен содержать ровно 11 цифр. Удалите пробелы и дефисы.</li>
+        <li><strong>Проверьте алгоритм Luhn:</strong> Система проверяет контрольную сумму. Используйте действительный грузинский личный номер.</li>
+        <li><strong>Попробуйте альтернативный поиск:</strong> Используйте расширенные фильтры поиска по имени, дате рождения или номеру телефона.</li>
+        <li><strong>Проверьте неизвестных пациентов:</strong> Если пациент был зарегистрирован в экстренной ситуации, у него может быть временный системный ID.</li>
+      </ol>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Проблема</span>
-      <span class="error-code-title">Поля опекуна не отображаются</span>
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>Примечание:</strong> Автопоиск запускается только после ввода ровно 11 цифр. Если ввести меньше или больше цифр, поиск не выполнится.
+      </div>
     </div>
-    <div class="error-code-solution">
-      <strong>Описание:</strong> Секция опекуна остается скрытой<br>
-      <strong>Причина:</strong> Дата рождения пациента указывает на возраст 18 лет или старше<br>
-      <strong>Решение:</strong> Секция опекуна отображается только для пациентов младше 18 лет. Проверьте дату рождения.
-    </div>
-  </div>
+  </details>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Проблема</span>
-      <span class="error-code-title">Секции визита не видны</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Описание:</strong> Секции Регистрация, Страхование, Гарантия и Демография скрыты<br>
-      <strong>Причина:</strong> Переключатель «Создать визит» выключен<br>
-      <strong>Решение:</strong> Включите переключатель в секции Личная информация для отображения полей визита
-    </div>
-  </div>
+  <!-- Issue 2: Form Validation Errors -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Ошибки валидации формы</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Проблема:</strong> Регистрационная форма отображает ошибки валидации и препятствует отправке.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">Проблема</span>
-      <span class="error-code-title">Поля неизвестного пациента только для чтения</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>Описание:</strong> Поля имени и личного номера нельзя редактировать<br>
-      <strong>Причина:</strong> Режим Неизвестного пациента автогенерирует эти значения<br>
-      <strong>Решение:</strong> Отключите переключатель Неизвестного пациента для ручного ввода данных
-    </div>
-  </div>
+      <p><strong>Распространенные проблемы валидации:</strong></p>
 
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Поле</th>
+            <th>Правило валидации</th>
+            <th>Решение</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Имя</strong></td>
+            <td>Обязательно (кроме "Неизвестный пациент")</td>
+            <td>Введите имя пациента или включите опцию "Неизвестный пациент"</td>
+          </tr>
+          <tr>
+            <td><strong>Личный номер</strong></td>
+            <td>11 цифр с контрольной суммой Luhn</td>
+            <td>Введите действительный 11-значный грузинский личный номер</td>
+          </tr>
+          <tr>
+            <td><strong>Дата рождения</strong></td>
+            <td>Не может быть в будущем</td>
+            <td>Выберите действительную прошедшую дату</td>
+          </tr>
+          <tr>
+            <td><strong>Телефон</strong></td>
+            <td>Требуется международный формат</td>
+            <td>Укажите код страны (например, +995)</td>
+          </tr>
+          <tr>
+            <td><strong>Данные опекуна</strong></td>
+            <td>Обязательно для пациентов до 18 лет</td>
+            <td>Заполните все поля опекуна для несовершеннолетних</td>
+          </tr>
+          <tr>
+            <td><strong>Отделение</strong></td>
+            <td>Должно соответствовать типу визита</td>
+            <td>Выберите отделение, отфильтрованное по выбранному типу визита</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Решение:</strong></p>
+      <ol class="doc-list">
+        <li>Прокрутите форму и найдите поля, выделенные красным.</li>
+        <li>Просмотрите сообщения об ошибках, отображаемые под недействительными полями.</li>
+        <li>Исправьте все ошибки валидации перед повторной попыткой отправки.</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- Issue 3: Active Visit Conflict -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Предупреждение об активном визите</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Проблема:</strong> При выборе пациента появляется предупреждение: "У пациента есть активный визит."</p>
+
+      <p><strong>Причина:</strong> Система обнаруживает существующий ресурс <code>Encounter</code> со статусом <code>status='in-progress'</code> для этого пациента. Лучшие практики FHIR не рекомендуют создавать несколько активных визитов одновременно.</p>
+
+      <p><strong>Решение:</strong></p>
+      <ol class="doc-list">
+        <li><strong>Проверьте активный визит:</strong> Убедитесь, что пациент в настоящее время не получает помощь в другом отделении.</li>
+        <li><strong>Закройте предыдущий визит:</strong> Если предыдущий визит завершен, сначала закройте его в системе.</li>
+        <li><strong>Переопределите предупреждение:</strong> Если создание нового визита медицински необходимо (например, экстренная ситуация), вы можете продолжить, нажав "Продолжить все равно" в модальном окне.</li>
+        <li><strong>Свяжитесь с IT-поддержкой:</strong> Если предупреждение появляется некорректно, предыдущий Encounter может потребовать административной коррекции.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>Важно:</strong> Создание дублирующих активных визитов может привести к проблемам целостности данных. Всегда проверяйте перед переопределением этого предупреждения.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 4: Draft Recovery Issues -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Черновик не сохраняется или не восстанавливается</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Проблема:</strong> Черновики формы не сохраняются автоматически, или ранее сохраненные черновики не загружаются при возврате на страницу регистрации.</p>
+
+      <p><strong>Возможные причины:</strong></p>
+      <ul class="doc-list">
+        <li>localStorage браузера отключено или переполнено</li>
+        <li>Активен режим инкогнито/приватного просмотра</li>
+        <li>Кэш браузера был очищен</li>
+        <li>Используется другой браузер или устройство</li>
+        <li>Черновик превысил лимит размера localStorage (обычно 5-10 МБ)</li>
+      </ul>
+
+      <p><strong>Решение:</strong></p>
+      <ol class="doc-list">
+        <li><strong>Проверьте настройки браузера:</strong> Включите localStorage в настройках конфиденциальности браузера.</li>
+        <li><strong>Избегайте приватного режима:</strong> Используйте обычное окно браузера для регистрационных задач.</li>
+        <li><strong>Удалите старые черновики:</strong> Если localStorage переполнено, вручную удалите старые черновики из модального окна восстановления.</li>
+        <li><strong>Используйте то же устройство:</strong> Черновики хранятся локально и не синхронизируются между устройствами.</li>
+        <li><strong>Отправляйте регулярно:</strong> Не полагайтесь только на автосохранение—отправляйте регистрации, когда они завершены.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>Частота автосохранения:</strong> Черновики сохраняются автоматически после 1 секунды бездействия. Ищите индикатор "Черновик сохранен" в верхней части формы.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 5: Insurance Section Not Showing -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Раздел страхования не отображается</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Проблема:</strong> Раздел страхования свернут или затенен и не может быть заполнен.</p>
+
+      <p><strong>Причина:</strong> Раздел страхования доступен только когда переключатель <strong>"Создать визит"</strong> в разделе регистрации включен. Без визита информацию о страховании нельзя связать с Encounter.</p>
+
+      <p><strong>Решение:</strong></p>
+      <ol class="doc-list">
+        <li>Прокрутите до раздела <strong>Регистрация</strong>.</li>
+        <li>Найдите переключатель <strong>"Создать визит"</strong>.</li>
+        <li>Переключите его в положение <strong>ВКЛ</strong>.</li>
+        <li>Раздел страхования станет активным и редактируемым.</li>
+      </ol>
+
+      <p><strong>Контекст FHIR:</strong> Страхование хранится как ресурс <code>Coverage</code>, связанный с <code>Encounter</code>. Без визита Coverage не может быть создан.</p>
+    </div>
+  </details>
+
+  <!-- Issue 6: Department Dropdown Empty -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Выпадающий список отделений пуст</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Проблема:</strong> Выпадающий список отделений в разделе регистрации не показывает вариантов.</p>
+
+      <p><strong>Причина:</strong> Отделения динамически фильтруются в зависимости от выбранного <strong>типа визита</strong>. Если тип визита не выбран или нет отделений, соответствующих выбранному типу, список будет пустым.</p>
+
+      <p><strong>Решение:</strong></p>
+      <ol class="doc-list">
+        <li>Убедитесь, что выбран <strong>тип визита</strong> (амбулаторный, стационарный или экстренный).</li>
+        <li>Дождитесь перезагрузки списка с отфильтрованными отделениями.</li>
+        <li>Если список все еще пуст, свяжитесь с IT—отделения могут потребовать настройки для этого типа визита.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>Примечание:</strong> Список отделений фильтруется хуком <code>useDepartments</code> на основе выбранного типа визита. Убедитесь, что типы визитов правильно сопоставлены в конфигурации системы.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 7: Mobile Wizard Navigation Issues -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>Мобильный мастер не переходит дальше</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>Проблема:</strong> На мобильных устройствах пошаговый мастер не переходит к следующему шагу, или кнопка "Далее" отключена.</p>
+
+      <p><strong>Возможные причины:</strong></p>
+      <ul class="doc-list">
+        <li>Обязательные поля на текущем шаге не заполнены</li>
+        <li>На текущем шаге есть ошибки валидации</li>
+        <li>Ошибка JavaScript в мобильном представлении</li>
+      </ul>
+
+      <p><strong>Решение:</strong></p>
+      <ol class="doc-list">
+        <li>Проверьте наличие ошибок валидации на текущем шаге (красные поля или сообщения об ошибках).</li>
+        <li>Убедитесь, что все обязательные поля заполнены.</li>
+        <li>Прокрутите шаг, чтобы убедиться, что все разделы видимы и заполнены.</li>
+        <li>Если проблема сохраняется, попробуйте переключиться на настольное представление или обновить страницу.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>Ограничение мобильной версии:</strong> Некоторые сложные взаимодействия формы лучше работают на настольном компьютере. Для интенсивных задач регистрации рассмотрите использование настольного компьютера или планшета.
+      </div>
+    </div>
+  </details>
+
+  <!-- Error Codes -->
   <h3 id="error-codes">Коды ошибок</h3>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Код</th>
-          <th>Сообщение</th>
-          <th>Решение</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ERR_001</code></td>
-          <td>Неверный личный номер</td>
-          <td>Проверьте 11 цифр, валидация Luhn</td>
-        </tr>
-        <tr>
-          <td><code>ERR_002</code></td>
-          <td>Активный визит существует</td>
-          <td>Закройте существующий визит</td>
-        </tr>
-        <tr>
-          <td><code>ERR_003</code></td>
-          <td>Обязательное поле пустое</td>
-          <td>Заполните имя, фамилию, пол</td>
-        </tr>
-        <tr>
-          <td><code>ERR_004</code></td>
-          <td>Дубликат пациента</td>
-          <td>Используйте существующего или создайте нового</td>
-        </tr>
-        <tr>
-          <td><code>ERR_005</code></td>
-          <td>Неверный формат телефона</td>
-          <td>Используйте формат +995XXXXXXXXX</td>
-        </tr>
-        <tr>
-          <td><code>ERR_006</code></td>
-          <td>Неверный формат эл. почты</td>
-          <td>Проверьте символ @ и домен</td>
-        </tr>
-        <tr>
-          <td><code>ERR_007</code></td>
-          <td>Дата рождения в будущем</td>
-          <td>Введите дату в прошлом</td>
-        </tr>
-        <tr>
-          <td><code>ERR_008</code></td>
-          <td>Срок страхования истёк</td>
-          <td>Обновите срок полиса</td>
-        </tr>
-        <tr>
-          <td><code>ERR_009</code></td>
-          <td>Отделение не выбрано</td>
-          <td>Выберите отделение из dropdown</td>
-        </tr>
-        <tr>
-          <td><code>ERR_010</code></td>
-          <td>Ошибка соединения с API</td>
-          <td>Проверьте интернет, попробуйте снова</td>
-        </tr>
-      </tbody>
-    </table>
+
+  <p>Система регистрации использует ресурсы FHIR <strong>OperationOutcome</strong> для передачи ошибок. Ниже приведены распространенные коды ошибок, с которыми вы можете столкнуться:</p>
+
+  <h4>Коды ошибок FHIR OperationOutcome</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Код</th>
+        <th>Серьезность</th>
+        <th>Описание</th>
+        <th>Действие</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>invalid</code></td>
+        <td>Ошибка</td>
+        <td>Содержимое ресурса недействительно</td>
+        <td>Проверьте форматы полей и обязательные поля</td>
+      </tr>
+      <tr>
+        <td><code>structure</code></td>
+        <td>Ошибка</td>
+        <td>Структурная проблема с ресурсом FHIR</td>
+        <td>Свяжитесь с IT-поддержкой—проблема привязки данных</td>
+      </tr>
+      <tr>
+        <td><code>required</code></td>
+        <td>Ошибка</td>
+        <td>Отсутствует обязательное поле</td>
+        <td>Заполните указанное обязательное поле</td>
+      </tr>
+      <tr>
+        <td><code>value</code></td>
+        <td>Ошибка</td>
+        <td>Значение вне допустимого диапазона</td>
+        <td>Проверьте диапазоны дат, числовые ограничения или значения перечисления</td>
+      </tr>
+      <tr>
+        <td><code>invariant</code></td>
+        <td>Ошибка</td>
+        <td>Нарушение бизнес-правила</td>
+        <td>Проверьте бизнес-логику (например, опекун обязателен для несовершеннолетних)</td>
+      </tr>
+      <tr>
+        <td><code>security</code></td>
+        <td>Ошибка</td>
+        <td>Авторизация не удалась</td>
+        <td>Проверьте права пользователя или повторно авторизуйтесь</td>
+      </tr>
+      <tr>
+        <td><code>login</code></td>
+        <td>Ошибка</td>
+        <td>Сеанс истек</td>
+        <td>Войдите снова</td>
+      </tr>
+      <tr>
+        <td><code>conflict</code></td>
+        <td>Ошибка</td>
+        <td>Конфликт ресурсов (например, дубликат)</td>
+        <td>Проверьте существующие записи пациентов или активные визиты</td>
+      </tr>
+      <tr>
+        <td><code>transient</code></td>
+        <td>Предупреждение</td>
+        <td>Временная проблема сервера</td>
+        <td>Повторите операцию</td>
+      </tr>
+      <tr>
+        <td><code>informational</code></td>
+        <td>Информация</td>
+        <td>Информационное сообщение</td>
+        <td>Действие не требуется</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Коды статуса HTTP</h4>
+
+  <p>При взаимодействии с FHIR API вы можете столкнуться со стандартными кодами статуса HTTP:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Код статуса</th>
+        <th>Значение</th>
+        <th>Распространенные причины</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>200 OK</code></td>
+        <td>Успех</td>
+        <td>Запрос выполнен успешно</td>
+      </tr>
+      <tr>
+        <td><code>201 Created</code></td>
+        <td>Ресурс создан</td>
+        <td>Новый пациент или визит успешно создан</td>
+      </tr>
+      <tr>
+        <td><code>400 Bad Request</code></td>
+        <td>Недействительный запрос</td>
+        <td>Ошибка валидации или некорректные данные</td>
+      </tr>
+      <tr>
+        <td><code>401 Unauthorized</code></td>
+        <td>Требуется аутентификация</td>
+        <td>Пользователь не вошел в систему или сеанс истек</td>
+      </tr>
+      <tr>
+        <td><code>403 Forbidden</code></td>
+        <td>Доступ запрещен</td>
+        <td>У пользователя нет прав на эту операцию</td>
+      </tr>
+      <tr>
+        <td><code>404 Not Found</code></td>
+        <td>Ресурс не найден</td>
+        <td>Пациент или ресурс не существует</td>
+      </tr>
+      <tr>
+        <td><code>409 Conflict</code></td>
+        <td>Конфликт ресурсов</td>
+        <td>Дублирующий пациент или конфликт активного визита</td>
+      </tr>
+      <tr>
+        <td><code>422 Unprocessable Entity</code></td>
+        <td>Валидация не прошла</td>
+        <td>Нарушение бизнес-правила (например, опекун обязателен для несовершеннолетнего)</td>
+      </tr>
+      <tr>
+        <td><code>500 Internal Server Error</code></td>
+        <td>Ошибка сервера</td>
+        <td>Свяжитесь с IT-поддержкой—проблема на стороне сервера</td>
+      </tr>
+      <tr>
+        <td><code>503 Service Unavailable</code></td>
+        <td>Сервис недоступен</td>
+        <td>Обслуживание сервера или временный сбой</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Сообщения валидации формы</h4>
+
+  <p>В дополнение к ошибкам FHIR, регистрационная форма отображает клиентские сообщения валидации:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Сообщение</th>
+        <th>Триггер</th>
+        <th>Исправление</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>"Личный номер должен содержать 11 цифр"</td>
+        <td>Длина личного номера ≠ 11</td>
+        <td>Введите ровно 11 цифр</td>
+      </tr>
+      <tr>
+        <td>"Недействительная контрольная сумма личного номера"</td>
+        <td>Валидация алгоритма Luhn не прошла</td>
+        <td>Используйте действительный грузинский личный номер</td>
+      </tr>
+      <tr>
+        <td>"Имя обязательно"</td>
+        <td>Имя пусто и "Неизвестный пациент" выключен</td>
+        <td>Заполните имя или включите "Неизвестный пациент"</td>
+      </tr>
+      <tr>
+        <td>"Информация об опекуне обязательна для несовершеннолетних"</td>
+        <td>Возраст пациента < 18 и поля опекуна пусты</td>
+        <td>Заполните все поля опекуна</td>
+      </tr>
+      <tr>
+        <td>"Недействительный формат номера телефона"</td>
+        <td>В телефоне отсутствует код страны</td>
+        <td>Укажите код страны (например, +995)</td>
+      </tr>
+      <tr>
+        <td>"Дата рождения не может быть в будущем"</td>
+        <td>Дата рождения > сегодня</td>
+        <td>Выберите прошедшую дату</td>
+      </tr>
+      <tr>
+        <td>"Отделение обязательно"</td>
+        <td>Тип визита выбран, но отделение нет</td>
+        <td>Выберите отделение из выпадающего списка</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Нужна дополнительная помощь?</strong> Если вы столкнулись с ошибкой, не указанной здесь, свяжитесь с вашей группой IT-поддержки, указав точное сообщение об ошибке и выполненные действия.
   </div>
+
 </section>

@@ -1,13 +1,13 @@
 {
   "planVersion": "1.0",
-  "generatedAt": "2026-02-07T13:05:00Z",
+  "generatedAt": "2026-02-08T15:15:00Z",
   "sourceSection": {
     "id": "overview",
     "file": "sections/en/overview.html",
     "titleKey": "toc.overview"
   },
   "emrConfig": {
-    "baseUrl": "http://localhost:3000",
+    "baseUrl": "http://localhost:3005",
     "loginCredentials": {
       "email": "admin@medimind.ge",
       "password": "MediMind2024"
@@ -18,69 +18,63 @@
     {
       "id": "screenshot",
       "name": "screenshot",
-      "description": "Full page overview of the registration interface showing all three zones: hero search bar at top, unified registration form in the center, and desktop sidebar with Today's Visits and Recent Patients on the right",
+      "description": "Full page overview of the registration interface showing header, search hero, form sections, and desktop sidebar all visible in a single viewport",
+      "desiredState": "Registration page fully loaded in desktop viewport (1440x900) showing the search hero at top, at least 2-3 form sections visible in the center, and the right sidebar with Today's Visits and Recent Patients visible",
+      "differentiator": "Wide viewport showing ALL major page zones simultaneously — header, search, form, AND sidebar — not a zoomed-in view of any single area",
+      "stateSetup": null,
       "type": "static",
-      "anchorId": "main-screenshot",
-      "docReference": "Overview section - main screenshot after introduction",
+      "anchorId": null,
+      "docReference": "Overview section intro paragraph",
       "sectionHeaderText": null,
       "expectedDOMElements": [
-        ".registration-search-hero-section",
-        ".registration-form-section",
-        ".registration-sidebar-section"
+        "input[type='text']",
+        ".emr-form-section",
+        "[class*='sidebar']"
       ],
       "knownLimitation": null,
-      "differentiator": "Only full-page screenshot — shows all 3 zones (search, form, sidebar) simultaneously",
+      "verificationCriteria": {
+        "mustShow": [
+          "Search input bar at top of page",
+          "At least 2 form section headers visible",
+          "Right sidebar panel with patient or visit list"
+        ],
+        "mustNotShow": [
+          "Login page",
+          "Error modal",
+          "Loading spinner covering entire page"
+        ]
+      },
+      "selector": null,
+      "languages": ["en", "ka", "ru"],
       "status": {
         "en": "completed",
         "ka": "completed",
         "ru": "completed"
       },
       "completedAt": {
-        "en": "2026-02-07T17:23:00Z",
-        "ka": "2026-02-07T17:50:00Z",
-        "ru": "2026-02-07T17:55:00Z"
+        "en": "2026-02-09T00:07:00Z",
+        "ka": "2026-02-08T23:30:00Z",
+        "ru": "2026-02-08T23:30:00Z"
       },
+      "validationNotes": {},
       "captureSteps": [
-        {
-          "action": "comment",
-          "text": "Navigate to registration page — shows full desktop layout with all 3 zones"
-        },
-        {
-          "action": "navigate",
-          "url": "{url}/emr/registration/registration"
-        },
-        {
-          "action": "wait",
-          "ms": 3000
-        },
-        {
-          "action": "evaluate",
-          "script": "document.querySelector('.registration-search-hero-section') !== null && document.querySelector('.registration-sidebar-section') !== null"
-        },
-        {
-          "action": "screenshot",
-          "name": "screenshot"
-        }
+        { "action": "navigate", "url": "{baseUrl}/emr/registration/registration" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "wait", "ms": 1000 },
+        { "action": "screenshot", "name": "screenshot" }
       ],
-      "verificationCriteria": {
-        "mustShow": [
-          "Search bar/input at top of page",
-          "Registration form with collapsible sections",
-          "Desktop sidebar with Today's Visits or Recent Patients"
-        ],
-        "mustNotShow": [
-          "Login page",
-          "Error page",
-          "Loading spinner only"
-        ]
+      "verification": {
+        "mustContain": ["search bar", "form sections", "sidebar"],
+        "languageCheck": true
       }
     }
   ],
   "languageSwitching": {
     "selectors": {
       "en": "text=ENG",
-      "ru": "text=\u0420\u0423\u0421",
-      "ka": "text=\u10e5\u10d0\u10e0"
+      "ru": "text=РУС",
+      "ka": "text=ქარ"
     },
     "waitAfterSwitch": 2000
   },

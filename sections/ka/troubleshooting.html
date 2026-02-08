@@ -2,160 +2,477 @@
   <div class="doc-section-header">
     <div class="doc-section-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
       </svg>
     </div>
+    <div class="doc-section-number">4</div>
     <h2>პრობლემების მოგვარება</h2>
   </div>
 
-  <h3 id="common-issues">გავრცელებული პრობლემები</h3>
+  <p>ეს განყოფილება მოიცავს ხშირ პრობლემებს, რომლებიც შეიძლება წააწყდეთ პაციენტის რეგისტრაციის მოდულის გამოყენებისას და მათ გადაწყვეტას.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">პრობლემა</span>
-      <span class="error-code-title">„პაციენტის ID უკვე არსებობს"</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>აღწერა:</strong> წითელი შეცდომა შენახვის ღილაკზე დაჭერის შემდეგ<br>
-      <strong>მიზეზი:</strong> დუბლიკატი ქართული პ/ნ აღმოჩენილია<br>
-      <strong>გადაწყვეტა:</strong> პირველად მოძებნეთ არსებული პაციენტი ძებნის ველში
-    </div>
+  <!-- Common Issues -->
+  <h3 id="common-issues">ხშირი პრობლემები</h3>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>სწრაფი რჩევა:</strong> რეგისტრაციის უმეტესი პრობლემა დაკავშირებულია ვალიდაციის წესებთან ან სავალდებულო ველებთან. გაგზავნამდე შეამოწმეთ ფორმა წითელი შეცდომის ინდიკატორებზე.
   </div>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">პრობლემა</span>
-      <span class="error-code-title">„აქტიური ვიზიტი უკვე არსებობს"</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>აღწერა:</strong> ვიზიტის ფორმა არ იხსნება<br>
-      <strong>მიზეზი:</strong> პაციენტს აქვს status="in-progress" Encounter<br>
-      <strong>გადაწყვეტა:</strong> დახურეთ არსებული ვიზიტი ან გადადით მასზე
-    </div>
-  </div>
+  <!-- Issue 1: Patient Not Found -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>პაციენტი არ მოიძებნა პირადი ნომრით</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>პრობლემა:</strong> პაციენტის პირადი ნომრით ძებნა არ იძლევა შედეგებს, მიუხედავად იმისა, რომ პაციენტი უნდა არსებობდეს სისტემაში.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">პრობლემა</span>
-      <span class="error-code-title">ვალიდაციის შეცდომა - პირადი ნომერი</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>აღწერა:</strong> „არასწორი პირადი ნომერი" შეტყობინება<br>
-      <strong>მიზეზი:</strong> Luhn ალგორითმის ვალიდაცია ვერ გაიარა<br>
-      <strong>გადაწყვეტა:</strong> შეამოწმეთ 11 ციფრი სწორად არის შეყვანილი. ტესტისთვის: <code>26001014632</code>
-    </div>
-  </div>
+      <p><strong>შესაძლო მიზეზები:</strong></p>
+      <ul class="doc-list">
+        <li>პირადი ნომრის ფორმატი არასწორია (უნდა იყოს ზუსტად 11 ციფრი)</li>
+        <li>შეყვანილი პირადი ნომერი არ გადის Luhn-ის ალგორითმის ვალიდაციას</li>
+        <li>პაციენტი დარეგისტრირებული იყო სხვა ID-ით ან უცნობ პაციენტად</li>
+        <li>პაციენტის ჩანაწერი არსებობს, მაგრამ ID ველში არის შეცდომები</li>
+      </ul>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">პრობლემა</span>
-      <span class="error-code-title">დაზღვევის კომპანია ვერ მოიძებნა</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>აღწერა:</strong> ცარიელი dropdown დაზღვევის სექციაში<br>
-      <strong>მიზეზი:</strong> Organization რესურსები არ არის ჩატვირთული<br>
-      <strong>გადაწყვეტა:</strong> შეამოწმეთ ინტერნეტ კავშირი, განაახლეთ გვერდი
-    </div>
-  </div>
+      <p><strong>გადაწყვეტა:</strong></p>
+      <ol class="doc-list">
+        <li><strong>შეამოწმეთ პირადი ნომრის ფორმატი:</strong> ქართული პირადი ნომერი უნდა იყოს ზუსტად 11 ციფრი. წაშალეთ ნებისმიერი სივრცე ან ტირე.</li>
+        <li><strong>შეამოწმეთ Luhn-ის ალგორითმი:</strong> სისტემა ამოწმებს საკონტროლო ჯამს. გამოიყენეთ ვალიდური ქართული პირადი ნომერი.</li>
+        <li><strong>სცადეთ ალტერნატიული ძებნა:</strong> გამოიყენეთ გაფართოებული ძებნის ფილტრები სახელით, დაბადების თარიღით ან ტელეფონის ნომრით საძებნად.</li>
+        <li><strong>შეამოწმეთ უცნობი პაციენტები:</strong> თუ პაციენტი დარეგისტრირდა გადაუდებელი სიტუაციის დროს, მათ შეიძლება ჰქონდეთ სისტემის მიერ დაგენერირებული დროებითი ID.</li>
+      </ol>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">პრობლემა</span>
-      <span class="error-code-title">მეურვის ველები არ ჩანს</span>
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>შენიშვნა:</strong> ავტომატური ძებნა იწყება მხოლოდ ზუსტად 11 ციფრის შეყვანის შემდეგ. თუ შეიყვანთ ნაკლებ ან მეტ ციფრს, ძებნა არ შესრულდება.
+      </div>
     </div>
-    <div class="error-code-solution">
-      <strong>აღწერა:</strong> მეურვის სექცია დამალული რჩება<br>
-      <strong>მიზეზი:</strong> პაციენტის დაბადების თარიღი მიუთითებს 18 ან მეტ ასაკზე<br>
-      <strong>გადაწყვეტა:</strong> მეურვის სექცია ჩნდება მხოლოდ 18 წლამდე პაციენტებისთვის. შეამოწმეთ დაბადების თარიღი.
-    </div>
-  </div>
+  </details>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">პრობლემა</span>
-      <span class="error-code-title">ვიზიტის სექციები არ ჩანს</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>აღწერა:</strong> რეგისტრაციის, დაზღვევის, გარანტიისა და დემოგრაფიის სექციები დამალულია<br>
-      <strong>მიზეზი:</strong> „ვიზიტის შექმნა" გადამრთველი გამორთულია<br>
-      <strong>გადაწყვეტა:</strong> ჩართეთ გადამრთველი პირადი ინფორმაციის სექციაში ვიზიტთან დაკავშირებული ველების საჩვენებლად
-    </div>
-  </div>
+  <!-- Issue 2: Form Validation Errors -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ფორმის ვალიდაციის შეცდომები</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>პრობლემა:</strong> რეგისტრაციის ფორმა აჩვენებს ვალიდაციის შეცდომებს და ხელს უშლის გაგზავნას.</p>
 
-  <div class="error-code-card">
-    <div class="error-code-header">
-      <span class="error-code-badge">პრობლემა</span>
-      <span class="error-code-title">უცნობი პაციენტის ველები მხოლოდ წაკითხვადია</span>
-    </div>
-    <div class="error-code-solution">
-      <strong>აღწერა:</strong> სახელისა და პირადი ნომრის ველების რედაქტირება შეუძლებელია<br>
-      <strong>მიზეზი:</strong> უცნობი პაციენტის რეჟიმი ავტომატურად ქმნის ამ მნიშვნელობებს<br>
-      <strong>გადაწყვეტა:</strong> გამორთეთ უცნობი პაციენტის გადამრთველი მონაცემების ხელით შესაყვანად
-    </div>
-  </div>
+      <p><strong>ხშირი ვალიდაციის პრობლემები:</strong></p>
 
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>ველი</th>
+            <th>ვალიდაციის წესი</th>
+            <th>გადაწყვეტა</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>სახელი</strong></td>
+            <td>სავალდებულო (გარდა უცნობი პაციენტისა)</td>
+            <td>შეიყვანეთ პაციენტის სახელი ან ჩართეთ "უცნობი პაციენტი"</td>
+          </tr>
+          <tr>
+            <td><strong>პირადი ნომერი</strong></td>
+            <td>11 ციფრი Luhn-ის საკონტროლო ჯამით</td>
+            <td>შეიყვანეთ ვალიდური 11-ციფრიანი ქართული პირადი ნომერი</td>
+          </tr>
+          <tr>
+            <td><strong>დაბადების თარიღი</strong></td>
+            <td>არ შეიძლება იყოს მომავალში</td>
+            <td>აირჩიეთ ვალიდური წარსული თარიღი</td>
+          </tr>
+          <tr>
+            <td><strong>ტელეფონი</strong></td>
+            <td>საერთაშორისო ფორმატი აუცილებელია</td>
+            <td>ჩართეთ ქვეყნის კოდი (მაგ., +995)</td>
+          </tr>
+          <tr>
+            <td><strong>მეურვის ინფორმაცია</strong></td>
+            <td>სავალდებულოა 18 წლამდე პაციენტებისთვის</td>
+            <td>შეავსეთ ყველა მეურვის ველი არასრულწლოვნებისთვის</td>
+          </tr>
+          <tr>
+            <td><strong>განყოფილება</strong></td>
+            <td>უნდა შეესაბამებოდეს ვიზიტის ტიპს</td>
+            <td>აირჩიეთ განყოფილება, რომელიც გაფილტრულია არჩეული ვიზიტის ტიპის მიხედვით</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>გადაწყვეტა:</strong></p>
+      <ol class="doc-list">
+        <li>გადაათრიეთ ფორმა და მოძებნეთ წითლად მონიშნული ველები.</li>
+        <li>გადახედეთ შეცდომის შეტყობინებებს, რომლებიც ნაჩვენებია არავალიდურ ველებში.</li>
+        <li>გამოასწორეთ ყველა ვალიდაციის შეცდომა ხელახალი გაგზავნის მცდელობამდე.</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- Issue 3: Active Visit Conflict -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>აქტიური ვიზიტის გაფრთხილება</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>პრობლემა:</strong> პაციენტის არჩევისას ჩნდება გაფრთხილება: "პაციენტს აქვს აქტიური ვიზიტი."</p>
+
+      <p><strong>მიზეზი:</strong> სისტემა აღმოაჩენს არსებულ <code>Encounter</code> რესურსს <code>status='in-progress'</code> ამ პაციენტისთვის. FHIR საუკეთესო პრაქტიკა არ ურჩევს ერთდროულად რამდენიმე აქტიური ვიზიტის შექმნას.</p>
+
+      <p><strong>გადაწყვეტა:</strong></p>
+      <ol class="doc-list">
+        <li><strong>შეამოწმეთ აქტიური ვიზიტი:</strong> შეამოწმეთ, იღებს თუ არა პაციენტი ამჟამად მოვლას სხვა განყოფილებაში.</li>
+        <li><strong>დახურეთ წინა ვიზიტი:</strong> თუ წინა ვიზიტი დასრულდა, ჯერ დახურეთ იგი სისტემაში.</li>
+        <li><strong>გააუქმეთ გაფრთხილება:</strong> თუ ახალი ვიზიტის შექმნა სამედიცინოდ აუცილებელია (მაგ., გადაუდებელი), შეგიძლიათ განაგრძოთ "მაინც გაგრძელება" ღილაკზე დაწკაპუნებით მოდალში.</li>
+        <li><strong>დაუკავშირდით IT მხარდაჭერას:</strong> თუ გაფრთხილება არასწორად ჩნდება, წინა Encounter-ს შეიძლება დასჭირდეს ადმინისტრაციული კორექცია.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>მნიშვნელოვანი:</strong> დუბლიკატი აქტიური ვიზიტების შექმნამ შეიძლება გამოიწვიოს მონაცემთა მთლიანობის პრობლემები. ყოველთვის შეამოწმეთ ამ გაფრთხილების გაუქმებამდე.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 4: Draft Recovery Issues -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>ნაწილობრივი შენახვა არ ხდება ან აღდგენა</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>პრობლემა:</strong> ფორმის ნაწილობრივი ვერსიები არ ინახება ავტომატურად, ან ადრე შენახული ვერსიები არ იტვირთება რეგისტრაციის გვერდზე დაბრუნებისას.</p>
+
+      <p><strong>შესაძლო მიზეზები:</strong></p>
+      <ul class="doc-list">
+        <li>ბრაუზერის localStorage გამორთულია ან სავსეა</li>
+        <li>ინკოგნიტო/პირადი ბრაუზინგის რეჟიმი აქტიურია</li>
+        <li>ბრაუზერის ქეში წაშლილია</li>
+        <li>გამოიყენება სხვა ბრაუზერი ან მოწყობილობა</li>
+        <li>ნაწილობრივი ვერსია გადააჭარბა localStorage ზომის ლიმიტს (ჩვეულებრივ 5-10MB)</li>
+      </ul>
+
+      <p><strong>გადაწყვეტა:</strong></p>
+      <ol class="doc-list">
+        <li><strong>შეამოწმეთ ბრაუზერის პარამეტრები:</strong> ჩართეთ localStorage თქვენს ბრაუზერის კონფიდენციალურობის პარამეტრებში.</li>
+        <li><strong>თავიდან აიცილეთ პირადი რეჟიმი:</strong> გამოიყენეთ ჩვეულებრივი ბრაუზერის ფანჯარა რეგისტრაციის ამოცანებისთვის.</li>
+        <li><strong>წაშალეთ ძველი ნაწილობრივი ვერსიები:</strong> თუ localStorage სავსეა, ხელით წაშალეთ ძველი ვერსიები აღდგენის მოდალიდან.</li>
+        <li><strong>გამოიყენეთ იგივე მოწყობილობა:</strong> ნაწილობრივი ვერსიები ინახება ლოკალურად და არ სინქრონიზდება მოწყობილობებს შორის.</li>
+        <li><strong>რეგულარულად გაგზავნეთ:</strong> ნუ დაეყრდნობით მხოლოდ ავტომატურ შენახვას—გააგზავნეთ რეგისტრაციები როდესაც დასრულდება.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>ავტომატური შენახვის სიხშირე:</strong> ნაწილობრივი ვერსიები ინახება ავტომატურად 1 წამის უმოქმედობის შემდეგ. მოძებნეთ "ნაწილობრივი შენახულია" ინდიკატორი ფორმის ზედა ნაწილში.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 5: Insurance Section Not Showing -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>დაზღვევის განყოფილება არ ჩანს</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>პრობლემა:</strong> დაზღვევის განყოფილება დახურულია ან მოშავდება და ვერ ივსება.</p>
+
+      <p><strong>მიზეზი:</strong> დაზღვევის განყოფილება ხელმისაწვდომია მხოლოდ მაშინ, როდესაც რეგისტრაციის განყოფილებაში <strong>"ვიზიტის შექმნა"</strong> გადამრთველი ჩართულია. ვიზიტის გარეშე დაზღვევის ინფორმაცია ვერ დაკავშირდება Encounter-თან.</p>
+
+      <p><strong>გადაწყვეტა:</strong></p>
+      <ol class="doc-list">
+        <li>გადაათრიეთ <strong>რეგისტრაციის</strong> განყოფილებამდე.</li>
+        <li>იპოვეთ <strong>"ვიზიტის შექმნა"</strong> გადამრთველი.</li>
+        <li>ჩართეთ იგი <strong>ON</strong> მდგომარეობაში.</li>
+        <li>დაზღვევის განყოფილება გაააქტიურდება და დასარედაქტირებელი გახდება.</li>
+      </ol>
+
+      <p><strong>FHIR კონტექსტი:</strong> დაზღვევა ინახება როგორც <code>Coverage</code> რესურსი დაკავშირებული <code>Encounter</code>-თან. ვიზიტის გარეშე Coverage ვერ შეიქმნება.</p>
+    </div>
+  </details>
+
+  <!-- Issue 6: Department Dropdown Empty -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>განყოფილების ჩამონათვალი ცარიელია</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>პრობლემა:</strong> რეგისტრაციის განყოფილებაში განყოფილების ჩამონათვალი არ აჩვენებს ვარიანტებს.</p>
+
+      <p><strong>მიზეზი:</strong> განყოფილებები დინამიურად ფილტრდება არჩეული <strong>ვიზიტის ტიპის</strong> მიხედვით. თუ ვიზიტის ტიპი არ არის არჩეული, ან არცერთი განყოფილება არ ემთხვევა არჩეულ ტიპს, ჩამონათვალი ცარიელი იქნება.</p>
+
+      <p><strong>გადაწყვეტა:</strong></p>
+      <ol class="doc-list">
+        <li>დარწმუნდით, რომ არჩეულია <strong>ვიზიტის ტიპი</strong> (ამბულატორიული, სტაციონარული ან გადაუდებელი).</li>
+        <li>დაელოდეთ ჩამონათვალის გადატვირთვას გაფილტრული განყოფილებებით.</li>
+        <li>თუ კვლავ ცარიელია, დაუკავშირდით IT-ს—განყოფილებები შეიძლება კონფიგურირება დასჭირდეს ამ ვიზიტის ტიპისთვის.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>შენიშვნა:</strong> განყოფილების სია ფილტრდება <code>useDepartments</code> hook-ის მიერ არჩეული ვიზიტის ტიპის საფუძველზე. დარწმუნდით, რომ ვიზიტის ტიპები სწორად არის მიბმული სისტემის კონფიგურაციაში.
+      </div>
+    </div>
+  </details>
+
+  <!-- Issue 7: Mobile Wizard Navigation Issues -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </span>
+      <strong>მობილური ვიზარდი არ გადადის შემდეგ ნაბიჯზე</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p><strong>პრობლემა:</strong> მობილურ მოწყობილობებზე ნაბიჯების ვიზარდი არ გადადის შემდეგ ნაბიჯზე, ან "შემდეგი" ღილაკი გამორთულია.</p>
+
+      <p><strong>შესაძლო მიზეზები:</strong></p>
+      <ul class="doc-list">
+        <li>მიმდინარე ნაბიჯში სავალდებულო ველები არ არის შევსებული</li>
+        <li>ვალიდაციის შეცდომები არსებობს მიმდინარე ნაბიჯში</li>
+        <li>JavaScript შეცდომა მობილურ ხედში</li>
+      </ul>
+
+      <p><strong>გადაწყვეტა:</strong></p>
+      <ol class="doc-list">
+        <li>შეამოწმეთ ვალიდაციის შეცდომები მიმდინარე ნაბიჯში (წითელი ველები ან შეცდომის შეტყობინებები).</li>
+        <li>დარწმუნდით, რომ ყველა სავალდებულო ველი შევსებულია.</li>
+        <li>გადაათრიეთ ნაბიჯი, რათა დარწმუნდეთ, რომ ყველა განყოფილება ხილულია და შევსებული.</li>
+        <li>თუ პრობლემა გრძელდება, სცადეთ დესკტოპ ხედზე გადასვლა ან გვერდის განახლება.</li>
+      </ol>
+
+      <div class="doc-callout doc-callout-warning doc-callout-simple">
+        <strong>მობილური შეზღუდვა:</strong> ზოგიერთი რთული ფორმის ინტერაქცია უკეთ მუშაობს დესკტოპზე. ინტენსიური რეგისტრაციის ამოცანებისთვის განიხილეთ დესკტოპის ან ტაბლეტის მოწყობილობის გამოყენება.
+      </div>
+    </div>
+  </details>
+
+  <!-- Error Codes -->
   <h3 id="error-codes">შეცდომის კოდები</h3>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>კოდი</th>
-          <th>შეტყობინება</th>
-          <th>გადაწყვეტა</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ERR_001</code></td>
-          <td>არასწორი პირადი ნომერი</td>
-          <td>შეამოწმეთ 11 ციფრი, Luhn ვალიდაცია</td>
-        </tr>
-        <tr>
-          <td><code>ERR_002</code></td>
-          <td>აქტიური ვიზიტი არსებობს</td>
-          <td>დახურეთ არსებული ვიზიტი</td>
-        </tr>
-        <tr>
-          <td><code>ERR_003</code></td>
-          <td>სავალდებულო ველი ცარიელია</td>
-          <td>შეავსეთ სახელი, გვარი, სქესი</td>
-        </tr>
-        <tr>
-          <td><code>ERR_004</code></td>
-          <td>დუბლიკატი პაციენტი</td>
-          <td>გამოიყენეთ არსებული ან შექმენით ახალი</td>
-        </tr>
-        <tr>
-          <td><code>ERR_005</code></td>
-          <td>არასწორი ტელეფონის ფორმატი</td>
-          <td>გამოიყენეთ +995XXXXXXXXX ფორმატი</td>
-        </tr>
-        <tr>
-          <td><code>ERR_006</code></td>
-          <td>არასწორი ელ-ფოსტის ფორმატი</td>
-          <td>შეამოწმეთ @ სიმბოლო და დომენი</td>
-        </tr>
-        <tr>
-          <td><code>ERR_007</code></td>
-          <td>დაბადების თარიღი მომავალშია</td>
-          <td>შეიყვანეთ წარსული თარიღი</td>
-        </tr>
-        <tr>
-          <td><code>ERR_008</code></td>
-          <td>დაზღვევის ვადა ამოწურულია</td>
-          <td>განაახლეთ პოლისის ვადა</td>
-        </tr>
-        <tr>
-          <td><code>ERR_009</code></td>
-          <td>განყოფილება არ არის არჩეული</td>
-          <td>აირჩიეთ განყოფილება dropdown-იდან</td>
-        </tr>
-        <tr>
-          <td><code>ERR_010</code></td>
-          <td>API კავშირის შეცდომა</td>
-          <td>შეამოწმეთ ინტერნეტი, სცადეთ თავიდან</td>
-        </tr>
-      </tbody>
-    </table>
+
+  <p>რეგისტრაციის სისტემა იყენებს FHIR <strong>OperationOutcome</strong> რესურსებს შეცდომების კომუნიკაციისთვის. ქვემოთ მოცემულია ხშირი შეცდომის კოდები, რომლებიც შეიძლება წააწყდეთ:</p>
+
+  <h4>FHIR OperationOutcome შეცდომის კოდები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>კოდი</th>
+        <th>სიმძიმე</th>
+        <th>აღწერა</th>
+        <th>მოქმედება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>invalid</code></td>
+        <td>შეცდომა</td>
+        <td>რესურსის შინაარსი არავალიდურია</td>
+        <td>შეამოწმეთ ველების ფორმატები და სავალდებულო ველები</td>
+      </tr>
+      <tr>
+        <td><code>structure</code></td>
+        <td>შეცდომა</td>
+        <td>FHIR რესურსის სტრუქტურული პრობლემა</td>
+        <td>დაუკავშირდით IT მხარდაჭერას—მონაცემთა დაკავშირების პრობლემა</td>
+      </tr>
+      <tr>
+        <td><code>required</code></td>
+        <td>შეცდომა</td>
+        <td>სავალდებულო ველი აკლია</td>
+        <td>შეავსეთ მითითებული სავალდებულო ველი</td>
+      </tr>
+      <tr>
+        <td><code>value</code></td>
+        <td>შეცდომა</td>
+        <td>მნიშვნელობა დაშვებული დიაპაზონის გარეთაა</td>
+        <td>შეამოწმეთ თარიღების დიაპაზონები, რიცხვითი ლიმიტები ან enum მნიშვნელობები</td>
+      </tr>
+      <tr>
+        <td><code>invariant</code></td>
+        <td>შეცდომა</td>
+        <td>ბიზნეს წესის დარღვევა</td>
+        <td>გადახედეთ ბიზნეს ლოგიკას (მაგ., მეურვე სავალდებულოა არასრულწლოვნებისთვის)</td>
+      </tr>
+      <tr>
+        <td><code>security</code></td>
+        <td>შეცდომა</td>
+        <td>ავტორიზაცია ვერ მოხერხდა</td>
+        <td>შეამოწმეთ მომხმარებლის უფლებები ან ხელახლა ავტორიზდით</td>
+      </tr>
+      <tr>
+        <td><code>login</code></td>
+        <td>შეცდომა</td>
+        <td>სესია ამოიწურა</td>
+        <td>ხელახლა შედით სისტემაში</td>
+      </tr>
+      <tr>
+        <td><code>conflict</code></td>
+        <td>შეცდომა</td>
+        <td>რესურსის კონფლიქტი (მაგ., დუბლიკატი)</td>
+        <td>შეამოწმეთ არსებული პაციენტების ჩანაწერები ან აქტიური ვიზიტები</td>
+      </tr>
+      <tr>
+        <td><code>transient</code></td>
+        <td>გაფრთხილება</td>
+        <td>დროებითი სერვერის პრობლემა</td>
+        <td>გაიმეორეთ ოპერაცია</td>
+      </tr>
+      <tr>
+        <td><code>informational</code></td>
+        <td>ინფორმაცია</td>
+        <td>საინფორმაციო შეტყობინება</td>
+        <td>არ საჭიროებს მოქმედებას</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>HTTP სტატუსის კოდები</h4>
+
+  <p>FHIR API-სთან ურთიერთობისას შეიძლება წააწყდეთ სტანდარტულ HTTP სტატუსის კოდებს:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>სტატუსის კოდი</th>
+        <th>მნიშვნელობა</th>
+        <th>ხშირი მიზეზები</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>200 OK</code></td>
+        <td>წარმატება</td>
+        <td>მოთხოვნა წარმატებით დასრულდა</td>
+      </tr>
+      <tr>
+        <td><code>201 Created</code></td>
+        <td>რესურსი შეიქმნა</td>
+        <td>ახალი პაციენტი ან ვიზიტი წარმატებით შეიქმნა</td>
+      </tr>
+      <tr>
+        <td><code>400 Bad Request</code></td>
+        <td>არავალიდური მოთხოვნა</td>
+        <td>ვალიდაციის შეცდომა ან არასწორი მონაცემები</td>
+      </tr>
+      <tr>
+        <td><code>401 Unauthorized</code></td>
+        <td>ავტორიზაცია საჭიროა</td>
+        <td>მომხმარებელი არ არის შესული ან სესია ამოიწურა</td>
+      </tr>
+      <tr>
+        <td><code>403 Forbidden</code></td>
+        <td>წვდომა აკრძალულია</td>
+        <td>მომხმარებელს არ აქვს უფლება ამ ოპერაციისთვის</td>
+      </tr>
+      <tr>
+        <td><code>404 Not Found</code></td>
+        <td>რესურსი ვერ მოიძებნა</td>
+        <td>პაციენტი ან რესურსი არ არსებობს</td>
+      </tr>
+      <tr>
+        <td><code>409 Conflict</code></td>
+        <td>რესურსის კონფლიქტი</td>
+        <td>დუბლიკატი პაციენტი ან აქტიური ვიზიტის კონფლიქტი</td>
+      </tr>
+      <tr>
+        <td><code>422 Unprocessable Entity</code></td>
+        <td>ვალიდაცია ვერ მოხერხდა</td>
+        <td>ბიზნეს წესის დარღვევა (მაგ., მეურვე სავალდებულოა არასრულწლოვნისთვის)</td>
+      </tr>
+      <tr>
+        <td><code>500 Internal Server Error</code></td>
+        <td>სერვერის შეცდომა</td>
+        <td>დაუკავშირდით IT მხარდაჭერას—სერვერის მხარე პრობლემა</td>
+      </tr>
+      <tr>
+        <td><code>503 Service Unavailable</code></td>
+        <td>სერვისი მიუწვდომელია</td>
+        <td>სერვერის მოვლა ან დროებითი გამორთვა</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ფორმის ვალიდაციის შეტყობინებები</h4>
+
+  <p>FHIR შეცდომების გარდა, რეგისტრაციის ფორმა აჩვენებს კლიენტის მხარე ვალიდაციის შეტყობინებებს:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>შეტყობინება</th>
+        <th>გამომწვევი</th>
+        <th>გამოსწორება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>"პირადი ნომერი უნდა იყოს 11 ციფრი"</td>
+        <td>პირადი ნომრის სიგრძე ≠ 11</td>
+        <td>შეიყვანეთ ზუსტად 11 ციფრი</td>
+      </tr>
+      <tr>
+        <td>"არავალიდური პირადი ნომრის საკონტროლო ჯამი"</td>
+        <td>Luhn-ის ალგორითმის ვალიდაცია ვერ მოხერხდა</td>
+        <td>გამოიყენეთ ვალიდური ქართული პირადი ნომერი</td>
+      </tr>
+      <tr>
+        <td>"სახელი სავალდებულოა"</td>
+        <td>სახელი ცარიელია და "უცნობი პაციენტი" გამორთულია</td>
+        <td>შეავსეთ სახელი ან ჩართეთ "უცნობი პაციენტი"</td>
+      </tr>
+      <tr>
+        <td>"მეურვის ინფორმაცია სავალდებულოა არასრულწლოვნებისთვის"</td>
+        <td>პაციენტის ასაკი < 18 და მეურვის ველები ცარიელია</td>
+        <td>შეავსეთ ყველა მეურვის ველი</td>
+      </tr>
+      <tr>
+        <td>"ტელეფონის ნომრის ფორმატი არავალიდურია"</td>
+        <td>ტელეფონს აკლია ქვეყნის კოდი</td>
+        <td>ჩართეთ ქვეყნის კოდი (მაგ., +995)</td>
+      </tr>
+      <tr>
+        <td>"დაბადების თარიღი არ შეიძლება იყოს მომავალში"</td>
+        <td>დაბადების თარიღი > დღეს</td>
+        <td>აირჩიეთ წარსული თარიღი</td>
+      </tr>
+      <tr>
+        <td>"განყოფილება სავალდებულოა"</td>
+        <td>ვიზიტის ტიპი არჩეულია, მაგრამ განყოფილება არა</td>
+        <td>აირჩიეთ განყოფილება ჩამონათვალიდან</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>დამატებითი დახმარება სჭირდებათ?</strong> თუ წააწყდით შეცდომას, რომელიც აქ არ არის ჩამოთვლილი, დაუკავშირდით თქვენს IT მხარდაჭერის გუნდს ზუსტი შეცდომის შეტყობინებით და თქვენ მიერ შესრულებული ნაბიჯებით.
   </div>
+
 </section>

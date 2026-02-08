@@ -1,887 +1,581 @@
 <section class="doc-section" id="features">
   <div class="doc-section-header">
     <div class="doc-section-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    <h2>Функции</h2>
+    <div>
+      <div class="doc-section-number">2</div>
+      <h2>Поиск пациента и форма регистрации</h2>
+    </div>
   </div>
 
-  <p><strong>Пациент</strong> — это постоянная медицинская запись, а <strong>Визит</strong> (случай обращения) представляет собой одно конкретное посещение больницы. Вы можете зарегистрировать только пациента или зарегистрировать пациента и создать визит одновременно.</p>
+  <!-- Patient Search System -->
+  <h3 id="search">2.1 Система поиска пациентов</h3>
 
-  <!-- ========================== -->
-  <!-- 1. Finding a Patient -->
-  <!-- ========================== -->
-  <h3 id="search">1. Поиск пациента</h3>
-  <p>Модуль регистрации включает мощную систему поиска, которая служит основным способом нахождения существующих пациентов.</p>
-
-  <!-- Hero Search -->
-  <h4 id="hero-search">Компонент главного поиска</h4>
-  <p>Строка главного поиска отображается в верхней части страницы регистрации:</p>
+  <p>Единая система поиска пациентов предоставляет возможности быстрого поиска пациентов как с помощью быстрого поиска, так и с расширенными параметрами фильтрации. Поиск поддерживает запросы в реальном времени по мере ввода и интеллектуальное определение шаблонов поиска.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/hero-search-en.png" alt="Главный поиск" class="doc-screenshot-image" data-i18n-img="hero-search">
+    <img src="images/hero-search-ru.png" alt="Интерфейс поиска пациентов с панелью быстрого поиска и кнопкой расширенных фильтров" class="doc-screenshot-image" data-i18n-img="hero-search">
   </div>
 
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Функция</th>
-          <th>Описание</th>
-          <th>Сочетание клавиш</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Быстрый поиск</strong></td>
-          <td>Автоматически определяет, является ли ввод личным номером (11 цифр) или именем</td>
-          <td><kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd></td>
-        </tr>
-        <tr>
-          <td><strong>Расширенные фильтры</strong></td>
-          <td>Панель с полями: Личный номер, Имя, Фамилия, Рег. номер</td>
-          <td><kbd>Cmd/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd></td>
-        </tr>
-        <tr>
-          <td><strong>Навигация по результатам</strong></td>
-          <td>Перемещение по результатам поиска</td>
-          <td><kbd>&#8593;</kbd> / <kbd>&#8595;</kbd></td>
-        </tr>
-        <tr>
-          <td><strong>Выбор результата</strong></td>
-          <td>Выбрать выделенный результат</td>
-          <td><kbd>Enter</kbd></td>
-        </tr>
-        <tr>
-          <td><strong>Закрыть поиск</strong></td>
-          <td>Закрыть панель поиска</td>
-          <td><kbd>Escape</kbd></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Advanced Filters -->
-  <h4 id="advanced-filters">Панель расширенных фильтров</h4>
-  <p>Нажмите кнопку «Расширенный» или используйте <kbd>Cmd/Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> для открытия детальных фильтров:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/advanced-filters-en.png" alt="Расширенные фильтры" class="doc-screenshot-image" data-i18n-img="advanced-filters">
-  </div>
-
+  <h4>Быстрый поиск</h4>
+  <p>Основная строка поиска принимает два типа запросов:</p>
   <ul class="doc-list">
-    <li><strong>Личный номер</strong> — Личный идентификационный номер (или номер паспорта для иностранных граждан)</li>
-    <li><strong>Имя</strong> — Имя пациента</li>
-    <li><strong>Фамилия</strong> — Фамилия пациента</li>
-    <li><strong>Регистрационный номер</strong> — Внутренний регистрационный номер EMR</li>
+    <li><strong>Поиск по имени:</strong> Введите любую часть имени или фамилии пациента (минимум 2 символа)</li>
+    <li><strong>Поиск по личному номеру:</strong> Введите цифры для поиска по грузинскому личному идентификационному номеру</li>
   </ul>
-
-  <!-- Dual Action Results -->
-  <h4 id="search-results">Результаты поиска с двойными действиями</h4>
-  <p>При поиске пациента по имени или личному номеру совпадающие результаты отображаются в выпадающем списке с двумя кнопками действий:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/search-results-en.png" alt="Результаты поиска" class="doc-screenshot-image" data-i18n-img="search-results">
-  </div>
-
-  <p>Каждый результат поиска отображает две кнопки действий:</p>
-
-  <div class="doc-action-cards">
-    <div class="doc-action-card">
-      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-        </svg>
-      </div>
-      <div class="doc-action-content">
-        <div class="doc-action-title">Новый визит</div>
-        <div class="doc-action-desc">Создает новый визит для данного пациента и переходит к деталям визита</div>
-      </div>
-    </div>
-    <div class="doc-action-card">
-      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-        </svg>
-      </div>
-      <div class="doc-action-content">
-        <div class="doc-action-title">Заполнить форму</div>
-        <div class="doc-action-desc">Заполняет форму регистрации данными пациента для редактирования</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Patient Lookup Section -->
-  <h4 id="patient-lookup">Секция поиска пациента</h4>
-  <p>В форме специальное поле позволяет искать пациентов по личному номеру:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/patient-lookup-en.png" alt="Секция поиска пациента" class="doc-screenshot-image" data-i18n-img="patient-lookup">
-  </div>
 
   <div class="doc-info-box">
-    <div class="doc-info-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-    </div>
+    <div class="doc-info-icon">ℹ️</div>
     <div class="doc-info-content">
-      <strong>Как работает поиск пациента:</strong>
-      <ul>
-        <li>Введите личный номер пациента</li>
-        <li>Система автоматически выполняет поиск по мере ввода</li>
-        <li>Если найден: отображается карточка пациента с именем, датой рождения и количеством визитов</li>
-        <li>Если не найден: разрешается регистрация нового пациента</li>
-      </ul>
+      <strong>Комбинация клавиш:</strong> Нажмите <kbd>Cmd+K</kbd> (Mac) или <kbd>Ctrl+K</kbd> (Windows/Linux) для быстрой фокусировки на поле поиска из любого места на странице.
     </div>
   </div>
 
-  <!-- Patient Found Card -->
-  <h4 id="patient-found">Карточка найденного пациента</h4>
-  <p>При нахождении существующего пациента карточка отображает его данные с возможностью редактирования или создания нового визита:</p>
+  <h4>Расширенные фильтры</h4>
+  <p>Нажмите кнопку <strong>Расширенные</strong> для доступа к дополнительным критериям поиска:</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/patient-found-en.png" alt="Карточка найденного пациента" class="doc-screenshot-image" data-i18n-img="patient-found">
+    <img src="images/advanced-filters-ru.png" alt="Панель расширенного поиска с полями для личного номера, имени, фамилии и регистрационного номера" class="doc-screenshot-image" data-i18n-img="advanced-filters">
   </div>
-
-  <!-- Duplicate Detection -->
-  <h4 id="duplicate-detection">Обнаружение дубликатов</h4>
-  <p>При попытке зарегистрировать пациента с личным номером, который уже существует в системе, появляется окно обнаружения дубликатов:</p>
-
-  <ul class="doc-list">
-    <li><strong>Автоматическая проверка</strong> — Срабатывает при вводе личного номера, совпадающего с существующей записью</li>
-    <li><strong>Предварительный просмотр карточки</strong> — Показывает имя существующего пациента, дату рождения и историю визитов</li>
-    <li><strong>Варианты действий</strong> — Просмотреть существующего пациента, заполнить форму его данными или продолжить новую регистрацию</li>
-  </ul>
-
-  <div class="doc-warning-box">
-    <div class="doc-warning-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-      </svg>
-    </div>
-    <div class="doc-warning-content">
-      <strong>Предотвращение дубликатов:</strong>
-      <p>Система использует 11-значный грузинский личный номер в качестве уникального идентификатора. При обнаружении совпадения рекомендуется использовать существующую запись, а не создавать дубликат.</p>
-    </div>
-  </div>
-
-  <!-- ========================== -->
-  <!-- 2. Registration Form -->
-  <!-- ========================== -->
-  <h3 id="form-sections">2. Форма регистрации</h3>
-  <p>Форма регистрации организована в <strong>9 сворачиваемых секций</strong>. Каждую секцию можно развернуть или свернуть для фокусировки на нужных полях.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/unified-form-en.png" alt="Единая форма регистрации" class="doc-screenshot-image" data-i18n-img="unified-form">
-  </div>
-
-  <!-- 9 Form Sections Grid -->
-  <div class="doc-form-sections-grid-8">
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">1</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Поиск пациента</div>
-        <div class="doc-form-section-desc">Поиск по личному номеру с карточкой пациента</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">2</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Личная информация</div>
-        <div class="doc-form-section-desc">Имя, пол, дата рождения, переключатель визита</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">3</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Контактная информация</div>
-        <div class="doc-form-section-desc">Телефон, email, адрес</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">4</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Дополнительные данные</div>
-        <div class="doc-form-section-desc">Гражданство, семейное положение, место работы</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">5</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Опекун/Представитель</div>
-        <div class="doc-form-section-desc">Обязательно для пациентов до 18 лет</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">6</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Регистрация</div>
-        <div class="doc-form-section-desc">Детали визита (опционально с переключателем)</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">7</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Страхование</div>
-        <div class="doc-form-section-desc">1-3 страховщика с добавлением/удалением</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">8</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Гарантия</div>
-        <div class="doc-form-section-desc">Гарантийные письма с загрузкой документов</div>
-      </div>
-    </div>
-    <div class="doc-form-section-card">
-      <div class="doc-form-section-number">9</div>
-      <div class="doc-form-section-content">
-        <div class="doc-form-section-title">Демография</div>
-        <div class="doc-form-section-desc">Регион, жалоба, источник направления</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Personal Information -->
-  <h4 id="personal-information">Секция личной информации</h4>
-  <p>Основные данные пациента, собираемые в этой секции:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Поле</th>
-          <th>Тип</th>
-          <th>Обязательно</th>
-          <th>Примечания</th>
+          <th>Поле фильтра</th>
+          <th>Описание</th>
+          <th>Путь FHIR</th>
         </tr>
       </thead>
       <tbody>
         <tr>
+          <td><strong>Личный номер</strong></td>
+          <td>Грузинский 11-значный личный идентификационный номер</td>
+          <td>Patient.identifier (system: urn:oid:2.16.840.1.113883.3.3785.100.1.1)</td>
+        </tr>
+        <tr>
           <td><strong>Имя</strong></td>
-          <td>Текст</td>
-          <td>Да</td>
-          <td>Имя пациента</td>
+          <td>Имя (имена) пациента</td>
+          <td>Patient.name[0].given</td>
         </tr>
         <tr>
           <td><strong>Фамилия</strong></td>
-          <td>Текст</td>
-          <td>Да</td>
           <td>Фамилия пациента</td>
+          <td>Patient.name[0].family</td>
         </tr>
         <tr>
-          <td><strong>Пол</strong></td>
-          <td>Выбор</td>
-          <td>Да</td>
-          <td>Мужской / Женский / Другой / Неизвестный</td>
-        </tr>
-        <tr>
-          <td><strong>Дата рождения</strong></td>
-          <td>Дата</td>
-          <td>Да</td>
-          <td>Должна быть в прошлом</td>
-        </tr>
-        <tr>
-          <td><strong>Создать визит</strong></td>
-          <td>Переключатель</td>
-          <td>Нет</td>
-          <td>Показывает/скрывает секции, связанные с визитом</td>
+          <td><strong>Регистрационный номер</strong></td>
+          <td>Регистрационный номер визита в больницу (формат: XXXXX-YYYY)</td>
+          <td>Encounter.identifier</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Unknown Patient -->
-  <h4 id="unknown-patient">Режим неизвестного пациента</h4>
-  <p>Для экстренных ситуаций, когда личность пациента не может быть установлена, переключатель <strong>Неизвестный пациент</strong> позволяет выполнить регистрацию без личного номера:</p>
+  <h4>Результаты поиска</h4>
+  <p>Результаты поиска появляются в выпадающем списке под строкой поиска, показывая до 10 пациентов для быстрого поиска или 20 для расширенного поиска. Каждый результат отображает:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/search-results-ru.png" alt="Выпадающий список результатов поиска с карточками пациентов и кнопками действий" class="doc-screenshot-image" data-i18n-img="search-results">
+  </div>
 
   <ul class="doc-list">
-    <li><strong>Расположение переключателя</strong> — Доступен в секции поиска пациента</li>
-    <li><strong>Автоматически сгенерированное имя</strong> — Система присваивает временное имя (напр., «Неизвестный пациент #12345»)</li>
-    <li><strong>Автоматически сгенерированный номер</strong> — Временный личный номер создается автоматически</li>
-    <li><strong>Последующая идентификация</strong> — Запись может быть обновлена после подтверждения личности пациента</li>
+    <li><strong>Имя пациента</strong> с личным номером и датой рождения</li>
+    <li><strong>Новый визит</strong> кнопка — Открывает модальное окно создания визита</li>
+    <li><strong>Заполнить форму</strong> кнопка — Заполняет регистрационную форму данными пациента для редактирования</li>
   </ul>
 
   <div class="doc-info-box">
-    <div class="doc-info-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-    </div>
+    <div class="doc-info-icon">⌨️</div>
     <div class="doc-info-content">
-      <strong>Когда использовать режим неизвестного пациента:</strong>
-      <ul>
-        <li>Экстренная госпитализация, когда пациент без сознания или не может общаться</li>
-        <li>Временная регистрация в ожидании подтверждения личности</li>
-        <li>Иностранные граждане без грузинского личного номера (до ввода паспортных данных)</li>
-      </ul>
+      <strong>Навигация с клавиатуры:</strong> Используйте клавиши со стрелками <kbd>↑</kbd> и <kbd>↓</kbd> для навигации по результатам, <kbd>Enter</kbd> для выбора и <kbd>Esc</kbd> для закрытия выпадающего списка.
     </div>
   </div>
 
-  <!-- Contact Information -->
-  <h4 id="contact-information">Секция контактной информации</h4>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Поле</th>
-          <th>Тип</th>
-          <th>Обязательно</th>
-          <th>Примечания</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Номер телефона</strong></td>
-          <td>Тел.</td>
-          <td>Нет</td>
-          <td>Формат: +995XXXXXXXXX</td>
-        </tr>
-        <tr>
-          <td><strong>Email</strong></td>
-          <td>Email</td>
-          <td>Нет</td>
-          <td>Стандартный формат email</td>
-        </tr>
-        <tr>
-          <td><strong>Адрес</strong></td>
-          <td>Текст</td>
-          <td>Нет</td>
-          <td>Полный адрес проживания</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <!-- Form Sections -->
+  <h3 id="form-sections">2.2 Разделы формы</h3>
 
-  <!-- Additional Details -->
-  <h4 id="additional-details">Секция дополнительных данных</h4>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Поле</th>
-          <th>Тип</th>
-          <th>Обязательно</th>
-          <th>Примечания</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Гражданство</strong></td>
-          <td>Выбор</td>
-          <td>Нет</td>
-          <td>Страна гражданства</td>
-        </tr>
-        <tr>
-          <td><strong>Семейное положение</strong></td>
-          <td>Выбор</td>
-          <td>Нет</td>
-          <td>Холост/Не замужем, Женат/Замужем, Разведен(а), Вдовец/Вдова</td>
-        </tr>
-        <tr>
-          <td><strong>Место работы</strong></td>
-          <td>Текст</td>
-          <td>Нет</td>
-          <td>Текущий работодатель или род занятий</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <p>Регистрационная форма организована в 9 сворачиваемых разделов, которые адаптируются в зависимости от того, создаете ли вы нового пациента или редактируете существующего. Форма включает интеллектуальные функции, такие как автосохранение черновиков, поиск пациентов и переключатель создания визита.</p>
 
-  <!-- Guardian -->
-  <h4 id="guardian">Секция опекуна / представителя</h4>
-  <p>Обязательна, когда пациенту менее 18 лет. Система автоматически определяет это на основе даты рождения.</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Поле</th>
-          <th>Тип</th>
-          <th>Обязательно</th>
-          <th>Примечания</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Имя опекуна</strong></td>
-          <td>Текст</td>
-          <td>Да*</td>
-          <td>*Обязательно для несовершеннолетних</td>
-        </tr>
-        <tr>
-          <td><strong>Фамилия опекуна</strong></td>
-          <td>Текст</td>
-          <td>Да*</td>
-          <td>*Обязательно для несовершеннолетних</td>
-        </tr>
-        <tr>
-          <td><strong>Личный номер опекуна</strong></td>
-          <td>Текст</td>
-          <td>Да*</td>
-          <td>11-значный личный номер</td>
-        </tr>
-        <tr>
-          <td><strong>Родственная связь</strong></td>
-          <td>Выбор</td>
-          <td>Да*</td>
-          <td>Родитель, Законный опекун и т.д.</td>
-        </tr>
-        <tr>
-          <td><strong>Телефон опекуна</strong></td>
-          <td>Тел.</td>
-          <td>Нет</td>
-          <td>Контактный номер</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- createVisit Toggle -->
-  <h4 id="create-visit-toggle">Переключатель создания визита</h4>
-  <p>Форма включает переключатель для управления созданием визита вместе с пациентом:</p>
-
-  <div class="doc-toggle-demo">
-    <div class="doc-toggle-option active">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <div>
-        <strong>Создать визит: ВКЛ</strong>
-        <p>Пациент + Визит создаются вместе. Секции Регистрация, Страхование, Гарантия и Демография видимы.</p>
-      </div>
-    </div>
-    <div class="doc-toggle-option">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <div>
-        <strong>Создать визит: ВЫКЛ</strong>
-        <p>Создается только пациент. Секции, связанные с визитом, скрыты.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Draft Auto-Save -->
-  <h4 id="draft-autosave">Автосохранение черновика</h4>
-  <p>Форма автоматически сохраняет ваш прогресс по мере заполнения:</p>
+  <h4>Поиск пациента</h4>
+  <p>Введите 11-значный личный номер для поиска существующих пациентов перед созданием новой записи:</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/draft-indicator-en.png" alt="Индикатор сохранения черновика" class="doc-screenshot-image" data-i18n-img="draft-indicator">
-  </div>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Функция</th>
-          <th>Поведение</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Интервал автосохранения</strong></td>
-          <td>Задержка 1 секунда после любого изменения поля</td>
-        </tr>
-        <tr>
-          <td><strong>Индикатор черновика</strong></td>
-          <td>Показывает бейдж «Черновик сохранен» при наличии несохраненных изменений</td>
-        </tr>
-        <tr>
-          <td><strong>Очистить черновик</strong></td>
-          <td>Кнопка для удаления сохраненного черновика и сброса формы</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Registration Flow Diagram -->
-  <h4 id="registration-flow">Поток регистрации</h4>
-  <p>Следующая диаграмма иллюстрирует полный рабочий процесс регистрации пациента:</p>
-
-  <div class="mermaid-container">
-    <div class="mermaid mermaid-zoomable">
-flowchart TD
-    A[Patient Lookup] --> B{Patient Found?}
-    B -->|Yes| C[Auto-fill Form]
-    B -->|No| D[New Patient Entry]
-    C --> E{Create Visit?}
-    D --> E
-    E -->|Yes| F[Fill Visit Details]
-    E -->|No| G[Patient Only]
-    F --> H[Submit]
-    G --> H
-    H --> I[FHIR Resources Created]
-    </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ========================== -->
-  <!-- 3. Visit Details -->
-  <!-- ========================== -->
-  <h3 id="visit-management">3. Детали визита</h3>
-  <p>Когда опция создания визита включена, секции, связанные с визитом, становятся доступными в форме:</p>
-
-  <!-- Encounter Creation -->
-  <h4 id="encounter-creation">Создание нового визита</h4>
-  <p>После нахождения существующего пациента форма отображает его данные и поля регистрации визита для создания нового обращения:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/encounter-creation-en.png" alt="Создание визита" class="doc-screenshot-image" data-i18n-img="encounter-creation">
-  </div>
-
-  <!-- Registration Section -->
-  <h4 id="registration-section">Секция регистрации</h4>
-  <div class="doc-screenshot-full">
-    <img src="images/registration-section-en.png" alt="Секция регистрации" class="doc-screenshot-image" data-i18n-img="registration-section">
-  </div>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Поле</th>
-          <th>Описание</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Тип визита</strong></td>
-          <td>Амбулаторный, Стационарный или Экстренный</td>
-        </tr>
-        <tr>
-          <td><strong>Дата визита</strong></td>
-          <td>Дата визита</td>
-        </tr>
-        <tr>
-          <td><strong>Отделение</strong></td>
-          <td>Целевое отделение/служба</td>
-        </tr>
-        <tr>
-          <td><strong>Направляющий врач</strong></td>
-          <td>Врач, направивший пациента (опционально)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Visit Types -->
-  <h4 id="visit-types">Типы визитов</h4>
-  <p>Система поддерживает три типа визитов, каждый с различным рабочим процессом:</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Тип</th>
-          <th>Код FHIR</th>
-          <th>Описание</th>
-          <th>Условные поля</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Амбулаторный</strong></td>
-          <td><code>AMB</code></td>
-          <td>Плановый или незапланированный визит, пациент возвращается домой в тот же день</td>
-          <td>Отделение, Направляющий врач</td>
-        </tr>
-        <tr>
-          <td><strong>Стационарный</strong></td>
-          <td><code>PLAN_STAT</code></td>
-          <td>Плановая госпитализация для лечения или операции</td>
-          <td>Отделение, Назначение койки, Ожидаемая длительность</td>
-        </tr>
-        <tr>
-          <td><strong>Экстренный</strong></td>
-          <td><code>EMER_STAT</code></td>
-          <td>Срочная незапланированная госпитализация через приемное отделение</td>
-          <td>Отделение, Уровень триажа</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Insurance Section -->
-  <h4 id="insurance">Секция страхования</h4>
-  <p>Добавьте до <strong>3 страховых компаний</strong> на один визит:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/insurance-section-en.png" alt="Секция страхования" class="doc-screenshot-image" data-i18n-img="insurance-section">
+    <img src="images/patient-lookup-ru.png" alt="Поле ввода личного номера с валидацией 11 цифр и поиском в реальном времени" class="doc-screenshot-image" data-i18n-img="patient-lookup">
   </div>
 
   <ul class="doc-list">
-    <li><strong>Страховая компания</strong> — Выбор из зарегистрированных страховщиков</li>
-    <li><strong>Номер полиса</strong> — Номер полиса пациента</li>
-    <li><strong>Тип покрытия</strong> — Полное, частичное или специальное покрытие</li>
-    <li><strong>Кнопки Добавить/Удалить</strong> — Управление несколькими страховщиками</li>
+    <li>Автоматически ищет при вводе 11 цифр</li>
+    <li>Проверяет личный номер с использованием алгоритма контрольной суммы Луна</li>
+    <li>Если пациент найден, отображает карточку пациента и сворачивает демографические разделы</li>
+    <li>Показывает количество амбулаторных и стационарных визитов для существующих пациентов</li>
   </ul>
 
-  <!-- Guarantee & Document Upload -->
-  <h4 id="guarantee">Секция гарантии</h4>
-  <p>Секция гарантии включает загрузку документов для прикрепления гарантийных писем и сопроводительных документов:</p>
+  <h4>Отображение найденного пациента</h4>
+  <p>Когда существующий пациент найден, форма отображает карточку пациента и сворачивает демографические разделы для упрощения регистрации визита:</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/document-upload-en.png" alt="Загрузка документов" class="doc-screenshot-image" data-i18n-img="document-upload">
+    <img src="images/patient-found-ru.png" alt="Карточка пациента с информацией о пациенте и кнопками редактирования и очистки" class="doc-screenshot-image" data-i18n-img="patient-found">
   </div>
 
-  <h5 id="document-upload">Функции загрузки документов</h5>
-  <ul class="doc-list">
-    <li><strong>Drag & Drop</strong> — Перетаскивайте файлы прямо в зону загрузки</li>
-    <li><strong>Клик для выбора</strong> — Нажмите на зону для открытия диалога выбора файлов</li>
-    <li><strong>Множество файлов</strong> — До 5 файлов на одну гарантию</li>
-    <li><strong>Множество гарантий</strong> — До 3 гарантий на регистрацию</li>
-    <li><strong>Метаданные документа</strong> — Название, дата, автор, номер документа</li>
-  </ul>
+  <h4>Полный вид формы</h4>
+  <p>Единая регистрационная форма объединяет демографические данные пациента и информацию о визите в едином интерфейсе:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/unified-form-ru.png" alt="Полная регистрационная форма со всеми сворачиваемыми разделами" class="doc-screenshot-image" data-i18n-img="unified-form">
+  </div>
+
+  <h4>Автосохранение черновика</h4>
+  <p>Форма автоматически сохраняет вашу работу в localStorage браузера по мере ввода. Индикатор черновика появляется при обнаружении несохраненных изменений:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/draft-indicator-ru.png" alt="Значок сохраненного черновика с отметкой времени последнего автосохранения" class="doc-screenshot-image" data-i18n-img="draft-indicator">
+  </div>
+
+  <p>Сохранение черновика происходит автоматически после 1 секунды бездействия. Черновик сохраняется между сеансами браузера и может быть очищен с помощью кнопки "Очистить черновик" в индикаторе прогресса.</p>
+
+  <h4>Обзор разделов формы</h4>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Поле</th>
-          <th>Описание</th>
-          <th>Обязательно</th>
+          <th>Раздел</th>
+          <th>Основные поля</th>
+          <th>Состояние по умолчанию</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Название документа</strong></td>
-          <td>Описательное название документа</td>
-          <td>Да</td>
+          <td><strong>1. Поиск пациента</strong></td>
+          <td>Личный номер (11 цифр)</td>
+          <td>Всегда видимый</td>
         </tr>
         <tr>
-          <td><strong>Дата документа</strong></td>
-          <td>Дата выдачи документа</td>
-          <td>Да</td>
+          <td><strong>2. Личная информация</strong></td>
+          <td>Имя, Фамилия, Пол, Дата рождения, Отчество</td>
+          <td>Открыт</td>
         </tr>
         <tr>
-          <td><strong>Автор</strong></td>
-          <td>Лицо или организация, выдавшая документ</td>
-          <td>Нет</td>
+          <td><strong>3. Контактная информация</strong></td>
+          <td>Телефон (международный формат), Email, Адрес</td>
+          <td>Свернут</td>
         </tr>
         <tr>
-          <td><strong>Номер документа</strong></td>
-          <td>Регистрационный номер на документе</td>
-          <td>Нет</td>
+          <td><strong>4. Дополнительные детали</strong></td>
+          <td>Гражданство, Семейное положение, Образование, Место работы, Город, Район</td>
+          <td>Свернут</td>
         </tr>
         <tr>
-          <td><strong>Файл вложения</strong></td>
-          <td>Сам файл (PDF, изображение и т.д.)</td>
-          <td>Да</td>
+          <td><strong>5. Опекун/Представитель</strong></td>
+          <td>Отношение, Личный номер, Имя, Контакт (обязательно для несовершеннолетних)</td>
+          <td>Свернут</td>
+        </tr>
+        <tr>
+          <td><strong>6. Регистрация</strong></td>
+          <td>Дата/Время визита, Тип поступления, Статус, Отделение</td>
+          <td>Открыт (если включено создание визита)</td>
+        </tr>
+        <tr>
+          <td><strong>7. Страхование</strong></td>
+          <td>Компания, Тип, Номер полиса, Даты действия (до 3 страховщиков)</td>
+          <td>Открыт (если включено создание визита)</td>
+        </tr>
+        <tr>
+          <td><strong>8. Гарантия</strong></td>
+          <td>Виртуальный аванс, Донор, Сумма, Срок, Номер письма</td>
+          <td>Свернут</td>
+        </tr>
+        <tr>
+          <td><strong>9. Демография</strong></td>
+          <td>Регион, Район, Город, Адрес, Образование, Семейное положение, Занятость</td>
+          <td>Открыт (если включено создание визита)</td>
         </tr>
       </tbody>
     </table>
-  </div>
-
-  <!-- Demographics -->
-  <h4 id="demographics">Секция демографии</h4>
-  <p>Дополнительные демографические данные, собираемые при регистрации визита:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/demographics-section-en.png" alt="Секция демографии" class="doc-screenshot-image" data-i18n-img="demographics-section">
-  </div>
-
-  <ul class="doc-list">
-    <li><strong>Регион</strong> — Регион проживания пациента</li>
-    <li><strong>Основная жалоба</strong> — Основная причина визита</li>
-    <li><strong>Источник направления</strong> — Как пациент был направлен</li>
-  </ul>
-
-  <!-- Active Visit Warning -->
-  <h4 id="active-visit-warning">Предупреждение об активном визите</h4>
-  <p>Если у пациента уже есть визит в процессе, появляется предупреждающее окно:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/active-visit-warning-en.png" alt="Предупреждение об активном визите" class="doc-screenshot-image" data-i18n-img="active-visit-warning">
   </div>
 
   <div class="doc-warning-box">
-    <div class="doc-warning-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-      </svg>
-    </div>
-    <div class="doc-warning-content">
-      <strong>Обнаружение активного визита:</strong>
-      <p>Система предотвращает дублирование обращений, обнаруживая визиты в процессе. Вы можете:</p>
-      <ul>
-        <li>Просмотреть существующий активный визит</li>
-        <li>Создать новый визит в любом случае (с подтверждением)</li>
-        <li>Отменить и вернуться к форме</li>
-      </ul>
-    </div>
+    <strong>Примечание:</strong> Разделы 6-9 (Регистрация, Страхование, Гарантия, Демография) видны только при включенном переключателе <strong>Создать визит</strong>. Это позволяет зарегистрировать нового пациента без немедленного создания визита или обновить информацию о пациенте для существующих пациентов.
   </div>
 
-  <!-- ========================== -->
-  <!-- 4. Desktop Sidebar -->
-  <!-- ========================== -->
-  <h3 id="desktop-sidebar">4. Боковая панель (Десктоп)</h3>
-  <p>На экранах шире 1024px появляется боковая панель с двумя сворачиваемыми секциями:</p>
+  <!-- Additional Details -->
+  <h3 id="additional-details">2.3 Дополнительные данные</h3>
+
+  <p>Раздел дополнительных данных собирает дополнительную информацию о пациенте помимо основных персональных данных. Сюда входят семейное положение, гражданство, место работы и другие демографические сведения.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/desktop-sidebar-en.png" alt="Боковая панель" class="doc-screenshot-image" data-i18n-img="desktop-sidebar">
+    <img src="images/additional-details-ru.png" alt="Раздел дополнительных данных с полями семейного положения, гражданства и места работы" class="doc-screenshot-image" data-i18n-img="additional-details">
   </div>
 
-  <!-- Today's Visits -->
-  <h4 id="todays-visits">Сегодняшние визиты</h4>
-  <p>Показывает все записи на текущий день:</p>
+  <ul class="doc-list">
+    <li>Семейное положение — выберите из стандартных вариантов (холост/не замужем, женат/замужем, разведён/разведена, вдовец/вдова)</li>
+    <li>Гражданство — укажите страну гражданства пациента</li>
+    <li>Место работы — запишите текущего работодателя или место работы пациента</li>
+    <li>Город, район — дополнительные адресные данные для точного отслеживания местоположения</li>
+  </ul>
 
+  <div class="doc-info-box">
+    <div class="doc-info-icon">📋</div>
+    <div class="doc-info-content">
+      <strong>Сопоставление FHIR:</strong> Дополнительные данные хранятся как расширения ресурса <code>Patient</code>, с использованием стандартных URL-адресов расширений FHIR для семейного положения (<code>Patient.maritalStatus</code>) и пользовательских расширений для гражданства и места работы.
+    </div>
+  </div>
+
+  <!-- Desktop Sidebar -->
+  <h3 id="desktop-sidebar">2.4 Боковая панель рабочего стола</h3>
+
+  <p>На настольных устройствах (экраны шире 1025px) боковая панель отображает списки сегодняшних визитов и недавно зарегистрированных пациентов в реальном времени. Боковая панель обеспечивает быстрый доступ к активным пациентам без прерывания вашей текущей работы.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/desktop-sidebar-ru.png" alt="Боковая панель рабочего стола с разделами визитов сегодня и недавних пациентов" class="doc-screenshot-image" data-i18n-img="desktop-sidebar">
+  </div>
+
+  <h4>Раздел визитов сегодня</h4>
+  <p>Отображает все встречи, созданные сегодня, показывая:</p>
+  <ul class="doc-list">
+    <li><strong>Значок времени</strong> указывающий, когда визит был зарегистрирован</li>
+    <li><strong>Значок статуса</strong> (например, "в процессе", "прибыл", "завершен")</li>
+    <li><strong>Имя пациента</strong> и регистрационный номер</li>
+    <li><strong>Тип визита</strong> (например, "Амбулаторный", "Стационарный")</li>
+  </ul>
+
+  <p>Нажмите на любую карточку визита, чтобы открыть модальное окно с деталями визита.</p>
+
+  <h4>Раздел недавних пациентов</h4>
+  <p>Показывает 5 самых недавно обновленных пациентов EMR (исключая пациентов портала), отображая:</p>
+  <ul class="doc-list">
+    <li><strong>Имя пациента</strong></li>
+    <li><strong>Личный номер</strong> и дата рождения</li>
+    <li><strong>Новый визит</strong> кнопка для быстрого создания визита</li>
+    <li><strong>Просмотр</strong> кнопка для открытия деталей пациента</li>
+  </ul>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">🔄</div>
+    <div class="doc-info-content">
+      <strong>Автообновление:</strong> Оба раздела автоматически обновляются при создании новых пациентов или визитов. Список недавних пациентов получает 30 самых недавно обновленных пациентов и фильтрует пациентов портала, отображая топ 10 пациентов EMR.
+    </div>
+  </div>
+
+  <!-- Mobile Wizard -->
+  <h3 id="mobile-wizard">2.5 Мобильный мастер</h3>
+
+  <p>На мобильных устройствах (экраны уже 768px) регистрационная форма преобразуется в пошаговый мастер с фиксированной навигацией внизу. Этот оптимизированный для мобильных устройств интерфейс обеспечивает доступность всех полей формы на маленьких экранах.</p>
+
+  <div class="doc-screenshot-mobile">
+    <img src="images/mobile-wizard-ru.png" alt="Интерфейс мобильного мастера с навигацией по шагам внизу" class="doc-screenshot-image" data-i18n-img="mobile-wizard">
+  </div>
+
+  <h4>Шаги мастера</h4>
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Колонка</th>
-          <th>Описание</th>
+          <th>Шаг</th>
+          <th>Включенные разделы</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Время</strong></td>
-          <td>Запланированное время приема (напр., 09:30)</td>
+          <td><strong>1. Пациент</strong></td>
+          <td>Поиск пациента, Личная информация</td>
         </tr>
         <tr>
-          <td><strong>Имя пациента</strong></td>
-          <td>Полное имя пациента</td>
+          <td><strong>2. Личная инфо</strong></td>
+          <td>Личная информация (продолжение)</td>
         </tr>
         <tr>
-          <td><strong>Статусный бейдж</strong></td>
-          <td>Визуальный индикатор статуса визита</td>
+          <td><strong>3. Контактная инфо</strong></td>
+          <td>Контактная информация, Дополнительные детали, Опекун</td>
+        </tr>
+        <tr>
+          <td><strong>4. Регистрация</strong></td>
+          <td>Регистрация визита, Страхование (если включено создание визита)</td>
+        </tr>
+        <tr>
+          <td><strong>5. Страхование</strong></td>
+          <td>Детали страхования, Гарантия, Демография (если включено создание визита)</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h4 id="visit-statuses">Статусные бейджи визитов</h4>
-  <div class="doc-status-badges">
-    <div class="doc-status-badge doc-status-planned">
-      <span class="doc-status-dot"></span>
-      Запланирован
-    </div>
-    <div class="doc-status-badge doc-status-arrived">
-      <span class="doc-status-dot"></span>
-      Прибыл
-    </div>
-    <div class="doc-status-badge doc-status-in-progress">
-      <span class="doc-status-dot"></span>
-      В процессе
-    </div>
-    <div class="doc-status-badge doc-status-finished">
-      <span class="doc-status-dot"></span>
-      Завершен
-    </div>
-  </div>
-
-  <!-- Recent Patients -->
-  <h4 id="recent-patients">Недавние пациенты</h4>
-  <p>Показывает 10 последних обновленных пациентов EMR (исключая портальных пациентов):</p>
-
   <ul class="doc-list">
-    <li><strong>Имя пациента</strong> — Полное имя</li>
-    <li><strong>Личный номер</strong> — 11-значный номер</li>
-    <li><strong>Дата рождения</strong> — Дата рождения</li>
-    <li><strong>Действия:</strong>
-      <ul>
-        <li><em>Новый визит</em> — Создать новый визит для пациента</li>
-        <li><em>Просмотр</em> — Открыть полную карточку пациента</li>
-      </ul>
-    </li>
+    <li>Индикатор прогресса показывает текущий шаг и статус завершения</li>
+    <li>Фиксированные кнопки действий остаются доступными при прокрутке</li>
+    <li>Кнопки Назад/Далее для навигации по шагам</li>
+    <li>Кнопка Отправить появляется на последнем шаге</li>
   </ul>
 
-  <!-- ========================== -->
-  <!-- 5. Mobile Wizard -->
-  <!-- ========================== -->
-  <h3 id="mobile-wizard">5. Мобильный мастер</h3>
-  <p>На экранах уже 768px форма трансформируется в <strong>5-шаговый мастер</strong> для удобной мобильной навигации:</p>
+  <!-- Visit Management: Registration Section -->
+  <h3 id="registration-section">2.6 Раздел регистрации</h3>
 
-  <div class="doc-screenshot-full doc-screenshot-mobile">
-    <img src="images/mobile-wizard-en.png" alt="Мобильный мастер" class="doc-screenshot-image" data-i18n-img="mobile-wizard">
+  <p>Раздел регистрации настраивает основные параметры визита при включенном переключателе <strong>Создать визит</strong>. Этот раздел создает ресурс Encounter, связанный с пациентом.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/registration-section-ru.png" alt="Раздел регистрации с полями даты визита, типа, статуса и отделения" class="doc-screenshot-image" data-i18n-img="registration-section">
   </div>
 
-  <div class="doc-wizard-steps">
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">1</div>
-      <div>
-        <div class="doc-wizard-step-label">Пациент</div>
-        <div class="doc-wizard-step-desc">Поиск + Личная информация</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">2</div>
-      <div>
-        <div class="doc-wizard-step-label">Детали</div>
-        <div class="doc-wizard-step-desc">Контакты + Дополнительно + Опекун</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">3</div>
-      <div>
-        <div class="doc-wizard-step-label">Визит</div>
-        <div class="doc-wizard-step-desc">Детали регистрации (если включено создание визита)</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">4</div>
-      <div>
-        <div class="doc-wizard-step-label">Страхование</div>
-        <div class="doc-wizard-step-desc">Страхование + Гарантия (если включено создание визита)</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">5</div>
-      <div>
-        <div class="doc-wizard-step-label">Подтверждение</div>
-        <div class="doc-wizard-step-desc">Демография + Сводка</div>
-      </div>
+  <h4>Параметры визита</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поле</th>
+          <th>Описание</th>
+          <th>Путь FHIR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Дата визита</strong></td>
+          <td>Дата и время регистрации визита (обязательно)</td>
+          <td>Encounter.period.start</td>
+        </tr>
+        <tr>
+          <td><strong>Тип поступления</strong></td>
+          <td>Амбулаторный или Стационарный (обязательно)</td>
+          <td>Encounter.class</td>
+        </tr>
+        <tr>
+          <td><strong>Тип стационарного</strong></td>
+          <td>Тип поступления для стационарных визитов (например, Экстренный, Плановый)</td>
+          <td>Encounter.type</td>
+        </tr>
+        <tr>
+          <td><strong>Статус</strong></td>
+          <td>Статус визита (например, Запланирован, Прибыл, В процессе)</td>
+          <td>Encounter.status</td>
+        </tr>
+        <tr>
+          <td><strong>Отделение</strong></td>
+          <td>Отделение больницы, обрабатывающее визит (обязательно, фильтруется по типу поступления)</td>
+          <td>Encounter.serviceProvider (ссылка на Organization)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">🏥</div>
+    <div class="doc-info-content">
+      <strong>Фильтрация отделений:</strong> Выпадающий список отделений динамически фильтруется в зависимости от выбранного типа поступления. Амбулаторные отделения появляются для амбулаторных визитов, а стационарные отделения для стационарных визитов.
     </div>
   </div>
 
-  <!-- Mobile Wizard Flow Diagram -->
-  <h4 id="wizard-flow">Поток шагов мастера</h4>
-  <div class="mermaid-container">
-    <div class="mermaid mermaid-zoomable">
-flowchart LR
-    S1[Step 1: Patient] --> S2[Step 2: Details]
-    S2 --> S3[Step 3: Visit]
-    S3 --> S4[Step 4: Insurance]
-    S4 --> S5[Step 5: Confirm]
+  <h4>Создание встречи</h4>
+  <p>Когда вы отправляете форму с включенным <strong>Создать визит</strong>, система создает ресурс Encounter:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/encounter-creation-ru.png" alt="Процесс создания встречи, показывающий создание ресурсов Patient и Encounter" class="doc-screenshot-image" data-i18n-img="encounter-creation">
+  </div>
+
+  <p>Встреча включает:</p>
+  <ul class="doc-list">
+    <li><strong>Регистрационный номер</strong> — Автоматически генерируемый идентификатор (формат: XXXXX-YYYY)</li>
+    <li><strong>Ссылка на пациента</strong> — Связывается с ресурсом Patient</li>
+    <li><strong>Поставщик услуг</strong> — Связывается с выбранной Organization (отделение)</li>
+    <li><strong>Страховое покрытие</strong> — Связывается с ресурсами Coverage, если страхование настроено</li>
+  </ul>
+
+  <!-- Visit Management: Insurance -->
+  <h3 id="insurance">2.7 Управление страхованием</h3>
+
+  <p>Раздел страхования позволяет настроить до 3 страховых компаний для визита пациента. Каждый страховщик хранится как ресурс FHIR Coverage.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/insurance-section-ru.png" alt="Раздел страхования с переключателем и карточками нескольких страховщиков" class="doc-screenshot-image" data-i18n-img="insurance-section">
+  </div>
+
+  <h4>Переключатель страхования</h4>
+  <p>Раздел включает флажок для включения/отключения страхования. При отключении форма сворачивается и ресурсы Coverage не создаются. При включении появляется карточка основного страховщика.</p>
+
+  <h4>Несколько страховщиков</h4>
+  <p>Вы можете добавить до 3 страховщиков для одного визита:</p>
+  <ul class="doc-list">
+    <li><strong>Основной страховщик (#1)</strong> — Всегда видим при включенном страховании, не может быть удален</li>
+    <li><strong>Вторичный страховщик (#2)</strong> — Нажмите "Добавить еще" для включения второго страховщика</li>
+    <li><strong>Третичный страховщик (#3)</strong> — Добавьте третьего страховщика при необходимости</li>
+  </ul>
+
+  <h4>Поля страховщика</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поле</th>
+          <th>Описание</th>
+          <th>Путь FHIR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Страховая компания</strong></td>
+          <td>Название страхового провайдера (выпадающий список с поиском)</td>
+          <td>Coverage.payor (ссылка на Organization)</td>
+        </tr>
+        <tr>
+          <td><strong>Тип страхования</strong></td>
+          <td>Тип страхового полиса (например, Государственный, Частный)</td>
+          <td>Coverage.type</td>
+        </tr>
+        <tr>
+          <td><strong>Номер полиса</strong></td>
+          <td>Идентификационный номер страхового полиса</td>
+          <td>Coverage.identifier</td>
+        </tr>
+        <tr>
+          <td><strong>Номер направления</strong></td>
+          <td>Номер авторизации или направления от страховщика</td>
+          <td>Coverage.extension (направление)</td>
+        </tr>
+        <tr>
+          <td><strong>Процент доплаты</strong></td>
+          <td>Процент доплаты пациента (0-100)</td>
+          <td>Coverage.costToBeneficiary</td>
+        </tr>
+        <tr>
+          <td><strong>Дата выдачи</strong></td>
+          <td>Дата выдачи страхового полиса</td>
+          <td>Coverage.period.start</td>
+        </tr>
+        <tr>
+          <td><strong>Действителен до</strong></td>
+          <td>Дата истечения срока действия страхового полиса</td>
+          <td>Coverage.period.end</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">🛡️</div>
+    <div class="doc-info-content">
+      <strong>Приоритет покрытия:</strong> Каждому страховщику присваивается значение приоритета (порядка) в ресурсе Coverage. Основной = 1, Вторичный = 2, Третичный = 3. Это определяет порядок обработки претензий.
     </div>
-    <div class="mermaid-controls">
-      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="M21 21l-4.35-4.35"></path>
-          <path d="M11 8v6M8 11h6"></path>
-        </svg>
-      </button>
+  </div>
+
+  <!-- Visit Management: Active Visit Warning -->
+  <h3 id="active-visit-warning">2.8 Предупреждение об активном визите</h3>
+
+  <p>При создании нового визита для пациента, у которого уже есть активный (в процессе) визит, система отображает модальное предупреждение для предотвращения дублирующих регистраций.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/active-visit-warning-ru.png" alt="Модальное окно предупреждения об активном визите с показом существующих встреч в процессе" class="doc-screenshot-image" data-i18n-img="active-visit-warning">
+  </div>
+
+  <h4>Триггер предупреждения</h4>
+  <p>Модальное окно появляется при выполнении всех этих условий:</p>
+  <ul class="doc-list">
+    <li>Вы отправляете форму с включенным <strong>Создать визит</strong></li>
+    <li>У пациента уже есть Encounter со <code>status="in-progress"</code></li>
+    <li>Активная встреча была создана в течение последних 24 часов</li>
+  </ul>
+
+  <h4>Содержимое модального окна</h4>
+  <p>Предупреждение отображает:</p>
+  <ul class="doc-list">
+    <li><strong>Имя пациента</strong> и личный номер</li>
+    <li><strong>Список активных визитов</strong> с регистрационными номерами, типами визитов и временными метками</li>
+    <li><strong>Кнопки действий:</strong> Отмена (вернуться назад) или Все равно продолжить (создать дублирующий визит)</li>
+  </ul>
+
+  <div class="doc-warning-box">
+    <strong>Лучшая практика:</strong> Внимательно просмотрите детали активного визита перед продолжением. Создание дублирующих активных визитов может вызвать путаницу в истории пациента и выставлении счетов. Если визит является подлинным новым поступлением (например, экстренная повторная госпитализация), нажмите "Все равно продолжить".
+  </div>
+
+  <!-- Visit Management: Demographics -->
+  <h3 id="demographics">2.9 Раздел демографии</h3>
+
+  <p>Раздел демографии собирает адресную и социальную информацию для статистических и административных целей. Этот раздел виден при включенном <strong>Создать визит</strong>.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/demographics-section-ru.png" alt="Раздел демографии с полями адреса и социальной информации" class="doc-screenshot-image" data-i18n-img="demographics-section">
+  </div>
+
+  <h4>Адресная информация</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поле</th>
+          <th>Описание</th>
+          <th>Путь FHIR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Регион</strong></td>
+          <td>Грузинский административный регион (например, Тбилиси, Аджария)</td>
+          <td>Patient.address[0].state</td>
+        </tr>
+        <tr>
+          <td><strong>Район</strong></td>
+          <td>Район в выбранном регионе (фильтруется по регионам)</td>
+          <td>Patient.address[0].district</td>
+        </tr>
+        <tr>
+          <td><strong>Город</strong></td>
+          <td>Название города или населенного пункта</td>
+          <td>Patient.address[0].city</td>
+        </tr>
+        <tr>
+          <td><strong>Фактический адрес</strong></td>
+          <td>Адрес улицы и номер квартиры</td>
+          <td>Patient.address[0].line</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Социальная информация</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поле</th>
+          <th>Описание</th>
+          <th>Расширение FHIR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Образование</strong></td>
+          <td>Высший уровень завершенного образования (например, Высшее, Среднее)</td>
+          <td>Patient.extension (образование)</td>
+        </tr>
+        <tr>
+          <td><strong>Семейное положение</strong></td>
+          <td>Семейное положение (например, Женат/Замужем, Холост/Не замужем, Разведен(а))</td>
+          <td>Patient.maritalStatus</td>
+        </tr>
+        <tr>
+          <td><strong>Занятость</strong></td>
+          <td>Статус занятости (например, Работает, Безработный, На пенсии)</td>
+          <td>Patient.extension (занятость)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">🗺️</div>
+    <div class="doc-info-content">
+      <strong>Копировать от пациента:</strong> Кнопка "Копировать из контактной информации" (вверху справа раздела) автоматически заполняет поля адреса из раздела контактной информации пациента, экономя время при регистрации.
     </div>
   </div>
 
   <div class="doc-info-box">
-    <div class="doc-info-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-      </svg>
-    </div>
+    <div class="doc-info-icon">🔗</div>
     <div class="doc-info-content">
-      <strong>Поведение мобильного мастера:</strong>
-      <ul>
-        <li>На мобильных устройствах 9 секций формы группируются в 5 шагов для удобной навигации</li>
-        <li>Шаги 3 и 4 скрыты, когда переключатель создания визита ВЫКЛ</li>
-        <li>Индикатор прогресса показывает текущий шаг</li>
-        <li>Кнопки Назад/Далее для навигации между шагами</li>
-        <li>Автосохранение черновика работает на всех шагах</li>
-      </ul>
+      <strong>Каскадные выпадающие списки:</strong> Поле Район динамически фильтруется в зависимости от выбранного Региона. Сначала выберите регион, прежде чем выбирать район.
     </div>
   </div>
+
 </section>

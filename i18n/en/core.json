@@ -18,7 +18,10 @@
   },
   "zoom": {
     "zoomIn": "Zoom in",
-    "zoomOut": "Zoom out"
+    "zoomOut": "Zoom out",
+    "reset": "Reset",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen"
   },
   "buttons": {
     "viewOnInterface": "View on interface",

@@ -2,46 +2,32 @@
   <div class="doc-section-header">
     <div class="doc-section-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
       </svg>
     </div>
-    <h2>Overview</h2>
+    <div class="doc-section-number">1</div>
+    <h2>Patient Registration Overview</h2>
   </div>
 
-  <p>The Patient Registration module is a <strong>central component of the MediMind EMR system</strong> that allows you to:</p>
+  <p>The <strong>Patient Registration</strong> module is a comprehensive, FHIR-compliant system for registering new patients and creating visit records. It combines patient search, form-based data entry, and visit management in a single, responsive interface that adapts to desktop, tablet, and mobile devices.</p>
 
-  <ul class="doc-list">
-    <li><strong>Search patients</strong> using unified hero search with keyboard shortcuts (Cmd/Ctrl+K)</li>
-    <li><strong>Register new patients</strong> with comprehensive data collection across 9 form sections</li>
-    <li><strong>Create visits</strong> optionally as part of patient registration</li>
-    <li><strong>View today's appointments</strong> and recent patients in the desktop sidebar</li>
-    <li><strong>Upload documents</strong> including guarantee letters with attachments</li>
-    <li><strong>Auto-save drafts</strong> to prevent data loss during registration</li>
-  </ul>
-
-  <p>The module is designed for <strong>registration staff</strong>, with a responsive interface that adapts to desktop and mobile devices.</p>
-
-  <!-- Screenshot -->
-  <div class="doc-screenshot-full" id="main-screenshot">
-    <img src="images/screenshot-en.png" alt="Registration Interface" class="doc-screenshot-image" data-i18n-img="screenshot">
-    <button class="doc-back-link" id="back-to-table-btn" onclick="goBackToTable()" style="display: none;">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-      </svg>
-      Back to table
-    </button>
+  <div class="doc-screenshot-full">
+    <img src="images/screenshot-en.png" alt="MediMind Patient Registration Overview" class="doc-screenshot-image" data-i18n-img="screenshot">
   </div>
 
   <!-- Statistics -->
-  <h3 id="statistics">Quick Statistics</h3>
+  <h3 id="statistics">System Statistics</h3>
+
+  <p>The registration module provides a feature-rich environment for patient data management with the following capabilities:</p>
+
   <div class="doc-stats-row">
-    <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">120+</span>
-      <span class="doc-stat-inline-label">Fields</span>
-    </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">9</span>
       <span class="doc-stat-inline-label">Form Sections</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">FHIR Resources</span>
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
@@ -49,159 +35,241 @@
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
-      <span class="doc-stat-inline-label">Visit Types</span>
+      <span class="doc-stat-inline-label">Responsive Modes</span>
     </div>
   </div>
 
-  <!-- 3 Zones -->
-  <h3 id="zones">3 Interface Zones</h3>
-  <p>The registration interface is organized into three main zones:</p>
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR R4 Compliant:</strong>
+    All patient data is stored using FHIR R4 resources (Patient, Encounter, Coverage, RelatedPerson, Organization) with Georgian healthcare extensions.
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Count</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Form Sections</strong></td>
+        <td>9</td>
+        <td>Collapsible accordion sections covering patient demographics, contact info, insurance, and visit details</td>
+      </tr>
+      <tr>
+        <td><strong>FHIR Resources</strong></td>
+        <td>5</td>
+        <td>Patient, Encounter, Coverage, RelatedPerson, Organization</td>
+      </tr>
+      <tr>
+        <td><strong>Data Binding Codes</strong></td>
+        <td>101+</td>
+        <td>GoodKey mappings for Georgian healthcare data standards</td>
+      </tr>
+      <tr>
+        <td><strong>Validation Rules</strong></td>
+        <td>15+</td>
+        <td>Georgian Personal ID (11-digit Luhn checksum), phone formats, date validations, required field checks</td>
+      </tr>
+      <tr>
+        <td><strong>Language Support</strong></td>
+        <td>3</td>
+        <td>Georgian (ka), English (en), Russian (ru)</td>
+      </tr>
+      <tr>
+        <td><strong>Responsive Breakpoints</strong></td>
+        <td>3</td>
+        <td>Mobile (&lt;768px), Tablet (768-1024px), Desktop (&gt;1025px)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Interface Zones -->
+  <h3 id="zones">Interface Zones</h3>
+
+  <p>The registration interface is divided into distinct visual regions, each serving a specific purpose. The layout adapts based on screen size:</p>
+
+  <h4>Desktop Layout (>1025px)</h4>
 
   <div class="doc-zone-diagram">
     <div class="doc-zone">
-      <div class="doc-zone-header">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        Hero Search
-      </div>
+      <div class="doc-zone-header">Header Section</div>
       <div class="doc-zone-content">
-        <p>Quick search by name or ID</p>
-        <p>Keyboard shortcut: Cmd/Ctrl+K</p>
-        <p>Advanced filters panel</p>
+        <p>Page title and subtitle</p>
+        <p>Navigation breadcrumbs</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-        Unified Form
-      </div>
+      <div class="doc-zone-header">Search Hero</div>
       <div class="doc-zone-content">
-        <p><strong>9 Collapsible Sections</strong></p>
-        <p>Patient data entry</p>
-        <p>Optional visit creation</p>
-        <p>Draft auto-save</p>
+        <p>Patient search bar (Cmd/Ctrl+K)</p>
+        <p>Advanced filters</p>
+        <p>Search results with actions</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-        </svg>
-        Desktop Sidebar
-      </div>
+      <div class="doc-zone-header">Registration Form</div>
       <div class="doc-zone-content">
-        <p><strong>Today's Visits</strong></p>
-        <p>Current day's encounters</p>
-        <p><strong>Recent Patients</strong></p>
-        <p>10 most recent EMR patients</p>
+        <p>9 collapsible sections</p>
+        <p>Progress indicator</p>
+        <p>Draft auto-save badge</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Right Sidebar</div>
+      <div class="doc-zone-content">
+        <p>Today's Visits (collapsible)</p>
+        <p>Recent Patients (collapsible)</p>
+        <p>Quick action buttons</p>
       </div>
     </div>
   </div>
+
+  <h4>Mobile Layout (<768px)</h4>
+
+  <div class="doc-zone-diagram" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="doc-zone">
+      <div class="doc-zone-header">Search Hero</div>
+      <div class="doc-zone-content">
+        <p>Simplified search bar</p>
+        <p>Tap to expand filters</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Wizard Steps</div>
+      <div class="doc-zone-content">
+        <p>5-step progress bar</p>
+        <p>Patient → Registration</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Form Sections</div>
+      <div class="doc-zone-content">
+        <p>Single-column layout</p>
+        <p>Collapsible sections</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Patient Table</div>
+      <div class="doc-zone-content">
+        <p>Full patient list below form</p>
+        <p>Replaces desktop sidebar</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Responsive Design:</strong>
+    The sidebar (Today's Visits + Recent Patients) only appears on desktop. On mobile and tablet, a full patient table appears below the form instead.
+  </div>
+
+  <h4>Visual Region Descriptions</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Zone</th>
+        <th>Purpose</th>
+        <th>Visibility</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Header Section</strong></td>
+        <td>Displays page title, icon, and subtitle with navigation context</td>
+        <td>All devices</td>
+      </tr>
+      <tr>
+        <td><strong>Search Hero Section</strong></td>
+        <td>Patient search with keyboard shortcut (Cmd/Ctrl+K), advanced filters, and dual-action results (New Visit / Fill Form)</td>
+        <td>All devices</td>
+      </tr>
+      <tr>
+        <td><strong>Registration Form</strong></td>
+        <td>9 collapsible accordion sections with progress tracker and draft auto-save indicator</td>
+        <td>All devices</td>
+      </tr>
+      <tr>
+        <td><strong>Desktop Sidebar</strong></td>
+        <td>Two collapsible panels: Today's Visits (encounter list) and Recent Patients (quick access with action buttons)</td>
+        <td>Desktop only (>1025px)</td>
+      </tr>
+      <tr>
+        <td><strong>Mobile Patient Table</strong></td>
+        <td>Full patient list below the form, replacing the desktop sidebar functionality</td>
+        <td>Mobile/Tablet (<1025px)</td>
+      </tr>
+      <tr>
+        <td><strong>Modals</strong></td>
+        <td>Visit creation dialog, active visit warning, patient edit form, duplicate patient warning</td>
+        <td>All devices (triggered by actions)</td>
+      </tr>
+    </tbody>
+  </table>
 
   <!-- Key Features -->
   <h3 id="key-features">Key Features</h3>
-  <div class="doc-features-grid">
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Unified Patient Search</div>
-      <div class="doc-feature-desc">Hero search with Cmd/Ctrl+K shortcut, auto-detection of ID vs name, and advanced filters</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Patient Lookup</div>
-      <div class="doc-feature-desc">Personal ID lookup with real-time validation and patient card display</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Draft Auto-Save</div>
-      <div class="doc-feature-desc">Automatically saves your work to prevent data loss during registration</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Mobile Wizard</div>
-      <div class="doc-feature-desc">5-step responsive wizard for screens under 768px width</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Document Upload</div>
-      <div class="doc-feature-desc">Drag & drop file upload for guarantee letters, up to 5 files per guarantee</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Today's Visits</div>
-      <div class="doc-feature-desc">Desktop sidebar showing current day's encounters with status badges</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Unknown Patient</div>
-      <div class="doc-feature-desc">Register emergency patients without personal ID using auto-generated identifiers</div>
-    </div>
+
+  <p>The patient registration system provides comprehensive capabilities for managing patient records and visit creation:</p>
+
+  <h4>Search and Lookup</h4>
+  <ul class="doc-list">
+    <li><strong>Unified Patient Search</strong> - Search by personal ID, name, or registration number with keyboard shortcut (Cmd/Ctrl+K)</li>
+    <li><strong>Advanced Filters</strong> - Filter by birthdate, phone, address, and other criteria</li>
+    <li><strong>Dual-Action Results</strong> - Each result offers "New Visit" (create encounter) or "Fill Form" (populate form fields) actions</li>
+    <li><strong>Auto-Search</strong> - Personal ID field automatically triggers search when 11 digits are entered</li>
+    <li><strong>Duplicate Detection</strong> - Warns when creating patients with similar names or Personal IDs</li>
+  </ul>
+
+  <h4>Patient Registration</h4>
+  <ul class="doc-list">
+    <li><strong>Personal ID Validation</strong> - Georgian 11-digit Personal ID with Luhn checksum verification</li>
+    <li><strong>Unknown Patient Mode</strong> - Emergency registration for patients without identification (generates temporary ID)</li>
+    <li><strong>Guardian Support</strong> - Automatic guardian fields for minors (<18 years old) with RelatedPerson FHIR resource</li>
+    <li><strong>International Phone</strong> - Phone number input with country code selector</li>
+    <li><strong>Address Management</strong> - Region/district/city cascading selectors with Georgian administrative divisions</li>
+  </ul>
+
+  <h4>Visit Management</h4>
+  <ul class="doc-list">
+    <li><strong>Create Visit Toggle</strong> - Enable/disable visit creation; when ON, shows 4 additional sections (Registration, Insurance, Guarantee, Demographics)</li>
+    <li><strong>Visit Types</strong> - Outpatient, Inpatient, Emergency, with department filtering based on selection</li>
+    <li><strong>Active Visit Warning</strong> - Detects existing active encounters and warns before creating duplicate visits</li>
+    <li><strong>Registration Numbers</strong> - Auto-generated sequential registration numbers per encounter</li>
+    <li><strong>Today's Visits Sidebar</strong> - Real-time list of today's encounters with status badges and time stamps</li>
+  </ul>
+
+  <h4>Insurance and Guarantees</h4>
+  <ul class="doc-list">
+    <li><strong>Multi-Insurer Support</strong> - Add up to 3 insurance companies per patient with Coverage FHIR resources</li>
+    <li><strong>Insurance Enable Toggle</strong> - Conditionally show/hide insurance fields</li>
+    <li><strong>Copay Configuration</strong> - Set copay percentages, policy numbers, issue dates, and validity periods</li>
+    <li><strong>Virtual Advance</strong> - Guarantee/deposit system with amount, donor, and deadline tracking</li>
+    <li><strong>Document Attachments</strong> - Upload guarantee letters and supporting documents</li>
+  </ul>
+
+  <h4>Form Experience</h4>
+  <ul class="doc-list">
+    <li><strong>Collapsible Sections</strong> - 9 accordion sections expand/collapse independently to reduce visual clutter</li>
+    <li><strong>Progress Indicator</strong> - Visual tracker showing completion status of each section</li>
+    <li><strong>Draft Auto-Save</strong> - Form data saved to localStorage every 1 second, with "Draft Saved" badge indicator</li>
+    <li><strong>Draft Recovery</strong> - Restore unsaved form data after browser reload or crash</li>
+    <li><strong>Sticky Submit Button</strong> - Submit button fixed at bottom on mobile for easy access</li>
+    <li><strong>Responsive Wizard</strong> - Mobile displays 5-step wizard (Patient → Personal Info → Contact → Registration → Insurance) instead of accordion</li>
+  </ul>
+
+  <h4>Data Standards</h4>
+  <ul class="doc-list">
+    <li><strong>FHIR R4 Compliance</strong> - All data stored as FHIR resources (Patient, Encounter, Coverage, RelatedPerson, Organization)</li>
+    <li><strong>GoodKey Data Binding</strong> - 101+ code mappings for Georgian healthcare standards</li>
+    <li><strong>Multi-Language</strong> - Full support for Georgian, English, and Russian with real-time language switching</li>
+    <li><strong>Accessibility</strong> - Keyboard navigation, screen reader support, and WCAG 2.1 AA compliance</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Recent Patients Filtering:</strong>
+    The Recent Patients sidebar automatically excludes portal patients (patient portal registrations) and only shows EMR-registered patients, limited to the 10 most recently updated records.
   </div>
-
-  <!-- Workflow Overview -->
-  <h3 id="workflow-overview">Workflow Overview</h3>
-  <p>A typical patient registration follows these steps:</p>
-
-  <div class="doc-wizard-steps">
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">1</div>
-      <div>
-        <div class="doc-wizard-step-label">Search</div>
-        <div class="doc-wizard-step-desc">Look up patient by personal ID or name using hero search or advanced filters</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">2</div>
-      <div>
-        <div class="doc-wizard-step-label">Fill Form</div>
-        <div class="doc-wizard-step-desc">Enter patient data across 9 collapsible sections (auto-filled if patient exists)</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">3</div>
-      <div>
-        <div class="doc-wizard-step-label">Visit Details</div>
-        <div class="doc-wizard-step-desc">Optionally enable visit creation to add visit type, insurance, and guarantee</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">4</div>
-      <div>
-        <div class="doc-wizard-step-label">Submit</div>
-        <div class="doc-wizard-step-desc">System creates FHIR resources (Patient, Encounter, Coverage) and redirects to patient record</div>
-      </div>
-    </div>
-  </div>
-
 </section>

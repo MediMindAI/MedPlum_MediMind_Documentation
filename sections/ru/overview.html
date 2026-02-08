@@ -2,206 +2,274 @@
   <div class="doc-section-header">
     <div class="doc-section-icon">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
       </svg>
     </div>
-    <h2>Обзор</h2>
+    <div class="doc-section-number">1</div>
+    <h2>Обзор регистрации пациента</h2>
   </div>
 
-  <p>Модуль регистрации пациентов является <strong>центральным компонентом системы MediMind EMR</strong>, который позволяет:</p>
+  <p>Модуль <strong>Регистрации пациента</strong> представляет собой комплексную систему, совместимую с FHIR, для регистрации новых пациентов и создания записей о визитах. Он объединяет поиск пациентов, ввод данных на основе форм и управление визитами в единый адаптивный интерфейс, который настраивается для настольных компьютеров, планшетов и мобильных устройств.</p>
 
-  <ul class="doc-list">
-    <li><strong>Искать пациентов</strong> с помощью единого поиска с клавиатурными сочетаниями (Cmd/Ctrl+K)</li>
-    <li><strong>Регистрировать новых пациентов</strong> со сбором данных в 9 секциях формы</li>
-    <li><strong>Создавать визиты</strong> опционально как часть регистрации пациента</li>
-    <li><strong>Просматривать сегодняшние записи</strong> и недавних пациентов в боковой панели</li>
-    <li><strong>Загружать документы</strong> включая гарантийные письма с вложениями</li>
-    <li><strong>Автосохранять черновики</strong> для предотвращения потери данных</li>
-  </ul>
-
-  <p>Модуль предназначен для <strong>регистрационного персонала</strong>, с адаптивным интерфейсом для настольных и мобильных устройств.</p>
-
-  <!-- Screenshot -->
-  <div class="doc-screenshot-full" id="main-screenshot">
-    <img src="images/screenshot-ru.png" alt="Интерфейс регистрации" class="doc-screenshot-image" data-i18n-img="screenshot">
-    <button class="doc-back-link" id="back-to-table-btn" onclick="goBackToTable()" style="display: none;">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-      </svg>
-      Вернуться назад
-    </button>
+  <div class="doc-screenshot-full">
+    <img src="images/screenshot-ru.png" alt="MediMind Обзор регистрации пациента" class="doc-screenshot-image" data-i18n-img="screenshot">
   </div>
 
-  <!-- Statistics -->
-  <h3 id="statistics">Краткая статистика</h3>
+  <!-- Статистика -->
+  <h3 id="statistics">Статистика системы</h3>
+
+  <p>Модуль регистрации обеспечивает богатую функциями среду для управления данными пациентов со следующими возможностями:</p>
+
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">120+</span>
-      <span class="doc-stat-inline-label">полей</span>
-    </div>
-    <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">9</span>
-      <span class="doc-stat-inline-label">секций формы</span>
+      <span class="doc-stat-inline-label">Разделов формы</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">FHIR ресурсов</span>
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
-      <span class="doc-stat-inline-label">языка</span>
+      <span class="doc-stat-inline-label">Языка</span>
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">3</span>
-      <span class="doc-stat-inline-label">типа визита</span>
+      <span class="doc-stat-inline-label">Адаптивных режима</span>
     </div>
   </div>
 
-  <!-- 3 Zones -->
-  <h3 id="zones">3 зоны интерфейса</h3>
-  <p>Интерфейс регистрации организован в три основные зоны:</p>
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Совместимость с FHIR R4:</strong>
+    Все данные пациента хранятся с использованием ресурсов FHIR R4 (Patient, Encounter, Coverage, RelatedPerson, Organization) с грузинскими расширениями здравоохранения.
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Категория</th>
+        <th>Количество</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Разделы формы</strong></td>
+        <td>9</td>
+        <td>Складывающиеся разделы аккордеона, охватывающие демографию пациента, контактную информацию, страховку и детали визита</td>
+      </tr>
+      <tr>
+        <td><strong>FHIR ресурсы</strong></td>
+        <td>5</td>
+        <td>Patient, Encounter, Coverage, RelatedPerson, Organization</td>
+      </tr>
+      <tr>
+        <td><strong>Коды привязки данных</strong></td>
+        <td>101+</td>
+        <td>Сопоставления GoodKey для стандартов данных грузинского здравоохранения</td>
+      </tr>
+      <tr>
+        <td><strong>Правила валидации</strong></td>
+        <td>15+</td>
+        <td>Грузинский личный ID (11-значная контрольная сумма Luhn), форматы телефонов, проверки дат, проверки обязательных полей</td>
+      </tr>
+      <tr>
+        <td><strong>Поддержка языков</strong></td>
+        <td>3</td>
+        <td>Грузинский (ka), Английский (en), Русский (ru)</td>
+      </tr>
+      <tr>
+        <td><strong>Адаптивные точки</strong></td>
+        <td>3</td>
+        <td>Мобильный (&lt;768px), Планшет (768-1024px), Настольный (&gt;1025px)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Зоны интерфейса -->
+  <h3 id="zones">Зоны интерфейса</h3>
+
+  <p>Интерфейс регистрации разделен на отдельные визуальные области, каждая из которых служит определенной цели. Макет адаптируется в зависимости от размера экрана:</p>
+
+  <h4>Настольный макет (>1025px)</h4>
 
   <div class="doc-zone-diagram">
     <div class="doc-zone">
-      <div class="doc-zone-header">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        Главный поиск
-      </div>
+      <div class="doc-zone-header">Раздел заголовка</div>
       <div class="doc-zone-content">
-        <p>Быстрый поиск по имени или ИИН</p>
-        <p>Клавиша: Cmd/Ctrl+K</p>
-        <p>Панель расширенных фильтров</p>
+        <p>Заголовок страницы и подзаголовок</p>
+        <p>Навигационные хлебные крошки</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-        Единая форма
-      </div>
+      <div class="doc-zone-header">Hero поиска</div>
       <div class="doc-zone-content">
-        <p><strong>9 сворачиваемых секций</strong></p>
-        <p>Ввод данных пациента</p>
-        <p>Опциональное создание визита</p>
-        <p>Автосохранение черновика</p>
+        <p>Поисковая строка пациента (Cmd/Ctrl+K)</p>
+        <p>Расширенные фильтры</p>
+        <p>Результаты поиска с действиями</p>
       </div>
     </div>
     <div class="doc-zone">
-      <div class="doc-zone-header">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-        </svg>
-        Боковая панель
-      </div>
+      <div class="doc-zone-header">Форма регистрации</div>
       <div class="doc-zone-content">
-        <p><strong>Сегодняшние визиты</strong></p>
-        <p>Записи текущего дня</p>
-        <p><strong>Недавние пациенты</strong></p>
-        <p>10 последних пациентов EMR</p>
+        <p>9 складывающихся разделов</p>
+        <p>Индикатор прогресса</p>
+        <p>Значок автосохранения черновика</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Правый Sidebar</div>
+      <div class="doc-zone-content">
+        <p>Сегодняшние визиты (складывается)</p>
+        <p>Недавние пациенты (складывается)</p>
+        <p>Кнопки быстрого действия</p>
       </div>
     </div>
   </div>
 
-  <!-- Key Features -->
+  <h4>Мобильный макет (<768px)</h4>
+
+  <div class="doc-zone-diagram" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="doc-zone">
+      <div class="doc-zone-header">Hero поиска</div>
+      <div class="doc-zone-content">
+        <p>Упрощенная поисковая строка</p>
+        <p>Касание для раскрытия фильтров</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Шаги мастера</div>
+      <div class="doc-zone-content">
+        <p>5-шаговая полоса прогресса</p>
+        <p>Пациент → Регистрация</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Разделы формы</div>
+      <div class="doc-zone-content">
+        <p>Одноколоночный макет</p>
+        <p>Складывающиеся разделы</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Таблица пациентов</div>
+      <div class="doc-zone-content">
+        <p>Полный список пациентов под формой</p>
+        <p>Заменяет настольный sidebar</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Адаптивный дизайн:</strong>
+    Sidebar (Сегодняшние визиты + Недавние пациенты) появляется только на настольных компьютерах. На мобильных и планшетах вместо этого под формой появляется полная таблица пациентов.
+  </div>
+
+  <h4>Описание визуальных областей</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Зона</th>
+        <th>Назначение</th>
+        <th>Видимость</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Раздел заголовка</strong></td>
+        <td>Отображает заголовок страницы, значок и подзаголовок с контекстом навигации</td>
+        <td>Все устройства</td>
+      </tr>
+      <tr>
+        <td><strong>Раздел Hero поиска</strong></td>
+        <td>Поиск пациента с горячей клавишей (Cmd/Ctrl+K), расширенными фильтрами и двойными результатами действия (Новый визит / Заполнить форму)</td>
+        <td>Все устройства</td>
+      </tr>
+      <tr>
+        <td><strong>Форма регистрации</strong></td>
+        <td>9 складывающихся разделов аккордеона с трекером прогресса и индикатором автосохранения черновика</td>
+        <td>Все устройства</td>
+      </tr>
+      <tr>
+        <td><strong>Настольный Sidebar</strong></td>
+        <td>Две складывающиеся панели: Сегодняшние визиты (список encounter) и Недавние пациенты (быстрый доступ с кнопками действий)</td>
+        <td>Только настольный (>1025px)</td>
+      </tr>
+      <tr>
+        <td><strong>Мобильная таблица пациентов</strong></td>
+        <td>Полный список пациентов под формой, заменяющий функциональность настольного sidebar</td>
+        <td>Мобильный/Планшет (<1025px)</td>
+      </tr>
+      <tr>
+        <td><strong>Модальные окна</strong></td>
+        <td>Диалог создания визита, предупреждение об активном визите, форма редактирования пациента, предупреждение о дубликате</td>
+        <td>Все устройства (активируется действиями)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Ключевые функции -->
   <h3 id="key-features">Ключевые функции</h3>
-  <div class="doc-features-grid">
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Единый поиск пациентов</div>
-      <div class="doc-feature-desc">Главный поиск с Cmd/Ctrl+K, автоопределение ИИН и имени, расширенные фильтры</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Поиск по ИИН</div>
-      <div class="doc-feature-desc">Поиск по личному номеру с валидацией и отображением карточки</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Автосохранение черновика</div>
-      <div class="doc-feature-desc">Автоматически сохраняет ваш прогресс по мере заполнения, предотвращая потерю данных</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Мобильный мастер</div>
-      <div class="doc-feature-desc">5-шаговый адаптивный мастер для экранов менее 768px</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Загрузка документов</div>
-      <div class="doc-feature-desc">Drag & drop загрузка для гарантийных писем, до 5 файлов на гарантию</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Сегодняшние визиты</div>
-      <div class="doc-feature-desc">Боковая панель с записями текущего дня и статусными бейджами</div>
-    </div>
-    <div class="doc-feature-card">
-      <div class="doc-feature-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
-      <div class="doc-feature-title">Неизвестный пациент</div>
-      <div class="doc-feature-desc">Регистрация экстренных пациентов без личного номера с автогенерируемыми идентификаторами</div>
-    </div>
+
+  <p>Система регистрации пациентов обеспечивает комплексные возможности для управления записями пациентов и создания визитов:</p>
+
+  <h4>Поиск и поиск</h4>
+  <ul class="doc-list">
+    <li><strong>Единый поиск пациентов</strong> - Поиск по личному ID, имени или регистрационному номеру с горячей клавишей (Cmd/Ctrl+K)</li>
+    <li><strong>Расширенные фильтры</strong> - Фильтрация по дате рождения, телефону, адресу и другим критериям</li>
+    <li><strong>Двойные результаты действия</strong> - Каждый результат предлагает действия "Новый визит" (создание encounter) или "Заполнить форму" (заполнение полей формы)</li>
+    <li><strong>Автопоиск</strong> - Поле личного ID автоматически запускает поиск при вводе 11 цифр</li>
+    <li><strong>Обнаружение дубликатов</strong> - Предупреждает при создании пациентов с похожими именами или личными ID</li>
+  </ul>
+
+  <h4>Регистрация пациента</h4>
+  <ul class="doc-list">
+    <li><strong>Проверка личного ID</strong> - Грузинский 11-значный личный ID с проверкой контрольной суммы Luhn</li>
+    <li><strong>Режим неизвестного пациента</strong> - Экстренная регистрация для пациентов без идентификации (генерирует временный ID)</li>
+    <li><strong>Поддержка опекуна</strong> - Автоматические поля опекуна для несовершеннолетних (<18 лет) с ресурсом FHIR RelatedPerson</li>
+    <li><strong>Международный телефон</strong> - Ввод номера телефона с селектором кода страны</li>
+    <li><strong>Управление адресом</strong> - Каскадные селекторы регион/район/город с грузинскими административными делениями</li>
+  </ul>
+
+  <h4>Управление визитами</h4>
+  <ul class="doc-list">
+    <li><strong>Переключатель создания визита</strong> - Включение/выключение создания визита; при включении показывает 4 дополнительных раздела (Регистрация, Страховка, Гарантия, Демография)</li>
+    <li><strong>Типы визитов</strong> - Амбулаторный, Стационарный, Экстренный, с фильтрацией отделений на основе выбора</li>
+    <li><strong>Предупреждение об активном визите</strong> - Обнаруживает существующие активные encounters и предупреждает перед созданием дублирующих визитов</li>
+    <li><strong>Регистрационные номера</strong> - Автоматически генерируемые последовательные регистрационные номера на encounter</li>
+    <li><strong>Sidebar сегодняшних визитов</strong> - Список encounters сегодня в реальном времени со значками статуса и временными метками</li>
+  </ul>
+
+  <h4>Страховка и гарантии</h4>
+  <ul class="doc-list">
+    <li><strong>Поддержка нескольких страховщиков</strong> - Добавьте до 3 страховых компаний на пациента с ресурсами FHIR Coverage</li>
+    <li><strong>Переключатель включения страховки</strong> - Условное отображение/скрытие полей страховки</li>
+    <li><strong>Конфигурация доплаты</strong> - Установите проценты доплаты, номера полисов, даты выпуска и периоды действия</li>
+    <li><strong>Виртуальный аванс</strong> - Система гарантии/депозита с отслеживанием суммы, донора и крайнего срока</li>
+    <li><strong>Вложения документов</strong> - Загрузка гарантийных писем и подтверждающих документов</li>
+  </ul>
+
+  <h4>Опыт работы с формой</h4>
+  <ul class="doc-list">
+    <li><strong>Складывающиеся разделы</strong> - 9 разделов аккордеона раскрываются/складываются независимо для уменьшения визуального беспорядка</li>
+    <li><strong>Индикатор прогресса</strong> - Визуальный трекер, показывающий статус завершения каждого раздела</li>
+    <li><strong>Автосохранение черновика</strong> - Данные формы сохраняются в localStorage каждую 1 секунду, с индикатором значка "Черновик сохранен"</li>
+    <li><strong>Восстановление черновика</strong> - Восстановление несохраненных данных формы после перезагрузки браузера или сбоя</li>
+    <li><strong>Липкая кнопка отправки</strong> - Кнопка отправки зафиксирована внизу на мобильном для удобного доступа</li>
+    <li><strong>Адаптивный мастер</strong> - Мобильный отображает 5-шаговый мастер (Пациент → Личная информация → Контакт → Регистрация → Страховка) вместо аккордеона</li>
+  </ul>
+
+  <h4>Стандарты данных</h4>
+  <ul class="doc-list">
+    <li><strong>Соответствие FHIR R4</strong> - Все данные хранятся как ресурсы FHIR (Patient, Encounter, Coverage, RelatedPerson, Organization)</li>
+    <li><strong>Привязка данных GoodKey</strong> - 101+ сопоставлений кодов для грузинских стандартов здравоохранения</li>
+    <li><strong>Многоязычность</strong> - Полная поддержка грузинского, английского и русского языков с переключением языка в реальном времени</li>
+    <li><strong>Доступность</strong> - Навигация с клавиатуры, поддержка программ чтения с экрана и соответствие WCAG 2.1 AA</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Фильтрация недавних пациентов:</strong>
+    Sidebar недавних пациентов автоматически исключает пациентов портала (регистрации портала пациентов) и показывает только зарегистрированных в EMR пациентов, ограничиваясь 10 самыми недавно обновленными записями.
   </div>
-
-  <!-- Обзор рабочего процесса -->
-  <h3 id="workflow-overview">Обзор рабочего процесса</h3>
-  <p>Типичная регистрация пациента включает следующие шаги:</p>
-
-  <div class="doc-wizard-steps">
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">1</div>
-      <div>
-        <div class="doc-wizard-step-label">Поиск</div>
-        <div class="doc-wizard-step-desc">Найдите пациента по личному номеру или имени через главный поиск или расширенные фильтры</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">2</div>
-      <div>
-        <div class="doc-wizard-step-label">Заполнение формы</div>
-        <div class="doc-wizard-step-desc">Введите данные пациента в 9 сворачиваемых секциях (автозаполнение если пациент существует)</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">3</div>
-      <div>
-        <div class="doc-wizard-step-label">Детали визита</div>
-        <div class="doc-wizard-step-desc">Опционально включите создание визита для добавления типа визита, страхования и гарантии</div>
-      </div>
-    </div>
-    <div class="doc-wizard-step">
-      <div class="doc-wizard-step-number">4</div>
-      <div>
-        <div class="doc-wizard-step-label">Отправка</div>
-        <div class="doc-wizard-step-desc">Система создает FHIR-ресурсы (Patient, Encounter, Coverage) и перенаправляет на карточку пациента</div>
-      </div>
-    </div>
-  </div>
-
 </section>

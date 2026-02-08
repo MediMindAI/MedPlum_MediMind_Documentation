@@ -437,24 +437,10 @@ const SectionLoader = {
     // Re-initialize FAQ accordion
     this.initFaqAccordion();
 
-    // Re-bind zoom handlers
-    document.querySelectorAll('.mermaid-zoomable').forEach(diagram => {
-      if (!diagram.hasAttribute('data-zoom-bound')) {
-        diagram.setAttribute('data-zoom-bound', 'true');
-        diagram.addEventListener('click', function() {
-          this.classList.toggle('zoomed');
-          const container = this.closest('.mermaid-container');
-          const button = container?.querySelector('.mermaid-zoom-btn');
-          if (button && typeof I18n !== 'undefined') {
-            const isZoomed = this.classList.contains('zoomed');
-            const zoomText = isZoomed ? I18n.t('zoom.zoomOut') : I18n.t('zoom.zoomIn');
-            button.innerHTML = isZoomed
-              ? `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"/></svg>${zoomText}`
-              : `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>${zoomText}`;
-          }
-        });
-      }
-    });
+    // Initialize diagram viewer (zoom/pan/nav toolbar)
+    if (typeof DiagramViewer !== 'undefined') {
+      setTimeout(() => DiagramViewer.initAll(), 500);
+    }
 
     // Update section references for scroll spy
     const sections = document.querySelectorAll('section[id], h3[id], h4[id]');

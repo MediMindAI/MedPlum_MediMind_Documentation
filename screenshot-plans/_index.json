@@ -1,68 +1,49 @@
 {
-  "indexVersion": "1.2",
-  "lastUpdated": "2026-02-07T21:25:00Z",
-  "lastValidated": "2026-02-07T21:25:00Z",
-  "validationReport": "screenshot-plans/_image-validation.md",
+  "indexVersion": "1.0",
+  "lastUpdated": "2026-02-09T12:00:00Z",
   "sections": [
     {
       "id": "overview",
       "planFile": "overview.json",
       "checklistFile": "overview.md",
       "status": "completed",
-      "totalScreenshots": 1,
-      "completedScreenshots": 1,
+      "totalScreenshots": 3,
+      "completedScreenshots": 3,
+      "needsRecapture": 0,
       "progress": 100,
       "screenshots": ["screenshot"],
-      "addedAt": "2026-02-07T13:05:00Z",
-      "completedAt": "2026-02-07T18:05:00Z",
-      "validatedAt": "2026-02-07T20:00:00Z"
+      "addedAt": "2026-02-08T15:15:00Z",
+      "completedAt": "2026-02-09T12:00:00Z"
     },
     {
       "id": "features",
       "planFile": "features.json",
       "checklistFile": "features.md",
       "status": "completed",
-      "totalScreenshots": 15,
-      "completedScreenshots": 15,
-      "partialScreenshots": 0,
-      "needsRecaptureScreenshots": 0,
+      "totalScreenshots": 45,
+      "completedScreenshots": 45,
+      "needsRecapture": 0,
       "progress": 100,
-      "screenshots": [
-        "hero-search", "advanced-filters", "search-results",
-        "patient-lookup", "patient-found", "unified-form",
-        "draft-indicator", "encounter-creation", "registration-section",
-        "insurance-section", "document-upload", "demographics-section",
-        "active-visit-warning", "desktop-sidebar", "mobile-wizard"
-      ],
-      "addedAt": "2026-02-07T13:10:00Z",
-      "completedAt": "2026-02-07T21:25:00Z",
-      "validatedAt": "2026-02-07T21:25:00Z"
+      "screenshots": ["hero-search", "advanced-filters", "search-results", "patient-lookup", "patient-found", "unified-form", "draft-indicator", "additional-details", "desktop-sidebar", "mobile-wizard", "registration-section", "encounter-creation", "insurance-section", "active-visit-warning", "demographics-section"],
+      "addedAt": "2026-02-08T16:00:00Z",
+      "completedAt": "2026-02-09T12:00:00Z"
     }
   ],
-  "capturedScreenshots": [
-    "screenshot", "hero-search", "advanced-filters", "search-results",
-    "patient-lookup", "patient-found", "unified-form",
-    "draft-indicator", "encounter-creation", "registration-section",
-    "insurance-section", "document-upload", "demographics-section",
-    "active-visit-warning", "desktop-sidebar", "mobile-wizard"
-  ],
-  "partialScreenshots": [],
-  "needsRecaptureScreenshots": [],
-  "pendingScreenshots": [],
-  "summary": {
+  "overallStatus": {
     "totalSections": 2,
     "pendingSections": 0,
     "inProgressSections": 0,
     "completedSections": 2,
-    "totalScreenshots": 16,
-    "completedScreenshots": 16,
-    "partialScreenshots": 0,
+    "totalScreenshots": 48,
+    "completed": 48,
     "needsRecapture": 0,
-    "totalImages": 48,
-    "passedImages": 48,
-    "failedImages": 0,
-    "overallProgress": 100,
-    "validationStatus": "passed",
-    "criticalIssues": []
-  }
+    "pending": 0,
+    "captured": 0,
+    "failed": 0,
+    "completionPercentage": 100,
+    "validatedAt": "2026-02-09T12:00:00Z"
+  },
+  "capturedScreenshots": ["screenshot", "hero-search", "advanced-filters", "search-results", "patient-lookup", "patient-found", "unified-form", "draft-indicator", "additional-details", "desktop-sidebar", "mobile-wizard", "registration-section", "encounter-creation", "insurance-section", "active-visit-warning", "demographics-section"],
+  "needsRecaptureScreenshots": [],
+  "pendingScreenshots": []
 }

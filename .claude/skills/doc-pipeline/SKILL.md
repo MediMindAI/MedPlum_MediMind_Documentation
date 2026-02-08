@@ -6,16 +6,16 @@ description: >
   plans screenshots, writes/updates HTML documentation, captures screenshots via
   Playwright, verifies everything to 100%. Use when documenting new EMR features,
   updating existing docs, or batch-processing multiple sections.
-version: 3.2.0
+version: 4.0.0
 ---
 
 # Documentation Pipeline Orchestrator
 
 Automates the full documentation lifecycle for MediMind EMR sections.
 
-**Input:** Natural language description of what to document
+**Input:** Natural language description of what to document (feature name, module, or description)
 **Output:** Complete documentation with screenshots in all 3 languages (en, ka, ru)
-**Pipeline:** RESOLVE → PLAN → DOCUMENT → CAPTURE → VERIFY → FINAL
+**Pipeline:** DISCOVER → RESOLVE → PLAN → DOCUMENT → CAPTURE → VERIFY → FINAL
 
 ## When to Use
 
@@ -38,6 +38,128 @@ Automates the full documentation lifecycle for MediMind EMR sections.
 /doc-pipeline Document all patient registration sections
 /doc-pipeline Resume — check screenshot-plans/_index.json and continue
 ```
+
+---
+
+## Phase 0: DISCOVER
+
+**Who:** Main orchestrator + 5 Explore sub-agents in parallel. **Always runs first.**
+
+Analyzes the EMR source code for the requested feature and produces a section plan with screenshots, content topics, and FHIR mappings. The user approves the plan before the pipeline continues.
+
+### Step 1: Resolve Feature to Source Paths
+
+1. Read `AppRoutes.tsx` to search for a route matching the user's feature description:
+   ```
+   Read /Users/toko/Desktop/medplum_medimind/packages/app/src/emr/AppRoutes.tsx
+   ```
+2. If an exact route match is found → resolve to the view files, component directory, and section wrapper.
+3. If no exact match → fuzzy search across all `views/` subdirectories and route paths. Present closest matches to the user and confirm before proceeding.
+4. Create the discover output directory:
+   ```bash
+   mkdir -p screenshot-plans/_discover
+   ```
+5. Record the resolved feature ID (e.g., `laboratory`, `registration`, `telemedicine`).
+
+### Step 2: Launch 5 Research Agents in Parallel
+
+Launch all 5 in a **single message** using `Task(subagent_type: "Explore")`. Each agent is read-only.
+
+| # | Agent Name | What to Read | What to Extract |
+|---|------------|--------------|-----------------|
+| 1 | Feature Architecture | `views/{feature}/*.tsx`, section wrapper | Page layout, component tree, visual regions, conditional UI |
+| 2 | Component Deep-Dive | `components/{feature}/**/*.tsx` | Form fields, labels, validation rules, sections, modals |
+| 3 | Data & FHIR | `hooks/*`, `services/*`, `types/*` related to feature | FHIR resources, data models, business rules |
+| 4 | Routes & Navigation | `AppRoutes.tsx`, sub-menu configs, main menu | Route tree, permissions, nav structure |
+| 5 | UI Patterns | `*.module.css` for feature, responsive hooks | Breakpoints, mobile vs desktop, visual states |
+
+Each agent writes its findings to a JSON file:
+```
+screenshot-plans/_discover/{featureId}-{N}-{agentName}.json
+```
+
+Example: `screenshot-plans/_discover/laboratory-1-architecture.json`
+
+Each JSON should contain:
+```json
+{
+  "featureId": "laboratory",
+  "agentName": "architecture",
+  "findings": {
+    "layout": "...",
+    "components": ["..."],
+    "visualRegions": ["..."],
+    "conditionalUI": ["..."]
+  }
+}
+```
+
+### Step 3: Synthesize Section Plan
+
+After all 5 agents complete, the orchestrator reads all JSONs and merges:
+
+- **Section structure** — Agent 1 (layout) + Agent 4 (routes): distinct routes → separate files; sub-areas → children/anchors
+- **Content outline** — Agent 2 (fields/labels) + Agent 3 (FHIR/rules): what to write about
+- **Screenshot suggestions** — Agent 1 (zones) + Agent 2 (interactions) + Agent 5 (responsive): what to capture
+- **Category** — Agent 4 (route prefix): which manifest category this belongs to
+
+Write two output files:
+
+1. **Human-readable plan** — `screenshot-plans/_discover/{featureId}-section-plan.md`
+   Print this to the user. It should contain:
+   - Proposed sections with IDs, files, and children/anchors
+   - Screenshot inventory (basenames + descriptions)
+   - FHIR resources and content topics
+   - i18n key suggestions (en, ka, ru)
+
+2. **Machine-readable plan** — `screenshot-plans/_discover/{featureId}-section-plan.json`
+   ```json
+   {
+     "featureId": "laboratory",
+     "status": "pending_approval",
+     "category": "patient-history",
+     "sections": [
+       {
+         "id": "laboratory",
+         "file": "laboratory",
+         "titleKey": "toc.laboratory",
+         "priority": "high",
+         "children": [
+           { "id": "lab-orders", "anchor": "lab-orders", "titleKey": "toc.labOrders" },
+           { "id": "lab-results", "anchor": "lab-results", "titleKey": "toc.labResults" }
+         ]
+       }
+     ],
+     "screenshots": [
+       { "basename": "lab-order-form", "description": "Laboratory order entry form", "type": "static" },
+       { "basename": "lab-results-table", "description": "Results table with reference ranges", "type": "static" }
+     ],
+     "fhirResources": ["ServiceRequest", "Observation", "DiagnosticReport"],
+     "contentTopics": ["Order entry", "Result viewing", "Status tracking"],
+     "i18nKeys": {
+       "en": { "toc.laboratory": "Laboratory" },
+       "ka": { "toc.laboratory": "ლაბორატორია" },
+       "ru": { "toc.laboratory": "Лаборатория" }
+     }
+   }
+   ```
+
+### Step 4: User Approval Gate
+
+Present the plan to the user showing:
+- Proposed sections with IDs, files, children/anchors
+- Screenshot inventory (basenames + descriptions)
+- FHIR resources and content topics
+- i18n key suggestions
+
+The user can:
+- **Approve** → proceed to Phase 1
+- **Modify** → update the plan based on feedback and re-present
+- **Reject** → stop the pipeline
+
+### Step 5: Mark Approved, Proceed
+
+Set `"status": "approved"` in the JSON plan file. Phase 1 picks it up automatically.
 
 ---
 
@@ -81,9 +203,24 @@ rm -f screenshot-plans/_image-validation.md
 rm -f screenshot-plans/_capture-report.md
 rm -f screenshot-plans/_completion-report.md
 rm -f screenshot-plans/_doc-report-*.md
+rm -rf screenshot-plans/_discover/
 ```
 
 ### Steps (for fresh runs)
+
+0. **Read approved discover plan (if Phase 0 ran):**
+   ```
+   Glob screenshot-plans/_discover/*-section-plan.json
+   ```
+   If an approved discover plan exists (`"status": "approved"`):
+   - Section list is ALREADY resolved from Phase 0 — no fuzzy matching needed
+   - Map each `sections[]` entry → `{ sectionId, file, exists: false }`
+   - Check `config/manifest.json` for existing entries (feature may already be partially documented)
+   - Merge: new sections from discover + existing sections from manifest
+   - Deduplicate by file as before
+   - **Skip directly to step 4** (Build a section list) with pre-resolved sections
+
+   If no discover plan exists (e.g., "Resume" or backward-compatible invocation), continue with steps 1-3 below.
 
 1. **Read the manifest:**
    ```
@@ -144,7 +281,7 @@ rm -f screenshot-plans/_doc-report-*.md
 |----------|---------------|-----------------|
 | search | registration | features |
 | form-sections | registration | features |
-| document-upload | registration | features |
+| additional-details | registration | features |
 | desktop-sidebar | registration | features |
 | mobile-wizard | registration | features |
 | registration-section | visit-management | features |
@@ -208,6 +345,9 @@ When user mentions "ai-assistant", expand to ALL sections: ai-chatbot-overview, 
    **Structural checks:**
    - `screenshots[]` array is populated (at least 1 entry)
    - Each screenshot has `captureSteps` array
+   - Each screenshot has `desiredState` field (string, non-empty)
+   - Each screenshot has `differentiator` field (string, non-empty)
+   - Each screenshot has `stateSetup` field (object or null)
    - `languageSwitching.selectors` has all 3 languages (en, ka, ru)
    - `emrConfig` has URL and credentials
 
@@ -273,7 +413,8 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
       validation rules, and conditional UI states. Use these real details in the docs.
    4. Place screenshot image tags using the plan JSON as the guide.
       Read screenshot-plans/{file}.json FIRST. For each screenshot entry:
-        - Find the `anchorId` field — this is the <h3 id="..."> where the image belongs
+        - Find the `anchorId` field (if present) — this is the <h3 id="..."> where the image belongs.
+          If `anchorId` is missing, use the screenshot `name` as a hint to find the nearest matching subsection.
         - Place the <img> tag DIRECTLY AFTER the content paragraph that describes that feature
         - The image must be INSIDE or immediately after the subsection with matching anchor ID
         - Use this HTML structure:
@@ -281,6 +422,8 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
         <img src="images/{name}-en.png" alt="{description}"
              class="doc-screenshot-image" data-i18n-img="{name}">
       </div>
+      NOTE: For screenshots with `type: "responsive"` in the plan JSON, use
+      `doc-screenshot-mobile` instead of `doc-screenshot-full` as the container class.
       If no plan JSON exists for this file, place images based on the doc content —
       add a screenshot after each major UI feature described.
    5. Create/update sections/ka/{file}.html:
@@ -466,125 +609,153 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
       5. NEVER proceed to capture if result.detected !== expected language.
          This is not a suggestion — it is a blocking gate.
 
-   CAPTURE ORDER — Group by language to minimize switches:
+   STATE SETUP EXECUTION — Run stateSetup BEFORE captureSteps for each screenshot:
 
-   3. ENGLISH PASS — Capture ALL screenshots across ALL sections:
-      - Switch language (use text= selectors on EMR, NOT button:has-text):
-        npx tsx scripts/playwright/cmd.ts click "text=ENG"
-      - npx tsx scripts/playwright/cmd.ts wait 2000
-      - For each section's screenshots (capture DESKTOP screenshots first, MOBILE last):
-        - Navigate to registration page:
-          npx tsx scripts/playwright/cmd.ts navigate "{emrUrl}/emr/registration/registration"
-        - Wait for page load: npx tsx scripts/playwright/cmd.ts wait 1500
-        - VERIFY LANGUAGE after EVERY navigation (React may reset language on route change):
-          npx tsx scripts/playwright/cmd.ts evaluate "document.body.innerText.substring(0, 200)"
-          If the page is NOT in the expected language (e.g., you see Georgian/Russian text during English pass):
-            Re-click the language button: npx tsx scripts/playwright/cmd.ts click "text=ENG"
-            npx tsx scripts/playwright/cmd.ts wait 2000
-            Verify again before proceeding.
-          DO NOT proceed to capture until you have confirmed the correct language is active.
-        - For scroll-based screenshots, NEVER use hardcoded CSS-module class names (they change every build).
-          Instead, use scrollIntoView on the TARGET ELEMENT you want to capture:
+   For each screenshot in the plan JSON:
+   1. Read the `desiredState` field (if present) — this is what the screenshot MUST show.
+      If the field is missing (legacy plan), treat the `description` field as the desiredState.
+   2. Read the `stateSetup` field (if present):
+      - If field is missing (legacy plan) → treat as null, proceed to captureSteps
+      - If `null` → no setup needed, proceed to captureSteps
+      - If present → execute `stateSetup.interactionSequence` steps in order
+   3. Execute `stateSetup.sampleData` fills:
+      - For each entry with a `selector`: try it. If it fails, try the `fallback` if present.
+      - For entries without a `selector` (descriptive format): use the `field` label to find
+        the element via DOM exploration (querySelector by label text, nearby input, etc.)
+      - If a fill/select fails entirely, log it but continue (partial data > no data)
 
-          PREFERRED — scroll a form section into view by its INDEX:
-          npx tsx scripts/playwright/cmd.ts evaluate 'document.querySelectorAll(".emr-form-section-header")[INDEX].scrollIntoView({behavior:"instant",block:"start"})'
-          (Replace INDEX with 0-7 per the section index table above.)
+   SMART SECTION TOGGLE — For stateSetup steps that expand form sections:
+   Before clicking a section header, CHECK if it's already open:
+     var s = document.querySelectorAll('.emr-form-section')[INDEX];
+     if(!s.classList.contains('open')) {
+       document.querySelectorAll('.emr-form-section-header-left')[INDEX].click();
+     }
+   This prevents collapsing sections that are already open by default (indices 0, 4, 5, 7).
+   The plan JSON should already contain this conditional logic in its evaluate scripts.
 
-          ALTERNATIVE — scroll the container to an absolute position:
-          npx tsx scripts/playwright/cmd.ts evaluate 'var c = document.querySelector("div[class*=transitionContainer]"); c.scrollTop = 800; "scrolled to " + c.scrollTop'
+   4. VERIFICATION GATE (mandatory — blocks capture if state not achieved):
+      After stateSetup executes and BEFORE capture:
+      A. Check section open state (if applicable):
+         npx tsx scripts/playwright/cmd.ts evaluate "var s=document.querySelectorAll('.emr-form-section')[INDEX]; JSON.stringify({open:s.classList.contains('open'), h:s.querySelector('.emr-form-section-content')?.offsetHeight||0})"
+         If open=false or h=0 → state setup FAILED
+      B. Check expectedDOMElements are visible and have height > 0:
+         npx tsx scripts/playwright/cmd.ts evaluate "document.querySelector('SELECTOR')?.offsetHeight > 0"
+      C. If gate fails: retry stateSetup up to 2 more times (3 total attempts)
+      D. If still fails after 3 attempts: mark ALL 3 langs as "failed" for this screenshot,
+         skip it entirely (do NOT capture wrong content), and continue to next screenshot.
 
-          ALWAYS check the return value. If scrollTop is 0, the container selector failed.
+   5. Now run the normal `captureSteps` (scroll + screenshot)
 
-          --fullpage WARNING: The EMR form is inside a scroll container div, NOT the page body.
-          `screenshot --fullpage` only captures the body height, NOT the container's scrollable content.
-          For unified-form/full-form screenshots, you MUST scroll the container and take multiple shots
-          OR set container scrollTop and take regular viewport screenshots.
+   KEY INSIGHT: EMR language buttons only change text labels — they do NOT reset form state,
+   scroll position, expanded/collapsed sections, or field values. So after stateSetup runs
+   once for a screenshot, all 3 language captures share the same UI state.
 
-          `scroll` COMMAND WARNING: `cmd.ts scroll` only accepts CSS selectors, NOT `text=` selectors.
-          For text-based targets, always use `evaluate` + `scrollIntoView` instead.
-        - For section-expand screenshots, click `.emr-form-section-header-left` by INDEX via evaluate:
-          The form has 8 sections. Click target is `.emr-form-section-header-left` (NOT the outer header div).
-          Using `text=` selectors will click the WIZARD STEP instead of the form accordion.
+   SAMPLE DATA BEST PRACTICES:
+   - Use realistic but clearly fake data (e.g., "POL-2024-00123", not "test123")
+   - For dropdowns: select the first non-placeholder option unless stateSetup specifies otherwise
+   - For date fields: use today's date
+   - For patient ID fields: use the known test patient 01011055555
+   - If stateSetup.sampleData fill fails (no matching selector):
+     Try evaluate: document.querySelector('THE_SECTION input[type="text"]').value = 'VALUE'
+     This bypasses React controlled inputs but shows data visually
 
-          EMR FORM SECTION INDEX (verified):
-          | Index | Section | Georgian Label (always shown) |
-          |-------|---------|------------------------------|
-          | 0 | Personal Information | Personal Information |
-          | 1 | Contact Information | Contact Information |
-          | 2 | Additional Details | Additional Details |
-          | 3 | Guardian/Representative | Guardian/Representative |
-          | 4 | Registration | რეგისტრაცია |
-          | 5 | Insurance | დაზღვევა |
-          | 6 | Guarantee | საგარანტიო |
-          | 7 | Demographics | დემოგრაფია |
+   CAPTURE ORDER — Per-screenshot language loop (capture all 3 langs per screenshot):
 
-          MIXED i18n NOTE: Sections 0-3 show English labels in English mode.
-          Sections 4-7 ALWAYS show Georgian labels regardless of language setting.
-          This is the EMR app's incomplete i18n — NOT a capture bug. Screenshots should show the actual state.
+   Key insight: EMR language buttons only change text labels — they do NOT reset form state,
+   scroll position, expanded/collapsed sections, or field values. So we can set up state ONCE
+   and capture all 3 language variants before moving to the next screenshot.
 
-          EXPAND a section (e.g., index 6 = Guarantee):
-          npx tsx scripts/playwright/cmd.ts evaluate 'document.querySelectorAll(".emr-form-section-header-left")[6].click()'
-          npx tsx scripts/playwright/cmd.ts wait 1000
+   3. For each DESKTOP screenshot (sorted by number field in plan JSON):
 
-          VERIFY expansion:
-          npx tsx scripts/playwright/cmd.ts evaluate 'var s = document.querySelectorAll(".emr-form-section")[6]; JSON.stringify({open: s.classList.contains("open"), h: s.querySelector(".emr-form-section-content").offsetHeight})'
-          If open=false or h=0, the click failed. Retry once. If still fails, try clicking the child title-text span.
+      a. Set up desired state ONCE (run stateSetup.interactionSequence + sampleData)
+      b. Run verification gate (MUST pass before any capture — see above)
+      c. Ensure language is English:
+         npx tsx scripts/playwright/cmd.ts click "text=ENG"
+         npx tsx scripts/playwright/cmd.ts wait 2000
+         Run MANDATORY LANGUAGE GATE to verify English
+      d. Capture -en screenshot:
+         npx tsx scripts/playwright/cmd.ts screenshot "{name}-en"
+         Read image to verify content
+      e. Switch to Georgian:
+         npx tsx scripts/playwright/cmd.ts click "text=ქარ"
+         npx tsx scripts/playwright/cmd.ts wait 2000
+         Run MANDATORY LANGUAGE GATE to verify Georgian
+      f. Capture -ka screenshot:
+         npx tsx scripts/playwright/cmd.ts screenshot "{name}-ka"
+      g. Switch to Russian:
+         npx tsx scripts/playwright/cmd.ts click "text=РУС"
+         npx tsx scripts/playwright/cmd.ts wait 2000
+         Run MANDATORY LANGUAGE GATE to verify Russian
+      h. Capture -ru screenshot:
+         npx tsx scripts/playwright/cmd.ts screenshot "{name}-ru"
+      i. Switch back to English for next screenshot:
+         npx tsx scripts/playwright/cmd.ts click "text=ENG"
+         npx tsx scripts/playwright/cmd.ts wait 2000
 
-          SCROLL the section into view after expanding:
-          npx tsx scripts/playwright/cmd.ts evaluate 'document.querySelectorAll(".emr-form-section-header")[6].scrollIntoView({behavior:"instant",block:"start"})'
-          npx tsx scripts/playwright/cmd.ts wait 500
+   4. MOBILE SCREENSHOTS (type: "responsive") — capture LAST, after all desktop screenshots:
+      For each mobile screenshot:
+      a. Switch to English at desktop viewport (language buttons hidden on mobile):
+         npx tsx scripts/playwright/cmd.ts click "text=ENG"
+         npx tsx scripts/playwright/cmd.ts wait 2000
+      b. Resize: npx tsx scripts/playwright/cmd.ts viewport 375 812
+      c. Navigate to registration page (full reload for responsive layout)
+      d. Wait 2000ms for render
+      e. Capture: npx tsx scripts/playwright/cmd.ts screenshot "mobile-wizard-en"
+      f. Resize back: npx tsx scripts/playwright/cmd.ts viewport 1440 900
+      g. Switch to Georgian:
+         npx tsx scripts/playwright/cmd.ts click "text=ქარ"
+         npx tsx scripts/playwright/cmd.ts wait 2000
+      h. Resize: npx tsx scripts/playwright/cmd.ts viewport 375 812
+      i. Navigate and capture: npx tsx scripts/playwright/cmd.ts screenshot "mobile-wizard-ka"
+      j. Resize back, switch to Russian, repeat for -ru
+      k. Resize back to desktop: npx tsx scripts/playwright/cmd.ts viewport 1440 900
 
-          DO NOT use:
-          - Playwright click "text=Insurance" → clicks wizard step, not form section
-          - evaluate ".emr-form-section-header[6].click()" → outer header click doesn't trigger React handlers
-          - cmd.ts scroll "text=..." → scroll command only accepts CSS selectors
-
-        PRE-CAPTURE VIEWPORT VERIFICATION (mandatory after every scroll/expand):
-        Before taking the screenshot, verify the viewport shows the expected content:
-          npx tsx scripts/playwright/cmd.ts evaluate "(() => { const el = document.elementFromPoint(window.innerWidth/2, window.innerHeight/2); return { tag: el?.tagName, class: el?.className?.substring(0,60), text: el?.textContent?.substring(0,40) }; })()"
-        Compare the result against the plan's `description` and `sectionHeaderText`:
-        - If the center element relates to the target content → proceed to capture
-        - If the center element shows unrelated content (e.g., header, footer, wrong section)
-          → scroll/expand FAILED. Re-attempt the scroll with adjusted offset or scrollIntoView.
-        - Retry up to 2 times. If viewport still wrong after retries, try different scrollTop value.
-          NOTE: --fullpage does NOT work as fallback for scroll container content (see warning above).
-
-        If the plan has `expectedDOMElements`, verify at least ONE is visible:
-          npx tsx scripts/playwright/cmd.ts evaluate "document.querySelector('SELECTOR') !== null"
-        If none are visible, the scroll/expand did not reach the target section.
-
-        - Screenshot name MUST include language suffix: "hero-search-en" (not just "hero-search")
-        - cmd.ts auto-appends .png — do NOT include .png in the name
-      - MOBILE SCREENSHOTS (e.g., mobile-wizard) — capture LAST within this language pass:
-        a. Resize: npx tsx scripts/playwright/cmd.ts viewport 375 812
-        b. Navigate to registration page (full reload for responsive layout)
-        c. Wait 2000ms for render
-        d. Capture: npx tsx scripts/playwright/cmd.ts screenshot "mobile-wizard-en"
-        e. Resize back: npx tsx scripts/playwright/cmd.ts viewport 1440 900
-        f. Navigate to registration page again to restore desktop layout
-      - After each screenshot, Read the image file to verify content
       NOTE: Mobile viewport (<768px) does NOT render language buttons.
-      You MUST capture mobile screenshots while still in the current language pass.
+      You MUST switch language BEFORE resizing to mobile viewport.
 
-   4. GEORGIAN PASS — Switch and verify for each navigation:
-      - npx tsx scripts/playwright/cmd.ts click "text=ქარ"
-      - npx tsx scripts/playwright/cmd.ts wait 2000
-      - Same screenshots, same order (desktop first, mobile last)
-      - Use -ka suffix in all screenshot names
-      - After EVERY navigate command, verify language is still Georgian:
-        npx tsx scripts/playwright/cmd.ts evaluate "document.body.innerText.substring(0, 200)"
-        If you see English or Russian text, re-click: npx tsx scripts/playwright/cmd.ts click "text=ქარ"
-        Wait 2000ms and verify again before capturing.
+   SCROLL AND EXPAND REFERENCE:
 
-   5. RUSSIAN PASS — Switch and verify for each navigation:
-      - npx tsx scripts/playwright/cmd.ts click "text=РУС"
-      - npx tsx scripts/playwright/cmd.ts wait 2000
-      - Same screenshots, same order (desktop first, mobile last)
-      - Use -ru suffix in all screenshot names
-      - After EVERY navigate command, verify language is still Russian:
-        npx tsx scripts/playwright/cmd.ts evaluate "document.body.innerText.substring(0, 200)"
-        If you see English or Georgian text, re-click: npx tsx scripts/playwright/cmd.ts click "text=РУС"
-        Wait 2000ms and verify again before capturing.
+   For scroll-based screenshots, NEVER use hardcoded CSS-module class names (they change every build).
+   Instead, use scrollIntoView on the TARGET ELEMENT you want to capture:
+
+   PREFERRED — scroll a form section into view by its INDEX:
+   npx tsx scripts/playwright/cmd.ts evaluate 'document.querySelectorAll(".emr-form-section-header")[INDEX].scrollIntoView({behavior:"instant",block:"start"})'
+
+   ALTERNATIVE — scroll the container to an absolute position:
+   npx tsx scripts/playwright/cmd.ts evaluate 'var c = document.querySelector("div[class*=transitionContainer]"); c.scrollTop = 800; "scrolled to " + c.scrollTop'
+
+   --fullpage WARNING: The EMR form is inside a scroll container div, NOT the page body.
+   `screenshot --fullpage` only captures the body height, NOT the container's scrollable content.
+
+   EMR FORM SECTION INDEX (verified):
+   | Index | Section | Default State | Georgian Label |
+   |-------|---------|---------------|----------------|
+   | 0 | Personal Information | Open | Personal Information |
+   | 1 | Contact Information | Closed | Contact Information |
+   | 2 | Additional Details | Closed | Additional Details |
+   | 3 | Guardian/Representative | Closed | Guardian/Representative |
+   | 4 | Registration | Open (createVisit) | რეგისტრაცია |
+   | 5 | Insurance | Open (empty) | დაზღვევა |
+   | 6 | Guarantee | Closed | საგარანტიო |
+   | 7 | Demographics | Open (createVisit) | დემოგრაფია |
+
+   SMART TOGGLE — check open/closed before clicking:
+   npx tsx scripts/playwright/cmd.ts evaluate 'var s=document.querySelectorAll(".emr-form-section")[INDEX]; if(!s.classList.contains("open")){document.querySelectorAll(".emr-form-section-header-left")[INDEX].click();} "ok"'
+
+   DO NOT use:
+   - Playwright click "text=Insurance" → clicks wizard step, not form section
+   - evaluate ".emr-form-section-header[6].click()" → outer header click doesn't trigger React handlers
+   - cmd.ts scroll "text=..." → scroll command only accepts CSS selectors
+
+   PRE-CAPTURE VIEWPORT VERIFICATION (mandatory after every scroll/expand):
+   Before taking the screenshot, verify the viewport shows the expected content:
+     npx tsx scripts/playwright/cmd.ts evaluate "(() => { const el = document.elementFromPoint(window.innerWidth/2, window.innerHeight/2); return { tag: el?.tagName, class: el?.className?.substring(0,60), text: el?.textContent?.substring(0,40) }; })()"
+
+   If the plan has `expectedDOMElements`, verify at least ONE is visible:
+     npx tsx scripts/playwright/cmd.ts evaluate "document.querySelector('SELECTOR') !== null"
+
+   Screenshot name MUST include language suffix: "hero-search-en" (not just "hero-search")
+   cmd.ts auto-appends .png — do NOT include .png in the name
 
    SESSION HEALTH CHECK — after every 5 screenshots:
      npx tsx scripts/playwright/cmd.ts evaluate "window.location.href"
@@ -598,9 +769,9 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
    6. Stop server:
       npx tsx scripts/playwright/cmd.ts stop
 
-   STATUS TRACKING (MANDATORY — update after EACH LANGUAGE PASS, not every screenshot):
+   STATUS TRACKING (MANDATORY — update after EACH SCREENSHOT, all 3 langs at once):
 
-   After completing all screenshots for a language (e.g., all English captures done):
+   After completing all 3 language captures for a screenshot (e.g., hero-search-en, -ka, -ru done):
 
    A. Update the PLAN JSON (e.g., screenshot-plans/features.json):
       For each successfully captured screenshot, find it in "screenshots" array by "name".
@@ -612,9 +783,10 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
 
    B. Update _index.json — recalculate counts from the plan JSON:
       - Loop through ALL screenshots in the plan JSON
-      - Count each status.{lang} value: "completed", "pending", or "failed"
-      - Set sections[i].status.completed = total completed count
-      - Set sections[i].status.pending = total pending count
+      - Count each status.{lang} value: "completed", "captured", "pending", or "failed"
+      - Set sections[i].completedScreenshots = count of "completed" statuses across all langs
+      - Set sections[i].status to: "completed" if all done, "in_progress" if any captured/completed, else "pending"
+      - Set sections[i].progress = (completedScreenshots / totalScreenshots) * 100
       - Also update capturedScreenshots[] array: add basename if all 3 langs complete
       - Also update pendingScreenshots[] array: remove basename when all 3 langs complete
       - Set overallStatus.completed = sum across all sections
@@ -642,6 +814,19 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
       - Check `mustShow` items: Are they visible in the captured image?
       - Check `mustNotShow` items: Are they absent from the captured image?
       - If verification fails, mark status as "needs-recapture" with reason
+
+   E. DESIRED STATE CHECK — Compare screenshot against plan's `desiredState`:
+      Read the `desiredState` field for this screenshot.
+      After taking the screenshot, Read the image and verify:
+      - Does the image show what `desiredState` describes?
+      - If desiredState says "fields filled" → are fields visibly filled?
+      - If desiredState says "toggle enabled" → is the toggle ON?
+      - If desiredState says "dropdown selected" → does dropdown show a value?
+
+      If the image does NOT match desiredState:
+      - If stateSetup was provided and failed → mark status as "captured". The partial state is acceptable — Phase 5 will validate the actual image content.
+      - If no stateSetup was provided → mark as "captured" (legacy plan without state spec)
+      - If stateSetup succeeded but image still wrong → mark as "needs-recapture"
 
    NOTE: This is a PRELIMINARY check. Full content-vs-description validation and
    cross-image uniqueness checks happen in Phase 5 Agent C. Phase 4 marks status
@@ -791,7 +976,8 @@ IMPORTANT — STATUS MODEL (Agent C is the SOLE AUTHORITY on completion):
   - "completed"        → file exists AND passed all validation checks
   - "needs-recapture"  → file exists but FAILED validation (wrong language, content, or duplicate)
   - "failed"           → capture was attempted but failed (set by Phase 4)
-Phase 4 sets "captured". Agent C promotes to "completed" or downgrades to "needs-recapture".
+  - "blocked"          → precondition not met (e.g., missing test data); set by Phase 4
+Phase 4 sets "captured", "failed", or "blocked". Agent C promotes "captured" to "completed" or downgrades to "needs-recapture". Agent C treats "blocked" as non-complete (same as "failed" for counting).
 
 STEP 2 — EXHAUSTIVE VISUAL VALIDATION (NO SAMPLING — read EVERY image):
 You MUST Read() every single PNG file. No sampling. No skipping.
@@ -827,24 +1013,24 @@ D. CONTENT vs DESCRIPTION — Read the plan JSON's "description" AND "expectedDO
    fields for this basename. Use the PER-BASENAME CHECKLIST below to verify content:
 
    **Patient Registration Screenshots:**
-   | Basename | Required Visual Elements |
-   |----------|------------------------|
-   | hero-search | Search bar/input visible at top of page |
-   | advanced-filters | Multiple filter input fields (Personal ID, Name, etc.) |
-   | patient-lookup | 11-digit personal ID input field within the form body |
-   | unified-form | Multiple collapsible section headers visible |
-   | draft-indicator | Top area of form (badge may not appear — see knownLimitation) |
-   | document-upload | File upload/drag-drop zone, document metadata fields |
-   | desktop-sidebar | Right-side panel with "Today's Visits" or "Recent Patients" |
-   | registration-section | Visit Type dropdown, Visit Date, Department fields |
-   | insurance-section | Insurance company selector, policy number field |
-   | active-visit-warning | Warning modal/dialog overlay (see knownLimitation) |
-   | demographics-section | Region dropdown, Chief Complaint, Referral Source fields |
-   | mobile-wizard | Narrow viewport, step wizard/progress indicator |
-   | search-results | Search dropdown with patient result and action buttons |
-   | patient-found | Patient card with name, ID, DOB, phone, Edit button |
-   | encounter-creation | Form with encounter/visit fields populated |
-   | screenshot | Full page overview with search + form + sidebar all visible |
+   | Basename | Required Visual Elements | Required State |
+   |----------|------------------------|----------------|
+   | hero-search | Search bar/input visible at top of page | Default (empty search bar OK) |
+   | advanced-filters | Multiple filter input fields (Personal ID, Name, etc.) | Filter panel EXPANDED (not collapsed) |
+   | patient-lookup | 11-digit personal ID input field within the form body | Default empty (shows input ready for use) |
+   | unified-form | Multiple collapsible section headers visible | At least 2 sections visible (1 expanded, 1 collapsed) |
+   | draft-indicator | Top area of form (badge may not appear — see knownLimitation) | Form with some data entered (badge may not appear — knownLimitation) |
+   | additional-details | Additional Details section with Marital Status, Citizenship, Workplace | Section EXPANDED, demographic fields visible |
+   | desktop-sidebar | Right-side panel with "Today's Visits" or "Recent Patients" | "Today's Visits" or "Recent Patients" with at least 1 entry |
+   | registration-section | Visit Type dropdown, Visit Date, Department fields | Section EXPANDED, fields visible (ideally with sample values selected) |
+   | insurance-section | Insurance toggle or company selector | Insurance ENABLED if possible; at minimum section expanded showing toggle |
+   | active-visit-warning | Warning modal/dialog overlay (see knownLimitation) | Modal OPEN with warning text visible (knownLimitation: requires-test-data) |
+   | demographics-section | Region dropdown, Chief Complaint, Referral Source fields | Section EXPANDED, all 3 fields visible |
+   | mobile-wizard | Narrow viewport, step wizard/progress indicator. Container must be `doc-screenshot-mobile`, NOT `doc-screenshot-full` | Step indicator visible, form content adapted for mobile |
+   | search-results | Search dropdown with patient result and action buttons | Dropdown OPEN with at least 1 patient result showing |
+   | patient-found | Patient card with name, ID, DOB, phone, Edit button | Patient card DISPLAYED with data populated |
+   | encounter-creation | Form with encounter/visit fields populated | Fields POPULATED with visit type and department selected |
+   | screenshot | Full page overview with search + form + sidebar all visible | Search + form + sidebar all visible in single viewport |
 
    **AI Chatbot Screenshots:**
    | Basename | Required Visual Elements |
@@ -861,11 +1047,63 @@ D. CONTENT vs DESCRIPTION — Read the plan JSON's "description" AND "expectedDO
    If the image does NOT show the required visual elements → FAIL: content mismatch.
    If `knownLimitation` is set and the limitation explains the gap → WARN, not FAIL.
 
+GLOBAL COMPOSITION CHECKS (apply to EVERY screenshot, all basenames):
+
+After the per-basename content check, run these additional checks on every image:
+
+G1. UNWANTED UI ELEMENTS — these must NOT be visible:
+    - Medplum resource navigation sidebar (Practitioner, Organization, ServiceRequest,
+      DiagnosticReport, Questionnaire, ADMIN, SETTINGS links in a left panel)
+    - Browser chrome (tabs, bookmarks bar, address bar, OS dock/taskbar)
+    - Console errors or dev tools
+    - Other application popups/tooltips not related to the documented feature
+    If ANY of these are visible → FAIL with reason "unwanted-ui-elements: {description}"
+
+G2. CONTENT AREA FOCUS — the EMR content should fill most of the viewport:
+    - The main content area (form, search, sidebar panel) should occupy >80% of viewport width
+    - If a left navigation panel takes up significant space (>15% of width),
+      it's likely the Medplum sidebar leaked into the capture
+    If content area is too narrow → FAIL with reason "content-area-too-narrow"
+
+G3. VISUAL COMPLETENESS — the screenshot should show a complete UI state:
+    - No partially-loaded spinners or skeleton screens
+    - No "Loading..." text as the primary content
+    - No half-rendered components (text visible but images/icons still loading)
+    If incomplete → FAIL with reason "incomplete-render"
+
+G4. CONSISTENCY CHECK — compare same basename across languages:
+    - All 3 language variants should have the same layout/composition
+    - Same UI elements visible in the same positions
+    - Only text labels and language-specific content should differ
+    - File sizes should be within 50% of each other (large disparity suggests different content)
+    If inconsistent → WARN (not fail) with reason "cross-lang-inconsistency: {details}"
+
+G5. MOBILE CONTAINER CLASS — for screenshots with `type: "responsive"` in the plan JSON:
+    - The HTML container must be `doc-screenshot-mobile`, NOT `doc-screenshot-full`
+    - Check: grep the section HTML for the basename's data-i18n-img and verify parent div class
+    If wrong container → FAIL with reason "wrong-container-class: expected doc-screenshot-mobile"
+
+Apply G1-G5 AFTER the per-basename content check (step D) and BEFORE the duplicate detection (step 3).
+If any G-check fails, mark as "needs-recapture" with the specific reason.
+
+F. STATE VALIDATION — If the plan JSON has a `desiredState` field for this basename:
+   - Parse the desiredState description
+   - Check if the image matches the described state
+   - "Section EXPANDED" → verify expanded content is visible, not just the header
+   - "Fields filled/selected" → verify data is visible in fields, not placeholder text
+   - "Toggle enabled" → verify toggle is in ON position
+   - If state doesn't match → mark as "needs-recapture" with reason "state-mismatch: {expected} vs {actual}"
+
 E. verificationCriteria CHECK — If the plan JSON has `verificationCriteria` for this basename:
    - Check each `mustShow` item: Is it visible in the image?
    - Check each `mustNotShow` item: Is it absent from the image?
    - If any mustShow is missing → FAIL: missing required element
    - If any mustNotShow is present → FAIL: shows forbidden element
+
+   PRIORITY: If both `verificationCriteria` (check D) and `desiredState` (check F) exist:
+   - Check D is ELEMENT-LEVEL (specific selectors must be visible/absent)
+   - Check F is STATE-LEVEL (overall visual state must match description)
+   - Both must pass. If D passes but F fails → "needs-recapture" (state wrong despite elements present).
 
 STEP 3 — DUPLICATE DETECTION ALGORITHM:
 Compare DIFFERENT basenames within the same language.
@@ -874,7 +1112,7 @@ Each basename should show a DISTINCT feature or page state.
 DUPLICATE DETECTION PROCEDURE:
 1. Group screenshots by route (same page = higher duplicate risk):
    - /emr/registration/registration screenshots: hero-search, advanced-filters,
-     patient-lookup, unified-form, draft-indicator, document-upload, desktop-sidebar,
+     patient-lookup, unified-form, draft-indicator, additional-details, desktop-sidebar,
      registration-section, insurance-section, demographics-section, search-results,
      patient-found, encounter-creation, screenshot, active-visit-warning
    - Mobile viewport (registration): mobile-wizard
@@ -885,9 +1123,13 @@ DUPLICATE DETECTION PROCEDURE:
    - Mobile viewport (ai): ai-mobile-chat
 
 2. For each same-route group, compare pairs of images:
-   - Do they show the same major UI elements in the same positions?
+   - Read both screenshots' `differentiator` fields from the plan JSON (if present). If missing, fall back to comparing `description` fields.
+   - The differentiator describes what should make each screenshot UNIQUE
+   - Compare the two images: does each one match its OWN differentiator?
+   - If screenshot A matches A's differentiator but B also looks like A → B is the duplicate
+   - If NEITHER matches its differentiator → both may need recapture
+   - Also check: do they show the same major UI elements in the same positions?
    - Is >80% of visible text the same across both images?
-   - Does the `differentiator` field in the plan describe a visible difference?
 
 3. If two basenames appear identical:
    FLAG: "DUPLICATE: {basename1} ≈ {basename2} (both show {description})"
@@ -1051,16 +1293,18 @@ End-to-end test of the documentation site itself.
 
 ### File Ownership by Phase
 
-| File/Directory | Phase 2 | Phase 3 | Phase 4 | Phase 5 | Phase 6 |
-|----------------|---------|---------|---------|---------|---------|
-| `screenshot-plans/*.json` | WRITE | READ | READ+WRITE | Agent C only | READ |
-| `screenshot-plans/_doc-report-*.md` | -- | WRITE | -- | -- | -- |
-| `screenshot-plans/_*-verification.md` | -- | -- | -- | WRITE (A,B,C) | READ |
-| `sections/{lang}/*.html` | READ | WRITE | -- | READ | -- |
-| `i18n/{lang}/*.json` | READ | Orchestrator only | -- | READ | -- |
-| `config/manifest.json` | READ | Orchestrator only | -- | READ | -- |
-| `images/*.png` | -- | -- | WRITE | READ | READ |
-| Playwright (port 9222) | -- | -- | EXCLUSIVE | -- | EXCLUSIVE |
+| File/Directory | Phase 0 | Phase 2 | Phase 3 | Phase 4 | Phase 5 | Phase 6 |
+|----------------|---------|---------|---------|---------|---------|---------|
+| `screenshot-plans/_discover/` | WRITE | -- | -- | -- | -- | -- |
+| `screenshot-plans/*.json` | -- | WRITE | READ | READ+WRITE | Agent C only | READ |
+| `screenshot-plans/_doc-report-*.md` | -- | -- | WRITE | -- | -- | -- |
+| `screenshot-plans/_*-verification.md` | -- | -- | -- | -- | WRITE (A,B,C) | READ |
+| `sections/{lang}/*.html` | -- | READ | WRITE | -- | READ | -- |
+| `i18n/{lang}/*.json` | -- | READ | Orchestrator only | -- | READ | -- |
+| `config/manifest.json` | READ | READ | Orchestrator only | -- | READ | -- |
+| `images/*.png` | -- | -- | -- | WRITE | READ | READ |
+| EMR source code | READ | -- | READ | -- | -- | -- |
+| Playwright (port 9222) | -- | -- | -- | EXCLUSIVE | -- | EXCLUSIVE |
 
 ### Rules
 
@@ -1078,6 +1322,7 @@ Do NOT proceed to the next phase until the current phase is verified:
 
 | Gate | Check |
 |------|-------|
+| Phase 0 → 1 | Discover plan JSON exists with `"status": "approved"`, user confirmed |
 | Phase 1 → 2 | Section list resolved, files identified, deduplicated by file |
 | Phase 2 → 3 | All `screenshot-plans/{section}.json` exist and are valid JSON |
 | Phase 3 → 4 | All `sections/{lang}/{file}.html` exist; files with screenshots have `data-i18n-img` |
@@ -1120,6 +1365,7 @@ If the pipeline is interrupted at any phase, it can be resumed:
    - status = "completed" AND file exists → skip (already verified by Phase 5)
    - status = "captured" AND file exists → skip (awaiting Phase 5 verification)
    - status = "needs-recapture" → DO NOT SKIP, re-capture this screenshot
+   - status = "blocked" → retry if precondition now met, otherwise skip
    - status = "pending" or "failed" → capture as normal
 7. **Phase 5 never skips** — Agent C always re-validates ALL images on disk
 

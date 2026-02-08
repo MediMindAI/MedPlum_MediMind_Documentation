@@ -1,6 +1,6 @@
 # Screenshot Plan: Overview
 
-**Generated:** 2026-02-07
+**Generated:** 2026-02-08
 **Source:** sections/en/overview.html
 **Total Files:** 3 (1 screenshot x 3 languages)
 
@@ -9,22 +9,18 @@
 ### Static Screenshots (1)
 | ID | Filename Pattern | Description |
 |----|------------------|-------------|
-| screenshot | screenshot-{lang}.png | Full page overview showing search + form + sidebar |
-
-### Multi-Step Flows (0)
-None
-
-### State-Based (0)
-None
+| screenshot | screenshot-{lang}.png | Full page overview showing search hero, form sections, and desktop sidebar |
 
 ## Execution Checklist
-- [ ] EMR running on localhost:3000 or 3005
+- [ ] EMR running on localhost:3005 (or 3000)
 - [ ] Playwright server started
 - [ ] Login completed
-- [ ] English screenshot captured
-- [ ] Georgian screenshot captured
-- [ ] Russian screenshot captured
+- [ ] English screenshot captured (screenshot-en.png)
+- [ ] Georgian screenshot captured (screenshot-ka.png)
+- [ ] Russian screenshot captured (screenshot-ru.png)
 - [ ] All files verified
 
-## Prerequisites
-- Desktop viewport (>1024px) to show sidebar
+## Capture Notes
+- Use desktop viewport (1440x900) to show all zones
+- No special state setup needed — default page load shows search + form + sidebar
+- Language switching via text=ENG, text=ქარ, text=РУС

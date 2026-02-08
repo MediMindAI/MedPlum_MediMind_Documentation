@@ -106,44 +106,238 @@ mermaid.initialize({
   }
 });
 
-// Diagram Zoom Toggle Function
-function toggleZoom(button) {
-  const container = button.closest('.mermaid-container');
-  const diagram = container.querySelector('.mermaid-zoomable');
+// DiagramViewer — Production-ready zoom/pan/navigation for Mermaid diagrams
+const DiagramViewer = {
+  _states: new WeakMap(),
+  MIN_SCALE: 0.5,
+  MAX_SCALE: 3.0,
+  STEP: 0.25,
 
-  if (diagram) {
-    diagram.classList.toggle('zoomed');
-
-    // Update button text using i18n
-    const isZoomed = diagram.classList.contains('zoomed');
-    const zoomText = (typeof I18n !== 'undefined')
-      ? (isZoomed ? I18n.t('zoom.zoomOut') : I18n.t('zoom.zoomIn'))
-      : (isZoomed ? 'Zoom out' : 'Zoom in');
-
-    button.innerHTML = isZoomed
-      ? `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"/></svg>${zoomText}`
-      : `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>${zoomText}`;
-  }
-}
-
-// Click on diagram to toggle zoom
-document.querySelectorAll('.mermaid-zoomable').forEach(diagram => {
-  diagram.addEventListener('click', function() {
-    this.classList.toggle('zoomed');
-    const container = this.closest('.mermaid-container');
-    const button = container.querySelector('.mermaid-zoom-btn');
-    if (button) {
-      const isZoomed = this.classList.contains('zoomed');
-      const zoomText = (typeof I18n !== 'undefined')
-        ? (isZoomed ? I18n.t('zoom.zoomOut') : I18n.t('zoom.zoomIn'))
-        : (isZoomed ? 'Zoom out' : 'Zoom in');
-
-      button.innerHTML = isZoomed
-        ? `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"/></svg>${zoomText}`
-        : `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>${zoomText}`;
+  _getState: function(container) {
+    if (!this._states.has(container)) {
+      this._states.set(container, { scale: 1, tx: 0, ty: 0, dragging: false });
     }
-  });
-});
+    return this._states.get(container);
+  },
+
+  _applyTransform: function(diagram, state) {
+    diagram.style.transform = 'translate(' + state.tx + 'px, ' + state.ty + 'px) scale(' + state.scale + ')';
+  },
+
+  _updateLevel: function(container, state) {
+    var el = container.querySelector('.mermaid-zoom-level');
+    if (el) el.textContent = Math.round(state.scale * 100) + '%';
+  },
+
+  _t: function(key, fallback) {
+    return (typeof I18n !== 'undefined') ? I18n.t(key) : fallback;
+  },
+
+  _buildToolbar: function(container) {
+    // Remove any old zoom-buttons markup
+    var old = container.querySelector('.mermaid-zoom-buttons');
+    if (old) old.remove();
+    // Skip if already has toolbar
+    if (container.querySelector('.mermaid-toolbar')) return;
+
+    var toolbar = document.createElement('div');
+    toolbar.className = 'mermaid-toolbar';
+
+    // Zoom group
+    var zoomGrp = document.createElement('div');
+    zoomGrp.className = 'mermaid-toolbar-group';
+
+    var minusBtn = document.createElement('button');
+    minusBtn.className = 'mermaid-tb-btn';
+    minusBtn.textContent = '\u2212';
+    minusBtn.title = this._t('zoom.zoomOut', 'Zoom out');
+    minusBtn.setAttribute('data-action', 'zoom-out');
+
+    var level = document.createElement('span');
+    level.className = 'mermaid-zoom-level';
+    level.textContent = '100%';
+
+    var plusBtn = document.createElement('button');
+    plusBtn.className = 'mermaid-tb-btn';
+    plusBtn.textContent = '+';
+    plusBtn.title = this._t('zoom.zoomIn', 'Zoom in');
+    plusBtn.setAttribute('data-action', 'zoom-in');
+
+    zoomGrp.appendChild(minusBtn);
+    zoomGrp.appendChild(level);
+    zoomGrp.appendChild(plusBtn);
+
+    // Action group
+    var actGrp = document.createElement('div');
+    actGrp.className = 'mermaid-toolbar-group';
+
+    var resetBtn = document.createElement('button');
+    resetBtn.className = 'mermaid-tb-btn';
+    resetBtn.textContent = '\u27F2';
+    resetBtn.title = this._t('zoom.reset', 'Reset');
+    resetBtn.setAttribute('data-action', 'reset');
+
+    var fsBtn = document.createElement('button');
+    fsBtn.className = 'mermaid-tb-btn';
+    fsBtn.textContent = '\u26F6';
+    fsBtn.title = this._t('zoom.fullscreen', 'Fullscreen');
+    fsBtn.setAttribute('data-action', 'fullscreen');
+
+    actGrp.appendChild(resetBtn);
+    actGrp.appendChild(fsBtn);
+
+    toolbar.appendChild(zoomGrp);
+    toolbar.appendChild(actGrp);
+
+    container.insertBefore(toolbar, container.firstChild);
+  },
+
+  _bindContainer: function(container) {
+    if (container.hasAttribute('data-dv-bound')) return;
+    container.setAttribute('data-dv-bound', 'true');
+    container.setAttribute('tabindex', '0');
+
+    var self = this;
+    var diagram = container.querySelector('.mermaid-zoomable');
+    if (!diagram) return;
+
+    var state = this._getState(container);
+
+    // Toolbar button clicks
+    container.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-action');
+      if (action === 'zoom-in') self.zoomTo(container, state.scale + self.STEP);
+      else if (action === 'zoom-out') self.zoomTo(container, state.scale - self.STEP);
+      else if (action === 'reset') { state.scale = 1; state.tx = 0; state.ty = 0; self._applyTransform(diagram, state); self._updateLevel(container, state); }
+      else if (action === 'fullscreen') {
+        if (document.fullscreenElement === container) document.exitFullscreen();
+        else container.requestFullscreen().catch(function() {});
+      }
+    });
+
+    // Ctrl+scroll zoom
+    container.addEventListener('wheel', function(e) {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? -self.STEP : self.STEP;
+      self.zoomTo(container, state.scale + delta);
+    }, { passive: false });
+
+    // Drag/pan
+    var startX, startY, startTx, startTy;
+    diagram.addEventListener('pointerdown', function(e) {
+      if (state.scale <= 1) return;
+      state.dragging = true;
+      diagram.classList.add('dragging');
+      diagram.setPointerCapture(e.pointerId);
+      startX = e.clientX; startY = e.clientY;
+      startTx = state.tx; startTy = state.ty;
+    });
+    diagram.addEventListener('pointermove', function(e) {
+      if (!state.dragging) return;
+      state.tx = startTx + (e.clientX - startX);
+      state.ty = startTy + (e.clientY - startY);
+      self._applyTransform(diagram, state);
+    });
+    diagram.addEventListener('pointerup', function() {
+      state.dragging = false;
+      diagram.classList.remove('dragging');
+    });
+
+    // Keyboard shortcuts when focused
+    container.addEventListener('keydown', function(e) {
+      if (e.key === '+' || e.key === '=') { e.preventDefault(); self.zoomTo(container, state.scale + self.STEP); }
+      else if (e.key === '-') { e.preventDefault(); self.zoomTo(container, state.scale - self.STEP); }
+      else if (e.key === '0') { e.preventDefault(); state.scale = 1; state.tx = 0; state.ty = 0; self._applyTransform(diagram, state); self._updateLevel(container, state); }
+      else if (e.key === 'f') { e.preventDefault(); if (document.fullscreenElement === container) document.exitFullscreen(); else container.requestFullscreen().catch(function() {}); }
+    });
+
+    // Touch pinch-zoom
+    var lastDist = 0;
+    container.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 2) {
+        lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      }
+    }, { passive: true });
+    container.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 2) {
+        var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        if (lastDist > 0) {
+          var factor = dist / lastDist;
+          self.zoomTo(container, state.scale * factor);
+        }
+        lastDist = dist;
+      }
+    }, { passive: true });
+  },
+
+  zoomTo: function(container, newScale) {
+    var state = this._getState(container);
+    state.scale = Math.max(this.MIN_SCALE, Math.min(this.MAX_SCALE, newScale));
+    var diagram = container.querySelector('.mermaid-zoomable');
+    if (diagram) {
+      this._applyTransform(diagram, state);
+      diagram.style.cursor = state.scale > 1 ? 'grab' : 'default';
+    }
+    this._updateLevel(container, state);
+  },
+
+  _buildNav: function() {
+    var containers = document.querySelectorAll('.mermaid-container');
+    if (containers.length < 2) return;
+    // Remove existing nav
+    document.querySelectorAll('.mermaid-diagram-nav').forEach(function(n) { n.remove(); });
+
+    var nav = document.createElement('div');
+    nav.className = 'mermaid-diagram-nav';
+
+    var self = this;
+    containers.forEach(function(c, i) {
+      var h3 = null;
+      var el = c;
+      while (el = el.previousElementSibling) { if (el.tagName === 'H3') { h3 = el; break; } }
+      var label = h3 ? h3.textContent.trim() : 'Diagram ' + (i + 1);
+      var pill = document.createElement('button');
+      pill.className = 'mermaid-nav-pill' + (i === 0 ? ' active' : '');
+      pill.textContent = (i + 1) + '/' + containers.length + ' ' + label;
+      pill.addEventListener('click', function() {
+        c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        nav.querySelectorAll('.mermaid-nav-pill').forEach(function(p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+      });
+      nav.appendChild(pill);
+    });
+
+    // Insert before first container
+    containers[0].parentNode.insertBefore(nav, containers[0]);
+
+    // Update active pill on scroll
+    var updatePills = throttle(function() {
+      var pills = nav.querySelectorAll('.mermaid-nav-pill');
+      containers.forEach(function(c, i) {
+        var rect = c.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2 && rect.bottom > 0) {
+          pills.forEach(function(p) { p.classList.remove('active'); });
+          pills[i].classList.add('active');
+        }
+      });
+    }, 200);
+    window.addEventListener('scroll', updatePills, { passive: true });
+  },
+
+  initAll: function() {
+    var self = this;
+    var containers = document.querySelectorAll('.mermaid-container');
+    containers.forEach(function(c) {
+      self._buildToolbar(c);
+      self._bindContainer(c);
+    });
+    if (containers.length > 1) this._buildNav();
+  }
+};
+window.DiagramViewer = DiagramViewer;
 
 // Search functionality
 const searchModal = document.getElementById('searchModal');
@@ -415,7 +609,6 @@ function toggleTocItem(button) {
 window.toggleTocItem = toggleTocItem;
 window.openSearch = openSearch;
 window.closeSearch = closeSearch;
-window.toggleZoom = toggleZoom;
 
 // Active nav link - sections cached for scroll spy (updated by section-loader)
 
