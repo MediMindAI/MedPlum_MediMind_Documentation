@@ -80,9 +80,17 @@ const TocGenerator = {
       button.className = 'toc-toggle';
       button.onclick = () => {
         if (typeof Router !== 'undefined') {
-          Router.navigate(Router.buildRoute(category.id));
+          const currentRoute = Router.getCurrentRoute();
+          if (currentRoute.category === category.id) {
+            // Same category — toggle open/closed
+            this._toggleItem(button);
+          } else {
+            // Different category — navigate; updateActiveState handles the rest
+            Router.navigate(Router.buildRoute(category.id));
+          }
+        } else {
+          this._toggleItem(button);
         }
-        this._toggleItem(button);
       };
       button.innerHTML = `
         <svg class="toc-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -227,6 +235,8 @@ const TocGenerator = {
 
   /**
    * Toggle TOC item
+   * Top-level categories: free toggle (multiple can be open)
+   * Sub-sections: accordion (only one open per level)
    */
   _toggleItem: function(button) {
     const tocItem = button.closest('.toc-item');
@@ -239,7 +249,7 @@ const TocGenerator = {
   updateActiveState: function() {
     if (!this.container || !this.currentRoute) return;
 
-    // Remove all active states and collapse all categories
+    // Remove all active states
     this.container.querySelectorAll('.toc-link.active').forEach(link => {
       link.classList.remove('active');
     });
@@ -248,14 +258,13 @@ const TocGenerator = {
       item.classList.remove('active');
     });
 
-    this.collapseAll();
-
     // Find and activate current section
     const { category, section, anchor } = this.currentRoute;
 
     if (category) {
       const categoryEl = this.container.querySelector(`[data-category="${category}"]`);
       if (categoryEl) {
+        // Just open the active category (don't close others)
         categoryEl.classList.add(this.config.openClass);
       }
     }
