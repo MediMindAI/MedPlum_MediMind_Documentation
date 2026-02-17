@@ -1,0 +1,187 @@
+{
+  "planVersion": "1.1",
+  "generatedAt": "2026-02-16T20:00:00Z",
+  "sourceSection": {
+    "id": "warehouse-overview",
+    "file": "sections/en/warehouse-overview.html",
+    "titleKey": "toc.warehouseOverview"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/warehouse/overview"
+  },
+  "screenshots": [
+    {
+      "number": 1,
+      "id": "wh-dashboard-overview",
+      "name": "wh-dashboard-overview",
+      "description": "Full warehouse dashboard showing alert banner, KPI strip with non-zero values, quick actions with badge, and analytics sections",
+      "desiredState": "Full dashboard loaded with DEMO_MODE data: alert banner visible at top, KPI cards showing non-zero values (12/3/7/14/18/9), quick action cards with pending badge, analytics sections below.",
+      "differentiator": "Shows the complete dashboard overview from the top — alert banner, KPI strip and quick actions are the focal point, with analytics partially visible below",
+      "stateSetup": null,
+      "type": "static",
+      "anchorId": "warehouse-overview",
+      "docReference": "Section intro - Warehouse Dashboard",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["KPI metric cards with non-zero values", "Quick action cards", "Alert banner", "Page header with warehouse icon"],
+        "mustNotShow": ["Loading skeletons", "Error message", "All-zero KPI values"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "screenshot", "name": "wh-dashboard-overview" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 2,
+      "id": "wh-dashboard-alerts",
+      "name": "wh-dashboard-alerts",
+      "description": "Alert banner and KPI summary strip with six non-zero metric cards and sparkline curves",
+      "desiredState": "Alert banner visible at top with stock-out/expiry warning. KPI summary strip showing all 6 metric cards with non-zero values and sparkline trend curves on the last two cards.",
+      "differentiator": "Zoomed/scrolled to focus on the alert banner and KPI strip area — shows metric card details with non-zero values, icons, and sparkline curves",
+      "stateSetup": null,
+      "type": "static",
+      "anchorId": "wh-kpi-metrics",
+      "docReference": "Section 1.2 - KPI Metrics",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["6 metric cards with non-zero numeric values", "Card labels", "Alert banner", "Sparkline curves on last 2 cards"],
+        "mustNotShow": ["Loading skeletons", "All-zero values"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "screenshot", "name": "wh-dashboard-alerts" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 3,
+      "id": "wh-dashboard-analytics",
+      "name": "wh-dashboard-analytics",
+      "description": "Intelligence Grid (pending transfers + expiry countdown) and Analytics Grid (sparklines + top 5 moved items)",
+      "desiredState": "Intelligence Grid visible showing 4 pending transfer rows and expiry countdown badges. Analytics Grid below with real sparkline curves and 5 top moved items with gradient progress bars.",
+      "differentiator": "Shows the analytics grid area — intelligence grid, sparkline charts with real curves, and top moved items list with 5 entries",
+      "stateSetup": {
+        "description": "Scroll down past KPI strip and quick actions to reveal the intelligence and analytics grids",
+        "interactionSequence": [
+          { "action": "evaluate", "script": "(() => { var headings = document.querySelectorAll('h2, h3, [class*=Title]'); for (var i = 0; i < headings.length; i++) { var t = headings[i].textContent.toLowerCase(); if (t.indexOf('intelligence') !== -1 || t.indexOf('pending') !== -1 || t.indexOf('analytics') !== -1) { headings[i].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to: ' + headings[i].textContent; } } var grids = document.querySelectorAll('.mantine-SimpleGrid-root'); if (grids.length >= 2) { grids[1].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to grid'; } window.scrollTo(0, 600); return 'fallback scroll'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "static",
+      "anchorId": "wh-analytics",
+      "docReference": "Section 1.4 - Analytics and Activity",
+      "sectionHeaderText": "Analytics",
+      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Pending transfers table with 4+ rows", "Expiry countdown badges", "Sparkline curves (not flat lines)", "Top 5 moved items with progress bars"],
+        "mustNotShow": ["Loading skeletons", "Empty state messages"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 1000 },
+        { "action": "screenshot", "name": "wh-dashboard-analytics" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 4,
+      "id": "wh-dashboard-activity",
+      "name": "wh-dashboard-activity",
+      "description": "Recent activity timeline with 7 diverse color-coded events: receipts (green), transfers (blue), adjustment (orange), expiry (red), request (cyan)",
+      "desiredState": "Recent activity timeline visible showing 7 diverse warehouse events. Multiple event types visible: receipts (green), transfers (blue), adjustment (orange), expiry (red), request (cyan). Each event has icon, title, description, timestamp, and type badge.",
+      "differentiator": "Shows the activity timeline section at the bottom — vertical list of diverse, color-coded time-stamped events, not the analytics charts above",
+      "stateSetup": {
+        "description": "Scroll to bottom of dashboard to reveal the recent activity timeline",
+        "interactionSequence": [
+          { "action": "evaluate", "script": "(() => { var headings = document.querySelectorAll('h2, h3, [class*=Title]'); for (var i = 0; i < headings.length; i++) { var t = headings[i].textContent.toLowerCase(); if (t.indexOf('activity') !== -1 || t.indexOf('recent') !== -1) { headings[i].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to: ' + headings[i].textContent; } } var timeline = document.querySelector('.mantine-Timeline-root'); if (timeline) { timeline.scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to timeline'; } window.scrollTo(0, document.body.scrollHeight); return 'scrolled to bottom'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "static",
+      "anchorId": "wh-analytics",
+      "docReference": "Section 1.4 - Recent Activity Timeline",
+      "sectionHeaderText": "Recent Activity",
+      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["7 timeline entries", "Multiple event type colors (green, blue, orange, red, cyan)", "Event timestamps", "Type badges"],
+        "mustNotShow": ["Loading skeletons", "Empty state message", "Only blue Transfer entries"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 1000 },
+        { "action": "screenshot", "name": "wh-dashboard-activity" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=РУС",
+      "ka": "text=ქარ"
+    },
+    "waitAfterSwitch": 2000,
+    "extraWaitRu": 2000
+  },
+  "summary": {
+    "totalScreenshots": 4,
+    "totalFiles": 12,
+    "staticScreenshots": 4,
+    "multiStepFlows": 0,
+    "stateBased": 0
+  }
+}

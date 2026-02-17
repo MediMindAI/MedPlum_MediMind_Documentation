@@ -1,0 +1,805 @@
+<section class="doc-section" id="warehouse-data-model">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="doc-section-number">2</div>
+      <h2>Data Architecture</h2>
+    </div>
+  </div>
+
+  <p>The warehouse module stores all inventory data using the <strong>FHIR R4 standard</strong> (Fast Healthcare Interoperability Resources). Think of FHIR as a universal language for health data -- instead of inventing custom database tables, the system maps every warehouse concept (receipts, transfers, stock balances) onto standardized FHIR resources. This makes the data portable, auditable, and interoperable with other healthcare systems.</p>
+
+  <p>This section covers three layers of the data architecture:</p>
+  <ul class="doc-list">
+    <li><strong>FHIR Resource Mappings</strong> -- which FHIR resources store which warehouse data</li>
+    <li><strong>StockQuant Model</strong> -- the materialized inventory balance system that enables instant stock lookups</li>
+    <li><strong>Workflows and Business Rules</strong> -- transfer state machines, FEFO picking, alerts, and cost calculation</li>
+  </ul>
+
+  <!-- ================================================================== -->
+  <!-- FHIR Resources -->
+  <!-- ================================================================== -->
+  <h3 id="wh-fhir-resources">FHIR Resource Mappings</h3>
+
+  <p>Every piece of warehouse data is stored as a FHIR resource. The table below shows how each warehouse concept maps to its FHIR representation. For integration teams, this is the definitive reference for querying warehouse data through the FHIR API.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Domain Concept</th>
+          <th>FHIR Resource</th>
+          <th>Key Fields</th>
+          <th>Identifier System</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Receipts</strong></td>
+          <td>SupplyDelivery</td>
+          <td>status, supplier (Organization ref), destination (Location), suppliedItem.quantity, type code = <code>receipt</code></td>
+          <td><code>receipt-number</code>, <code>invoice-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Transfers</strong></td>
+          <td>SupplyDelivery</td>
+          <td>status, source/destination departments (via extensions), type code = <code>transfer</code></td>
+          <td><code>transfer-document-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Waybills</strong></td>
+          <td>SupplyDelivery</td>
+          <td>identifier (10-digit waybill number), type code = <code>waybill</code>, RS.ge integration data</td>
+          <td><code>waybill-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Orders</strong></td>
+          <td>SupplyRequest</td>
+          <td>status, requester department, receiver department, line items (JSON extension)</td>
+          <td><code>order-document-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Stock Balances</strong></td>
+          <td>Basic (StockQuant)</td>
+          <td>composite key identifier, quantity, reservedQuantity, lotNumber, expiryDate, qualityStatus, unitCost</td>
+          <td><code>stock-quant-key</code></td>
+        </tr>
+        <tr>
+          <td><strong>Products</strong></td>
+          <td>DeviceDefinition</td>
+          <td>manufacturer, modelNumber, udiDeviceIdentifier, category extensions (VAT, dosage form, stock levels)</td>
+          <td><code>product-code</code></td>
+        </tr>
+        <tr>
+          <td><strong>Suppliers</strong></td>
+          <td>Organization</td>
+          <td>name, identifier (supplier code), type = supplier, contact details</td>
+          <td><code>supplier-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>Warehouses</strong></td>
+          <td>Location</td>
+          <td>name, type (pharmacy, laboratory, blood-bank, etc.), partOf (parent department)</td>
+          <td><code>warehouse-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>Nomenclature</strong></td>
+          <td>List</td>
+          <td>title, entry[] (references to DeviceDefinition), code for category/group hierarchy</td>
+          <td>--</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Base URL for all extensions:</strong> All custom FHIR extensions use the base URL <code>http://medimind.ge/fhir</code>. For example, the unit price extension is <code>http://medimind.ge/fhir/StructureDefinition/admin-unit-price</code>. The system currency is GEL (Georgian Lari).
+    </div>
+  </div>
+
+  <h4>Three-Tier Nomenclature Hierarchy</h4>
+
+  <p>Products in the warehouse follow a three-level classification, similar to how a library organizes books into sections, shelves, and individual titles:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Name</th>
+          <th>Count</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Item Group</strong></td>
+          <td>Category classification</td>
+          <td>~310 groups</td>
+          <td>Consumable Materials, Medications, Reagents</td>
+        </tr>
+        <tr>
+          <td><strong>2. Medical Item</strong></td>
+          <td>Generic medical item</td>
+          <td>~503 items</td>
+          <td>Surgical Gloves (generic)</td>
+        </tr>
+        <tr>
+          <td><strong>3. Warehouse Item</strong></td>
+          <td>Specific inventory record</td>
+          <td>~35,900 items</td>
+          <td>Surgical Gloves, Brand X, Size M, Box of 100</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The top-level warehouse groups (11 categories) include: Consumable Materials, Medications, Household, Non-Inventory, Fixed Assets, Inventory, Reagents, Solutions, Medical Instruments, Narcotics, and Food.</p>
+
+  <h4>Warehouse Location Types</h4>
+
+  <p>Each warehouse/department has a type that determines its capabilities (such as whether it can receive directly from suppliers or requires cold chain tracking):</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Type Code</th>
+          <th>Description</th>
+          <th>Special Requirements</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>pharmacy</code></td><td>Pharmacy</td><td>--</td></tr>
+        <tr><td><code>laboratory</code></td><td>Laboratory</td><td>Direct receiving, ISO 15189, temperature 2-8 C</td></tr>
+        <tr><td><code>blood-bank</code></td><td>Blood Bank</td><td>Direct receiving, FDA/AABB, temperature 1-6 C</td></tr>
+        <tr><td><code>surgical</code></td><td>Surgical</td><td>--</td></tr>
+        <tr><td><code>icu</code></td><td>ICU</td><td>--</td></tr>
+        <tr><td><code>emergency</code></td><td>Emergency</td><td>--</td></tr>
+        <tr><td><code>main</code></td><td>Main Warehouse</td><td>Central hub for all departments</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Sample FHIR Resource: Receipt (SupplyDelivery)</h4>
+
+  <p>Here is a simplified example of how a receipt line item is stored as a FHIR SupplyDelivery resource:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "SupplyDelivery",
+  "status": "completed",
+  "type": {
+    "coding": [{
+      "system": "http://medimind.ge/fhir/CodeSystem/supply-type",
+      "code": "receipt",
+      "display": "Receipt"
+    }]
+  },
+  "suppliedItem": {
+    "quantity": { "value": 500, "unit": "tablet" }
+  },
+  "occurrenceDateTime": "2026-02-15",
+  "identifier": [{
+    "system": "http://medimind.ge/fhir/identifier/receipt-number",
+    "value": "REC-2026-001234"
+  }],
+  "extension": [
+    { "url": ".../admin-item-code", "valueString": "MED-001" },
+    { "url": ".../admin-item-name", "valueString": "Amoxicillin 500mg" },
+    { "url": ".../admin-unit-price", "valueMoney": { "value": 0.35, "currency": "GEL" } },
+    { "url": ".../admin-line-total", "valueMoney": { "value": 175.00, "currency": "GEL" } },
+    { "url": ".../dest-department", "valueString": "location-pharmacy-01" },
+    { "url": ".../admin-lot-number", "valueString": "LOT-2026A" },
+    { "url": ".../admin-expiry-date", "valueString": "2028-06-30" }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- Stock Quantity Model -->
+  <!-- ================================================================== -->
+  <h3 id="wh-stock-quant">Stock Quantity Model</h3>
+
+  <p>The <strong>StockQuant</strong> is the system's answer to a simple question: "How much of item X is in warehouse Y right now?" Instead of adding up every receipt and subtracting every transfer each time someone checks stock (which gets slower as history grows), the system maintains a <strong>materialized balance record</strong> -- a pre-computed answer that stays up to date automatically.</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">O(1)</span>
+      <span class="doc-stat-inline-label">Balance Lookup Time</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4-Part</span>
+      <span class="doc-stat-inline-label">Composite Key</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">Max Retry Attempts</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Quality Statuses</span>
+    </div>
+  </div>
+
+  <h4>Composite Key</h4>
+
+  <p>Each StockQuant record is uniquely identified by a <strong>four-part composite key</strong>. Think of it like a filing system: the combination of item, location, lot, and quality status pinpoints exactly one balance record.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">Key format: {itemCode}|{locationId}|{lotNumber}|{qualityStatus}
+
+Examples:
+  MED-001|pharmacy-01|LOT-2026A|accepted     -- Amoxicillin, Pharmacy, Lot A, accepted
+  MED-001|pharmacy-01|LOT-2026B|quarantine   -- Same item, same location, different lot in quarantine
+  MED-001|lab-02|NONE|accepted               -- Same item, Lab, no lot tracking</code></pre>
+  </div>
+
+  <p>When no lot tracking is used, the lot portion is stored as <code>NONE</code>. The default quality status is <code>accepted</code>.</p>
+
+  <h4>StockQuant Fields</h4>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>FHIR Extension</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>itemCode</strong></td>
+          <td><code>sq-item-code</code></td>
+          <td>string</td>
+          <td>Product code (FK to DeviceDefinition)</td>
+        </tr>
+        <tr>
+          <td><strong>itemName</strong></td>
+          <td><code>sq-item-name</code></td>
+          <td>string</td>
+          <td>Display name (denormalized for performance)</td>
+        </tr>
+        <tr>
+          <td><strong>locationId</strong></td>
+          <td><code>sq-location-id</code></td>
+          <td>string</td>
+          <td>Department/warehouse Location ID</td>
+        </tr>
+        <tr>
+          <td><strong>lotNumber</strong></td>
+          <td><code>sq-lot-number</code></td>
+          <td>string</td>
+          <td>Lot/batch identifier (empty = untracked)</td>
+        </tr>
+        <tr>
+          <td><strong>expiryDate</strong></td>
+          <td><code>sq-expiry-date</code></td>
+          <td>date</td>
+          <td>Lot expiration date (ISO format)</td>
+        </tr>
+        <tr>
+          <td><strong>qualityStatus</strong></td>
+          <td><code>sq-quality-status</code></td>
+          <td>code</td>
+          <td><code>accepted</code>, <code>quarantine</code>, or <code>rejected</code></td>
+        </tr>
+        <tr>
+          <td><strong>quantity</strong></td>
+          <td><code>sq-quantity</code></td>
+          <td>decimal</td>
+          <td>Current total quantity on hand</td>
+        </tr>
+        <tr>
+          <td><strong>reservedQuantity</strong></td>
+          <td><code>sq-reserved-qty</code></td>
+          <td>decimal</td>
+          <td>Quantity reserved for pending transfers</td>
+        </tr>
+        <tr>
+          <td><strong>unitCost</strong></td>
+          <td><code>sq-unit-cost</code></td>
+          <td>decimal</td>
+          <td>Weighted average cost per unit (GEL)</td>
+        </tr>
+        <tr>
+          <td><strong>unit</strong></td>
+          <td><code>sq-unit</code></td>
+          <td>string</td>
+          <td>Unit of measure (tablet, ml, box, etc.)</td>
+        </tr>
+        <tr>
+          <td><strong>lastMovementDate</strong></td>
+          <td><code>sq-last-movement</code></td>
+          <td>dateTime</td>
+          <td>Timestamp of last balance change</td>
+        </tr>
+        <tr>
+          <td><strong>lastMovementRef</strong></td>
+          <td><code>sq-last-move-ref</code></td>
+          <td>string</td>
+          <td>Reference to the last SupplyDelivery that modified this quant</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Available Quantity:</strong> The quantity a user can actually consume or transfer is <code>quantity - reservedQuantity</code>. Reserved quantity represents stock that has been earmarked for approved transfers that have not yet shipped.
+    </div>
+  </div>
+
+  <h4>Optimistic Locking</h4>
+
+  <p>When two people try to update the same stock balance simultaneously (for example, two receipts arriving at the same warehouse at the same time), the system uses <strong>optimistic locking</strong> to prevent data corruption. Here is how it works:</p>
+
+  <ol class="doc-list">
+    <li>Read the current StockQuant record (including its <code>meta.versionId</code>)</li>
+    <li>Calculate the new quantity</li>
+    <li>Send an update with an <code>If-Match</code> ETag header containing the version ID</li>
+    <li>If someone else updated the record first, the server returns <strong>412 Precondition Failed</strong></li>
+    <li>The system retries with exponential backoff (up to 5 attempts, with random jitter)</li>
+  </ol>
+
+  <p>This approach avoids database locks while guaranteeing that no stock changes are lost, even under concurrent access.</p>
+
+  <h4>Sample FHIR Resource: StockQuant (Basic)</h4>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "Basic",
+  "code": {
+    "coding": [{
+      "system": "http://medimind.ge/fhir/CodeSystem/supply-type",
+      "code": "stock-quant",
+      "display": "Stock Quant"
+    }]
+  },
+  "identifier": [{
+    "system": "http://medimind.ge/fhir/identifier/stock-quant-key",
+    "value": "MED-001|pharmacy-01|LOT-2026A|accepted"
+  }],
+  "meta": {
+    "versionId": "3",
+    "tag": [
+      { "system": ".../CodeSystem/department", "code": "pharmacy-01" },
+      { "system": ".../CodeSystem/item-code", "code": "MED-001" }
+    ]
+  },
+  "extension": [
+    { "url": ".../sq-item-code", "valueString": "MED-001" },
+    { "url": ".../sq-item-name", "valueString": "Amoxicillin 500mg" },
+    { "url": ".../sq-location-id", "valueString": "pharmacy-01" },
+    { "url": ".../sq-location-name", "valueString": "Main Pharmacy" },
+    { "url": ".../sq-lot-number", "valueString": "LOT-2026A" },
+    { "url": ".../sq-expiry-date", "valueDate": "2028-06-30" },
+    { "url": ".../sq-quality-status", "valueCode": "accepted" },
+    { "url": ".../sq-quantity", "valueDecimal": 450 },
+    { "url": ".../sq-reserved-qty", "valueDecimal": 50 },
+    { "url": ".../sq-unit-cost", "valueDecimal": 0.35 },
+    { "url": ".../sq-unit", "valueString": "tablet" },
+    { "url": ".../sq-last-movement", "valueDateTime": "2026-02-15T10:30:00Z" }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- Workflows & Business Rules -->
+  <!-- ================================================================== -->
+  <h3 id="wh-workflows">Workflows &amp; Business Rules</h3>
+
+  <p>The warehouse module enforces several automated business rules that govern how stock moves through the system. These rules ensure regulatory compliance, prevent data errors, and optimize inventory turnover.</p>
+
+  <h4>Transfer Status Lifecycle</h4>
+
+  <p>Transfers between departments follow a <strong>9-state lifecycle</strong> with strictly enforced transitions. Think of it like a package tracking system -- each transfer can only move forward through valid states, and some states are terminal (the transfer cannot change after reaching them).</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+stateDiagram-v2
+    [*] --> draft
+    draft --> requested: Submit
+    draft --> cancelled: Cancel
+    requested --> approved: Approve
+    requested --> rejected: Reject
+    requested --> cancelled: Cancel
+    approved --> in_progress: Begin Shipment
+    approved --> cancelled: Cancel
+    in_progress --> received: Confirm Receipt
+    in_progress --> partial: Partial Receipt
+    in_progress --> completed: Direct Complete
+    in_progress --> cancelled: Cancel
+    received --> completed: Finalize
+    partial --> completed: Complete Remaining
+    partial --> cancelled: Cancel
+
+    state "in-progress" as in_progress
+
+    completed --> [*]
+    rejected --> [*]
+    cancelled --> [*]
+    </div>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Current Status</th>
+          <th>Allowed Transitions</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>draft</code></td>
+          <td>requested, cancelled</td>
+          <td>Created but not yet submitted for approval</td>
+        </tr>
+        <tr>
+          <td><code>requested</code></td>
+          <td>approved, rejected, cancelled</td>
+          <td>Submitted, awaiting manager approval</td>
+        </tr>
+        <tr>
+          <td><code>approved</code></td>
+          <td>in-progress, cancelled</td>
+          <td>Manager approved; items can now be picked and shipped</td>
+        </tr>
+        <tr>
+          <td><code>in-progress</code></td>
+          <td>received, partial, completed, cancelled</td>
+          <td>Items are being physically moved between departments</td>
+        </tr>
+        <tr>
+          <td><code>received</code></td>
+          <td>completed</td>
+          <td>Destination department confirmed full receipt</td>
+        </tr>
+        <tr>
+          <td><code>partial</code></td>
+          <td>completed, cancelled</td>
+          <td>Partial receipt -- some items still pending</td>
+        </tr>
+        <tr>
+          <td><code>completed</code></td>
+          <td><em>(terminal)</em></td>
+          <td>Transfer fully done, stock balances updated</td>
+        </tr>
+        <tr>
+          <td><code>rejected</code></td>
+          <td><em>(terminal)</em></td>
+          <td>Manager rejected the transfer request</td>
+        </tr>
+        <tr>
+          <td><code>cancelled</code></td>
+          <td><em>(terminal)</em></td>
+          <td>Transfer cancelled at any stage</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Order Status Lifecycle</h4>
+
+  <p>Orders (supply requests from departments) follow a simpler lifecycle:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Current Status</th>
+          <th>Allowed Transitions</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>draft</code></td>
+          <td>active, cancelled</td>
+          <td>Order created, not yet submitted</td>
+        </tr>
+        <tr>
+          <td><code>active</code></td>
+          <td>confirmed, cancelled</td>
+          <td>Order submitted and visible to warehouse staff</td>
+        </tr>
+        <tr>
+          <td><code>confirmed</code></td>
+          <td>complete, cancelled</td>
+          <td>Warehouse confirmed the order and stock is dispatched</td>
+        </tr>
+        <tr>
+          <td><code>complete</code></td>
+          <td><em>(terminal)</em></td>
+          <td>Order fully fulfilled</td>
+        </tr>
+        <tr>
+          <td><code>cancelled</code></td>
+          <td><em>(terminal)</em></td>
+          <td>Order cancelled</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>FEFO Picking Algorithm</h4>
+
+  <p><strong>FEFO</strong> (First Expired, First Out) is a regulatory requirement for medical supplies. When stock needs to be consumed or transferred, the system automatically suggests which lot to pick based on expiration dates -- always using the oldest-expiring lot first.</p>
+
+  <div class="doc-warning-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Regulatory Compliance:</strong> FEFO picking is mandated for pharmaceutical products to minimize waste from expired inventory. Overriding FEFO recommendations requires a documented reason (damaged packaging, customer request, lot recall, quality issue, or insufficient quantity).
+    </div>
+  </div>
+
+  <p>The FEFO algorithm works in three steps:</p>
+
+  <ol class="doc-list">
+    <li><strong>Filter</strong> -- Exclude all lots that are expired (expiry date before today) or quarantined/rejected. Also exclude lots with no available quantity (fully reserved).</li>
+    <li><strong>Sort</strong> -- Sort remaining lots by expiry date ascending (earliest expiry first). Lots with no expiry date go to the end.</li>
+    <li><strong>Pick</strong> -- Select the first lot with sufficient available quantity (<code>quantity - reservedQuantity >= requested amount</code>).</li>
+  </ol>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">FEFO Picking Logic (pseudocode):
+
+1. Get all StockQuants for (itemCode, locationId, qualityStatus='accepted')
+2. Filter: remove where expiryDate &lt; today
+3. Filter: remove where (quantity - reservedQuantity) &lt;= 0
+4. Sort: by expiryDate ASC (nulls last)
+5. For each candidate:
+     if availableQty >= requestedAmount:
+       return this lot    -- pick from here
+6. If no single lot has enough: raise InsufficientStockError</code></pre>
+  </div>
+
+  <h4>Warehouse Zone Picking Order</h4>
+
+  <p>When a pick list contains items from multiple warehouse zones, items are grouped and picked in a specific order for safety and compliance:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Priority</th>
+          <th>Zone</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Cold Chain</strong></td>
+          <td>Temperature-sensitive items must be picked and moved first to minimize time outside cold storage</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Controlled</strong></td>
+          <td>Narcotics and controlled substances require additional verification and documentation</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Hazardous</strong></td>
+          <td>Hazardous materials need special handling precautions</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>General</strong></td>
+          <td>Standard supplies with no special handling requirements</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Weighted Average Cost Calculation</h4>
+
+  <p>When new stock arrives at a price different from existing stock, the system recalculates the unit cost using a <strong>weighted average</strong>. This ensures that the cost per unit reflects the blended cost across all received batches.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">Weighted Average Cost Formula:
+
+  newUnitCost = (existingQty x existingCost + receivedQty x receivedCost)
+                / (existingQty + receivedQty)
+
+Example:
+  Existing: 200 tablets at 0.30 GEL each
+  Received: 300 tablets at 0.40 GEL each
+
+  newCost = (200 x 0.30 + 300 x 0.40) / (200 + 300)
+          = (60 + 120) / 500
+          = 0.36 GEL per tablet
+
+Special case: Free/donated items (cost = 0) do NOT dilute existing cost.
+  If existingQty > 0 and receivedCost = 0:
+    unitCost stays at existingCost (unchanged)</code></pre>
+  </div>
+
+  <h4>Stock Alert Rules</h4>
+
+  <p>The system monitors inventory levels and automatically generates alerts based on configurable thresholds. Alerts appear on the warehouse dashboard and can trigger notifications.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Alert Type</th>
+          <th>Trigger Condition</th>
+          <th>Severity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Stock-Out</strong></td>
+          <td>quantity = 0 for any tracked item</td>
+          <td>Critical (red)</td>
+        </tr>
+        <tr>
+          <td><strong>Low Stock</strong></td>
+          <td>quantity &lt; 50% of the reorder point (minStockLevel on DeviceDefinition)</td>
+          <td>Warning (orange)</td>
+        </tr>
+        <tr>
+          <td><strong>Expiring (7 days)</strong></td>
+          <td>expiryDate within the next 7 days</td>
+          <td>Critical (red)</td>
+        </tr>
+        <tr>
+          <td><strong>Expiring (30 days)</strong></td>
+          <td>expiryDate within the next 30 days</td>
+          <td>Warning (orange)</td>
+        </tr>
+        <tr>
+          <td><strong>Expiring (90 days)</strong></td>
+          <td>expiryDate within the next 90 days</td>
+          <td>Info (blue)</td>
+        </tr>
+        <tr>
+          <td><strong>Expired</strong></td>
+          <td>expiryDate is in the past</td>
+          <td>Critical (red)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Stock Movement Types</h4>
+
+  <p>Every change to a StockQuant balance is caused by a <strong>stock movement</strong>. The system tracks seven types of movements, each stored as a FHIR SupplyDelivery with a specific type code:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Movement Type</th>
+          <th>Effect on Quantity</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>receipt</code></td>
+          <td>+</td>
+          <td>Goods received from a supplier</td>
+        </tr>
+        <tr>
+          <td><code>transfer</code></td>
+          <td>- (source) / + (destination)</td>
+          <td>Inter-departmental stock movement</td>
+        </tr>
+        <tr>
+          <td><code>adjustment-plus</code></td>
+          <td>+</td>
+          <td>Positive adjustment (physical count found more than expected)</td>
+        </tr>
+        <tr>
+          <td><code>adjustment-minus</code></td>
+          <td>-</td>
+          <td>Negative adjustment (damage, loss, reconciliation)</td>
+        </tr>
+        <tr>
+          <td><code>consumption</code></td>
+          <td>-</td>
+          <td>Items consumed in patient care</td>
+        </tr>
+        <tr>
+          <td><code>scrap</code></td>
+          <td>-</td>
+          <td>Items disposed of (expired, damaged beyond use)</td>
+        </tr>
+        <tr>
+          <td><code>recall</code></td>
+          <td>-</td>
+          <td>Manufacturer recall -- items removed from circulation</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Adjustment Reason Codes</h4>
+
+  <p>When a stock adjustment is made (either positive or negative), a reason code must be provided for audit compliance:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Reason Code</th>
+          <th>When Used</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>physical-count</code></td><td>Physical inventory count revealed a discrepancy</td></tr>
+        <tr><td><code>damage-spoilage</code></td><td>Items damaged or spoiled during storage</td></tr>
+        <tr><td><code>expired-disposal</code></td><td>Expired items being written off</td></tr>
+        <tr><td><code>theft-loss</code></td><td>Items missing due to theft or unexplained loss</td></tr>
+        <tr><td><code>system-correction</code></td><td>Correcting a data entry error</td></tr>
+        <tr><td><code>reconciliation</code></td><td>Automated reconciliation process detected mismatch</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Cold Chain and Quality Inspection</h4>
+
+  <p>Certain warehouse locations (Laboratory, Blood Bank) require additional quality control steps during receiving:</p>
+
+  <ul class="doc-list">
+    <li><strong>Temperature Capture</strong> -- For cold-chain items, the receiving staff records the temperature at the time of receipt. The system validates whether the reading is within the acceptable range (e.g., 2-8 C for laboratory, 1-6 C for blood bank).</li>
+    <li><strong>Inspection Checklist</strong> -- Staff verify packaging integrity, product condition, and labeling completeness. Items that fail inspection are placed in <code>quarantine</code> status until reviewed.</li>
+    <li><strong>Quality Status Flow</strong> -- Items enter as <code>quarantine</code> (pending inspection), then move to <code>accepted</code> (cleared for use) or <code>rejected</code> (returned or disposed). Only <code>accepted</code> items are available for transfers and consumption.</li>
+  </ul>
+
+  <h4>Balance Calculation Strategy</h4>
+
+  <p>The system uses a dual strategy for calculating inventory balances:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Performance</th>
+          <th>When Used</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>StockQuant Lookup</strong></td>
+          <td>O(1) -- instant</td>
+          <td>Primary method. Reads the pre-computed balance from the Basic resource.</td>
+        </tr>
+        <tr>
+          <td><strong>Legacy Recomputation</strong></td>
+          <td>O(n) -- slow</td>
+          <td>Fallback when StockQuant data is not available. Scans up to 10,000 SupplyDelivery records to recompute from history.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The balance cache uses a 30-second TTL (time-to-live) and supports cross-tab invalidation via BroadcastChannel, so when one browser tab updates stock, all other open tabs see the change within 30 seconds.</p>
+
+</section>

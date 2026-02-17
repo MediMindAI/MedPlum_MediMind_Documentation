@@ -29,6 +29,27 @@
     "dataFlow": "Data Flow",
     "troubleshooting": "Troubleshooting",
     "commonIssues": "Common Issues",
-    "errorCodes": "Error Codes"
+    "errorCodes": "Error Codes",
+    "warehouse": "Warehouse",
+    "warehouseOverview": "Warehouse Overview",
+    "whDashboard": "Dashboard",
+    "whKpiMetrics": "KPI Metrics",
+    "whQuickActions": "Quick Actions",
+    "whAnalytics": "Analytics",
+    "warehouseNomenclature": "Product Nomenclature",
+    "whHierarchy": "Product Hierarchy",
+    "whCategories": "Categories & Groups",
+    "whProductCatalog": "Product Catalog",
+    "warehouseOperations": "Warehouse Operations",
+    "whReceiving": "Receiving",
+    "whTransfers": "Transfers",
+    "whOrders": "Orders",
+    "whInventory": "Inventory",
+    "whWriteoffs": "Write-offs",
+    "whProcurement": "Procurement",
+    "warehouseDataModel": "Data Architecture",
+    "whFhirResources": "FHIR Resources",
+    "whStockQuant": "Stock Quantity Model",
+    "whWorkflows": "Workflows & Rules"
   }
 }

@@ -1,0 +1,198 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-17T10:00:00Z",
+  "sourceSection": {
+    "id": "warehouse-procurement",
+    "file": "sections/en/warehouse-operations.html",
+    "titleKey": "toc.whProcurement"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/warehouse/procurement"
+  },
+  "screenshots": [
+    {
+      "number": 1,
+      "id": "wh-procurement-list",
+      "name": "wh-procurement-list",
+      "description": "Procurement request history tab showing table with priority badges, status columns, and totals",
+      "desiredState": "Procurement page fully loaded with the Request History tab active. Table shows request rows with columns: request number, date, requester, priority badge (normal/urgent/critical), status, and total value.",
+      "differentiator": "Shows the procurement request history list — not the analytics tab, not the pending approval tab, not the creation modal",
+      "stateSetup": null,
+      "type": "static",
+      "anchorId": "wh-procurement",
+      "docReference": "Section 3.6 - Procurement",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Request table rows or empty state", "Priority badges", "Tab switcher"],
+        "mustNotShow": ["Loading skeletons", "Error message"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "navigate", "url": "/emr/dashboard/warehouse/procurement" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-procurement-list" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 2,
+      "id": "wh-procurement-create",
+      "name": "wh-procurement-create",
+      "description": "Procurement request creation modal with multi-section form for items, quantities, and priority selection",
+      "desiredState": "Procurement creation modal is open showing form fields: date, request number, requester department, priority selector, supplier dropdown, and line items section for adding products.",
+      "differentiator": "Shows the procurement creation form as a modal overlay — not the request history list",
+      "stateSetup": {
+        "description": "Click the New Request button in the page header to open the creation modal",
+        "interactionSequence": [
+          { "action": "navigate", "url": "/emr/dashboard/warehouse/procurement" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var btns = document.querySelectorAll('button'); for (var b of btns) { var rect = b.getBoundingClientRect(); if (rect.top < 120 && b.textContent.trim().length > 0 && rect.width > 80) { b.click(); return 'clicked header action button'; } } return 'no button found'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "state-based",
+      "anchorId": "wh-procurement",
+      "docReference": "Section 3.6 - Creating a Procurement Request",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [],
+      "knownLimitation": "The New Request button selector may need adjustment based on actual DOM structure.",
+      "verificationCriteria": {
+        "mustShow": ["Modal/dialog overlay", "Date field", "Priority selector", "Requester department dropdown"],
+        "mustNotShow": ["Only the list page without modal"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-procurement-create" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 3,
+      "id": "wh-procurement-approval",
+      "name": "wh-procurement-approval",
+      "description": "Pending approval tab showing procurement requests awaiting review with approve and reject action buttons",
+      "desiredState": "Procurement page with the Pending Approval tab active. Shows requests awaiting authorization with action buttons for approve and reject.",
+      "differentiator": "Shows the pending approval tab — not the request history tab, not the analytics tab",
+      "stateSetup": {
+        "description": "Navigate to procurement page and click the Pending Approval tab",
+        "interactionSequence": [
+          { "action": "navigate", "url": "/emr/dashboard/warehouse/procurement" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var tabs = document.querySelectorAll('[role=\"tab\"]'); if (tabs.length >= 3) { tabs[2].click(); return 'clicked third tab (pending approval)'; } if (tabs.length >= 2) { tabs[tabs.length - 1].click(); return 'clicked last tab'; } return 'tabs not found, count: ' + tabs.length; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "state-based",
+      "anchorId": "wh-procurement",
+      "docReference": "Section 3.6 - Pending Approval",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [],
+      "knownLimitation": "If no pending requests exist, an empty state will be shown. The orange badge count depends on live data.",
+      "verificationCriteria": {
+        "mustShow": ["Pending Approval tab selected/active", "Request rows with action buttons or empty state"],
+        "mustNotShow": ["Loading skeletons", "Procurement creation modal"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-procurement-approval" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 4,
+      "id": "wh-procurement-detail",
+      "name": "wh-procurement-detail",
+      "description": "Procurement request detail modal showing read-only view with line items, approval history, and status timeline",
+      "desiredState": "Detail modal is open showing a read-only view of a procurement request. Displays all line items with quantities and prices, approval history with timestamps, and the current status in a timeline or badge.",
+      "differentiator": "Shows the detail/read-only modal for an existing request — not the creation modal, not the list page",
+      "stateSetup": {
+        "description": "Navigate to procurement page and click a table row to open the detail modal",
+        "interactionSequence": [
+          { "action": "navigate", "url": "/emr/dashboard/warehouse/procurement" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var rows = document.querySelectorAll('table tbody tr, [class*=\"TableRow\"], [class*=\"table-row\"]'); if (rows.length > 0) { rows[0].click(); return 'clicked first table row'; } return 'no table rows found'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "state-based",
+      "anchorId": "wh-procurement",
+      "docReference": "Section 3.6 - Request Detail View",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [],
+      "knownLimitation": "Requires at least one procurement request in the table. If the table is empty, no detail modal can be opened.",
+      "verificationCriteria": {
+        "mustShow": ["Modal/dialog overlay", "Line items list", "Status information"],
+        "mustNotShow": ["Only the list page without modal"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-procurement-detail" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=РУС",
+      "ka": "text=ქარ"
+    },
+    "waitAfterSwitch": 2000
+  },
+  "summary": {
+    "totalScreenshots": 4,
+    "totalFiles": 12,
+    "staticScreenshots": 1,
+    "multiStepFlows": 0,
+    "stateBased": 3
+  }
+}

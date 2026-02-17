@@ -29,6 +29,27 @@
     "dataFlow": "მონაცემთა ნაკადი",
     "troubleshooting": "პრობლემების მოგვარება",
     "commonIssues": "ხშირი პრობლემები",
-    "errorCodes": "შეცდომის კოდები"
+    "errorCodes": "შეცდომის კოდები",
+    "warehouse": "საწყობი",
+    "warehouseOverview": "საწყობის მიმოხილვა",
+    "whDashboard": "დაფა",
+    "whKpiMetrics": "KPI მეტრიკები",
+    "whQuickActions": "სწრაფი მოქმედებები",
+    "whAnalytics": "ანალიტიკა",
+    "warehouseNomenclature": "პროდუქციის ნომენკლატურა",
+    "whHierarchy": "პროდუქციის იერარქია",
+    "whCategories": "კატეგორიები და ჯგუფები",
+    "whProductCatalog": "პროდუქციის კატალოგი",
+    "warehouseOperations": "საწყობის ოპერაციები",
+    "whReceiving": "მიღება",
+    "whTransfers": "ტრანსფერები",
+    "whOrders": "შეკვეთები",
+    "whInventory": "ინვენტარი",
+    "whWriteoffs": "ჩამოწერა",
+    "whProcurement": "შესყიდვა",
+    "warehouseDataModel": "მონაცემთა არქიტექტურა",
+    "whFhirResources": "FHIR რესურსები",
+    "whStockQuant": "მარაგის რაოდენობის მოდელი",
+    "whWorkflows": "სამუშაო პროცესები და წესები"
   }
 }

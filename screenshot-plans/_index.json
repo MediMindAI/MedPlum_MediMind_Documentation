@@ -1,6 +1,6 @@
 {
   "indexVersion": "1.0",
-  "lastUpdated": "2026-02-09T12:00:00Z",
+  "lastUpdated": "2026-02-17T10:00:00Z",
   "sections": [
     {
       "id": "overview",
@@ -27,23 +27,88 @@
       "screenshots": ["hero-search", "advanced-filters", "search-results", "patient-lookup", "patient-found", "unified-form", "draft-indicator", "additional-details", "desktop-sidebar", "mobile-wizard", "registration-section", "encounter-creation", "insurance-section", "active-visit-warning", "demographics-section"],
       "addedAt": "2026-02-08T16:00:00Z",
       "completedAt": "2026-02-09T12:00:00Z"
+    },
+    {
+      "id": "warehouse-overview",
+      "planFile": "warehouse-overview.json",
+      "checklistFile": null,
+      "status": "completed",
+      "totalScreenshots": 12,
+      "completedScreenshots": 12,
+      "needsRecapture": 0,
+      "progress": 100,
+      "screenshots": ["wh-dashboard-overview", "wh-dashboard-alerts", "wh-dashboard-analytics", "wh-dashboard-activity"],
+      "addedAt": "2026-02-16T08:30:00Z",
+      "completedAt": "2026-02-16T20:30:00Z"
+    },
+    {
+      "id": "warehouse-operations",
+      "planFile": "warehouse-operations.json",
+      "checklistFile": null,
+      "status": "completed",
+      "totalScreenshots": 27,
+      "completedScreenshots": 27,
+      "needsRecapture": 0,
+      "progress": 100,
+      "screenshots": ["wh-receiving-list", "wh-receipt-wizard", "wh-transfers-list", "wh-transfer-create", "wh-transfer-approval", "wh-orders-list", "wh-order-create", "wh-inventory-balances", "wh-inventory-picking"],
+      "addedAt": "2026-02-16T08:30:00Z",
+      "completedAt": "2026-02-16T18:00:00Z"
+    },
+    {
+      "id": "warehouse-nomenclature",
+      "planFile": "warehouse-nomenclature.json",
+      "checklistFile": null,
+      "status": "completed",
+      "totalScreenshots": 18,
+      "completedScreenshots": 18,
+      "needsRecapture": 0,
+      "progress": 100,
+      "screenshots": ["wh-nomenclature-categories", "wh-nomenclature-groups", "wh-nomenclature-items", "wh-nomenclature-catalog", "wh-nomenclature-hierarchy", "wh-item-edit"],
+      "addedAt": "2026-02-16T08:30:00Z",
+      "completedAt": "2026-02-16T18:00:00Z"
+    },
+    {
+      "id": "warehouse-writeoffs",
+      "planFile": "warehouse-writeoffs.json",
+      "checklistFile": null,
+      "status": "completed",
+      "totalScreenshots": 12,
+      "completedScreenshots": 12,
+      "needsRecapture": 0,
+      "progress": 100,
+      "screenshots": ["wh-writeoffs-list", "wh-writeoffs-create", "wh-writeoffs-analytics", "wh-writeoffs-confirmation"],
+      "addedAt": "2026-02-17T10:00:00Z",
+      "completedAt": "2026-02-17T12:00:00Z"
+    },
+    {
+      "id": "warehouse-procurement",
+      "planFile": "warehouse-procurement.json",
+      "checklistFile": null,
+      "status": "completed",
+      "totalScreenshots": 12,
+      "completedScreenshots": 12,
+      "needsRecapture": 0,
+      "progress": 100,
+      "screenshots": ["wh-procurement-list", "wh-procurement-create", "wh-procurement-approval", "wh-procurement-detail"],
+      "addedAt": "2026-02-17T10:00:00Z",
+      "completedAt": "2026-02-17T12:00:00Z"
     }
   ],
   "overallStatus": {
-    "totalSections": 2,
+    "totalSections": 7,
     "pendingSections": 0,
     "inProgressSections": 0,
-    "completedSections": 2,
-    "totalScreenshots": 48,
-    "completed": 48,
+    "completedSections": 7,
+    "totalScreenshots": 129,
+    "completed": 129,
     "needsRecapture": 0,
     "pending": 0,
     "captured": 0,
     "failed": 0,
     "completionPercentage": 100,
-    "validatedAt": "2026-02-09T12:00:00Z"
+    "validatedAt": "2026-02-17T12:00:00Z"
   },
-  "capturedScreenshots": ["screenshot", "hero-search", "advanced-filters", "search-results", "patient-lookup", "patient-found", "unified-form", "draft-indicator", "additional-details", "desktop-sidebar", "mobile-wizard", "registration-section", "encounter-creation", "insurance-section", "active-visit-warning", "demographics-section"],
+  "capturedScreenshots": ["screenshot", "hero-search", "advanced-filters", "search-results", "patient-lookup", "patient-found", "unified-form", "draft-indicator", "additional-details", "desktop-sidebar", "mobile-wizard", "registration-section", "encounter-creation", "insurance-section", "active-visit-warning", "demographics-section", "wh-dashboard-overview", "wh-dashboard-alerts", "wh-dashboard-analytics", "wh-dashboard-activity", "wh-receiving-list", "wh-receipt-wizard", "wh-transfers-list", "wh-transfer-create", "wh-transfer-approval", "wh-orders-list", "wh-order-create", "wh-inventory-balances", "wh-inventory-picking", "wh-nomenclature-categories", "wh-nomenclature-groups", "wh-nomenclature-items", "wh-nomenclature-catalog", "wh-nomenclature-hierarchy", "wh-item-edit", "wh-writeoffs-list", "wh-writeoffs-create", "wh-writeoffs-analytics", "wh-writeoffs-confirmation", "wh-procurement-list", "wh-procurement-create", "wh-procurement-approval", "wh-procurement-detail"],
   "needsRecaptureScreenshots": [],
   "pendingScreenshots": []
 }

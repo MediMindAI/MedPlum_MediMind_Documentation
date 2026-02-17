@@ -1,0 +1,805 @@
+<section class="doc-section" id="warehouse-data-model">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="doc-section-number">2</div>
+      <h2>მონაცემთა არქიტექტურა</h2>
+    </div>
+  </div>
+
+  <p>საწყობის მოდული ყველა სამარაგო მონაცემს ინახავს <strong>FHIR R4 სტანდარტის</strong> (Fast Healthcare Interoperability Resources) გამოყენებით. FHIR არის ჯანდაცვის მონაცემების უნივერსალური ენა -- საკუთარი მონაცემთა ბაზის ცხრილების შექმნის ნაცვლად, სისტემა ყველა საწყობის კონცეფციას (მიღება, გადაწერა, მარაგის ნაშთი) ასახავს სტანდარტიზებულ FHIR რესურსებზე. ეს მონაცემებს ხდის პორტატულს, აუდიტირებადს და თავსებადს სხვა ჯანდაცვის სისტემებთან.</p>
+
+  <p>ეს სექცია მოიცავს მონაცემთა არქიტექტურის სამ ფენას:</p>
+  <ul class="doc-list">
+    <li><strong>FHIR რესურსების შესაბამისობა</strong> -- რომელი FHIR რესურსები ინახავს რომელ საწყობის მონაცემებს</li>
+    <li><strong>მარაგის რაოდენობის მოდელი (StockQuant)</strong> -- მატერიალიზებული სამარაგო ბალანსის სისტემა, რომელიც უზრუნველყოფს მყისიერ ნაშთის მოძიებას</li>
+    <li><strong>სამუშაო პროცესები და ბიზნეს წესები</strong> -- გადაწერის სტატუსები, FEFO კრეფა, გაფრთხილებები და ღირებულების გამოთვლა</li>
+  </ul>
+
+  <!-- ================================================================== -->
+  <!-- FHIR რესურსები -->
+  <!-- ================================================================== -->
+  <h3 id="wh-fhir-resources">FHIR რესურსების შესაბამისობა</h3>
+
+  <p>საწყობის ყოველი მონაცემი ინახება FHIR რესურსის სახით. ქვემოთ მოცემული ცხრილი აჩვენებს, თუ როგორ შეესაბამება თითოეული საწყობის კონცეფცია FHIR-ის წარმოდგენას. ინტეგრაციის გუნდებისთვის ეს არის საბოლოო ცნობარი საწყობის მონაცემების FHIR API-ით მოთხოვნისთვის.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>საწყობის კონცეფცია</th>
+          <th>FHIR რესურსი</th>
+          <th>ძირითადი ველები</th>
+          <th>იდენტიფიკატორის სისტემა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>მიღება</strong></td>
+          <td>SupplyDelivery</td>
+          <td>status, მომწოდებელი (Organization ref), დანიშნულება (Location), suppliedItem.quantity, ტიპის კოდი = <code>receipt</code></td>
+          <td><code>receipt-number</code>, <code>invoice-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>გადაწერა</strong></td>
+          <td>SupplyDelivery</td>
+          <td>status, წყარო/დანიშნულების განყოფილებები (გაფართოებების საშუალებით), ტიპის კოდი = <code>transfer</code></td>
+          <td><code>transfer-document-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>ზედნადები</strong></td>
+          <td>SupplyDelivery</td>
+          <td>იდენტიფიკატორი (10-ნიშნა ზედნადების ნომერი), ტიპის კოდი = <code>waybill</code>, RS.ge ინტეგრაციის მონაცემები</td>
+          <td><code>waybill-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>შეკვეთა</strong></td>
+          <td>SupplyRequest</td>
+          <td>status, მომთხოვნი განყოფილება, მიმღები განყოფილება, პოზიციები (JSON გაფართოება)</td>
+          <td><code>order-document-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>მარაგის ნაშთი</strong></td>
+          <td>Basic (StockQuant)</td>
+          <td>კომპოზიტური გასაღების იდენტიფიკატორი, რაოდენობა, დარეზერვებული რაოდენობა, პარტიის ნომერი, ვარგისიანობის ვადა, ხარისხის სტატუსი, ერთეულის ფასი</td>
+          <td><code>stock-quant-key</code></td>
+        </tr>
+        <tr>
+          <td><strong>პროდუქტები</strong></td>
+          <td>DeviceDefinition</td>
+          <td>მწარმოებელი, მოდელის ნომერი, UDI იდენტიფიკატორი, კატეგორიის გაფართოებები (დღგ, დოზის ფორმა, მარაგის დონეები)</td>
+          <td><code>product-code</code></td>
+        </tr>
+        <tr>
+          <td><strong>მომწოდებლები</strong></td>
+          <td>Organization</td>
+          <td>სახელი, იდენტიფიკატორი (მომწოდებლის კოდი), ტიპი = supplier, საკონტაქტო ინფორმაცია</td>
+          <td><code>supplier-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>საწყობები</strong></td>
+          <td>Location</td>
+          <td>სახელი, ტიპი (ფარმაცია, ლაბორატორია, სისხლის ბანკი და ა.შ.), partOf (მშობელი განყოფილება)</td>
+          <td><code>warehouse-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>ნომენკლატურა</strong></td>
+          <td>List</td>
+          <td>სათაური, entry[] (DeviceDefinition-ის მითითებები), კოდი კატეგორიის/ჯგუფის იერარქიისთვის</td>
+          <td>--</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>ბაზისური URL ყველა გაფართოებისთვის:</strong> ყველა მორგებული FHIR გაფართოება იყენებს ბაზისურ URL-ს <code>http://medimind.ge/fhir</code>. მაგალითად, ერთეულის ფასის გაფართოება არის <code>http://medimind.ge/fhir/StructureDefinition/admin-unit-price</code>. სისტემის ვალუტა არის GEL (ქართული ლარი).
+    </div>
+  </div>
+
+  <h4>ნომენკლატურის სამდონიანი იერარქია</h4>
+
+  <p>საწყობის პროდუქტები მიჰყვება სამდონიან კლასიფიკაციას, მსგავსი იმისა, როგორ აწყობს ბიბლიოთეკა წიგნებს სექციებად, თაროებად და ინდივიდუალურ სათაურებად:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>დონე</th>
+          <th>სახელი</th>
+          <th>რაოდენობა</th>
+          <th>მაგალითი</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. საგნების ჯგუფი</strong></td>
+          <td>კატეგორიის კლასიფიკაცია</td>
+          <td>~310 ჯგუფი</td>
+          <td>სახარჯი მასალა, მედიკამენტები, რეაქტივი</td>
+        </tr>
+        <tr>
+          <td><strong>2. სამედიცინო საგანი</strong></td>
+          <td>ზოგადი სამედიცინო საგანი</td>
+          <td>~503 საგანი</td>
+          <td>ქირურგიული ხელთათმანები (ზოგადი)</td>
+        </tr>
+        <tr>
+          <td><strong>3. სასაქონლო ერთეული</strong></td>
+          <td>კონკრეტული სამარაგო ჩანაწერი</td>
+          <td>~35,900 ერთეული</td>
+          <td>ქირურგიული ხელთათმანები, ბრენდი X, ზომა M, 100 ცალიანი ყუთი</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>ზედა დონის საწყობის ჯგუფები (11 კატეგორია) მოიცავს: სახარჯი მასალა, მედიკამენტები, სამეურნეო, არა ინვენტარი, ძირითადი საშუალებები, ინვენტარი, რეაქტივი, ხსნარი, სამედიცინო ინსტრუმენტი, ნარკოტიკები და კვება.</p>
+
+  <h4>საწყობის მდებარეობის ტიპები</h4>
+
+  <p>ყოველ საწყობს/განყოფილებას აქვს ტიპი, რომელიც განსაზღვრავს მის შესაძლებლობებს (მაგალითად, შეუძლია თუ არა პირდაპირი მიღება მომწოდებლებისგან ან საჭიროებს თუ არა ცივი ჯაჭვის მონიტორინგს):</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ტიპის კოდი</th>
+          <th>აღწერა</th>
+          <th>სპეციალური მოთხოვნები</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>pharmacy</code></td><td>ფარმაცია</td><td>--</td></tr>
+        <tr><td><code>laboratory</code></td><td>ლაბორატორია</td><td>პირდაპირი მიღება, ISO 15189, ტემპერატურა 2-8 C</td></tr>
+        <tr><td><code>blood-bank</code></td><td>სისხლის ბანკი</td><td>პირდაპირი მიღება, FDA/AABB, ტემპერატურა 1-6 C</td></tr>
+        <tr><td><code>surgical</code></td><td>ოპერაციული</td><td>--</td></tr>
+        <tr><td><code>icu</code></td><td>რეანიმაცია</td><td>--</td></tr>
+        <tr><td><code>emergency</code></td><td>გადაუდებელი</td><td>--</td></tr>
+        <tr><td><code>main</code></td><td>მთავარი საწყობი</td><td>ცენტრალური კვანძი ყველა განყოფილებისთვის</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>FHIR რესურსის ნიმუში: მიღება (SupplyDelivery)</h4>
+
+  <p>აქ მოცემულია გამარტივებული მაგალითი იმისა, თუ როგორ ინახება მიღების პოზიცია FHIR SupplyDelivery რესურსის სახით:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "SupplyDelivery",
+  "status": "completed",
+  "type": {
+    "coding": [{
+      "system": "http://medimind.ge/fhir/CodeSystem/supply-type",
+      "code": "receipt",
+      "display": "Receipt"
+    }]
+  },
+  "suppliedItem": {
+    "quantity": { "value": 500, "unit": "tablet" }
+  },
+  "occurrenceDateTime": "2026-02-15",
+  "identifier": [{
+    "system": "http://medimind.ge/fhir/identifier/receipt-number",
+    "value": "REC-2026-001234"
+  }],
+  "extension": [
+    { "url": ".../admin-item-code", "valueString": "MED-001" },
+    { "url": ".../admin-item-name", "valueString": "ამოქსიცილინი 500მგ" },
+    { "url": ".../admin-unit-price", "valueMoney": { "value": 0.35, "currency": "GEL" } },
+    { "url": ".../admin-line-total", "valueMoney": { "value": 175.00, "currency": "GEL" } },
+    { "url": ".../dest-department", "valueString": "location-pharmacy-01" },
+    { "url": ".../admin-lot-number", "valueString": "LOT-2026A" },
+    { "url": ".../admin-expiry-date", "valueString": "2028-06-30" }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- მარაგის რაოდენობის მოდელი -->
+  <!-- ================================================================== -->
+  <h3 id="wh-stock-quant">მარაგის რაოდენობის მოდელი</h3>
+
+  <p><strong>StockQuant</strong> არის სისტემის პასუხი მარტივ კითხვაზე: "რამდენი X საგანი არის Y საწყობში ამ მომენტში?" ყოველ ჯერზე ყველა მიღებისა და გადაწერის დაჯამების ნაცვლად (რაც ისტორიის ზრდასთან ერთად ნელდება), სისტემა ინახავს <strong>მატერიალიზებულ ბალანსის ჩანაწერს</strong> -- წინასწარ გამოთვლილ პასუხს, რომელიც ავტომატურად განახლდება.</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">O(1)</span>
+      <span class="doc-stat-inline-label">ბალანსის მოძიების დრო</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4-ნაწილიანი</span>
+      <span class="doc-stat-inline-label">კომპოზიტური გასაღები</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">მაქს. ცდის რაოდენობა</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">ხარისხის სტატუსი</span>
+    </div>
+  </div>
+
+  <h4>კომპოზიტური გასაღები</h4>
+
+  <p>ყოველი StockQuant ჩანაწერი უნიკალურად იდენტიფიცირდება <strong>ოთხნაწილიანი კომპოზიტური გასაღებით</strong>. წარმოიდგინეთ ეს როგორც სისტემა: საგნის, მდებარეობის, პარტიისა და ხარისხის სტატუსის კომბინაცია ზუსტად ერთ ბალანსის ჩანაწერს მიუთითებს.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">გასაღების ფორმატი: {itemCode}|{locationId}|{lotNumber}|{qualityStatus}
+
+მაგალითები:
+  MED-001|pharmacy-01|LOT-2026A|accepted     -- ამოქსიცილინი, ფარმაცია, პარტია A, მიღებული
+  MED-001|pharmacy-01|LOT-2026B|quarantine   -- იგივე საგანი, იგივე ადგილი, სხვა პარტია კარანტინში
+  MED-001|lab-02|NONE|accepted               -- იგივე საგანი, ლაბ, პარტიის თვალყურის დევნების გარეშე</code></pre>
+  </div>
+
+  <p>პარტიის თვალყურის დევნების გარეშე, პარტიის ნაწილი ინახება როგორც <code>NONE</code>. ნაგულისხმევი ხარისხის სტატუსი არის <code>accepted</code>.</p>
+
+  <h4>StockQuant ველები</h4>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>ველი</th>
+          <th>FHIR გაფართოება</th>
+          <th>ტიპი</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>itemCode</strong></td>
+          <td><code>sq-item-code</code></td>
+          <td>string</td>
+          <td>პროდუქტის კოდი (FK DeviceDefinition-ზე)</td>
+        </tr>
+        <tr>
+          <td><strong>itemName</strong></td>
+          <td><code>sq-item-name</code></td>
+          <td>string</td>
+          <td>საჩვენებელი სახელი (დენორმალიზებული წარმადობისთვის)</td>
+        </tr>
+        <tr>
+          <td><strong>locationId</strong></td>
+          <td><code>sq-location-id</code></td>
+          <td>string</td>
+          <td>განყოფილების/საწყობის Location ID</td>
+        </tr>
+        <tr>
+          <td><strong>lotNumber</strong></td>
+          <td><code>sq-lot-number</code></td>
+          <td>string</td>
+          <td>პარტიის/სერიის იდენტიფიკატორი (ცარიელი = არ იმართება)</td>
+        </tr>
+        <tr>
+          <td><strong>expiryDate</strong></td>
+          <td><code>sq-expiry-date</code></td>
+          <td>date</td>
+          <td>პარტიის ვარგისიანობის ვადა (ISO ფორმატი)</td>
+        </tr>
+        <tr>
+          <td><strong>qualityStatus</strong></td>
+          <td><code>sq-quality-status</code></td>
+          <td>code</td>
+          <td><code>accepted</code>, <code>quarantine</code>, ან <code>rejected</code></td>
+        </tr>
+        <tr>
+          <td><strong>quantity</strong></td>
+          <td><code>sq-quantity</code></td>
+          <td>decimal</td>
+          <td>მიმდინარე საერთო რაოდენობა ხელზე</td>
+        </tr>
+        <tr>
+          <td><strong>reservedQuantity</strong></td>
+          <td><code>sq-reserved-qty</code></td>
+          <td>decimal</td>
+          <td>მომლოდინე გადაწერებისთვის დარეზერვებული რაოდენობა</td>
+        </tr>
+        <tr>
+          <td><strong>unitCost</strong></td>
+          <td><code>sq-unit-cost</code></td>
+          <td>decimal</td>
+          <td>შეწონილი საშუალო ღირებულება ერთეულზე (GEL)</td>
+        </tr>
+        <tr>
+          <td><strong>unit</strong></td>
+          <td><code>sq-unit</code></td>
+          <td>string</td>
+          <td>ზომის ერთეული (აბი, მლ, ყუთი და ა.შ.)</td>
+        </tr>
+        <tr>
+          <td><strong>lastMovementDate</strong></td>
+          <td><code>sq-last-movement</code></td>
+          <td>dateTime</td>
+          <td>ბალანსის ბოლო ცვლილების დრო</td>
+        </tr>
+        <tr>
+          <td><strong>lastMovementRef</strong></td>
+          <td><code>sq-last-move-ref</code></td>
+          <td>string</td>
+          <td>მითითება ბოლო SupplyDelivery-ზე, რომელმაც შეცვალა ეს ჩანაწერი</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>ხელმისაწვდომი რაოდენობა:</strong> რაოდენობა, რომელიც მომხმარებელს შეუძლია რეალურად გამოიყენოს ან გადაწეროს, არის <code>quantity - reservedQuantity</code>. დარეზერვებული რაოდენობა წარმოადგენს მარაგს, რომელიც გამოყოფილია დამტკიცებული, მაგრამ ჯერ არ გაგზავნილი გადაწერებისთვის.
+    </div>
+  </div>
+
+  <h4>ოპტიმისტური დაბლოკვა</h4>
+
+  <p>როდესაც ორი ადამიანი ცდილობს ერთდროულად იგივე მარაგის ბალანსის განახლებას (მაგალითად, ორი მიღება ერთ საწყობში ერთდროულად), სისტემა იყენებს <strong>ოპტიმისტურ დაბლოკვას</strong> მონაცემთა დაზიანების თავიდან ასაცილებლად. მუშაობის პრინციპი:</p>
+
+  <ol class="doc-list">
+    <li>მიმდინარე StockQuant ჩანაწერის წაკითხვა (მათ შორის მისი <code>meta.versionId</code>)</li>
+    <li>ახალი რაოდენობის გამოთვლა</li>
+    <li>განახლების გაგზავნა <code>If-Match</code> ETag ჰედერით, რომელიც შეიცავს ვერსიის ID-ს</li>
+    <li>თუ სხვამ ადრე განაახლა ჩანაწერი, სერვერი აბრუნებს <strong>412 Precondition Failed</strong></li>
+    <li>სისტემა ხელახლა ცდის ექსპონენციალური დაყოვნებით (მაქსიმუმ 5 ცდა, შემთხვევითი ჯიტერით)</li>
+  </ol>
+
+  <p>ეს მიდგომა თავს არიდებს მონაცემთა ბაზის ბლოკირებას და ამავდროულად გარანტიას იძლევა, რომ მარაგის ცვლილებები არ დაიკარგება კონკურენტული წვდომის პირობებშიც კი.</p>
+
+  <h4>FHIR რესურსის ნიმუში: StockQuant (Basic)</h4>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "Basic",
+  "code": {
+    "coding": [{
+      "system": "http://medimind.ge/fhir/CodeSystem/supply-type",
+      "code": "stock-quant",
+      "display": "Stock Quant"
+    }]
+  },
+  "identifier": [{
+    "system": "http://medimind.ge/fhir/identifier/stock-quant-key",
+    "value": "MED-001|pharmacy-01|LOT-2026A|accepted"
+  }],
+  "meta": {
+    "versionId": "3",
+    "tag": [
+      { "system": ".../CodeSystem/department", "code": "pharmacy-01" },
+      { "system": ".../CodeSystem/item-code", "code": "MED-001" }
+    ]
+  },
+  "extension": [
+    { "url": ".../sq-item-code", "valueString": "MED-001" },
+    { "url": ".../sq-item-name", "valueString": "ამოქსიცილინი 500მგ" },
+    { "url": ".../sq-location-id", "valueString": "pharmacy-01" },
+    { "url": ".../sq-location-name", "valueString": "მთავარი ფარმაცია" },
+    { "url": ".../sq-lot-number", "valueString": "LOT-2026A" },
+    { "url": ".../sq-expiry-date", "valueDate": "2028-06-30" },
+    { "url": ".../sq-quality-status", "valueCode": "accepted" },
+    { "url": ".../sq-quantity", "valueDecimal": 450 },
+    { "url": ".../sq-reserved-qty", "valueDecimal": 50 },
+    { "url": ".../sq-unit-cost", "valueDecimal": 0.35 },
+    { "url": ".../sq-unit", "valueString": "tablet" },
+    { "url": ".../sq-last-movement", "valueDateTime": "2026-02-15T10:30:00Z" }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- სამუშაო პროცესები და ბიზნეს წესები -->
+  <!-- ================================================================== -->
+  <h3 id="wh-workflows">სამუშაო პროცესები და ბიზნეს წესები</h3>
+
+  <p>საწყობის მოდული ავტომატურ ბიზნეს წესებს ამოქმედებს, რომლებიც არეგულირებს მარაგის მოძრაობას სისტემაში. ეს წესები უზრუნველყოფს მარეგულირებელ შესაბამისობას, თავიდან აიცილებს მონაცემთა შეცდომებს და ოპტიმიზაციას უკეთებს მარაგის ბრუნვას.</p>
+
+  <h4>გადაწერის სტატუსის სასიცოცხლო ციკლი</h4>
+
+  <p>განყოფილებებს შორის გადაწერები მიჰყვება <strong>9 სტატუსიან სასიცოცხლო ციკლს</strong> მკაცრად განსაზღვრული გადასვლებით. ეს ჰგავს ამანათის თვალყურის დევნების სისტემას -- ყოველი გადაწერა შეიძლება მხოლოდ წინ წავიდეს ვალიდურ სტატუსებში, ზოგი სტატუსი კი ტერმინალურია (გადაწერის შეცვლა მათ მიღწევის შემდეგ შეუძლებელია).</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+stateDiagram-v2
+    [*] --> draft
+    draft --> requested: წარდგენა
+    draft --> cancelled: გაუქმება
+    requested --> approved: დამტკიცება
+    requested --> rejected: უარყოფა
+    requested --> cancelled: გაუქმება
+    approved --> in_progress: გაგზავნის დაწყება
+    approved --> cancelled: გაუქმება
+    in_progress --> received: მიღების დადასტურება
+    in_progress --> partial: ნაწილობრივი მიღება
+    in_progress --> completed: პირდაპირი დასრულება
+    in_progress --> cancelled: გაუქმება
+    received --> completed: საბოლოო დასრულება
+    partial --> completed: დარჩენილის დასრულება
+    partial --> cancelled: გაუქმება
+
+    state "in-progress" as in_progress
+
+    completed --> [*]
+    rejected --> [*]
+    cancelled --> [*]
+    </div>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მიმდინარე სტატუსი</th>
+          <th>ნებადართული გადასვლები</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>draft</code></td>
+          <td>requested, cancelled</td>
+          <td>შექმნილი, მაგრამ ჯერ არ წარდგენილი დამტკიცებისთვის</td>
+        </tr>
+        <tr>
+          <td><code>requested</code></td>
+          <td>approved, rejected, cancelled</td>
+          <td>წარდგენილი, ელოდება მენეჯერის დამტკიცებას</td>
+        </tr>
+        <tr>
+          <td><code>approved</code></td>
+          <td>in-progress, cancelled</td>
+          <td>მენეჯერმა დაამტკიცა; საგნების აკრეფა და გაგზავნა შესაძლებელია</td>
+        </tr>
+        <tr>
+          <td><code>in-progress</code></td>
+          <td>received, partial, completed, cancelled</td>
+          <td>საგნები ფიზიკურად გადადის განყოფილებებს შორის</td>
+        </tr>
+        <tr>
+          <td><code>received</code></td>
+          <td>completed</td>
+          <td>მიმღებმა განყოფილებამ დაადასტურა სრული მიღება</td>
+        </tr>
+        <tr>
+          <td><code>partial</code></td>
+          <td>completed, cancelled</td>
+          <td>ნაწილობრივი მიღება -- ზოგი საგანი ჯერ კიდევ მომლოდინეა</td>
+        </tr>
+        <tr>
+          <td><code>completed</code></td>
+          <td><em>(ტერმინალური)</em></td>
+          <td>გადაწერა სრულად დასრულებულია, მარაგის ნაშთები განახლებულია</td>
+        </tr>
+        <tr>
+          <td><code>rejected</code></td>
+          <td><em>(ტერმინალური)</em></td>
+          <td>მენეჯერმა უარყო გადაწერის მოთხოვნა</td>
+        </tr>
+        <tr>
+          <td><code>cancelled</code></td>
+          <td><em>(ტერმინალური)</em></td>
+          <td>გადაწერა გაუქმებულია ნებისმიერ ეტაპზე</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>შეკვეთის სტატუსის სასიცოცხლო ციკლი</h4>
+
+  <p>შეკვეთები (განყოფილებების მომარაგების მოთხოვნები) მიჰყვება უფრო მარტივ სასიცოცხლო ციკლს:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მიმდინარე სტატუსი</th>
+          <th>ნებადართული გადასვლები</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>draft</code></td>
+          <td>active, cancelled</td>
+          <td>შეკვეთა შექმნილი, ჯერ არ წარდგენილი</td>
+        </tr>
+        <tr>
+          <td><code>active</code></td>
+          <td>confirmed, cancelled</td>
+          <td>შეკვეთა წარდგენილი და ხილული საწყობის პერსონალისთვის</td>
+        </tr>
+        <tr>
+          <td><code>confirmed</code></td>
+          <td>complete, cancelled</td>
+          <td>საწყობმა დაადასტურა შეკვეთა და მარაგი გაიგზავნა</td>
+        </tr>
+        <tr>
+          <td><code>complete</code></td>
+          <td><em>(ტერმინალური)</em></td>
+          <td>შეკვეთა სრულად შესრულებულია</td>
+        </tr>
+        <tr>
+          <td><code>cancelled</code></td>
+          <td><em>(ტერმინალური)</em></td>
+          <td>შეკვეთა გაუქმებულია</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>FEFO კრეფის ალგორითმი</h4>
+
+  <p><strong>FEFO</strong> (First Expired, First Out -- ვადაგასული პირველი გავიდეს) არის სამედიცინო მარაგების მარეგულირებელი მოთხოვნა. მარაგის მოხმარების ან გადაწერის საჭიროებისას სისტემა ავტომატურად გვთავაზობს რომელი პარტია უნდა აიკრიფოს ვარგისიანობის ვადების მიხედვით -- ყოველთვის ყველაზე ადრე ვადაგასული პარტიით იწყება.</p>
+
+  <div class="doc-warning-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>მარეგულირებელი შესაბამისობა:</strong> FEFO კრეფა სავალდებულოა ფარმაცევტული პროდუქტებისთვის ვადაგასული მარაგის ნარჩენების მინიმიზაციისთვის. FEFO რეკომენდაციის გადახრა მოითხოვს დოკუმენტირებულ მიზეზს (დაზიანებული შეფუთვა, მომხმარებლის მოთხოვნა, პარტიის გამოთხოვა, ხარისხის პრობლემა, ან არასაკმარისი რაოდენობა).
+    </div>
+  </div>
+
+  <p>FEFO ალგორითმი მუშაობს სამ ნაბიჯად:</p>
+
+  <ol class="doc-list">
+    <li><strong>ფილტრაცია</strong> -- გამოირიცხება ყველა პარტია, რომელიც ვადაგასულია (ვარგისიანობის ვადა დღეზე ადრე) ან კარანტინში/უარყოფილია. ასევე გამოირიცხება პარტიები ხელმისაწვდომი რაოდენობის გარეშე (სრულად დარეზერვებული).</li>
+    <li><strong>დალაგება</strong> -- დარჩენილი პარტიები ლაგდება ვარგისიანობის ვადით ზრდადობით (ადრეული ვადა პირველი). ვადის გარეშე პარტიები ბოლოში.</li>
+    <li><strong>აკრეფა</strong> -- შეირჩევა პირველი პარტია საკმარისი ხელმისაწვდომი რაოდენობით (<code>quantity - reservedQuantity >= მოთხოვნილი რაოდენობა</code>).</li>
+  </ol>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">FEFO კრეფის ლოგიკა (ფსევდოკოდი):
+
+1. მოიპოვე ყველა StockQuant (itemCode, locationId, qualityStatus='accepted')
+2. ფილტრი: ამოიღე სადაც expiryDate &lt; დღეს
+3. ფილტრი: ამოიღე სადაც (quantity - reservedQuantity) &lt;= 0
+4. დალაგება: expiryDate ზრდადობით (null-ები ბოლოში)
+5. ყოველი კანდიდატისთვის:
+     თუ availableQty >= requestedAmount:
+       დააბრუნე ეს პარტია    -- აქედან აკრიფე
+6. თუ არცერთ პარტიას არ აქვს საკმარისი: გამოტანე InsufficientStockError</code></pre>
+  </div>
+
+  <h4>საწყობის ზონის კრეფის თანმიმდევრობა</h4>
+
+  <p>როდესაც კრეფის სია შეიცავს საგნებს რამდენიმე საწყობის ზონიდან, საგნები ჯგუფდება და იკრიფება კონკრეტული თანმიმდევრობით უსაფრთხოებისა და შესაბამისობისთვის:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>პრიორიტეტი</th>
+          <th>ზონა</th>
+          <th>მიზეზი</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>ცივი ჯაჭვი</strong></td>
+          <td>ტემპერატურულად მგრძნობიარე საგნები პირველად უნდა აიკრიფოს და გადაადგილდეს ცივ საცავს გარეთ ყოფნის დროის მინიმიზაციისთვის</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>კონტროლირებადი</strong></td>
+          <td>ნარკოტიკები და კონტროლირებადი ნივთიერებები მოითხოვენ დამატებით ვერიფიკაციას და დოკუმენტაციას</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>საშიში მასალა</strong></td>
+          <td>საშიშ მასალებს სჭირდება სპეციალური მოპყრობის წესები</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>ზოგადი</strong></td>
+          <td>სტანდარტული მარაგი სპეციალური მოპყრობის მოთხოვნების გარეშე</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>შეწონილი საშუალო ღირებულების გამოთვლა</h4>
+
+  <p>როდესაც ახალი მარაგი ჩამოდის არსებული მარაგისგან განსხვავებული ფასით, სისტემა ხელახლა ითვლის ერთეულის ღირებულებას <strong>შეწონილი საშუალოს</strong> გამოყენებით. ეს უზრუნველყოფს, რომ ერთეულის ღირებულება ასახავს ნაზავის ღირებულებას ყველა მიღებულ პარტიაში.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">შეწონილი საშუალო ღირებულების ფორმულა:
+
+  ახალიᲖასი = (არსებულიᲠაოდ x არსებულიᲖასი + მიღებულიᲠაოდ x მიღებულიᲖასი)
+               / (არსებულიᲠაოდ + მიღებულიᲠაოდ)
+
+მაგალითი:
+  არსებული: 200 აბი 0.30 GEL თითო
+  მიღებული: 300 აბი 0.40 GEL თითო
+
+  ახალიᲖასი = (200 x 0.30 + 300 x 0.40) / (200 + 300)
+            = (60 + 120) / 500
+            = 0.36 GEL აბზე
+
+სპეციალური შემთხვევა: უფასო/შემოწირული საგნები (ღირებულება = 0) არ ამცირებს არსებულ ფასს.
+  თუ არსებულიᲠაოდ > 0 და მიღებულიᲖასი = 0:
+    unitCost რჩება არსებულᲖასზე (უცვლელი)</code></pre>
+  </div>
+
+  <h4>მარაგის გაფრთხილების წესები</h4>
+
+  <p>სისტემა მონიტორინგს უწევს მარაგის დონეებს და ავტომატურად ქმნის გაფრთხილებებს კონფიგურირებადი ზღვრების საფუძველზე. გაფრთხილებები გამოჩნდება საწყობის საინფორმაციო პანელზე და შეუძლიათ შეტყობინებების გააქტიურება.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>გაფრთხილების ტიპი</th>
+          <th>გააქტიურების პირობა</th>
+          <th>სიმძიმე</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>მარაგის ამოწურვა</strong></td>
+          <td>quantity = 0 ნებისმიერი თვალყურის დევნის ქვეშ მყოფი საგნისთვის</td>
+          <td>კრიტიკული (წითელი)</td>
+        </tr>
+        <tr>
+          <td><strong>დაბალი მარაგი</strong></td>
+          <td>quantity &lt; 50% ხელახალი შეკვეთის წერტილისა (minStockLevel DeviceDefinition-ზე)</td>
+          <td>გაფრთხილება (ნარინჯისფერი)</td>
+        </tr>
+        <tr>
+          <td><strong>ვადა იწურება (7 დღე)</strong></td>
+          <td>expiryDate მომდევნო 7 დღეში</td>
+          <td>კრიტიკული (წითელი)</td>
+        </tr>
+        <tr>
+          <td><strong>ვადა იწურება (30 დღე)</strong></td>
+          <td>expiryDate მომდევნო 30 დღეში</td>
+          <td>გაფრთხილება (ნარინჯისფერი)</td>
+        </tr>
+        <tr>
+          <td><strong>ვადა იწურება (90 დღე)</strong></td>
+          <td>expiryDate მომდევნო 90 დღეში</td>
+          <td>ინფორმაცია (ლურჯი)</td>
+        </tr>
+        <tr>
+          <td><strong>ვადაგასული</strong></td>
+          <td>expiryDate უკვე გასული</td>
+          <td>კრიტიკული (წითელი)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>მარაგის მოძრაობის ტიპები</h4>
+
+  <p>StockQuant ბალანსის ყოველი ცვლილება გამოწვეულია <strong>მარაგის მოძრაობით</strong>. სისტემა თვალყურს ადევნებს შვიდი ტიპის მოძრაობას, თითოეული ინახება FHIR SupplyDelivery-ით სპეციფიკური ტიპის კოდით:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მოძრაობის ტიპი</th>
+          <th>ეფექტი რაოდენობაზე</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>receipt</code></td>
+          <td>+</td>
+          <td>მომწოდებლისგან მიღებული საქონელი</td>
+        </tr>
+        <tr>
+          <td><code>transfer</code></td>
+          <td>- (წყარო) / + (დანიშნულება)</td>
+          <td>განყოფილებათშორისი მარაგის გადაადგილება</td>
+        </tr>
+        <tr>
+          <td><code>adjustment-plus</code></td>
+          <td>+</td>
+          <td>დადებითი კორექტირება (ფიზიკურმა დათვლამ მეტი იპოვა მოსალოდნელზე)</td>
+        </tr>
+        <tr>
+          <td><code>adjustment-minus</code></td>
+          <td>-</td>
+          <td>უარყოფითი კორექტირება (დაზიანება, დანაკარგი, შედარება)</td>
+        </tr>
+        <tr>
+          <td><code>consumption</code></td>
+          <td>-</td>
+          <td>პაციენტის მოვლაში მოხმარებული საგნები</td>
+        </tr>
+        <tr>
+          <td><code>scrap</code></td>
+          <td>-</td>
+          <td>განადგურებული საგნები (ვადაგასული, შეუქცევადი დაზიანება)</td>
+        </tr>
+        <tr>
+          <td><code>recall</code></td>
+          <td>-</td>
+          <td>მწარმოებლის გამოთხოვა -- საგნები ამოღებულია მიმოქცევიდან</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>კორექტირების მიზეზის კოდები</h4>
+
+  <p>მარაგის კორექტირების დროს (დადებითი თუ უარყოფითი) აუდიტის შესაბამისობისთვის მიზეზის კოდის მითითება სავალდებულოა:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მიზეზის კოდი</th>
+          <th>გამოყენების შემთხვევა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>physical-count</code></td><td>ფიზიკურმა ინვენტარიზაციამ გამოავლინა შეუსაბამობა</td></tr>
+        <tr><td><code>damage-spoilage</code></td><td>საგნები დაზიანდა ან გაფუჭდა შენახვისას</td></tr>
+        <tr><td><code>expired-disposal</code></td><td>ვადაგასული საგნების ჩამოწერა</td></tr>
+        <tr><td><code>theft-loss</code></td><td>ქურდობის ან აუხსნელი დაკარგვის გამო დაკარგული საგნები</td></tr>
+        <tr><td><code>system-correction</code></td><td>მონაცემთა შეტანის შეცდომის გასწორება</td></tr>
+        <tr><td><code>reconciliation</code></td><td>ავტომატურმა შედარების პროცესმა აღმოაჩინა შეუსაბამობა</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>ცივი ჯაჭვი და ხარისხის ინსპექცია</h4>
+
+  <p>ზოგიერთი საწყობის მდებარეობა (ლაბორატორია, სისხლის ბანკი) მოითხოვს ხარისხის კონტროლის დამატებით ნაბიჯებს მიღებისას:</p>
+
+  <ul class="doc-list">
+    <li><strong>ტემპერატურის აღრიცხვა</strong> -- ცივი ჯაჭვის საგნებისთვის, მიმღები პერსონალი აღრიცხავს ტემპერატურას მიღების მომენტში. სისტემა ამოწმებს, მოცემულია თუ არა მაჩვენებელი მისაღებ დიაპაზონში (მაგ., 2-8 C ლაბორატორიისთვის, 1-6 C სისხლის ბანკისთვის).</li>
+    <li><strong>ინსპექციის ჩამონათვალი</strong> -- პერსონალი ამოწმებს შეფუთვის მთლიანობას, პროდუქტის მდგომარეობას და ეტიკეტირების სისრულეს. საგნები, რომლებიც ვერ გადიან ინსპექციას, ინდება <code>quarantine</code> სტატუსზე განხილვამდე.</li>
+    <li><strong>ხარისხის სტატუსის ნაკადი</strong> -- საგნები შემოდის როგორც <code>quarantine</code> (ინსპექციის მომლოდინე), შემდეგ გადადის <code>accepted</code> (გამოყენებისთვის ნებადართული) ან <code>rejected</code> (დაბრუნებული ან განადგურებული). მხოლოდ <code>accepted</code> საგნები ხელმისაწვდომია გადაწერებისა და მოხმარებისთვის.</li>
+  </ul>
+
+  <h4>ბალანსის გამოთვლის სტრატეგია</h4>
+
+  <p>სისტემა იყენებს ორმაგ სტრატეგიას სამარაგო ბალანსების გამოთვლისთვის:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>მეთოდი</th>
+          <th>წარმადობა</th>
+          <th>გამოყენების შემთხვევა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>StockQuant მოძიება</strong></td>
+          <td>O(1) -- მყისიერი</td>
+          <td>ძირითადი მეთოდი. კითხულობს წინასწარ გამოთვლილ ბალანსს Basic რესურსიდან.</td>
+        </tr>
+        <tr>
+          <td><strong>ძველი ხელახალი გამოთვლა</strong></td>
+          <td>O(n) -- ნელი</td>
+          <td>სარეზერვო, როდესაც StockQuant მონაცემები მიუწვდომელია. სკანირებს 10,000-მდე SupplyDelivery ჩანაწერს ისტორიიდან ხელახალი გამოთვლისთვის.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>ბალანსის ქეში იყენებს 30-წამიან TTL-ს (სიცოცხლის დრო) და მხარს უჭერს ჩანართების შორის ინვალიდაციას BroadcastChannel-ის საშუალებით, ასე რომ როდესაც ბრაუზერის ერთი ჩანართი ანახლებს მარაგს, ყველა სხვა გახსნილი ჩანართი ხედავს ცვლილებას 30 წამში.</p>
+
+</section>

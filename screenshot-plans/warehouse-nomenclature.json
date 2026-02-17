@@ -1,0 +1,294 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-16T12:00:00Z",
+  "sourceSection": {
+    "id": "warehouse-nomenclature",
+    "file": "sections/en/warehouse-nomenclature.html",
+    "titleKey": "toc.warehouseNomenclature"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/nomenclature/warehouse"
+  },
+  "screenshots": [
+    {
+      "number": 1,
+      "id": "wh-nomenclature-hierarchy",
+      "name": "wh-nomenclature-hierarchy",
+      "description": "Expanded 5-tier hierarchy info panel showing all levels with descriptions and examples",
+      "desiredState": "The collapsible hierarchy info panel at the top of the nomenclature page is expanded, revealing a visual guide that explains all 5 levels (Categories, Product Groups, Sub-Groups, Generic Names, Product Catalog) with descriptions and examples. The 5 tab cards are visible below.",
+      "differentiator": "Shows the expanded info/help panel at the top that explains how the hierarchy works — not the tab content below",
+      "stateSetup": {
+        "description": "Click the collapsible hierarchy info bar to expand it, then wait for the content to render",
+        "interactionSequence": [
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var panels = document.querySelectorAll('[class*=Collapse], [class*=Accordion], details, [class*=collapse]'); return 'Found ' + panels.length + ' collapsible elements'; })()" },
+          { "action": "evaluate", "script": "(() => { var btn = document.querySelector('[class*=hierarchy] [class*=toggle], [class*=info-panel] [class*=header], [class*=HierarchyInfo] button, [class*=hierarchyInfo] [class*=header]'); if (btn) { btn.click(); return 'clicked hierarchy toggle'; } var allBtns = document.querySelectorAll('button, [role=button]'); for (var i = 0; i < allBtns.length; i++) { var t = allBtns[i].textContent.toLowerCase(); if (t.includes('hierarch') || t.includes('how does')) { allBtns[i].click(); return 'clicked button: ' + allBtns[i].textContent.trim().substring(0, 50); } } return 'no hierarchy toggle found'; })()" },
+          { "action": "wait", "ms": 1000 }
+        ],
+        "sampleData": null
+      },
+      "type": "interaction",
+      "anchorId": "wh-hierarchy",
+      "docReference": "Section: Product Hierarchy — hierarchy info panel",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[class*=nomenclature], [class*=Nomenclature]"],
+      "knownLimitation": "The hierarchy info panel toggle selector may vary; may need DOM exploration to find the correct clickable element",
+      "verificationCriteria": {
+        "mustShow": ["Expanded hierarchy panel with level descriptions", "5 tab cards visible"],
+        "mustNotShow": ["Loading skeletons", "Error message"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-nomenclature-hierarchy" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 2,
+      "id": "wh-nomenclature-categories",
+      "name": "wh-nomenclature-categories",
+      "description": "Categories tab (Level 1) showing list of warehouse categories with add, edit, and delete actions",
+      "desiredState": "The Categories tab card (Level 1) is active/selected at the top. The content area below shows a list/table of warehouse categories (e.g., Consumables, Medications, Reagents) with action buttons (add, edit, delete), search bar, and status indicators.",
+      "differentiator": "Shows the Categories (Level 1) tab content — a simple list of top-level category names with CRUD actions",
+      "stateSetup": {
+        "description": "Click the first tab card (Categories / Level 1) to activate it",
+        "interactionSequence": [
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var cards = document.querySelectorAll('[class*=TabCard], [class*=tabCard], [class*=tab-card], [class*=LevelCard], [class*=levelCard], [class*=level-card]'); if (cards.length > 0) { cards[0].click(); return 'clicked first tab card'; } var tabs = document.querySelectorAll('[role=tab], [class*=Tab]'); for (var i = 0; i < tabs.length; i++) { var t = tabs[i].textContent; if (t.includes('1') || t.toLowerCase().includes('categor')) { tabs[i].click(); return 'clicked tab: ' + t.trim().substring(0, 40); } } return 'no tab card found — may already be active'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "interaction",
+      "anchorId": "wh-categories",
+      "docReference": "Section: Categories & Groups — Categories (Level 1)",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[class*=nomenclature], [class*=Nomenclature]"],
+      "knownLimitation": "Tab card selectors may need DOM exploration; the first tab may be active by default",
+      "verificationCriteria": {
+        "mustShow": ["Category list with item names", "Add/edit/delete action buttons or icons", "First tab card highlighted as active"],
+        "mustNotShow": ["Loading skeletons", "Error message"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-nomenclature-categories" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 3,
+      "id": "wh-nomenclature-groups",
+      "name": "wh-nomenclature-groups",
+      "description": "Product Groups tab (Level 2) showing group list with parent category, item count, and cross-filter navigation",
+      "desiredState": "The Product Groups tab card (Level 2) is active/selected. The content area shows a table of product groups with columns for group name, parent category, and item count badge. Search and add-new controls are visible.",
+      "differentiator": "Shows the Product Groups (Level 2) tab — group list with parent category column and item count badges, not the Categories tab",
+      "stateSetup": {
+        "description": "Click the second tab card (Product Groups / Level 2) to activate it",
+        "interactionSequence": [
+          { "action": "wait", "ms": 1000 },
+          { "action": "evaluate", "script": "(() => { var cards = document.querySelectorAll('[class*=TabCard], [class*=tabCard], [class*=tab-card], [class*=LevelCard], [class*=levelCard], [class*=level-card]'); if (cards.length > 1) { cards[1].click(); return 'clicked second tab card'; } var tabs = document.querySelectorAll('[role=tab], [class*=Tab]'); for (var i = 0; i < tabs.length; i++) { var t = tabs[i].textContent; if (t.includes('2') || t.toLowerCase().includes('group')) { tabs[i].click(); return 'clicked tab: ' + t.trim().substring(0, 40); } } return 'no second tab card found'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "interaction",
+      "anchorId": "wh-categories",
+      "docReference": "Section: Categories & Groups — Product Groups (Level 2)",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[class*=nomenclature], [class*=Nomenclature]"],
+      "knownLimitation": "Tab card index assumes 5 cards in order: Categories, Groups, Sub-Groups, Generic Names, Catalog",
+      "verificationCriteria": {
+        "mustShow": ["Product group list", "Parent category column", "Second tab card highlighted as active"],
+        "mustNotShow": ["Loading skeletons", "Error message"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-nomenclature-groups" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 4,
+      "id": "wh-nomenclature-items",
+      "name": "wh-nomenclature-items",
+      "description": "Generic Names tab (Level 4) showing product list with sub-group badges, warehouse item counts, and filter options",
+      "desiredState": "The Generic Names tab card (Level 4) is active/selected. The content area shows a table of generic product names with sub-group badge, warehouse item count, and action buttons. Search bar is visible at the top.",
+      "differentiator": "Shows Generic Names (Level 4) — standard product names with sub-group badges and warehouse item counts, not the Product Catalog table with 13 columns",
+      "stateSetup": {
+        "description": "Click the fourth tab card (Generic Names / Level 4) to activate it",
+        "interactionSequence": [
+          { "action": "wait", "ms": 1000 },
+          { "action": "evaluate", "script": "(() => { var cards = document.querySelectorAll('[class*=TabCard], [class*=tabCard], [class*=tab-card], [class*=LevelCard], [class*=levelCard], [class*=level-card]'); if (cards.length > 3) { cards[3].click(); return 'clicked fourth tab card (index 3)'; } var tabs = document.querySelectorAll('[role=tab], [class*=Tab]'); for (var i = 0; i < tabs.length; i++) { var t = tabs[i].textContent; if (t.includes('4') || t.toLowerCase().includes('generic')) { tabs[i].click(); return 'clicked tab: ' + t.trim().substring(0, 40); } } return 'no fourth tab card found'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "interaction",
+      "anchorId": "wh-product-catalog",
+      "docReference": "Section: Product Catalog — Generic Names (Level 4)",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[class*=nomenclature], [class*=Nomenclature]"],
+      "knownLimitation": "Tab card index assumes 5 cards in order; Level 3 (Sub-Groups) is skipped in screenshots as it follows the same pattern",
+      "verificationCriteria": {
+        "mustShow": ["Generic name list", "Sub-group badges or item count", "Fourth tab card highlighted as active"],
+        "mustNotShow": ["Loading skeletons", "Error message"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-nomenclature-items" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 5,
+      "id": "wh-nomenclature-catalog",
+      "name": "wh-nomenclature-catalog",
+      "description": "Product Catalog tab (Level 5) showing detailed item list with code, name, group, category, unit, manufacturer, and quantity columns",
+      "desiredState": "The Product Catalog tab card (Level 5) is active/selected. The content area shows a wide data table with 13 columns (ID, Code, Name, Product Group, Generic Name, Category, Unit, Manufacturer, Quantity, Description, Deleted, Parent, Price Calculation). Filter controls (text search, category dropdown, status filter) are visible above the table. Pagination at the bottom.",
+      "differentiator": "Shows the Product Catalog (Level 5) — the most detailed table with many columns showing specific warehouse items, not the simpler lists at higher levels",
+      "stateSetup": {
+        "description": "Click the fifth tab card (Product Catalog / Level 5) to activate it",
+        "interactionSequence": [
+          { "action": "wait", "ms": 1000 },
+          { "action": "evaluate", "script": "(() => { var cards = document.querySelectorAll('[class*=TabCard], [class*=tabCard], [class*=tab-card], [class*=LevelCard], [class*=levelCard], [class*=level-card]'); if (cards.length > 4) { cards[4].click(); return 'clicked fifth tab card (index 4)'; } var tabs = document.querySelectorAll('[role=tab], [class*=Tab]'); for (var i = 0; i < tabs.length; i++) { var t = tabs[i].textContent; if (t.includes('5') || t.toLowerCase().includes('catalog')) { tabs[i].click(); return 'clicked tab: ' + t.trim().substring(0, 40); } } return 'no fifth tab card found'; })()" },
+          { "action": "wait", "ms": 2000 }
+        ],
+        "sampleData": null
+      },
+      "type": "interaction",
+      "anchorId": "wh-product-catalog",
+      "docReference": "Section: Product Catalog — Product Catalog (Level 5)",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[class*=nomenclature], [class*=Nomenclature]"],
+      "knownLimitation": "Table may be wider than viewport; some right-side columns may require horizontal scroll",
+      "verificationCriteria": {
+        "mustShow": ["Multi-column data table with product rows", "Filter controls above table", "Fifth tab card highlighted as active"],
+        "mustNotShow": ["Loading skeletons", "Error message"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-nomenclature-catalog" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 6,
+      "id": "wh-item-edit",
+      "name": "wh-item-edit",
+      "description": "Warehouse item edit modal showing Main tab with VAT settings, medical item link, generic drug, breakdown, and manufacturer fields",
+      "desiredState": "The edit modal is open over the Product Catalog table, showing the Main tab with editable sections: Basic Config (VAT checkbox, Parent ID), Department Stock table, Medical Item autocomplete, Medical Item Group, Generic drug, Item Breakdown, Medical Heading (country/manufacturer), Tags, Price Calculation. Each section has its own Save button.",
+      "differentiator": "Shows the edit modal dialog overlaying the catalog — a form with multiple labeled sections and Save buttons, not the table view behind it",
+      "stateSetup": {
+        "description": "Ensure Product Catalog tab (Level 5) is active, then click the edit button on the first data row to open the edit modal",
+        "interactionSequence": [
+          { "action": "wait", "ms": 1000 },
+          { "action": "evaluate", "script": "(() => { var cards = document.querySelectorAll('[class*=TabCard], [class*=tabCard], [class*=tab-card], [class*=LevelCard], [class*=levelCard], [class*=level-card]'); if (cards.length > 4) { cards[4].click(); return 'clicked fifth tab card'; } return 'no tab cards found'; })()" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var editBtns = document.querySelectorAll('table tbody tr button[class*=edit], table tbody tr [class*=ActionIcon], table tbody tr button svg'); for (var i = 0; i < editBtns.length; i++) { var el = editBtns[i]; if (el.closest('button')) { el.closest('button').click(); return 'clicked edit button on row'; } } var allBtns = document.querySelectorAll('table tbody tr button, table tbody tr [role=button]'); if (allBtns.length > 0) { allBtns[0].click(); return 'clicked first button in table row'; } return 'no edit button found in table'; })()" },
+          { "action": "wait", "ms": 2000 }
+        ],
+        "sampleData": null
+      },
+      "type": "interaction",
+      "anchorId": "wh-product-catalog",
+      "docReference": "Section: Product Catalog — Editing a Catalog Item",
+      "sectionHeaderText": null,
+      "expectedDOMElements": ["[class*=Modal], [class*=modal], [role=dialog]"],
+      "knownLimitation": "Edit button selector may vary; modal content may require scrolling to see all sections",
+      "verificationCriteria": {
+        "mustShow": ["Modal/dialog overlay", "Form fields with labels", "Save button(s)"],
+        "mustNotShow": ["Error message", "Loading skeleton inside modal"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-item-edit" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=РУС",
+      "ka": "text=ქარ"
+    },
+    "waitAfterSwitch": 2000
+  },
+  "summary": {
+    "totalScreenshots": 6,
+    "totalFiles": 18,
+    "staticScreenshots": 0,
+    "multiStepFlows": 0,
+    "stateBased": 6
+  }
+}

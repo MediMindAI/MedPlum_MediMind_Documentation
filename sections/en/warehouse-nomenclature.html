@@ -1,0 +1,463 @@
+<section class="doc-section" id="warehouse-nomenclature">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 3h7v7H3V3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 3h7v7h-7V3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 14h7v7H3v-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17.5 14v7M14 17.5h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h2>Product Nomenclature</h2>
+    </div>
+  </div>
+
+  <!-- Product Hierarchy -->
+  <h3 id="wh-hierarchy">Product Hierarchy</h3>
+
+  <p>The warehouse module organizes all products using a <strong>5-tier hierarchy</strong>. Think of it like folders on a computer: broad categories at the top, and specific items at the bottom. Each level narrows down the classification, making it easy to find and manage thousands of products.</p>
+
+  <!-- Visual hierarchy diagram -->
+  <div style="max-width: 680px; margin: 2rem auto;">
+    <div style="display: flex; flex-direction: column; gap: 0; align-items: center;">
+      <!-- Level 1 -->
+      <div style="width: 100%; padding: 14px 20px; background: linear-gradient(135deg, var(--emr-primary) 0%, var(--emr-secondary) 100%); border-radius: 10px; color: var(--emr-text-inverse); display: flex; align-items: center; gap: 14px;">
+        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">1</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 15px;">Categories</div>
+          <div style="font-size: 12px; opacity: 0.85;">Top-level grouping (e.g., Consumables, Medications, Equipment)</div>
+        </div>
+        <div style="padding: 3px 10px; background: rgba(255,255,255,0.2); border-radius: 6px; font-size: 12px; font-weight: 600;">Level 1</div>
+      </div>
+      <!-- Connector -->
+      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
+      <!-- Level 2 -->
+      <div style="width: 92%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-secondary); border-radius: 10px; display: flex; align-items: center; gap: 14px;">
+        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(43,108,176,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-secondary);">2</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Product Groups</div>
+          <div style="font-size: 12px; color: var(--emr-text-secondary);">Groups within categories (e.g., Antibiotics, Bandages)</div>
+        </div>
+        <div style="padding: 3px 10px; background: rgba(43,108,176,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--emr-secondary);">Level 2</div>
+      </div>
+      <!-- Connector -->
+      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
+      <!-- Level 3 -->
+      <div style="width: 84%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-accent); border-radius: 10px; display: flex; align-items: center; gap: 14px;">
+        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(99,179,237,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-accent);">3</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Sub-Groups</div>
+          <div style="font-size: 12px; color: var(--emr-text-secondary);">Optional sub-classification within groups</div>
+        </div>
+        <div style="padding: 3px 10px; background: rgba(99,179,237,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--emr-accent);">Level 3</div>
+      </div>
+      <!-- Connector -->
+      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
+      <!-- Level 4 -->
+      <div style="width: 76%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #38b2ac; border-radius: 10px; display: flex; align-items: center; gap: 14px;">
+        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(56,178,172,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #38b2ac;">4</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Generic Names</div>
+          <div style="font-size: 12px; color: var(--emr-text-secondary);">Standard product names (e.g., Amoxicillin, Paracetamol)</div>
+        </div>
+        <div style="padding: 3px 10px; background: rgba(56,178,172,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: #38b2ac;">Level 4</div>
+      </div>
+      <!-- Connector -->
+      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
+      <!-- Level 5 -->
+      <div style="width: 68%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #dd6b20; border-radius: 10px; display: flex; align-items: center; gap: 14px;">
+        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(221,107,32,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #dd6b20;">5</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Product Catalog</div>
+          <div style="font-size: 12px; color: var(--emr-text-secondary);">Specific items with dosage, manufacturer, unit</div>
+        </div>
+        <div style="padding: 3px 10px; background: rgba(221,107,32,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: #dd6b20;">Level 5</div>
+      </div>
+    </div>
+  </div>
+
+  <p>The page displays each level as a <strong>clickable card tab</strong> at the top, connected by arrow indicators to show the hierarchy flow. A badge on each card shows the count of items at that level.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-hierarchy-en.png" alt="5-tier hierarchy info panel showing all levels with descriptions and examples" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-hierarchy">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">ℹ️</div>
+    <div class="doc-info-content">
+      <strong>Hierarchy Info Panel:</strong> Click the "How does this hierarchy work?" bar at the top of the page to expand a visual guide explaining each level with examples. This is helpful for new users learning how products are organized.
+    </div>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Example</th>
+          <th>FHIR Resource</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td>Categories</td>
+          <td>Broadest classification of warehouse items</td>
+          <td>Consumables, Medications, Reagents</td>
+          <td>List (code: warehouse-categories)</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Product Groups</td>
+          <td>Groups of products within a category</td>
+          <td>Antibiotics, Surgical Gloves, IV Solutions</td>
+          <td>List (code: warehouse-item-groups)</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>Sub-Groups</td>
+          <td>Optional finer classification within groups</td>
+          <td>Penicillins (within Antibiotics)</td>
+          <td>List (code: warehouse-subcategories)</td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td>Generic Names</td>
+          <td>Standard product names without brand specifics</td>
+          <td>Amoxicillin, Paracetamol, Saline Solution</td>
+          <td>List (code: warehouse-medical-items)</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Product Catalog</td>
+          <td>Specific warehouse items with manufacturer, dosage, unit</td>
+          <td>Amoxicillin 500mg Tablet, GlaxoSmithKline</td>
+          <td>SupplyDelivery / DeviceDefinition</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Cross-Filtering</h4>
+  <p>A key feature of the nomenclature system is <strong>cross-filtering</strong>. Clicking on an item at any level automatically filters the next level down:</p>
+  <ul class="doc-list">
+    <li>Click a <strong>Product Group</strong> to see only the Generic Names belonging to that group</li>
+    <li>Click a <strong>Generic Name</strong> to see only the Product Catalog items for that product</li>
+    <li>Active filters appear as <strong>badges</strong> at the top of the page, and can be cleared individually or all at once</li>
+  </ul>
+
+  <!-- Categories & Groups -->
+  <h3 id="wh-categories">Categories & Groups</h3>
+
+  <p>The first three levels of the hierarchy provide the organizational framework for all warehouse products.</p>
+
+  <h4>Categories (Level 1)</h4>
+  <p>Categories are the broadest classification. The system comes pre-configured with standard hospital warehouse categories such as Consumable Materials, Medications, Household Supplies, Reagents, and Medical Instruments.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-categories-en.png" alt="Categories tab showing list of warehouse categories with add, edit, and delete actions" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-categories">
+  </div>
+
+  <p>Each category tab provides:</p>
+  <ul class="doc-list">
+    <li><strong>Add new item</strong> — Type a name and press Enter or click the add button</li>
+    <li><strong>Search</strong> — Filter the list by typing in the search bar</li>
+    <li><strong>Inline edit</strong> — Click the edit button on any row to rename directly in the table</li>
+    <li><strong>Delete</strong> — Remove items with a confirmation dialog to prevent accidental deletion</li>
+    <li><strong>Status indicator</strong> — Green dot for active items, gray for inactive</li>
+    <li><strong>Pagination</strong> — 25 items per page for fast loading</li>
+  </ul>
+
+  <h4>Product Groups (Level 2)</h4>
+  <p>Product Groups organize items within categories. Each group belongs to a parent category and tracks how many Generic Names it contains.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-groups-en.png" alt="Product Groups tab showing group list with parent category, item count, and cross-filter navigation" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-groups">
+  </div>
+
+  <p>The Groups tab adds these features beyond the standard list:</p>
+  <ul class="doc-list">
+    <li><strong>Parent Category</strong> column — Shows which category each group belongs to</li>
+    <li><strong>Item Count</strong> badge — Displays how many Generic Names are in each group</li>
+    <li><strong>Row click navigation</strong> — Click any group row to cross-filter to its Generic Names</li>
+    <li><strong>Category selector</strong> — When adding a new group, optionally assign it to a parent category</li>
+  </ul>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">ℹ️</div>
+    <div class="doc-info-content">
+      <strong>Sub-Groups (Level 3)</strong> provide optional finer classification within Product Groups. They work the same way as Categories and Groups but are used less frequently. The Sub-Groups tab follows the same add/search/edit/delete pattern.
+    </div>
+  </div>
+
+  <!-- Product Catalog -->
+  <h3 id="wh-product-catalog">Product Catalog</h3>
+
+  <p>The bottom two levels contain the actual product data used in day-to-day warehouse operations.</p>
+
+  <h4>Generic Names (Level 4)</h4>
+  <p>Generic Names represent standard product names without brand or manufacturer specifics. For example, "Amoxicillin" is a generic name, while "Amoxicillin 500mg Tablet by GlaxoSmithKline" is a specific catalog item.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-items-en.png" alt="Generic Names tab showing product list with sub-group badges, warehouse item counts, and filter options" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-items">
+  </div>
+
+  <p>The Generic Names tab shows:</p>
+  <ul class="doc-list">
+    <li><strong>Sub-Group badge</strong> — Which sub-group (or product group) this item belongs to</li>
+    <li><strong>Warehouse Count</strong> — Number of specific catalog items linked to this generic name</li>
+    <li><strong>Group filter alert</strong> — When cross-filtered from a Product Group, a blue alert shows the active filter with a clear button</li>
+    <li><strong>Row click navigation</strong> — Click any generic name to cross-filter to its Product Catalog items</li>
+  </ul>
+
+  <h4>Product Catalog (Level 5)</h4>
+  <p>The Product Catalog is the most detailed level, containing specific warehouse items with full attributes. This is where you manage the actual products that are stocked, distributed, and tracked in the hospital.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-catalog-en.png" alt="Product Catalog tab showing detailed item list with code, name, group, category, unit, manufacturer, and quantity columns" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-catalog">
+  </div>
+
+  <p>The Product Catalog table has 13 columns that display comprehensive item information:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+          <th>FHIR Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ID</strong></td>
+          <td>Original database identifier</td>
+          <td>SupplyDelivery.identifier</td>
+        </tr>
+        <tr>
+          <td><strong>Code</strong></td>
+          <td>Product code (SKU)</td>
+          <td>SupplyDelivery.identifier (code system)</td>
+        </tr>
+        <tr>
+          <td><strong>Name</strong></td>
+          <td>Full product name with dosage and form</td>
+          <td>SupplyDelivery.suppliedItem.itemCodeableConcept</td>
+        </tr>
+        <tr>
+          <td><strong>Product Group</strong></td>
+          <td>Parent group from Level 2</td>
+          <td>Extension: general-group</td>
+        </tr>
+        <tr>
+          <td><strong>Generic Name</strong></td>
+          <td>Generic name from Level 4</td>
+          <td>Extension: general-name</td>
+        </tr>
+        <tr>
+          <td><strong>Category</strong></td>
+          <td>Top-level category (Consumables, Medications, etc.)</td>
+          <td>SupplyDelivery.type</td>
+        </tr>
+        <tr>
+          <td><strong>Unit</strong></td>
+          <td>Measurement unit (piece, ml, box, ampoule, etc.)</td>
+          <td>SupplyDelivery.suppliedItem.quantity.unit</td>
+        </tr>
+        <tr>
+          <td><strong>Manufacturer</strong></td>
+          <td>Country/manufacturer of the product</td>
+          <td>Extension: manufacturer</td>
+        </tr>
+        <tr>
+          <td><strong>Quantity</strong></td>
+          <td>Current stock quantity</td>
+          <td>SupplyDelivery.suppliedItem.quantity.value</td>
+        </tr>
+        <tr>
+          <td><strong>Description</strong></td>
+          <td>Additional product description</td>
+          <td>Extension: description</td>
+        </tr>
+        <tr>
+          <td><strong>Deleted</strong></td>
+          <td>Soft-delete status (Yes/No)</td>
+          <td>SupplyDelivery.status</td>
+        </tr>
+        <tr>
+          <td><strong>Parent</strong></td>
+          <td>Parent item reference (for bundled products)</td>
+          <td>Extension: parent-item</td>
+        </tr>
+        <tr>
+          <td><strong>Price Calculation</strong></td>
+          <td>Pricing visibility rules for billing</td>
+          <td>Extension: price-calculation-mode</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The catalog supports <strong>server-side pagination</strong> (50 items per page) and provides three filter controls:</p>
+  <ul class="doc-list">
+    <li><strong>Text search</strong> — Filter by product name with debounced input (300ms delay for performance)</li>
+    <li><strong>Category filter</strong> — Dropdown to filter by top-level category</li>
+    <li><strong>Status filter</strong> — Show active items, deleted items, or all</li>
+  </ul>
+
+  <div class="doc-warning-box">
+    <strong>Note:</strong> Deleted items appear with a <strong>red highlight</strong> in the table. Items are soft-deleted (marked as deleted) rather than permanently removed, preserving the audit trail for compliance.
+  </div>
+
+  <h4>Editing a Catalog Item</h4>
+  <p>Click the edit button on any catalog item to open a detailed edit modal. The modal has two tabs:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-item-edit-en.png" alt="Warehouse item edit modal showing Main tab with VAT settings, medical item link, generic drug, breakdown, and manufacturer fields" class="doc-screenshot-image" data-i18n-img="wh-item-edit">
+  </div>
+
+  <p><strong>Main Tab</strong> contains these editable sections, each with its own Save button:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Section</th>
+          <th>Fields</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Basic Config</strong></td>
+          <td>VAT checkbox, Parent ID</td>
+          <td>Tax settings and parent item reference</td>
+        </tr>
+        <tr>
+          <td><strong>Department Stock</strong></td>
+          <td>Department name, Quantity</td>
+          <td>Read-only table showing stock distribution across departments</td>
+        </tr>
+        <tr>
+          <td><strong>Medical Item</strong></td>
+          <td>Medical item name (autocomplete)</td>
+          <td>Links this catalog item to a Generic Name from Level 4</td>
+        </tr>
+        <tr>
+          <td><strong>Medical Item Group</strong></td>
+          <td>Group name (auto-populated)</td>
+          <td>Auto-fills when a medical item is selected; also editable</td>
+        </tr>
+        <tr>
+          <td><strong>Generic</strong></td>
+          <td>Generic drug (autocomplete)</td>
+          <td>Links to the generic drug reference for pharmacological grouping</td>
+        </tr>
+        <tr>
+          <td><strong>Item Breakdown</strong></td>
+          <td>Quantity, Unit</td>
+          <td>Bill of materials for composite products</td>
+        </tr>
+        <tr>
+          <td><strong>Medical Heading</strong></td>
+          <td>Heading, Country, Manufacturer</td>
+          <td>Product origin and manufacturer details</td>
+        </tr>
+        <tr>
+          <td><strong>Tags</strong></td>
+          <td>Category tag, UNSPSC code</td>
+          <td>Classification tags (Narcotic, Antibiotic, Immunological, etc.)</td>
+        </tr>
+        <tr>
+          <td><strong>Price Calculation</strong></td>
+          <td>Calculation mode</td>
+          <td>Billing visibility rules with copy-to-clipboard</td>
+        </tr>
+        <tr>
+          <td><strong>Pharmaceutical Details</strong></td>
+          <td>Dosage form, Strength, Route, Controlled substance</td>
+          <td>Only shown for Medication/Narcotic categories</td>
+        </tr>
+        <tr>
+          <td><strong>Stock & Tracking</strong></td>
+          <td>Min/Max stock, Lead time, Lot tracking, Expiration tracking</td>
+          <td>Reorder alerts and traceability settings</td>
+        </tr>
+        <tr>
+          <td><strong>Transaction History</strong></td>
+          <td>Last 50 transactions (read-only)</td>
+          <td>Audit trail of receipts, transfers, and adjustments</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Attributes Tab</strong> shows child items linked to this product (for bundled or composite items).</p>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">ℹ️</div>
+    <div class="doc-info-content">
+      <strong>Step-Up Authentication:</strong> Saving changes to catalog items requires re-authentication. When you click Save, a confirmation dialog prompts you to verify your credentials before the change is applied. This protects against unauthorized modifications to the product database.
+    </div>
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </span>
+      <strong>FHIR Data Model Details</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p>The nomenclature hierarchy is implemented using these FHIR resources:</p>
+      <ul class="doc-list">
+        <li><strong>List</strong> (with different <code>code</code> values) — Stores Levels 1-4 as list entries. Each list entry contains the item name and status. Parent-child relationships are maintained through entry references.</li>
+        <li><strong>SupplyDelivery</strong> — Stores Level 5 catalog items with their full attributes (code, name, category, unit, quantity). FHIR extensions carry additional data like manufacturer, pricing rules, and group links.</li>
+        <li><strong>DeviceDefinition</strong> — Used for the edit modal, providing detailed attributes like VAT, pharmaceutical details, stock levels, lot tracking, and transaction history.</li>
+      </ul>
+
+      <div class="doc-table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>FHIR Resource</th>
+              <th>List Code</th>
+              <th>Nomenclature Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>List</td>
+              <td><code>warehouse-categories</code></td>
+              <td>Level 1 — Categories</td>
+            </tr>
+            <tr>
+              <td>List</td>
+              <td><code>warehouse-item-groups</code></td>
+              <td>Level 2 — Product Groups</td>
+            </tr>
+            <tr>
+              <td>List</td>
+              <td><code>warehouse-subcategories</code></td>
+              <td>Level 3 — Sub-Groups</td>
+            </tr>
+            <tr>
+              <td>List</td>
+              <td><code>warehouse-medical-items</code></td>
+              <td>Level 4 — Generic Names</td>
+            </tr>
+            <tr>
+              <td>SupplyDelivery</td>
+              <td>N/A (search by status)</td>
+              <td>Level 5 — Product Catalog</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
+</section>

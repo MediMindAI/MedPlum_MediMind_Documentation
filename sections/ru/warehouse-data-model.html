@@ -1,0 +1,805 @@
+<section class="doc-section" id="warehouse-data-model">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="doc-section-number">2</div>
+      <h2>Архитектура данных</h2>
+    </div>
+  </div>
+
+  <p>Модуль склада хранит все складские данные с использованием <strong>стандарта FHIR R4</strong> (Fast Healthcare Interoperability Resources). FHIR -- это универсальный язык для медицинских данных: вместо создания собственных таблиц базы данных система отображает каждое складское понятие (поступления, перемещения, остатки) на стандартизированные ресурсы FHIR. Это делает данные переносимыми, проверяемыми и совместимыми с другими медицинскими системами.</p>
+
+  <p>Этот раздел охватывает три уровня архитектуры данных:</p>
+  <ul class="doc-list">
+    <li><strong>Сопоставление ресурсов FHIR</strong> -- какие ресурсы FHIR хранят какие складские данные</li>
+    <li><strong>Модель количества запасов (StockQuant)</strong> -- система материализованных складских остатков, обеспечивающая мгновенный поиск запасов</li>
+    <li><strong>Рабочие процессы и бизнес-правила</strong> -- состояния перемещений, комплектация FEFO, оповещения и расчет себестоимости</li>
+  </ul>
+
+  <!-- ================================================================== -->
+  <!-- Ресурсы FHIR -->
+  <!-- ================================================================== -->
+  <h3 id="wh-fhir-resources">Сопоставление ресурсов FHIR</h3>
+
+  <p>Каждый элемент складских данных хранится как ресурс FHIR. Таблица ниже показывает, как каждое складское понятие соответствует его представлению в FHIR. Для интеграционных команд это основной справочник для запросов складских данных через FHIR API.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Складское понятие</th>
+          <th>Ресурс FHIR</th>
+          <th>Ключевые поля</th>
+          <th>Система идентификаторов</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Поступления</strong></td>
+          <td>SupplyDelivery</td>
+          <td>status, поставщик (Organization ref), назначение (Location), suppliedItem.quantity, код типа = <code>receipt</code></td>
+          <td><code>receipt-number</code>, <code>invoice-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Перемещения</strong></td>
+          <td>SupplyDelivery</td>
+          <td>status, отделения источника/назначения (через расширения), код типа = <code>transfer</code></td>
+          <td><code>transfer-document-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Накладные</strong></td>
+          <td>SupplyDelivery</td>
+          <td>идентификатор (10-значный номер накладной), код типа = <code>waybill</code>, данные интеграции RS.ge</td>
+          <td><code>waybill-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Заказы</strong></td>
+          <td>SupplyRequest</td>
+          <td>status, отделение-заказчик, отделение-получатель, позиции (JSON расширение)</td>
+          <td><code>order-document-number</code></td>
+        </tr>
+        <tr>
+          <td><strong>Остатки запасов</strong></td>
+          <td>Basic (StockQuant)</td>
+          <td>составной ключ-идентификатор, количество, зарезервированное количество, номер партии, срок годности, статус качества, себестоимость единицы</td>
+          <td><code>stock-quant-key</code></td>
+        </tr>
+        <tr>
+          <td><strong>Продукты</strong></td>
+          <td>DeviceDefinition</td>
+          <td>производитель, номер модели, UDI идентификатор, расширения категорий (НДС, лекарственная форма, уровни запасов)</td>
+          <td><code>product-code</code></td>
+        </tr>
+        <tr>
+          <td><strong>Поставщики</strong></td>
+          <td>Organization</td>
+          <td>название, идентификатор (код поставщика), тип = supplier, контактные данные</td>
+          <td><code>supplier-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>Склады</strong></td>
+          <td>Location</td>
+          <td>название, тип (аптека, лаборатория, банк крови и т.д.), partOf (родительское отделение)</td>
+          <td><code>warehouse-id</code></td>
+        </tr>
+        <tr>
+          <td><strong>Номенклатура</strong></td>
+          <td>List</td>
+          <td>заголовок, entry[] (ссылки на DeviceDefinition), код для иерархии категорий/групп</td>
+          <td>--</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Базовый URL для всех расширений:</strong> Все пользовательские расширения FHIR используют базовый URL <code>http://medimind.ge/fhir</code>. Например, расширение цены единицы -- <code>http://medimind.ge/fhir/StructureDefinition/admin-unit-price</code>. Системная валюта -- GEL (грузинский лари).
+    </div>
+  </div>
+
+  <h4>Трехуровневая иерархия номенклатуры</h4>
+
+  <p>Продукты на складе следуют трехуровневой классификации, аналогично тому, как библиотека организует книги по секциям, полкам и отдельным заголовкам:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Уровень</th>
+          <th>Название</th>
+          <th>Количество</th>
+          <th>Пример</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Группа предметов</strong></td>
+          <td>Классификация по категориям</td>
+          <td>~310 групп</td>
+          <td>Расходные материалы, Медикаменты, Реагенты</td>
+        </tr>
+        <tr>
+          <td><strong>2. Медицинский предмет</strong></td>
+          <td>Общий медицинский предмет</td>
+          <td>~503 предмета</td>
+          <td>Хирургические перчатки (общее)</td>
+        </tr>
+        <tr>
+          <td><strong>3. Складская единица</strong></td>
+          <td>Конкретная складская запись</td>
+          <td>~35 900 единиц</td>
+          <td>Хирургические перчатки, Бренд X, Размер M, Упаковка 100 шт.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Группы верхнего уровня (11 категорий) включают: Расходные материалы, Медикаменты, Хозяйственные товары, Неинвентарные, Основные средства, Инвентарь, Реагенты, Растворы, Медицинские инструменты, Наркотики и Питание.</p>
+
+  <h4>Типы складских помещений</h4>
+
+  <p>Каждый склад/отделение имеет тип, определяющий его возможности (например, может ли он получать товары напрямую от поставщиков или требует контроля холодовой цепи):</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Код типа</th>
+          <th>Описание</th>
+          <th>Специальные требования</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>pharmacy</code></td><td>Аптека</td><td>--</td></tr>
+        <tr><td><code>laboratory</code></td><td>Лаборатория</td><td>Прямой прием, ISO 15189, температура 2-8 C</td></tr>
+        <tr><td><code>blood-bank</code></td><td>Банк крови</td><td>Прямой прием, FDA/AABB, температура 1-6 C</td></tr>
+        <tr><td><code>surgical</code></td><td>Хирургический</td><td>--</td></tr>
+        <tr><td><code>icu</code></td><td>Реанимация</td><td>--</td></tr>
+        <tr><td><code>emergency</code></td><td>Экстренный</td><td>--</td></tr>
+        <tr><td><code>main</code></td><td>Главный склад</td><td>Центральный узел для всех отделений</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Пример ресурса FHIR: Поступление (SupplyDelivery)</h4>
+
+  <p>Вот упрощенный пример того, как позиция поступления хранится как ресурс FHIR SupplyDelivery:</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "SupplyDelivery",
+  "status": "completed",
+  "type": {
+    "coding": [{
+      "system": "http://medimind.ge/fhir/CodeSystem/supply-type",
+      "code": "receipt",
+      "display": "Receipt"
+    }]
+  },
+  "suppliedItem": {
+    "quantity": { "value": 500, "unit": "tablet" }
+  },
+  "occurrenceDateTime": "2026-02-15",
+  "identifier": [{
+    "system": "http://medimind.ge/fhir/identifier/receipt-number",
+    "value": "REC-2026-001234"
+  }],
+  "extension": [
+    { "url": ".../admin-item-code", "valueString": "MED-001" },
+    { "url": ".../admin-item-name", "valueString": "Амоксициллин 500мг" },
+    { "url": ".../admin-unit-price", "valueMoney": { "value": 0.35, "currency": "GEL" } },
+    { "url": ".../admin-line-total", "valueMoney": { "value": 175.00, "currency": "GEL" } },
+    { "url": ".../dest-department", "valueString": "location-pharmacy-01" },
+    { "url": ".../admin-lot-number", "valueString": "LOT-2026A" },
+    { "url": ".../admin-expiry-date", "valueString": "2028-06-30" }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- Модель количества запасов -->
+  <!-- ================================================================== -->
+  <h3 id="wh-stock-quant">Модель количества запасов</h3>
+
+  <p><strong>StockQuant</strong> -- это ответ системы на простой вопрос: "Сколько товара X находится на складе Y прямо сейчас?" Вместо суммирования всех поступлений и вычитания всех перемещений при каждой проверке запасов (что замедляется по мере роста истории), система поддерживает <strong>материализованную запись баланса</strong> -- предварительно вычисленный ответ, который автоматически обновляется.</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">O(1)</span>
+      <span class="doc-stat-inline-label">Время поиска баланса</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4-частный</span>
+      <span class="doc-stat-inline-label">Составной ключ</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">Макс. попыток</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Статуса качества</span>
+    </div>
+  </div>
+
+  <h4>Составной ключ</h4>
+
+  <p>Каждая запись StockQuant уникально идентифицируется <strong>четырехчастным составным ключом</strong>. Представьте это как систему картотеки: комбинация товара, местоположения, партии и статуса качества указывает на ровно одну запись баланса.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">Формат ключа: {itemCode}|{locationId}|{lotNumber}|{qualityStatus}
+
+Примеры:
+  MED-001|pharmacy-01|LOT-2026A|accepted     -- Амоксициллин, Аптека, Партия A, принято
+  MED-001|pharmacy-01|LOT-2026B|quarantine   -- Тот же товар, то же место, другая партия на карантине
+  MED-001|lab-02|NONE|accepted               -- Тот же товар, Лаборатория, без отслеживания партий</code></pre>
+  </div>
+
+  <p>Без отслеживания партий часть партии хранится как <code>NONE</code>. Статус качества по умолчанию -- <code>accepted</code>.</p>
+
+  <h4>Поля StockQuant</h4>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Поле</th>
+          <th>Расширение FHIR</th>
+          <th>Тип</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>itemCode</strong></td>
+          <td><code>sq-item-code</code></td>
+          <td>string</td>
+          <td>Код продукта (FK на DeviceDefinition)</td>
+        </tr>
+        <tr>
+          <td><strong>itemName</strong></td>
+          <td><code>sq-item-name</code></td>
+          <td>string</td>
+          <td>Отображаемое имя (денормализовано для производительности)</td>
+        </tr>
+        <tr>
+          <td><strong>locationId</strong></td>
+          <td><code>sq-location-id</code></td>
+          <td>string</td>
+          <td>ID местоположения отделения/склада</td>
+        </tr>
+        <tr>
+          <td><strong>lotNumber</strong></td>
+          <td><code>sq-lot-number</code></td>
+          <td>string</td>
+          <td>Идентификатор партии/серии (пусто = без отслеживания)</td>
+        </tr>
+        <tr>
+          <td><strong>expiryDate</strong></td>
+          <td><code>sq-expiry-date</code></td>
+          <td>date</td>
+          <td>Дата истечения срока годности партии (формат ISO)</td>
+        </tr>
+        <tr>
+          <td><strong>qualityStatus</strong></td>
+          <td><code>sq-quality-status</code></td>
+          <td>code</td>
+          <td><code>accepted</code>, <code>quarantine</code> или <code>rejected</code></td>
+        </tr>
+        <tr>
+          <td><strong>quantity</strong></td>
+          <td><code>sq-quantity</code></td>
+          <td>decimal</td>
+          <td>Текущее общее количество в наличии</td>
+        </tr>
+        <tr>
+          <td><strong>reservedQuantity</strong></td>
+          <td><code>sq-reserved-qty</code></td>
+          <td>decimal</td>
+          <td>Количество, зарезервированное для ожидающих перемещений</td>
+        </tr>
+        <tr>
+          <td><strong>unitCost</strong></td>
+          <td><code>sq-unit-cost</code></td>
+          <td>decimal</td>
+          <td>Средневзвешенная стоимость за единицу (GEL)</td>
+        </tr>
+        <tr>
+          <td><strong>unit</strong></td>
+          <td><code>sq-unit</code></td>
+          <td>string</td>
+          <td>Единица измерения (таблетка, мл, коробка и т.д.)</td>
+        </tr>
+        <tr>
+          <td><strong>lastMovementDate</strong></td>
+          <td><code>sq-last-movement</code></td>
+          <td>dateTime</td>
+          <td>Временная метка последнего изменения баланса</td>
+        </tr>
+        <tr>
+          <td><strong>lastMovementRef</strong></td>
+          <td><code>sq-last-move-ref</code></td>
+          <td>string</td>
+          <td>Ссылка на последний SupplyDelivery, изменивший этот остаток</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Доступное количество:</strong> Количество, которое пользователь может фактически использовать или переместить, равно <code>quantity - reservedQuantity</code>. Зарезервированное количество представляет запас, выделенный для утвержденных, но еще не отправленных перемещений.
+    </div>
+  </div>
+
+  <h4>Оптимистическая блокировка</h4>
+
+  <p>Когда два человека пытаются одновременно обновить один и тот же складской остаток (например, два поступления на один склад одновременно), система использует <strong>оптимистическую блокировку</strong> для предотвращения повреждения данных. Как это работает:</p>
+
+  <ol class="doc-list">
+    <li>Чтение текущей записи StockQuant (включая её <code>meta.versionId</code>)</li>
+    <li>Расчет нового количества</li>
+    <li>Отправка обновления с заголовком <code>If-Match</code> ETag, содержащим ID версии</li>
+    <li>Если кто-то другой обновил запись раньше, сервер возвращает <strong>412 Precondition Failed</strong></li>
+    <li>Система повторяет попытку с экспоненциальной задержкой (до 5 попыток, со случайным разбросом)</li>
+  </ol>
+
+  <p>Этот подход избегает блокировок базы данных, гарантируя при этом, что ни одно изменение запасов не будет потеряно даже при конкурентном доступе.</p>
+
+  <h4>Пример ресурса FHIR: StockQuant (Basic)</h4>
+
+  <div class="doc-code-block">
+    <pre><code class="language-json">{
+  "resourceType": "Basic",
+  "code": {
+    "coding": [{
+      "system": "http://medimind.ge/fhir/CodeSystem/supply-type",
+      "code": "stock-quant",
+      "display": "Stock Quant"
+    }]
+  },
+  "identifier": [{
+    "system": "http://medimind.ge/fhir/identifier/stock-quant-key",
+    "value": "MED-001|pharmacy-01|LOT-2026A|accepted"
+  }],
+  "meta": {
+    "versionId": "3",
+    "tag": [
+      { "system": ".../CodeSystem/department", "code": "pharmacy-01" },
+      { "system": ".../CodeSystem/item-code", "code": "MED-001" }
+    ]
+  },
+  "extension": [
+    { "url": ".../sq-item-code", "valueString": "MED-001" },
+    { "url": ".../sq-item-name", "valueString": "Амоксициллин 500мг" },
+    { "url": ".../sq-location-id", "valueString": "pharmacy-01" },
+    { "url": ".../sq-location-name", "valueString": "Главная аптека" },
+    { "url": ".../sq-lot-number", "valueString": "LOT-2026A" },
+    { "url": ".../sq-expiry-date", "valueDate": "2028-06-30" },
+    { "url": ".../sq-quality-status", "valueCode": "accepted" },
+    { "url": ".../sq-quantity", "valueDecimal": 450 },
+    { "url": ".../sq-reserved-qty", "valueDecimal": 50 },
+    { "url": ".../sq-unit-cost", "valueDecimal": 0.35 },
+    { "url": ".../sq-unit", "valueString": "tablet" },
+    { "url": ".../sq-last-movement", "valueDateTime": "2026-02-15T10:30:00Z" }
+  ]
+}</code></pre>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- Рабочие процессы и бизнес-правила -->
+  <!-- ================================================================== -->
+  <h3 id="wh-workflows">Рабочие процессы и бизнес-правила</h3>
+
+  <p>Модуль склада применяет автоматические бизнес-правила, управляющие движением запасов в системе. Эти правила обеспечивают нормативное соответствие, предотвращают ошибки данных и оптимизируют оборачиваемость запасов.</p>
+
+  <h4>Жизненный цикл статуса перемещения</h4>
+
+  <p>Перемещения между отделениями следуют <strong>9-статусному жизненному циклу</strong> с жестко определенными переходами. Это похоже на систему отслеживания посылок -- каждое перемещение может двигаться только вперед через допустимые состояния, а некоторые состояния являются терминальными (изменение перемещения после их достижения невозможно).</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+stateDiagram-v2
+    [*] --> draft
+    draft --> requested: Отправить
+    draft --> cancelled: Отменить
+    requested --> approved: Одобрить
+    requested --> rejected: Отклонить
+    requested --> cancelled: Отменить
+    approved --> in_progress: Начать отгрузку
+    approved --> cancelled: Отменить
+    in_progress --> received: Подтвердить прием
+    in_progress --> partial: Частичный прием
+    in_progress --> completed: Прямое завершение
+    in_progress --> cancelled: Отменить
+    received --> completed: Завершить
+    partial --> completed: Завершить остаток
+    partial --> cancelled: Отменить
+
+    state "in-progress" as in_progress
+
+    completed --> [*]
+    rejected --> [*]
+    cancelled --> [*]
+    </div>
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Текущий статус</th>
+          <th>Допустимые переходы</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>draft</code></td>
+          <td>requested, cancelled</td>
+          <td>Создано, но еще не отправлено на утверждение</td>
+        </tr>
+        <tr>
+          <td><code>requested</code></td>
+          <td>approved, rejected, cancelled</td>
+          <td>Отправлено, ожидает утверждения менеджером</td>
+        </tr>
+        <tr>
+          <td><code>approved</code></td>
+          <td>in-progress, cancelled</td>
+          <td>Менеджер утвердил; товары могут быть скомплектованы и отправлены</td>
+        </tr>
+        <tr>
+          <td><code>in-progress</code></td>
+          <td>received, partial, completed, cancelled</td>
+          <td>Товары физически перемещаются между отделениями</td>
+        </tr>
+        <tr>
+          <td><code>received</code></td>
+          <td>completed</td>
+          <td>Отделение-получатель подтвердило полное получение</td>
+        </tr>
+        <tr>
+          <td><code>partial</code></td>
+          <td>completed, cancelled</td>
+          <td>Частичное получение -- часть товаров еще ожидается</td>
+        </tr>
+        <tr>
+          <td><code>completed</code></td>
+          <td><em>(терминальный)</em></td>
+          <td>Перемещение полностью завершено, остатки обновлены</td>
+        </tr>
+        <tr>
+          <td><code>rejected</code></td>
+          <td><em>(терминальный)</em></td>
+          <td>Менеджер отклонил запрос на перемещение</td>
+        </tr>
+        <tr>
+          <td><code>cancelled</code></td>
+          <td><em>(терминальный)</em></td>
+          <td>Перемещение отменено на любом этапе</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Жизненный цикл статуса заказа</h4>
+
+  <p>Заказы (запросы на снабжение от отделений) следуют более простому жизненному циклу:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Текущий статус</th>
+          <th>Допустимые переходы</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>draft</code></td>
+          <td>active, cancelled</td>
+          <td>Заказ создан, еще не отправлен</td>
+        </tr>
+        <tr>
+          <td><code>active</code></td>
+          <td>confirmed, cancelled</td>
+          <td>Заказ отправлен и виден персоналу склада</td>
+        </tr>
+        <tr>
+          <td><code>confirmed</code></td>
+          <td>complete, cancelled</td>
+          <td>Склад подтвердил заказ и запасы отправлены</td>
+        </tr>
+        <tr>
+          <td><code>complete</code></td>
+          <td><em>(терминальный)</em></td>
+          <td>Заказ полностью выполнен</td>
+        </tr>
+        <tr>
+          <td><code>cancelled</code></td>
+          <td><em>(терминальный)</em></td>
+          <td>Заказ отменен</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Алгоритм комплектации FEFO</h4>
+
+  <p><strong>FEFO</strong> (First Expired, First Out -- первый истекающий, первый выдаваемый) -- это нормативное требование для медицинских материалов. При необходимости использования или перемещения запасов система автоматически предлагает, какую партию выбрать на основе сроков годности -- всегда начиная с партии с ближайшим сроком истечения.</p>
+
+  <div class="doc-warning-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Нормативное соответствие:</strong> Комплектация FEFO обязательна для фармацевтической продукции для минимизации потерь от просроченных запасов. Отклонение от рекомендаций FEFO требует документально подтвержденной причины (поврежденная упаковка, запрос клиента, отзыв партии, проблема качества или недостаточное количество).
+    </div>
+  </div>
+
+  <p>Алгоритм FEFO работает в три шага:</p>
+
+  <ol class="doc-list">
+    <li><strong>Фильтрация</strong> -- Исключаются все партии с истекшим сроком годности (дата истечения до сегодня) или находящиеся в карантине/отклоненные. Также исключаются партии без доступного количества (полностью зарезервированные).</li>
+    <li><strong>Сортировка</strong> -- Оставшиеся партии сортируются по дате истечения по возрастанию (ближайший срок первый). Партии без даты истечения идут в конец.</li>
+    <li><strong>Комплектация</strong> -- Выбирается первая партия с достаточным доступным количеством (<code>quantity - reservedQuantity >= запрошенное количество</code>).</li>
+  </ol>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">Логика комплектации FEFO (псевдокод):
+
+1. Получить все StockQuant для (itemCode, locationId, qualityStatus='accepted')
+2. Фильтр: убрать где expiryDate &lt; сегодня
+3. Фильтр: убрать где (quantity - reservedQuantity) &lt;= 0
+4. Сортировка: по expiryDate по возрастанию (null в конец)
+5. Для каждого кандидата:
+     если availableQty >= requestedAmount:
+       вернуть эту партию    -- комплектовать отсюда
+6. Если ни одна партия не имеет достаточно: вернуть InsufficientStockError</code></pre>
+  </div>
+
+  <h4>Порядок комплектации по зонам склада</h4>
+
+  <p>Когда лист комплектации содержит товары из нескольких складских зон, товары группируются и комплектуются в определенном порядке для безопасности и соответствия нормам:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Приоритет</th>
+          <th>Зона</th>
+          <th>Причина</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Холодовая цепь</strong></td>
+          <td>Термочувствительные товары должны быть скомплектованы и перемещены первыми для минимизации времени вне холодного хранения</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Контролируемые</strong></td>
+          <td>Наркотики и контролируемые вещества требуют дополнительной верификации и документации</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Опасные</strong></td>
+          <td>Опасные материалы требуют специальных мер предосторожности при обращении</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Общие</strong></td>
+          <td>Стандартные материалы без специальных требований к обращению</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Расчет средневзвешенной стоимости</h4>
+
+  <p>Когда новые запасы поступают по цене, отличной от существующих, система пересчитывает стоимость единицы, используя <strong>средневзвешенное</strong>. Это гарантирует, что стоимость единицы отражает смешанную стоимость по всем полученным партиям.</p>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">Формула средневзвешенной стоимости:
+
+  новаяСтоимость = (существКол x существСтоим + приходКол x приходСтоим)
+                   / (существКол + приходКол)
+
+Пример:
+  Существующие: 200 таблеток по 0.30 GEL каждая
+  Поступившие: 300 таблеток по 0.40 GEL каждая
+
+  новаяСтоимость = (200 x 0.30 + 300 x 0.40) / (200 + 300)
+                 = (60 + 120) / 500
+                 = 0.36 GEL за таблетку
+
+Особый случай: Бесплатные/пожертвованные товары (стоимость = 0) НЕ снижают существующую стоимость.
+  Если существКол > 0 и приходСтоим = 0:
+    unitCost остается на существСтоим (без изменений)</code></pre>
+  </div>
+
+  <h4>Правила оповещений о запасах</h4>
+
+  <p>Система отслеживает уровни запасов и автоматически генерирует оповещения на основе настраиваемых пороговых значений. Оповещения отображаются на панели управления складом и могут инициировать уведомления.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Тип оповещения</th>
+          <th>Условие срабатывания</th>
+          <th>Серьезность</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Отсутствие запасов</strong></td>
+          <td>quantity = 0 для любого отслеживаемого товара</td>
+          <td>Критический (красный)</td>
+        </tr>
+        <tr>
+          <td><strong>Низкий запас</strong></td>
+          <td>quantity &lt; 50% точки перезаказа (minStockLevel в DeviceDefinition)</td>
+          <td>Предупреждение (оранжевый)</td>
+        </tr>
+        <tr>
+          <td><strong>Истекает (7 дней)</strong></td>
+          <td>expiryDate в пределах ближайших 7 дней</td>
+          <td>Критический (красный)</td>
+        </tr>
+        <tr>
+          <td><strong>Истекает (30 дней)</strong></td>
+          <td>expiryDate в пределах ближайших 30 дней</td>
+          <td>Предупреждение (оранжевый)</td>
+        </tr>
+        <tr>
+          <td><strong>Истекает (90 дней)</strong></td>
+          <td>expiryDate в пределах ближайших 90 дней</td>
+          <td>Информация (синий)</td>
+        </tr>
+        <tr>
+          <td><strong>Просрочено</strong></td>
+          <td>expiryDate в прошлом</td>
+          <td>Критический (красный)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Типы движений запасов</h4>
+
+  <p>Каждое изменение баланса StockQuant вызвано <strong>движением запасов</strong>. Система отслеживает семь типов движений, каждое из которых хранится как FHIR SupplyDelivery с определенным кодом типа:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Тип движения</th>
+          <th>Влияние на количество</th>
+          <th>Описание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>receipt</code></td>
+          <td>+</td>
+          <td>Товары, полученные от поставщика</td>
+        </tr>
+        <tr>
+          <td><code>transfer</code></td>
+          <td>- (источник) / + (назначение)</td>
+          <td>Межотделенческое перемещение запасов</td>
+        </tr>
+        <tr>
+          <td><code>adjustment-plus</code></td>
+          <td>+</td>
+          <td>Положительная корректировка (при инвентаризации найдено больше ожидаемого)</td>
+        </tr>
+        <tr>
+          <td><code>adjustment-minus</code></td>
+          <td>-</td>
+          <td>Отрицательная корректировка (повреждение, потеря, сверка)</td>
+        </tr>
+        <tr>
+          <td><code>consumption</code></td>
+          <td>-</td>
+          <td>Товары, использованные при оказании помощи пациентам</td>
+        </tr>
+        <tr>
+          <td><code>scrap</code></td>
+          <td>-</td>
+          <td>Утилизированные товары (просроченные, поврежденные безвозвратно)</td>
+        </tr>
+        <tr>
+          <td><code>recall</code></td>
+          <td>-</td>
+          <td>Отзыв производителя -- товары изъяты из обращения</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Коды причин корректировки</h4>
+
+  <p>При выполнении корректировки запасов (положительной или отрицательной) для аудиторского соответствия необходимо указать код причины:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Код причины</th>
+          <th>Когда используется</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>physical-count</code></td><td>Физическая инвентаризация выявила расхождение</td></tr>
+        <tr><td><code>damage-spoilage</code></td><td>Товары повреждены или испорчены при хранении</td></tr>
+        <tr><td><code>expired-disposal</code></td><td>Списание просроченных товаров</td></tr>
+        <tr><td><code>theft-loss</code></td><td>Товары пропали из-за кражи или необъяснимой потери</td></tr>
+        <tr><td><code>system-correction</code></td><td>Исправление ошибки ввода данных</td></tr>
+        <tr><td><code>reconciliation</code></td><td>Автоматический процесс сверки обнаружил несоответствие</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Холодовая цепь и инспекция качества</h4>
+
+  <p>Некоторые складские помещения (Лаборатория, Банк крови) требуют дополнительных шагов контроля качества при приемке:</p>
+
+  <ul class="doc-list">
+    <li><strong>Фиксация температуры</strong> -- Для товаров холодовой цепи приемный персонал фиксирует температуру в момент получения. Система проверяет, находится ли показание в допустимом диапазоне (например, 2-8 C для лаборатории, 1-6 C для банка крови).</li>
+    <li><strong>Контрольный лист инспекции</strong> -- Персонал проверяет целостность упаковки, состояние продукта и полноту маркировки. Товары, не прошедшие инспекцию, помещаются в статус <code>quarantine</code> до рассмотрения.</li>
+    <li><strong>Поток статуса качества</strong> -- Товары поступают как <code>quarantine</code> (ожидание инспекции), затем переходят в <code>accepted</code> (допущены к использованию) или <code>rejected</code> (возвращены или утилизированы). Только товары со статусом <code>accepted</code> доступны для перемещений и потребления.</li>
+  </ul>
+
+  <h4>Стратегия расчета баланса</h4>
+
+  <p>Система использует двойную стратегию для расчета складских остатков:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Метод</th>
+          <th>Производительность</th>
+          <th>Когда используется</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Поиск StockQuant</strong></td>
+          <td>O(1) -- мгновенный</td>
+          <td>Основной метод. Читает предварительно вычисленный баланс из ресурса Basic.</td>
+        </tr>
+        <tr>
+          <td><strong>Устаревший пересчет</strong></td>
+          <td>O(n) -- медленный</td>
+          <td>Запасной вариант, когда данные StockQuant недоступны. Сканирует до 10 000 записей SupplyDelivery для пересчета из истории.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Кэш балансов использует 30-секундный TTL (время жизни) и поддерживает инвалидацию между вкладками через BroadcastChannel, поэтому когда одна вкладка браузера обновляет запасы, все другие открытые вкладки видят изменение в течение 30 секунд.</p>
+
+</section>

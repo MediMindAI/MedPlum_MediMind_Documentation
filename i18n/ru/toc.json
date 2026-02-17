@@ -29,6 +29,27 @@
     "dataFlow": "Поток данных",
     "troubleshooting": "Устранение неполадок",
     "commonIssues": "Частые проблемы",
-    "errorCodes": "Коды ошибок"
+    "errorCodes": "Коды ошибок",
+    "warehouse": "Склад",
+    "warehouseOverview": "Обзор склада",
+    "whDashboard": "Панель",
+    "whKpiMetrics": "KPI метрики",
+    "whQuickActions": "Быстрые действия",
+    "whAnalytics": "Аналитика",
+    "warehouseNomenclature": "Номенклатура продукции",
+    "whHierarchy": "Иерархия продукции",
+    "whCategories": "Категории и группы",
+    "whProductCatalog": "Каталог продукции",
+    "warehouseOperations": "Складские операции",
+    "whReceiving": "Приёмка",
+    "whTransfers": "Трансферы",
+    "whOrders": "Заказы",
+    "whInventory": "Инвентарь",
+    "whWriteoffs": "Списание",
+    "whProcurement": "Закупки",
+    "warehouseDataModel": "Архитектура данных",
+    "whFhirResources": "FHIR ресурсы",
+    "whStockQuant": "Модель количества запасов",
+    "whWorkflows": "Рабочие процессы и правила"
   }
 }

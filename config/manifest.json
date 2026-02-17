@@ -82,6 +82,60 @@
           ]
         }
       ]
+    },
+    {
+      "id": "warehouse",
+      "titleKey": "toc.warehouse",
+      "sections": [
+        {
+          "id": "warehouse-overview",
+          "titleKey": "toc.warehouseOverview",
+          "file": "warehouse-overview",
+          "priority": "high",
+          "children": [
+            { "id": "wh-dashboard", "titleKey": "toc.whDashboard", "anchor": "wh-dashboard" },
+            { "id": "wh-kpi-metrics", "titleKey": "toc.whKpiMetrics", "anchor": "wh-kpi-metrics" },
+            { "id": "wh-quick-actions", "titleKey": "toc.whQuickActions", "anchor": "wh-quick-actions" },
+            { "id": "wh-analytics", "titleKey": "toc.whAnalytics", "anchor": "wh-analytics" }
+          ]
+        },
+        {
+          "id": "warehouse-nomenclature",
+          "titleKey": "toc.warehouseNomenclature",
+          "file": "warehouse-nomenclature",
+          "priority": "high",
+          "children": [
+            { "id": "wh-hierarchy", "titleKey": "toc.whHierarchy", "anchor": "wh-hierarchy" },
+            { "id": "wh-categories", "titleKey": "toc.whCategories", "anchor": "wh-categories" },
+            { "id": "wh-product-catalog", "titleKey": "toc.whProductCatalog", "anchor": "wh-product-catalog" }
+          ]
+        },
+        {
+          "id": "warehouse-operations",
+          "titleKey": "toc.warehouseOperations",
+          "file": "warehouse-operations",
+          "priority": "high",
+          "children": [
+            { "id": "wh-receiving", "titleKey": "toc.whReceiving", "anchor": "wh-receiving" },
+            { "id": "wh-transfers", "titleKey": "toc.whTransfers", "anchor": "wh-transfers" },
+            { "id": "wh-orders", "titleKey": "toc.whOrders", "anchor": "wh-orders" },
+            { "id": "wh-inventory", "titleKey": "toc.whInventory", "anchor": "wh-inventory" },
+            { "id": "wh-writeoffs", "titleKey": "toc.whWriteoffs", "anchor": "wh-writeoffs" },
+            { "id": "wh-procurement", "titleKey": "toc.whProcurement", "anchor": "wh-procurement" }
+          ]
+        },
+        {
+          "id": "warehouse-data-model",
+          "titleKey": "toc.warehouseDataModel",
+          "file": "warehouse-data-model",
+          "priority": "medium",
+          "children": [
+            { "id": "wh-fhir-resources", "titleKey": "toc.whFhirResources", "anchor": "wh-fhir-resources" },
+            { "id": "wh-stock-quant", "titleKey": "toc.whStockQuant", "anchor": "wh-stock-quant" },
+            { "id": "wh-workflows", "titleKey": "toc.whWorkflows", "anchor": "wh-workflows" }
+          ]
+        }
+      ]
     }
   ]
 }
