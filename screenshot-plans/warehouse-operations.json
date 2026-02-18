@@ -19,9 +19,9 @@
       "number": 1,
       "id": "wh-receiving-list",
       "name": "wh-receiving-list",
-      "description": "Receiving page list view showing receipt records with status badges, tab switcher, and supplier/warehouse columns",
-      "desiredState": "Receiving page fully loaded with the List tab active. Table shows receipt rows with columns: receipt number, date, supplier, warehouse, total amount, and status badges (in-progress / completed). Tab bar at top shows List and Grouped views.",
-      "differentiator": "Shows the receiving list tab with receipt rows in a flat table — not the grouped view, not the receipt creation modal",
+      "description": "Restructured receiving page with tab switcher (Receiving History + Analytics), collapsible search filters, and new table columns (Date, Invoice Number, Contract Number, Company, Department, Quantity, Total)",
+      "desiredState": "Receiving page fully loaded with Receiving History tab active. Page header shows Import from RS and + Create Receipt buttons. Tab bar shows Receiving History (with count badge) and Analytics tabs. Collapsible search filter panel visible. Table shows rows with columns: Date, Invoice Number, Contract Number, Company, Department, Quantity, Total.",
+      "differentiator": "Shows the restructured receiving page with new tab layout, filters panel, and updated table columns — not the old list/grouped view",
       "stateSetup": null,
       "type": "static",
       "anchorId": "wh-receiving",
@@ -52,29 +52,29 @@
     },
     {
       "number": 2,
-      "id": "wh-receipt-wizard",
-      "name": "wh-receipt-wizard",
-      "description": "Receipt creation modal showing header fields (date, receipt number, company, warehouse) and product line items entry row",
-      "desiredState": "Receipt creation modal/dialog is open on top of the receiving page. The modal shows header fields (date, receipt number, company dropdown, warehouse dropdown) and the line item entry section with columns for product code, name, unit, quantity, unit price, and totals.",
-      "differentiator": "Shows the receipt creation form as a modal overlay — not the receiving list page behind it",
+      "id": "wh-receiving-review",
+      "name": "wh-receiving-review",
+      "description": "Review Items modal showing document info cards (Document #, Date, Company, Amount), matched items with lot/expiry tracking, and department selector",
+      "desiredState": "Review Items modal is open showing document info cards at top, department selector with Receive without contract checkbox, matched items table with Quantity, Price, Total columns and Unmatch buttons, and per-item Lot Number and Expiry Date fields.",
+      "differentiator": "Shows the Review Items modal — not the receiving list page, not the Create Receipt wizard",
       "stateSetup": {
-        "description": "Click the Create Receipt button in the page header to open the receipt creation modal",
+        "description": "Navigate to receiving page, click on a receipt row to open the Review Items modal",
         "interactionSequence": [
           { "action": "navigate", "url": "/emr/dashboard/warehouse/receiving" },
           { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var btns = document.querySelectorAll('button'); for (var b of btns) { if (b.querySelector('svg') && b.textContent.trim().length > 0) { var rect = b.getBoundingClientRect(); if (rect.top < 120) { b.click(); return 'clicked header button'; } } } var addBtn = document.querySelector('button[aria-label]'); if (addBtn) { addBtn.click(); return 'clicked add button'; } return 'no button found'; })()" },
+          { "action": "evaluate", "script": "(() => { var rows = document.querySelectorAll('tr[data-row-key], tbody tr'); for (var r of rows) { if (r.querySelector('td')) { r.click(); return 'clicked first data row'; } } return 'no data rows found'; })()" },
           { "action": "wait", "ms": 1500 }
         ],
         "sampleData": null
       },
       "type": "state-based",
       "anchorId": "wh-receiving",
-      "docReference": "Section 3.1 - Creating a Receipt",
+      "docReference": "Section 3.1 - Reviewing Imported Items",
       "sectionHeaderText": null,
       "expectedDOMElements": [],
-      "knownLimitation": "The create button selector may need adjustment based on actual DOM structure. Try clicking the prominent action button in the page header area.",
+      "knownLimitation": "The row click selector may need adjustment. The Review Items modal may only appear for RS-imported receipts.",
       "verificationCriteria": {
-        "mustShow": ["Modal/dialog overlay", "Date field", "Company/supplier dropdown", "Warehouse dropdown", "Line item entry row"],
+        "mustShow": ["Modal/dialog overlay", "Document info cards", "Matched items table", "Lot Number and Expiry Date fields"],
         "mustNotShow": ["Only the list page without modal"]
       },
       "languages": ["en", "ka", "ru"],
@@ -369,6 +369,92 @@
         "ka": null,
         "ru": null
       }
+    },
+    {
+      "number": 10,
+      "id": "wh-receipt-create",
+      "name": "wh-receipt-create",
+      "description": "Create Receipt 3-step wizard showing Step 1: Shipment Details with supplier, department, invoice number, and delivery date fields",
+      "desiredState": "Create Receipt wizard is open showing Step 1 (Shipment Details). Form shows fields for supplier, department, invoice number, and delivery date. Step indicators visible at top showing 3 steps.",
+      "differentiator": "Shows the Create Receipt wizard Step 1 — not the Review Items modal, not the receiving list page",
+      "stateSetup": {
+        "description": "Navigate to receiving page and click + Create Receipt button to open the wizard",
+        "interactionSequence": [
+          { "action": "navigate", "url": "/emr/dashboard/warehouse/receiving" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var btns = document.querySelectorAll('button'); for (var b of btns) { var t = b.textContent.trim(); if (t.indexOf('Create') !== -1 || t.indexOf('+') !== -1) { var rect = b.getBoundingClientRect(); if (rect.top < 120) { b.click(); return 'clicked create receipt button'; } } } return 'no button found'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "state-based",
+      "anchorId": "wh-receiving",
+      "docReference": "Section 3.1 - Creating a Receipt",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [],
+      "knownLimitation": "The Create Receipt button may be the second button in the header (after Import from RS).",
+      "verificationCriteria": {
+        "mustShow": ["Wizard/modal overlay", "Step indicators", "Supplier field", "Department field"],
+        "mustNotShow": ["Only the list page without modal"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-receipt-create" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    },
+    {
+      "number": 11,
+      "id": "wh-receiving-analytics",
+      "name": "wh-receiving-analytics",
+      "description": "Analytics tab on the receiving page showing summary statistics and charts for receiving operations",
+      "desiredState": "Receiving page with the Analytics tab active. Shows summary statistics and visual charts for receiving operations trends.",
+      "differentiator": "Shows the Analytics tab content — not the Receiving History tab, not any modal",
+      "stateSetup": {
+        "description": "Navigate to receiving page and click the Analytics tab",
+        "interactionSequence": [
+          { "action": "navigate", "url": "/emr/dashboard/warehouse/receiving" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "(() => { var tabs = document.querySelectorAll('[role=\"tab\"]'); for (var i = 0; i < tabs.length; i++) { var t = tabs[i].textContent.toLowerCase(); if (t.indexOf('analytics') !== -1 || t.indexOf('analytic') !== -1) { tabs[i].click(); return 'clicked analytics tab'; } } if (tabs.length >= 2) { tabs[1].click(); return 'clicked second tab'; } return 'tabs not found'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "state-based",
+      "anchorId": "wh-receiving",
+      "docReference": "Section 3.1 - Analytics",
+      "sectionHeaderText": null,
+      "expectedDOMElements": [],
+      "knownLimitation": "The Analytics tab may be the second tab. Content depends on available data.",
+      "verificationCriteria": {
+        "mustShow": ["Analytics tab selected/active", "Statistics or charts or empty state"],
+        "mustNotShow": ["Loading skeletons", "Receiving History table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 500 },
+        { "action": "screenshot", "name": "wh-receiving-analytics" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
     }
   ],
   "languageSwitching": {
@@ -380,10 +466,10 @@
     "waitAfterSwitch": 2000
   },
   "summary": {
-    "totalScreenshots": 9,
-    "totalFiles": 27,
+    "totalScreenshots": 11,
+    "totalFiles": 33,
     "staticScreenshots": 4,
     "multiStepFlows": 0,
-    "stateBased": 5
+    "stateBased": 7
   }
 }

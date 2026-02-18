@@ -96,7 +96,8 @@
             { "id": "wh-dashboard", "titleKey": "toc.whDashboard", "anchor": "wh-dashboard" },
             { "id": "wh-kpi-metrics", "titleKey": "toc.whKpiMetrics", "anchor": "wh-kpi-metrics" },
             { "id": "wh-quick-actions", "titleKey": "toc.whQuickActions", "anchor": "wh-quick-actions" },
-            { "id": "wh-analytics", "titleKey": "toc.whAnalytics", "anchor": "wh-analytics" }
+            { "id": "wh-analytics", "titleKey": "toc.whAnalytics", "anchor": "wh-analytics" },
+            { "id": "wh-notifications", "titleKey": "toc.whNotifications", "anchor": "wh-notifications" }
           ]
         },
         {

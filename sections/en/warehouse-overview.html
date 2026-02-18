@@ -24,7 +24,7 @@
 
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">6</span>
+      <span class="doc-stat-inline-number">7</span>
       <span class="doc-stat-inline-label">Dashboard Sections</span>
     </div>
     <div class="doc-stat-inline">
@@ -41,7 +41,7 @@
     </div>
   </div>
 
-  <p>The six sections, from top to bottom:</p>
+  <p>The seven sections, from top to bottom:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
@@ -82,6 +82,11 @@
           <td><strong>Recent Activity</strong></td>
           <td>Timeline of warehouse events from the last 7 days</td>
           <td>Always visible (shows empty state message if no events)</td>
+        </tr>
+        <tr>
+          <td><strong>Notifications</strong></td>
+          <td>Real-time notification feed for transfers, procurement, and system events</td>
+          <td>Always visible</td>
         </tr>
       </tbody>
     </table>
@@ -354,6 +359,65 @@
   </div>
 
   <p>Timestamps display as relative time (e.g., "3 min ago", "2 hours ago", "5 days ago") and fall back to a formatted date for events older than 7 days. Clicking on an activity item navigates to the relevant page (receipts or transfers).</p>
+
+  <!-- Notifications -->
+  <h3 id="wh-notifications">Notifications</h3>
+
+  <p>The <strong>Notifications</strong> section provides a real-time feed of system events related to warehouse operations. Each notification appears as a card with an icon, title, description, and timestamp -- keeping warehouse staff informed without leaving the dashboard.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-dashboard-notifications-en.png" alt="Notification feed showing transfer alerts, procurement updates, and system events with timestamps" class="doc-screenshot-image" data-i18n-img="wh-dashboard-notifications">
+  </div>
+
+  <p>Each notification card displays:</p>
+
+  <ul class="doc-list">
+    <li><strong>Icon</strong> -- Color-coded icon indicating the notification type</li>
+    <li><strong>Title</strong> -- Brief summary of the event</li>
+    <li><strong>Description</strong> -- Additional details about the event</li>
+    <li><strong>Timestamp</strong> -- Relative time since the event occurred</li>
+  </ul>
+
+  <p>A <strong>"Mark all as read"</strong> button with an unread count badge appears at the top of the feed, allowing users to clear all unread notifications at once.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Notification Type</th>
+          <th>Priority</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Transfer</strong></td>
+          <td>High</td>
+          <td>Incoming transfer requests, approvals, and rejections</td>
+        </tr>
+        <tr>
+          <td><strong>Procurement</strong></td>
+          <td>Medium</td>
+          <td>Procurement status changes (submitted, approved, ordered, received)</td>
+        </tr>
+        <tr>
+          <td><strong>Stock Alert</strong></td>
+          <td>High</td>
+          <td>Stock-out warnings and low stock threshold notifications</td>
+        </tr>
+        <tr>
+          <td><strong>Expiry</strong></td>
+          <td>Medium</td>
+          <td>Items approaching or past their expiration date</td>
+        </tr>
+        <tr>
+          <td><strong>System</strong></td>
+          <td>Low</td>
+          <td>General system events (imports completed, reports generated)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>Data Sources:</strong>

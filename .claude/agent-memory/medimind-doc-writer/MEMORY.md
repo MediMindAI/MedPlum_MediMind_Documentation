@@ -86,3 +86,51 @@
 ### Source File Conversion
 - AI chatbot components source: `/Users/toko/Desktop/medplum_medimind/explanations/features/ai-chatbot-emr/`
 - Contains: components.md, state-management.md, hooks.md
+
+## Warehouse Module Source Paths (Verified 2026-02-16)
+- View: `views/nomenclature/WarehouseNomenclatureView.tsx` (462 lines)
+- Tabs: `components/warehouse/tabs/{CategoriesTab,ItemGroupsTab,SubCategoryTab,MedicalItemsTab,WarehouseItemsTab}.tsx`
+- Edit form: `components/warehouse/forms/WarehouseEditForm.tsx` (831 lines, 2-tab: Main + Attributes)
+- Info panel: `components/warehouse/WarehouseInfoPanel.tsx` (collapsible 5-level hierarchy explainer)
+- Types: `types/warehouse.ts` (918 lines - complete FHIR extension mappings)
+- Tab type: `WarehouseNomenclatureTabType = 'categories' | 'groups' | 'subCategories' | 'items' | 'warehouse'`
+- FHIR resources: List (4 codes for levels 1-4), SupplyDelivery (level 5), DeviceDefinition (edit modal)
+- Cross-filter: clicking group -> filters items; clicking item -> filters warehouse
+- Product catalog: 13-column EMRTable, server-side pagination (50/page), debounced search (300ms)
+- Edit modal: Step-up auth required, section-by-section save, conditional pharma fields
+
+## Visual Hierarchy Diagrams
+- For 5-tier or multi-level systems, use inline HTML/CSS diagrams (not Mermaid)
+- Pattern: decreasing width cards (100%, 92%, 84%, 76%, 68%) with dashed connectors
+- Color-code each level using `var(--emr-primary)` gradient for top, then border-left colors for each tier
+- Use level number circles with matching background opacity
+
+## Warehouse Operations Source Paths (Verified 2026-02-16)
+- Receiving: `views/settings/tabs/administration/UnifiedReceivingPage.tsx` (2 tabs: List, Grouped)
+- Transfers: `views/settings/tabs/administration/UnifiedTransfersPage.tsx` (3 tabs: All, Grouped, Approval)
+- Orders: `views/settings/tabs/administration/UnifiedOrdersPage.tsx` (3 tabs: All, Grouped, Confirmation)
+- Inventory: `views/settings/tabs/administration/UnifiedInventoryPage.tsx` (2 tabs: Stock Levels, Picking)
+- Receipt modal: `components/reception/ReceiptFormModal.tsx` (header + line items, bidirectional product search)
+- Transfer Book: `components/transfer/TransferBookModal.tsx` (dual-panel BookModal, step-up auth, direct write-off)
+- Transfer Confirmation: `views/settings/tabs/administration/TransferConfirmationPage.tsx` (dept access, edit quantities)
+- Order Book: `components/order/OrderBookModal.tsx` (dual-panel BookModal, requester/receiver)
+- Balances table: `components/balances/BalancesTable.tsx` (EMRTable, 50/page, expiry badges, Excel export)
+- Balances filters: `components/balances/BalancesFilters.tsx` (dept, group, stock status, zone, cross-location)
+- Picking: `views/settings/tabs/administration/PickingPage.tsx` (FEFO sorting, StockQuant queries, override reasons)
+- FHIR: Receipt=SupplyDelivery(receipt), Transfer=SupplyDelivery(transfer), Order=SupplyRequest, Inventory=Basic(StockQuant)
+- Shared BookModal: `components/shared/BookModal.tsx` (used by both TransferBookModal and OrderBookModal)
+
+## Warehouse Data Architecture (Verified 2026-02-16)
+- StockQuant composite key: `{itemCode}|{locationId}|{lotNumber}|{qualityStatus}` (NONE for untracked lots)
+- StockQuant FHIR: Basic resource with `stock-quant` code, extensions prefixed `sq-`
+- Optimistic locking: 5 retries, exponential backoff with jitter, If-Match ETag
+- FEFO: filter expired/quarantine -> sort expiryDate ASC (nulls last) -> pick first with sufficient qty
+- Transfer statuses: draft->requested->approved->in-progress->received/partial->completed (+ rejected/cancelled terminals)
+- Order statuses: draft->active->confirmed->complete (+ cancelled terminal; dispatched/delivered are legacy)
+- Weighted avg cost: (oldQty*oldCost + newQty*newCost)/(oldQty+newQty); donated items (cost=0) preserve existing cost
+- Stock moves: receipt, transfer, adjustment-plus/minus, consumption, scrap, recall
+- Adjustment reasons: physical-count, damage-spoilage, expired-disposal, theft-loss, system-correction, reconciliation
+- FHIR base URL: `http://medimind.ge/fhir` (NEVER `https`), currency: GEL
+- Balance cache: 30s TTL, BroadcastChannel for cross-tab invalidation
+- Three-tier nomenclature: ItemGroup (~310) -> MedicalItem (~503) -> WarehouseItem (~35900)
+- 11 warehouse groups: consumables, medications, household, non-inventory, fixed-assets, inventory, reagent, solution, medical-instrument, narcotics, food

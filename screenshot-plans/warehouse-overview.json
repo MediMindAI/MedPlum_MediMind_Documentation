@@ -167,6 +167,47 @@
         "ru": null
       }
     }
+    ,{
+      "number": 5,
+      "id": "wh-dashboard-notifications",
+      "name": "wh-dashboard-notifications",
+      "description": "Notification feed section showing notification cards with icons, titles, descriptions, timestamps, and mark-all-as-read button with unread count badge",
+      "desiredState": "Dashboard scrolled to notifications section. Notification cards visible with different types (transfer, procurement, stock alert, expiry, system). Mark all as read button visible with unread count badge.",
+      "differentiator": "Shows the notifications feed section — not the activity timeline, not the analytics grid",
+      "stateSetup": {
+        "description": "Scroll to the notifications section at the bottom of the dashboard",
+        "interactionSequence": [
+          { "action": "evaluate", "script": "(() => { var headings = document.querySelectorAll('h2, h3, [class*=Title]'); for (var i = 0; i < headings.length; i++) { var t = headings[i].textContent.toLowerCase(); if (t.indexOf('notification') !== -1) { headings[i].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to: ' + headings[i].textContent; } } window.scrollTo(0, document.body.scrollHeight); return 'scrolled to bottom'; })()" },
+          { "action": "wait", "ms": 1500 }
+        ],
+        "sampleData": null
+      },
+      "type": "static",
+      "anchorId": "wh-notifications",
+      "docReference": "Section 1.5 - Notifications",
+      "sectionHeaderText": "Notifications",
+      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Notification cards", "Mark all as read button", "Unread count badge", "Timestamps"],
+        "mustNotShow": ["Loading skeletons", "Error message"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "wait", "ms": 1000 },
+        { "action": "screenshot", "name": "wh-dashboard-notifications" }
+      ],
+      "status": {
+        "en": "pending",
+        "ka": "pending",
+        "ru": "pending"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      }
+    }
   ],
   "languageSwitching": {
     "selectors": {
@@ -178,9 +219,9 @@
     "extraWaitRu": 2000
   },
   "summary": {
-    "totalScreenshots": 4,
-    "totalFiles": 12,
-    "staticScreenshots": 4,
+    "totalScreenshots": 5,
+    "totalFiles": 15,
+    "staticScreenshots": 5,
     "multiStepFlows": 0,
     "stateBased": 0
   }

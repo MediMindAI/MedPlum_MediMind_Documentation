@@ -27,114 +27,157 @@
   <!-- ============================================================ -->
   <h3 id="wh-receiving">3.1 Goods Receiving</h3>
 
-  <p>The Receiving page manages incoming goods from external suppliers. Each receipt records the supplier, destination warehouse, and individual line items with quantities and pricing. Receipts follow a lifecycle from <strong>in-progress</strong> (being entered) to <strong>completed</strong> (confirmed and stocked).</p>
+  <p>The Receiving page has been restructured with a modern tabbed interface for managing incoming goods. The page header features <strong>"Import from RS"</strong> and <strong>"+ Create Receipt"</strong> action buttons, with a tab switcher below for navigating between <strong>Receiving History</strong> and <strong>Analytics</strong> views.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-receiving-list-en.png" alt="Receiving page showing list of receipt records with status badges and tab switcher" class="doc-screenshot-image" data-i18n-img="wh-receiving-list">
+    <img src="images/wh-receiving-list-en.png" alt="Receiving page with tab switcher, search filters, and new table columns" class="doc-screenshot-image" data-i18n-img="wh-receiving-list">
   </div>
 
-  <h4>View Modes</h4>
-  <p>The page offers two tab views for organizing receipts:</p>
+  <h4>Page Header</h4>
+  <p>The page header contains two primary action buttons:</p>
   <ul class="doc-list">
-    <li><strong>List View</strong> -- Displays all receipts in a flat table sorted by date, with receipt number, supplier, warehouse, total amount, and status</li>
-    <li><strong>Grouped View</strong> -- Groups receipts by document number, making it easy to see all line items belonging to a single delivery</li>
+    <li><strong>Import from RS</strong> -- Import receipts directly from the Revenue Service (RS) system for officially documented deliveries</li>
+    <li><strong>+ Create Receipt</strong> -- Open the 3-step receipt creation wizard</li>
   </ul>
 
-  <h4>Creating a Receipt</h4>
-  <p>Click the <strong>Create Receipt</strong> button in the page header to open the receipt creation modal. The form is divided into a header section and a line items section:</p>
+  <h4>Tab Views</h4>
+  <p>Below the header, a tab switcher organizes the page into two views:</p>
+  <ul class="doc-list">
+    <li><strong>Receiving History</strong> (with count badge) -- Grouped invoice records showing all receipts, organized by reception groups</li>
+    <li><strong>Analytics</strong> (with count badge) -- Summary statistics and charts for receiving operations</li>
+  </ul>
 
-  <div class="doc-screenshot-full">
-    <img src="images/wh-receipt-wizard-en.png" alt="Receipt creation modal showing header fields and product line items table" class="doc-screenshot-image" data-i18n-img="wh-receipt-wizard">
-  </div>
+  <h4>Reception Group</h4>
+  <p>The <strong>Reception Group</strong> sub-section allows organizing receipts into logical groups for batch processing and tracking related deliveries together.</p>
+
+  <h4>Search &amp; Filters</h4>
+  <p>A collapsible <strong>Search &amp; Filters</strong> panel provides seven filter fields for narrowing down receipt records:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Header Field</th>
+          <th>Filter Field</th>
           <th>Description</th>
-          <th>FHIR Mapping</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date From</strong></td>
+          <td>Start date for filtering receipts</td>
+        </tr>
+        <tr>
+          <td><strong>Date To</strong></td>
+          <td>End date for filtering receipts</td>
+        </tr>
+        <tr>
+          <td><strong>Invoice Number</strong></td>
+          <td>Search by specific invoice number</td>
+        </tr>
+        <tr>
+          <td><strong>Contract Number</strong></td>
+          <td>Filter by contract number</td>
+        </tr>
+        <tr>
+          <td><strong>Supplier</strong></td>
+          <td>Filter by supplier company name</td>
+        </tr>
+        <tr>
+          <td><strong>Department</strong></td>
+          <td>Filter by receiving department</td>
+        </tr>
+        <tr>
+          <td><strong>Item Name</strong></td>
+          <td>Search by product name within receipts</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Results can be exported in two formats using the <strong>Excel</strong> and <strong>PDF</strong> export buttons.</p>
+
+  <h4>Table Columns</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>Date</strong></td>
-          <td>Receipt date (defaults to today)</td>
-          <td>SupplyDelivery.occurrenceDateTime</td>
+          <td>Receipt date</td>
         </tr>
         <tr>
-          <td><strong>Receipt Number</strong></td>
-          <td>Auto-generated unique identifier (read-only)</td>
-          <td>SupplyDelivery.identifier</td>
+          <td><strong>Invoice Number</strong></td>
+          <td>Supplier invoice identifier</td>
+        </tr>
+        <tr>
+          <td><strong>Contract Number</strong></td>
+          <td>Associated procurement contract</td>
         </tr>
         <tr>
           <td><strong>Company</strong></td>
-          <td>Supplier company (searchable dropdown from 495+ registered suppliers)</td>
-          <td>SupplyDelivery.supplier (Organization reference)</td>
+          <td>Supplier company name</td>
         </tr>
         <tr>
-          <td><strong>Warehouse</strong></td>
-          <td>Destination department/warehouse that receives the goods</td>
-          <td>SupplyDelivery.destination (Location reference)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Line Items</h4>
-  <p>Each line item represents a product being received. The product entry row provides bidirectional search: type a <strong>product code</strong> or a <strong>product name</strong> and the system auto-completes the matching item from the warehouse catalog.</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Line Item Field</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Product Code</strong></td>
-          <td>Autocomplete from warehouse catalog; selecting a code auto-fills the name and unit</td>
-        </tr>
-        <tr>
-          <td><strong>Product Name</strong></td>
-          <td>Autocomplete search (minimum 2 characters); selecting a name auto-fills the code and unit</td>
-        </tr>
-        <tr>
-          <td><strong>Unit</strong></td>
-          <td>Measurement unit (auto-filled from catalog, editable)</td>
+          <td><strong>Department</strong></td>
+          <td>Receiving department/warehouse</td>
         </tr>
         <tr>
           <td><strong>Quantity</strong></td>
-          <td>Number of units received (minimum 1)</td>
+          <td>Total quantity of items received</td>
         </tr>
         <tr>
-          <td><strong>Unit Price</strong></td>
-          <td>Purchase price per unit</td>
-        </tr>
-        <tr>
-          <td><strong>Unit Total</strong></td>
-          <td>Auto-calculated: Quantity x Unit Price (read-only)</td>
-        </tr>
-        <tr>
-          <td><strong>Sale Price</strong></td>
-          <td>Retail/sale price per unit</td>
-        </tr>
-        <tr>
-          <td><strong>Sale Total</strong></td>
-          <td>Auto-calculated: Quantity x Sale Price (read-only)</td>
+          <td><strong>Total</strong></td>
+          <td>Total monetary value of the receipt</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <p>After filling in a line item, click the <strong>+</strong> button to add it to the receipt. Added items appear in a scrollable table below. Each item can be removed by clicking the trash icon. Click <strong>Save</strong> to finalize the receipt.</p>
+  <h4>Reviewing Imported Items</h4>
+  <p>When reviewing a receipt (especially one imported from RS), the <strong>"Review Items"</strong> modal provides a detailed view of the imported data with matching and tracking capabilities.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-receiving-review-en.png" alt="Review Items modal showing document info cards, matched items, and lot tracking fields" class="doc-screenshot-image" data-i18n-img="wh-receiving-review">
+  </div>
+
+  <p>The Review Items modal includes:</p>
+  <ul class="doc-list">
+    <li><strong>Document info cards</strong> -- Four cards at the top showing Document #, Date, Company Name, and Amount</li>
+    <li><strong>Duplicate waybill warning</strong> -- Alert if the invoice number has already been imported</li>
+    <li><strong>Department selector</strong> -- Choose the receiving department, with a "Receive without contract" checkbox option</li>
+    <li><strong>Matched items table</strong> -- Each row shows Quantity, Price, Total, and an Unmatch button for correcting automatic matches</li>
+    <li><strong>Per-item tracking</strong> -- Lot Number and Expiry Date fields for each line item</li>
+  </ul>
+
+  <h4>Creating a Receipt</h4>
+  <p>Click <strong>"+ Create Receipt"</strong> to open the 3-step receipt creation wizard:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-receipt-create-en.png" alt="Create Receipt wizard Step 1 showing shipment details form" class="doc-screenshot-image" data-i18n-img="wh-receipt-create">
+  </div>
+
+  <ol class="doc-list">
+    <li><strong>Shipment Details</strong> -- Enter supplier, department, invoice number, and delivery date</li>
+    <li><strong>Process Items</strong> -- Add line items with product, quantity, pricing, lot number, and expiry date</li>
+    <li><strong>Confirmation</strong> -- Review all details and confirm the receipt</li>
+  </ol>
+
+  <h4>Analytics</h4>
+  <p>The <strong>Analytics</strong> tab provides summary statistics and visual charts for receiving operations, helping managers track trends in goods received over time.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-receiving-analytics-en.png" alt="Analytics tab showing receiving statistics and charts" class="doc-screenshot-image" data-i18n-img="wh-receiving-analytics">
+  </div>
 
   <div class="doc-info-box">
     <div class="doc-info-icon">&#x1F4E6;</div>
     <div class="doc-info-content">
-      <strong>RS Import:</strong> The <strong>Import from RS</strong> button allows importing receipts directly from the Revenue Service (RS) system, streamlining data entry for officially documented deliveries.
+      <strong>RS Import:</strong> The <strong>Import from RS</strong> button allows importing receipts directly from the Revenue Service (RS) system. Imported data is automatically matched against the warehouse catalog, and unmatched items are flagged for manual review.
     </div>
   </div>
 
