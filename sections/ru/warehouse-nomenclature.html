@@ -250,22 +250,22 @@
         <tr>
           <td><strong>Группа продукции</strong></td>
           <td>Родительская группа с Уровня 2</td>
-          <td>Extension: general-group</td>
+          <td>Extension: item-group-ref (general-group deprecated)</td>
         </tr>
         <tr>
           <td><strong>Общее наименование</strong></td>
           <td>Общее название с Уровня 4</td>
-          <td>Extension: general-name</td>
+          <td>Extension: medical-item-ref (general-name deprecated)</td>
         </tr>
         <tr>
           <td><strong>Категория</strong></td>
           <td>Категория верхнего уровня (Расходные материалы, Медикаменты и т.д.)</td>
-          <td>SupplyDelivery.type</td>
+          <td>Extension: warehouse-category</td>
         </tr>
         <tr>
           <td><strong>Единица</strong></td>
           <td>Единица измерения (штука, мл, коробка, ампула и т.д.)</td>
-          <td>SupplyDelivery.suppliedItem.quantity.unit</td>
+          <td>Extension: warehouse-unit</td>
         </tr>
         <tr>
           <td><strong>Производитель</strong></td>
@@ -275,17 +275,17 @@
         <tr>
           <td><strong>Количество</strong></td>
           <td>Текущее количество на складе</td>
-          <td>SupplyDelivery.suppliedItem.quantity.value</td>
+          <td>Extension: warehouse-quantity</td>
         </tr>
         <tr>
           <td><strong>Описание</strong></td>
           <td>Дополнительное описание продукта</td>
-          <td>Extension: description</td>
+          <td>SupplyDelivery.suppliedItem.itemCodeableConcept.coding[0].display</td>
         </tr>
         <tr>
           <td><strong>Удалён</strong></td>
           <td>Статус мягкого удаления (Да/Нет)</td>
-          <td>SupplyDelivery.status</td>
+          <td>Extension: is-deleted + SupplyDelivery.status</td>
         </tr>
         <tr>
           <td><strong>Родитель</strong></td>
@@ -295,7 +295,7 @@
         <tr>
           <td><strong>Расчёт цены</strong></td>
           <td>Правила видимости ценообразования для выставления счетов</td>
-          <td>Extension: price-calculation-mode</td>
+          <td>Extension: price-calculation</td>
         </tr>
       </tbody>
     </table>
@@ -307,10 +307,6 @@
     <li><strong>Фильтр категории</strong> — Выпадающий список для фильтрации по категории верхнего уровня</li>
     <li><strong>Фильтр статуса</strong> — Показать активные товары, удалённые товары или все</li>
   </ul>
-
-  <div class="doc-warning-box">
-    <strong>Примечание:</strong> Удалённые товары отображаются с <strong>красной подсветкой</strong> в таблице. Товары удаляются "мягко" (помечаются как удалённые), а не безвозвратно, что сохраняет журнал аудита для соответствия требованиям.
-  </div>
 
   <h4>Редактирование товара каталога</h4>
   <p>Нажмите кнопку редактирования на любом товаре каталога, чтобы открыть подробное модальное окно редактирования. Модальное окно имеет две вкладки:</p>

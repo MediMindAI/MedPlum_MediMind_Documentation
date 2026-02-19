@@ -1,0 +1,1035 @@
+<section class="doc-section" id="admin-architecture">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">14</span> Data Flow &amp; FHIR Architecture</h2>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.1 Overview -->
+  <!-- ========================== -->
+  <h3 id="arch-overview">14.1 Overview</h3>
+  <p>The Administration module is built on a <strong>5-layer architecture</strong> with a strict principle: <strong>no shared global state</strong>. There is no Redux, Zustand, or any other global state management library. Each page manages its own state through custom React hooks, and cross-domain communication occurs exclusively through <strong>FHIR resources</strong> persisted on the Medplum server and <strong>cache invalidation</strong> signals.</p>
+
+  <ul class="doc-list">
+    <li><strong>No shared state</strong> -- each page is fully self-contained with its own hook</li>
+    <li><strong>Unidirectional data flow</strong> -- Page Component &rarr; Custom Hook &rarr; Domain Service &rarr; FHIR Service &rarr; Medplum Client</li>
+    <li><strong>FHIR as the single source of truth</strong> -- all inventory data lives on the Medplum server</li>
+    <li><strong>Client-side filtering</strong> -- most extension-based filtering happens after fetching from the server</li>
+    <li><strong>Cache invalidation for cross-domain sync</strong> -- operations on one page trigger cache clears on related pages</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 14.2 Architecture Layers -->
+  <!-- ========================== -->
+  <h3 id="arch-layers">14.2 Architecture Layers</h3>
+  <p>The following diagram illustrates the 5 layers of the Administration module architecture:</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    L1["Layer 1: Page Component (View)"]
+    L2["Layer 2: Custom Hook (State Management)"]
+    L3["Layer 3: Domain Service (Business Logic)"]
+    L4["Layer 4: FHIR Service (Data Access)"]
+    L5["Layer 5: Medplum Client (HTTP API)"]
+
+    L1 -->|"calls hook, renders UI"| L2
+    L2 -->|"calls service functions"| L3
+    L3 -->|"calls FHIR CRUD"| L4
+    L4 -->|"HTTP requests"| L5
+    L5 -->|"HTTPS"| CLOUD["Medplum Cloud Server"]
+
+    style L1 fill:#1a365d,stroke:#2b6cb0,color:#ffffff
+    style L2 fill:#2b6cb0,stroke:#3182ce,color:#ffffff
+    style L3 fill:#3182ce,stroke:#63b3ed,color:#ffffff
+    style L4 fill:#63b3ed,stroke:#bee3f8,color:#1a365d
+    style L5 fill:#bee3f8,stroke:#e5e7eb,color:#1a365d
+    style CLOUD fill:#f3f4f6,stroke:#9ca3af,color:#1f2937
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Layer Responsibilities Table -->
+  <h4 id="layer-responsibilities">Layer Responsibilities</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Responsibility</th>
+          <th>Examples</th>
+          <th>MUST NOT Do</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Page Component</strong></td>
+          <td>Renders UI, handles user interactions, passes callbacks to children</td>
+          <td><code>BalancesPage</code>, <code>ReceptionPage</code>, <code>TransferPage</code></td>
+          <td>Contain business logic, call FHIR services directly, hold complex state</td>
+        </tr>
+        <tr>
+          <td><strong>2. Custom Hook</strong></td>
+          <td>Local state management, filter state, pagination, fetch triggers</td>
+          <td><code>useBalances</code>, <code>useReception</code>, <code>useTransferCreate</code></td>
+          <td>Render UI, make HTTP calls directly, reference DOM elements</td>
+        </tr>
+        <tr>
+          <td><strong>3. Domain Service</strong></td>
+          <td>Business logic, validation, data transformation (mostly legacy/unused)</td>
+          <td><code>balanceService</code>, <code>receptionService</code></td>
+          <td>Hold state, access React hooks, render components</td>
+        </tr>
+        <tr>
+          <td><strong>4. FHIR Service</strong></td>
+          <td>CRUD operations, type converters (FHIR &harr; UI), cache management</td>
+          <td><code>supplyDeliveryFhirService</code>, <code>supplyRequestFhirService</code></td>
+          <td>Contain UI logic, know about React, manage application state</td>
+        </tr>
+        <tr>
+          <td><strong>5. Medplum Client</strong></td>
+          <td>Authenticated HTTPS requests to Medplum Cloud</td>
+          <td><code>medplum.searchResources()</code>, <code>medplum.createResource()</code></td>
+          <td>Contain domain logic, transform data, manage cache</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.3 Cross-Domain Data Flows -->
+  <!-- ========================== -->
+  <h3 id="arch-data-flows">14.3 Cross-Domain Data Flows</h3>
+  <p>The four business domains (Reception, Transfer, Order, Balances) communicate through FHIR resources stored on the Medplum server. The following sections describe the three primary cross-domain flows.</p>
+
+  <!-- Flow 1: Reception → Balances -->
+  <h4 id="flow-reception-balances">Reception &rarr; Balances</h4>
+  <p>When a receipt is created and confirmed, it directly affects the balance of the destination department:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Action</th>
+          <th>FHIR Effect</th>
+          <th>Balance Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Create receipt on ReceptionPage</td>
+          <td><code>SupplyDelivery</code> created with <code>status=in-progress</code></td>
+          <td>None (not counted)</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Confirm receipt</td>
+          <td><code>SupplyDelivery.status</code> updated to <code>completed</code></td>
+          <td>Balance increases for destination dept</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Cache invalidation</td>
+          <td>None</td>
+          <td>Balance cache cleared for affected department</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Important:</strong> In-progress receipts do NOT affect balances until confirmed. This is by design -- unconfirmed goods should not appear in inventory counts until the warehouse has verified and accepted them.
+    </div>
+  </div>
+
+  <!-- Flow 2: Transfer Create → Confirmation → Balances -->
+  <h4 id="flow-transfer-balances">Transfer Create &rarr; Transfer Confirmation &rarr; Balances</h4>
+  <p>Transfers involve a two-step process: creation by the source department and confirmation by the receiving department or supervisor:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Action</th>
+          <th>FHIR Effect</th>
+          <th>Balance Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Create transfer on TransferCreatePage</td>
+          <td><code>SupplyDelivery</code> (type=transfer) created with <code>status=in-progress</code></td>
+          <td>None (not counted)</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Supervisor approves on TransferConfirmationPage</td>
+          <td><code>SupplyDelivery.status</code> updated to <code>completed</code></td>
+          <td>Source dept decreases, destination dept increases</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Direct write-off (alternative)</td>
+          <td><code>SupplyDelivery</code> created directly with <code>status=completed</code></td>
+          <td>Immediate effect on both departments</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Flow 3: Order Create → Order Confirmation -->
+  <h4 id="flow-order-transfer">Order Create &rarr; Order Confirmation</h4>
+  <p>Department orders follow an approval workflow that can optionally trigger automatic transfer creation:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Action</th>
+          <th>FHIR Effect</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Department creates order on OrderPage</td>
+          <td><code>SupplyRequest</code> created with <code>status=active</code></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Warehouse reviews on OrderConfirmationPage</td>
+          <td><code>SupplyRequest.status</code> updated (confirmed/cancelled)</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Auto-create transfer (optional)</td>
+          <td>New <code>SupplyDelivery</code> (type=transfer) created from approved order</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Transfer confirmation</td>
+          <td>Standard transfer confirmation flow applies</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Full Cross-Domain Flow Diagram -->
+  <h4 id="full-inventory-flow">Full Cross-Domain Inventory Flow</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart TD
+    SUP["External Supplier"] -->|"Invoice + Goods"| REC["RECEPTION PAGE"]
+    REC -->|"Create SupplyDelivery\nstatus=in-progress"| FHIR_R["FHIR: SupplyDelivery\n(type=receipt)"]
+    FHIR_R -->|"Confirm"| FHIR_RC["status=completed"]
+    FHIR_RC -->|"Invalidate cache"| BAL["BALANCES PAGE"]
+
+    DEPT_A["Department A"] -->|"Supply Request"| ORD["ORDER PAGE"]
+    ORD -->|"Create SupplyRequest\nstatus=active"| FHIR_O["FHIR: SupplyRequest"]
+    FHIR_O -->|"Approve"| ORD_CONF["ORDER CONFIRMATION"]
+    ORD_CONF -->|"Auto-create transfer"| XFER_C["TRANSFER CREATE"]
+
+    DEPT_B["Department B"] -->|"Direct transfer"| XFER_C
+    XFER_C -->|"Create SupplyDelivery\nstatus=in-progress"| FHIR_T["FHIR: SupplyDelivery\n(type=transfer)"]
+    FHIR_T -->|"Confirm"| XFER_CONF["TRANSFER CONFIRMATION"]
+    XFER_CONF -->|"status=completed"| FHIR_TC["Completed Transfer"]
+    FHIR_TC -->|"Invalidate cache"| BAL
+
+    BAL -->|"Aggregate all completed\nSupplyDelivery resources"| STOCK["Current Stock Levels"]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.4 FHIR Resource Reference -->
+  <!-- ========================== -->
+  <h3 id="arch-fhir-resources">14.4 FHIR Resource Reference</h3>
+  <p>The Administration module uses three primary FHIR resource configurations. All are based on FHIR R4 and stored on the Medplum Cloud server.</p>
+
+  <!-- SupplyDelivery (Receipts) -->
+  <h4 id="fhir-receipt">SupplyDelivery (Receipts)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value / Path</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Resource Type</strong></td>
+          <td><code>SupplyDelivery</code></td>
+          <td>FHIR R4 supply delivery resource</td>
+        </tr>
+        <tr>
+          <td><strong>Type</strong></td>
+          <td><code>type = 'receipt'</code> (via extension)</td>
+          <td>Distinguishes receipts from transfers</td>
+        </tr>
+        <tr>
+          <td><strong>Identifier: Receipt Number</strong></td>
+          <td><code>identifier[system="receipt-number"]</code></td>
+          <td>Auto-generated 10-digit document number</td>
+        </tr>
+        <tr>
+          <td><strong>Identifier: Invoice Number</strong></td>
+          <td><code>identifier[system="invoice-number"]</code></td>
+          <td>Supplier invoice reference</td>
+        </tr>
+        <tr>
+          <td><strong>Status Lifecycle</strong></td>
+          <td><code>in-progress</code> &rarr; <code>completed</code> | <code>abandoned</code></td>
+          <td>Created as in-progress, confirmed to completed</td>
+        </tr>
+        <tr>
+          <td><strong>Supplier</strong></td>
+          <td><code>supplier</code> (Reference)</td>
+          <td>Reference to Organization resource</td>
+        </tr>
+        <tr>
+          <td><strong>Tag</strong></td>
+          <td><code>meta.tag</code></td>
+          <td>Used for server-side filtering with <code>_tag</code> parameter</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SupplyDelivery (Transfers) -->
+  <h4 id="fhir-transfer">SupplyDelivery (Transfers)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value / Path</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Resource Type</strong></td>
+          <td><code>SupplyDelivery</code></td>
+          <td>Same FHIR type as receipts</td>
+        </tr>
+        <tr>
+          <td><strong>Type</strong></td>
+          <td><code>type = 'transfer'</code> (via extension)</td>
+          <td>Distinguishes transfers from receipts</td>
+        </tr>
+        <tr>
+          <td><strong>Identifier: Document Number</strong></td>
+          <td><code>identifier[system="transfer-document-number"]</code></td>
+          <td>Auto-generated 10-digit document number</td>
+        </tr>
+        <tr>
+          <td><strong>Status Lifecycle</strong></td>
+          <td><code>in-progress</code> &rarr; <code>completed</code> | <code>abandoned</code></td>
+          <td>Created as in-progress, supervisor confirms to completed</td>
+        </tr>
+        <tr>
+          <td><strong>Source Department</strong></td>
+          <td>Extension: <code>source-department</code></td>
+          <td>Department sending the items</td>
+        </tr>
+        <tr>
+          <td><strong>Destination Department</strong></td>
+          <td>Extension: <code>destination-department</code></td>
+          <td>Department receiving the items</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SupplyRequest (Orders) -->
+  <h4 id="fhir-order">SupplyRequest (Orders)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value / Path</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Resource Type</strong></td>
+          <td><code>SupplyRequest</code></td>
+          <td>FHIR R4 supply request resource</td>
+        </tr>
+        <tr>
+          <td><strong>Identifier: Document Number</strong></td>
+          <td><code>identifier[system="order-document-number"]</code></td>
+          <td>Auto-generated 10-digit document number</td>
+        </tr>
+        <tr>
+          <td><strong>Status Lifecycle</strong></td>
+          <td><code>active</code> &rarr; <code>completed</code> | <code>cancelled</code></td>
+          <td>Created as active, warehouse approves or rejects</td>
+        </tr>
+        <tr>
+          <td><strong>Requester Department</strong></td>
+          <td>Extension: <code>requester-department</code></td>
+          <td>Department making the supply request</td>
+        </tr>
+        <tr>
+          <td><strong>Receiver Department</strong></td>
+          <td>Extension: <code>receiver-department</code></td>
+          <td>Warehouse/department fulfilling the order</td>
+        </tr>
+        <tr>
+          <td><strong>Line Items</strong></td>
+          <td>Extension: <code>ORDER_LINE_ITEMS</code></td>
+          <td>JSON-encoded array of all order line items stored in a single extension</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Key Differences Table -->
+  <h4 id="resource-comparison">Key Differences: Receipt vs Transfer vs Order</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>Receipt</th>
+          <th>Transfer</th>
+          <th>Order</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>FHIR Resource</strong></td>
+          <td><code>SupplyDelivery</code></td>
+          <td><code>SupplyDelivery</code></td>
+          <td><code>SupplyRequest</code></td>
+        </tr>
+        <tr>
+          <td><strong>Line Item Storage</strong></td>
+          <td>Separate FHIR resources per item</td>
+          <td>Separate FHIR resources per item</td>
+          <td>JSON in single extension</td>
+        </tr>
+        <tr>
+          <td><strong>Source</strong></td>
+          <td>External supplier</td>
+          <td>Internal department</td>
+          <td>Requesting department</td>
+        </tr>
+        <tr>
+          <td><strong>Destination</strong></td>
+          <td>Warehouse/department</td>
+          <td>Internal department</td>
+          <td>Fulfilling warehouse</td>
+        </tr>
+        <tr>
+          <td><strong>Affects Balances</strong></td>
+          <td>Yes (when completed)</td>
+          <td>Yes (when completed)</td>
+          <td>No (indirectly via transfer)</td>
+        </tr>
+        <tr>
+          <td><strong>Initial Status</strong></td>
+          <td><code>in-progress</code></td>
+          <td><code>in-progress</code></td>
+          <td><code>active</code></td>
+        </tr>
+        <tr>
+          <td><strong>Confirmation Required</strong></td>
+          <td>Yes</td>
+          <td>Yes (supervisor)</td>
+          <td>Yes (warehouse staff)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-fhir-supply-delivery-en.png" alt="SupplyDelivery resource structure showing receipt and transfer fields" class="doc-screenshot-image" data-i18n-img="admin-fhir-supply-delivery">
+  </div>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-fhir-supply-request-en.png" alt="SupplyRequest resource structure showing order fields and line items extension" class="doc-screenshot-image" data-i18n-img="admin-fhir-supply-request">
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.5 Extension Reference -->
+  <!-- ========================== -->
+  <h3 id="arch-extensions">14.5 Extension Reference</h3>
+  <p>All Administration module FHIR extensions use the base URL prefix <code>http://medimind.ge/fhir/StructureDefinition/</code>. The following table lists all extensions defined in <code>ADMINISTRATION_EXTENSIONS</code>:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>URL Suffix</th>
+          <th>Value Type</th>
+          <th>Used By</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>document-type</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Distinguishes <code>receipt</code> from <code>transfer</code></td>
+        </tr>
+        <tr>
+          <td><code>source-department</code></td>
+          <td><code>valueReference</code></td>
+          <td>Transfer</td>
+          <td>Department sending the items</td>
+        </tr>
+        <tr>
+          <td><code>destination-department</code></td>
+          <td><code>valueReference</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Department receiving the items</td>
+        </tr>
+        <tr>
+          <td><code>requester-department</code></td>
+          <td><code>valueReference</code></td>
+          <td>Order</td>
+          <td>Department that created the supply request</td>
+        </tr>
+        <tr>
+          <td><code>receiver-department</code></td>
+          <td><code>valueReference</code></td>
+          <td>Order</td>
+          <td>Warehouse/department fulfilling the order</td>
+        </tr>
+        <tr>
+          <td><code>item-code</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Inventory item code identifier</td>
+        </tr>
+        <tr>
+          <td><code>item-name</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Human-readable item name</td>
+        </tr>
+        <tr>
+          <td><code>item-type</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Item category (one of 11 types)</td>
+        </tr>
+        <tr>
+          <td><code>item-quantity</code></td>
+          <td><code>valueDecimal</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Number of items in this line</td>
+        </tr>
+        <tr>
+          <td><code>item-price</code></td>
+          <td><code>valueDecimal</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Unit price of the item</td>
+        </tr>
+        <tr>
+          <td><code>item-total</code></td>
+          <td><code>valueDecimal</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Calculated total (quantity x price)</td>
+        </tr>
+        <tr>
+          <td><code>item-unit</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Unit of measure (pieces, ml, kg, etc.)</td>
+        </tr>
+        <tr>
+          <td><code>item-expiration</code></td>
+          <td><code>valueDate</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Expiry date of the item batch</td>
+        </tr>
+        <tr>
+          <td><code>item-series</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer</td>
+          <td>Batch/lot/series number</td>
+        </tr>
+        <tr>
+          <td><code>invoice-number</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt</td>
+          <td>Supplier invoice reference number</td>
+        </tr>
+        <tr>
+          <td><code>invoice-date</code></td>
+          <td><code>valueDate</code></td>
+          <td>Receipt</td>
+          <td>Date on the supplier invoice</td>
+        </tr>
+        <tr>
+          <td><code>document-date</code></td>
+          <td><code>valueDate</code></td>
+          <td>Receipt, Transfer, Order</td>
+          <td>Date the document was created</td>
+        </tr>
+        <tr>
+          <td><code>document-number</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer, Order</td>
+          <td>Auto-generated 10-digit document number</td>
+        </tr>
+        <tr>
+          <td><code>created-by</code></td>
+          <td><code>valueReference</code></td>
+          <td>Receipt, Transfer, Order</td>
+          <td>Reference to the Practitioner who created the document</td>
+        </tr>
+        <tr>
+          <td><code>confirmed-by</code></td>
+          <td><code>valueReference</code></td>
+          <td>Receipt, Transfer, Order</td>
+          <td>Reference to the Practitioner who confirmed/approved</td>
+        </tr>
+        <tr>
+          <td><code>confirmation-date</code></td>
+          <td><code>valueDateTime</code></td>
+          <td>Receipt, Transfer, Order</td>
+          <td>Timestamp when the document was confirmed</td>
+        </tr>
+        <tr>
+          <td><code>notes</code></td>
+          <td><code>valueString</code></td>
+          <td>Receipt, Transfer, Order</td>
+          <td>Free-text notes or comments</td>
+        </tr>
+        <tr>
+          <td><code>is-direct-writeoff</code></td>
+          <td><code>valueBoolean</code></td>
+          <td>Transfer</td>
+          <td>Indicates if transfer bypasses confirmation</td>
+        </tr>
+        <tr>
+          <td><code>ORDER_LINE_ITEMS</code></td>
+          <td><code>valueString</code> (JSON)</td>
+          <td>Order</td>
+          <td>JSON-encoded array of all order line items</td>
+        </tr>
+        <tr>
+          <td><code>order-reference</code></td>
+          <td><code>valueReference</code></td>
+          <td>Transfer</td>
+          <td>Link to the SupplyRequest that initiated this transfer</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.6 State Management Patterns -->
+  <!-- ========================== -->
+  <h3 id="arch-state-patterns">14.6 State Management Patterns</h3>
+  <p>The following patterns are used consistently across all custom hooks in the Administration module:</p>
+
+  <!-- fetchTrigger Pattern -->
+  <h4 id="pattern-fetch-trigger">fetchTrigger Pattern</h4>
+  <p>A simple numeric counter that triggers data refetch when incremented:</p>
+
+  <div class="doc-code-block">
+    <pre><code>const [fetchTrigger, setFetchTrigger] = useState(0);
+
+// In useEffect dependency array:
+useEffect(() => {
+  fetchData();
+}, [fetchTrigger, filters]);
+
+// To trigger refetch:
+const handleRefresh = () => setFetchTrigger(prev => prev + 1);</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Why fetchTrigger?</strong>
+      <p>This pattern allows manual re-fetching without changing any filter values. It is simpler than maintaining a <code>lastFetched</code> timestamp and avoids the complexity of a full state machine.</p>
+    </div>
+  </div>
+
+  <!-- Cancelled Fetch Pattern -->
+  <h4 id="pattern-cancelled-fetch">Cancelled Fetch Pattern</h4>
+  <p>Prevents state updates after a component has unmounted or a newer fetch has started:</p>
+
+  <div class="doc-code-block">
+    <pre><code>useEffect(() => {
+  let cancelled = false;
+
+  const fetchData = async () => {
+    setLoading(true);
+    const results = await fhirService.search(filters);
+    if (!cancelled) {
+      setData(results);
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+  return () => { cancelled = true; };
+}, [fetchTrigger, filters]);</code></pre>
+  </div>
+
+  <!-- medplumRef Pattern -->
+  <h4 id="pattern-medplum-ref">medplumRef Pattern</h4>
+  <p>Provides a stable reference to the Medplum client for use in async callbacks:</p>
+
+  <div class="doc-code-block">
+    <pre><code>const medplum = useMedplum();
+const medplumRef = useRef(medplum);
+medplumRef.current = medplum;
+
+// In async callbacks:
+const handleCreate = async () => {
+  await fhirService.create(medplumRef.current, data);
+};</code></pre>
+  </div>
+
+  <!-- Client-Side Pagination -->
+  <h4 id="pattern-pagination">Client-Side Pagination</h4>
+  <p>Most Administration pages fetch a large batch of results and paginate locally:</p>
+
+  <div class="doc-code-block">
+    <pre><code>// Fetch up to 500 resources from server
+const allResults = await medplum.searchResources('SupplyDelivery', {
+  _count: '500',
+  _tag: 'administration',
+  status: 'completed'
+});
+
+// Paginate client-side
+const page = allResults.slice(
+  (currentPage - 1) * pageSize,
+  currentPage * pageSize
+);</code></pre>
+  </div>
+
+  <!-- Partial Filter Update -->
+  <h4 id="pattern-partial-filter">Partial Filter Update Pattern</h4>
+  <p>Filters are updated partially using a spread-based updater function:</p>
+
+  <div class="doc-code-block">
+    <pre><code>const updateFilters = (partial: Partial&lt;BalanceFilters&gt;) => {
+  setFilters(prev => ({ ...prev, ...partial }));
+};
+
+// Usage:
+updateFilters({ departmentId: 'dept-123' });
+updateFilters({ showZeros: true, showNegative: true });</code></pre>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.7 Caching Architecture -->
+  <!-- ========================== -->
+  <h3 id="arch-caching">14.7 Caching Architecture</h3>
+  <p>The Administration module uses a minimal caching strategy. Only the <strong>Balance service</strong> maintains a cache; all other data is fetched fresh on each page load.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Cache</th>
+          <th>TTL</th>
+          <th>Scope</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Balance Cache</strong></td>
+          <td>30 seconds</td>
+          <td>Per department or <code>__all__</code></td>
+          <td>Balance computation is expensive (aggregates hundreds of SupplyDelivery resources)</td>
+        </tr>
+        <tr>
+          <td><strong>Reception Data</strong></td>
+          <td>None</td>
+          <td>Fresh fetch on each load</td>
+          <td>Mutable list -- users need to see latest receipts immediately</td>
+        </tr>
+        <tr>
+          <td><strong>Transfer Data</strong></td>
+          <td>None</td>
+          <td>Fresh fetch on each load</td>
+          <td>Mutable list -- confirmation status can change at any time</td>
+        </tr>
+        <tr>
+          <td><strong>Order Data</strong></td>
+          <td>None</td>
+          <td>Fresh fetch on each load</td>
+          <td>Mutable list -- order status can change at any time</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Why Only Balance Cache?</strong>
+      <p>Balance computation requires fetching and aggregating potentially hundreds of <code>SupplyDelivery</code> resources, making it the most expensive operation in the Administration module. A 30-second cache provides a significant performance improvement for users who navigate between balance views or change column filters. Other data (receipts, transfers, orders) is displayed as mutable lists where staleness would be immediately confusing to users.</p>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.8 FHIR Query Patterns -->
+  <!-- ========================== -->
+  <h3 id="arch-query-patterns">14.8 FHIR Query Patterns</h3>
+  <p>The Administration module uses several common FHIR search parameters when querying the Medplum server:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Example</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>_count</code></td>
+          <td><code>_count=500</code></td>
+          <td>Limits the number of returned resources (max batch size)</td>
+        </tr>
+        <tr>
+          <td><code>_sort</code></td>
+          <td><code>_sort=-_lastUpdated</code></td>
+          <td>Sorts results by last update date (descending)</td>
+        </tr>
+        <tr>
+          <td><code>_tag</code></td>
+          <td><code>_tag=administration</code></td>
+          <td>Filters by resource tag (primary server-side filter)</td>
+        </tr>
+        <tr>
+          <td><code>status</code></td>
+          <td><code>status=completed</code></td>
+          <td>Filters by resource status (server-side)</td>
+        </tr>
+        <tr>
+          <td><code>supplier</code></td>
+          <td><code>supplier=Organization/123</code></td>
+          <td>Filters SupplyDelivery by supplier reference</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Server-Side vs Client-Side Filtering:</strong>
+      <p>Extensions cannot be searched server-side in Medplum. All extension-based filtering happens client-side after fetching. This means that filters like department, item type, item code, and item name are applied in JavaScript after the FHIR search returns results. Only <code>_tag</code>, <code>status</code>, and <code>supplier</code> can be used as efficient server-side filters.</p>
+    </div>
+  </div>
+
+  <!-- Server-side vs Client-side Breakdown -->
+  <h4 id="filter-split">Filter Distribution</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Filter Type</th>
+          <th>Where Applied</th>
+          <th>Examples</th>
+          <th>Performance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Server-Side</strong></td>
+          <td>Medplum FHIR API</td>
+          <td><code>_tag</code>, <code>status</code>, <code>supplier</code>, <code>_sort</code>, <code>_count</code></td>
+          <td>Fast -- reduces data transferred over the network</td>
+        </tr>
+        <tr>
+          <td><strong>Client-Side</strong></td>
+          <td>JavaScript (in hook/service)</td>
+          <td>Department, item type, item code, item name, price range, expiration range</td>
+          <td>Slower -- full dataset must be fetched first, then filtered in memory</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 14.9 Error Handling Patterns -->
+  <!-- ========================== -->
+  <h3 id="arch-error-handling">14.9 Error Handling Patterns</h3>
+  <p>The Administration module uses three distinct error handling strategies depending on the operation type:</p>
+
+  <!-- Pattern 1: Continue with Partial Data -->
+  <h4 id="error-partial-data">Pattern 1: Continue with Partial Data</h4>
+  <p>Used by the <strong>balance service</strong> when aggregating data from multiple sources:</p>
+
+  <div class="doc-code-block">
+    <pre><code>// If one SupplyDelivery fetch fails, continue with others
+try {
+  const receipts = await fetchReceipts(departmentId);
+} catch (error) {
+  console.warn('Failed to fetch receipts, using empty array');
+  receipts = [];
+}
+// Balance computed with available data</code></pre>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Rationale:</strong> Balance calculation involves multiple API calls. Failing completely because one call errored would prevent users from seeing any balance data. Partial data with a warning is more useful than no data at all.
+    </div>
+  </div>
+
+  <!-- Pattern 2: Throw to Hook -->
+  <h4 id="error-throw">Pattern 2: Throw to Hook</h4>
+  <p>Used by <strong>create operations</strong> (receipts, transfers, orders) where failure must be communicated to the user:</p>
+
+  <div class="doc-code-block">
+    <pre><code>// FHIR service throws on create failure
+const createReceipt = async (medplum, data) => {
+  const resource = await medplum.createResource('SupplyDelivery', data);
+  if (!resource.id) {
+    throw new Error('Failed to create receipt');
+  }
+  return resource;
+};
+
+// Hook catches and sets error state
+try {
+  await fhirService.createReceipt(medplumRef.current, receiptData);
+  showNotification({ type: 'success', message: 'Receipt created' });
+} catch (error) {
+  showNotification({ type: 'error', message: error.message });
+}</code></pre>
+  </div>
+
+  <!-- Pattern 3: Return Null -->
+  <h4 id="error-return-null">Pattern 3: Return Null</h4>
+  <p>Used by <strong>update and delete operations</strong> where failure should be handled gracefully:</p>
+
+  <div class="doc-code-block">
+    <pre><code>// FHIR service returns null on update failure
+const updateStatus = async (medplum, id, newStatus) => {
+  try {
+    return await medplum.updateResource({
+      resourceType: 'SupplyDelivery',
+      id,
+      status: newStatus
+    });
+  } catch (error) {
+    console.error('Failed to update status:', error);
+    return null;
+  }
+};
+
+// Hook checks for null
+const result = await fhirService.updateStatus(medplumRef.current, id, 'completed');
+if (result === null) {
+  showNotification({ type: 'error', message: 'Update failed' });
+}</code></pre>
+  </div>
+
+  <!-- Error Handling Summary -->
+  <h4 id="error-summary">Error Handling Summary</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Pattern</th>
+          <th>Used By</th>
+          <th>On Failure</th>
+          <th>User Experience</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Continue with Partial Data</strong></td>
+          <td>Balance service (read aggregations)</td>
+          <td>Uses empty array, logs warning</td>
+          <td>Shows partial balance data (possibly inaccurate)</td>
+        </tr>
+        <tr>
+          <td><strong>Throw to Hook</strong></td>
+          <td>Create operations (receipt, transfer, order)</td>
+          <td>Exception propagates to hook, sets error state</td>
+          <td>Error notification shown, form remains open for retry</td>
+        </tr>
+        <tr>
+          <td><strong>Return Null</strong></td>
+          <td>Update/delete operations (status changes)</td>
+          <td>Returns <code>null</code>, logs error</td>
+          <td>Error notification shown, page state unchanged</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Network Errors:</strong> All three patterns are designed for recoverable FHIR API errors. If the Medplum server is completely unreachable, the Medplum SDK itself will throw a network error that is caught by a top-level error boundary in the React application.
+    </div>
+  </div>
+
+</section>

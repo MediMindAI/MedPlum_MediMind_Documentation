@@ -527,11 +527,8 @@ function updateActiveNavLink() {
   const category = tocItem.closest('.toc-item[data-category]');
   const categoryId = category?.getAttribute('data-category');
 
-  // If category changed, collapse all sections first
+  // Track category change (don't close other top-level categories)
   if (categoryId && categoryId !== previousCategory) {
-    document.querySelectorAll('.toc-item.open').forEach(item => {
-      item.classList.remove('open');
-    });
     previousCategory = categoryId;
   }
 

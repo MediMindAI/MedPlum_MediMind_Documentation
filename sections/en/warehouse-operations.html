@@ -51,7 +51,7 @@
   <p>The <strong>Reception Group</strong> sub-section allows organizing receipts into logical groups for batch processing and tracking related deliveries together.</p>
 
   <h4>Search &amp; Filters</h4>
-  <p>A collapsible <strong>Search &amp; Filters</strong> panel provides seven filter fields for narrowing down receipt records:</p>
+  <p>A collapsible <strong>Search &amp; Filters</strong> panel provides nine filter fields for narrowing down receipt records:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
@@ -90,6 +90,14 @@
           <td><strong>Item Name</strong></td>
           <td>Search by product name within receipts</td>
         </tr>
+        <tr>
+          <td><strong>Price From</strong></td>
+          <td>Minimum price filter for receipts</td>
+        </tr>
+        <tr>
+          <td><strong>Price To</strong></td>
+          <td>Maximum price filter for receipts</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -127,8 +135,24 @@
           <td>Receiving department/warehouse</td>
         </tr>
         <tr>
+          <td><strong>Goods</strong></td>
+          <td>Item/product name</td>
+        </tr>
+        <tr>
           <td><strong>Quantity</strong></td>
           <td>Total quantity of items received</td>
+        </tr>
+        <tr>
+          <td><strong>Unit Price</strong></td>
+          <td>Price per single unit</td>
+        </tr>
+        <tr>
+          <td><strong>Package Quantity</strong></td>
+          <td>Number of units per package</td>
+        </tr>
+        <tr>
+          <td><strong>Package Price</strong></td>
+          <td>Price per package</td>
         </tr>
         <tr>
           <td><strong>Total</strong></td>
@@ -266,17 +290,17 @@
         <tr>
           <td><strong>From Department</strong></td>
           <td>Source department (selecting this loads available inventory in the left panel)</td>
-          <td>Extension: fromDepartment (Location reference)</td>
+          <td>Extension: source-department (Location reference)</td>
         </tr>
         <tr>
           <td><strong>To Department</strong></td>
           <td>Destination department</td>
-          <td>Extension: toDepartment (Location reference)</td>
+          <td>Extension: dest-department (Location reference)</td>
         </tr>
         <tr>
           <td><strong>Direct Write-Off</strong></td>
           <td>When enabled, skips the approval step and completes the transfer immediately</td>
-          <td>Extension: directWriteOff</td>
+          <td>SupplyDelivery.status = 'completed' (via parameter)</td>
         </tr>
       </tbody>
     </table>
@@ -346,9 +370,14 @@
           <td>SupplyRequest.status = active</td>
         </tr>
         <tr>
+          <td><strong>Confirmed</strong></td>
+          <td>Order confirmed by receiver, ready for fulfillment</td>
+          <td>Extension: confirmed</td>
+        </tr>
+        <tr>
           <td><strong>Complete</strong></td>
           <td>Order fulfilled -- stock has been delivered</td>
-          <td>SupplyRequest.status = completed</td>
+          <td>Extension: complete</td>
         </tr>
         <tr>
           <td><strong>Cancelled</strong></td>
@@ -383,7 +412,7 @@
         <tr>
           <td><strong>Date</strong></td>
           <td>Order date</td>
-          <td>SupplyRequest.authoredOn</td>
+          <td>SupplyRequest.occurrenceDateTime</td>
         </tr>
         <tr>
           <td><strong>Document Number</strong></td>
@@ -393,12 +422,12 @@
         <tr>
           <td><strong>Requester Department</strong></td>
           <td>The department placing the order</td>
-          <td>SupplyRequest.requester (Location reference)</td>
+          <td>Extension: requester-department (Location reference)</td>
         </tr>
         <tr>
           <td><strong>Receiver Department</strong></td>
           <td>The warehouse/supplier fulfilling the order (selecting this loads available inventory)</td>
-          <td>SupplyRequest.supplier (Location reference)</td>
+          <td>Extension: receiver-department (Location reference)</td>
         </tr>
       </tbody>
     </table>
@@ -678,12 +707,12 @@
         <tr>
           <td><strong>Department</strong></td>
           <td>Source department from which items are being written off</td>
-          <td>Extension: fromDepartment (Location reference)</td>
+          <td>Extension: source-department (Location reference)</td>
         </tr>
         <tr>
           <td><strong>Reason</strong></td>
           <td>Reason for the write-off (free text or predefined category)</td>
-          <td>Extension: writeOffReason</td>
+          <td>Extension: writeoff-reason</td>
         </tr>
       </tbody>
     </table>
@@ -837,6 +866,16 @@
           <td><strong>Received</strong></td>
           <td>Goods delivered and received into inventory</td>
           <td>SupplyRequest.status = completed</td>
+        </tr>
+        <tr>
+          <td><strong>Partially Received</strong></td>
+          <td>Only part of the requested goods have been delivered</td>
+          <td>Extension: partially-received</td>
+        </tr>
+        <tr>
+          <td><strong>Rejected</strong></td>
+          <td>Request rejected by the approving authority</td>
+          <td>Extension: rejected</td>
         </tr>
         <tr>
           <td><strong>Cancelled</strong></td>

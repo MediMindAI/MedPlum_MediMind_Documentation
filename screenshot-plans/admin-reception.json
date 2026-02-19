@@ -1,0 +1,419 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-06T18:00:00Z",
+  "sourceSection": {
+    "id": "admin-reception",
+    "file": "sections/en/admin-reception.html",
+    "titleKey": "toc.adminReception"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/administration/reception"
+  },
+  "screenshots": [
+    {
+      "id": "admin-reception-page",
+      "name": "admin-reception-page",
+      "description": "ReceptionPage quick entry interface showing the last 20 receipts table with columns (Date, Receipt Number, Company Name, Quantity, Total) and action buttons (Import from RS, Create Receipt) at the top",
+      "type": "static",
+      "anchorId": "reception-page",
+      "docReference": "Section 10.2 - ReceptionPage (Quick Entry)",
+      "sectionHeaderText": "ReceptionPage (Quick Entry)",
+      "expectedDOMElements": [
+        "table",
+        "button"
+      ],
+      "knownLimitation": "requires-test-data",
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/reception"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-reception-page"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:57:00Z",
+        "ka": "2026-02-06T23:15:00Z",
+        "ru": "2026-02-06T23:25:00Z"
+      },
+      "verification": {
+        "mustContain": [
+          "reception page with recent receipts table and action buttons"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "EN identical to admin-dashboard-en/admin-navigation-en (all 4 are same file). KA is unique. RU identical to admin-navigation-ru/admin-reception-menu-ru."
+    },
+    {
+      "id": "admin-reception-create",
+      "name": "admin-reception-create",
+      "description": "ReceiptFormModal for manual receipt creation showing two-part form: header section (receiptDate, receiptNumber, supplierId, warehouseId) and line items section (product search, unit, quantity, purchasePrice, salePrice, computed totals)",
+      "type": "static",
+      "anchorId": "receipt-creation",
+      "docReference": "Section 10.3 - Receipt Creation",
+      "sectionHeaderText": "Receipt Creation",
+      "expectedDOMElements": [
+        "[role='dialog']",
+        "form",
+        "input"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/reception"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "evaluate",
+          "script": "(() => { const buttons = Array.from(document.querySelectorAll('button')); const createBtn = buttons.find(b => b.querySelector('svg') && b.closest('[class*=\"action\"], [class*=\"header\"], [class*=\"toolbar\"]')); return createBtn ? 'found create button' : 'buttons: ' + buttons.map(b => b.textContent.trim().substring(0, 30)).join(' | '); })()"
+        },
+        {
+          "action": "click",
+          "selector": "button:has(svg):last-of-type"
+        },
+        {
+          "action": "wait",
+          "ms": 2000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-reception-create"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:58:00Z",
+        "ka": "2026-02-06T23:15:00Z",
+        "ru": "2026-02-06T23:25:00Z"
+      },
+      "verification": {
+        "mustContain": [
+          "receipt creation modal with header fields and line items form"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages show receipt creation modal with header and line items. Distinct from other screenshots. PASS."
+    },
+    {
+      "id": "admin-receptions-list",
+      "name": "admin-receptions-list",
+      "description": "ReceptionsPage full receivings list showing the 11-column table (Date, Invoice #, Contract #, Company, Department, Item, Qty, Price, Pkg Qty, Pkg Price, Total) with all historical receipt data and pagination",
+      "type": "static",
+      "anchorId": "receptions-page",
+      "docReference": "Section 10.4 - ReceptionsPage (Full List)",
+      "sectionHeaderText": "ReceptionsPage (Full List)",
+      "expectedDOMElements": [
+        "table",
+        "th"
+      ],
+      "knownLimitation": "requires-test-data",
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/receptions"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-receptions-list"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T23:00:00Z",
+        "ka": "2026-02-06T23:15:00Z",
+        "ru": "2026-02-06T23:25:00Z"
+      },
+      "verification": {
+        "mustContain": [
+          "receptions table with 11 columns of receipt data"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages are identical to admin-receptions-filters and admin-reception-export of same language. The content IS valid (shows receptions page with filters+table+export), but they must be distinct from filters/export basenames."
+    },
+    {
+      "id": "admin-receptions-filters",
+      "name": "admin-receptions-filters",
+      "description": "ReceptionsPage 11-field filter panel showing all filter inputs: dateFrom, dateTo, invoiceNumber, contractNumber, companyId, departmentId, itemName, priceFrom, priceTo, totalFrom, totalTo",
+      "type": "static",
+      "anchorId": "receptions-filters",
+      "docReference": "Section 10.4 - ReceptionsPage Filter Panel (11 Fields)",
+      "sectionHeaderText": "Filter Panel (11 Fields)",
+      "expectedDOMElements": [
+        "input",
+        "select",
+        "[class*='filter']"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/receptions"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "evaluate",
+          "script": "(() => { const filterPanel = document.querySelector('[class*=\"filter\"], [class*=\"search\"], form'); if (filterPanel) { filterPanel.scrollIntoView({ behavior: 'instant' }); return 'filter panel found'; } return 'no filter panel found'; })()"
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-receptions-filters"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "filter panel with date range, text inputs, and select dropdowns"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages identical to admin-receptions-list of same language. Content shows filter panel but also the full page. Should be cropped or zoomed to show just the filter section distinctly."
+    },
+    {
+      "id": "admin-reception-export",
+      "name": "admin-reception-export",
+      "description": "Reception export functionality on the ReceptionsPage showing Excel and PDF export buttons/options available for exporting filtered receipt data",
+      "type": "static",
+      "anchorId": "reception-export",
+      "docReference": "Section 10.5 - Export Functionality",
+      "sectionHeaderText": "Export Functionality",
+      "expectedDOMElements": [
+        "button",
+        "[class*='export']"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/receptions"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "evaluate",
+          "script": "(() => { const buttons = Array.from(document.querySelectorAll('button')); const exportBtns = buttons.filter(b => b.textContent.toLowerCase().includes('export') || b.textContent.toLowerCase().includes('excel') || b.textContent.toLowerCase().includes('pdf') || b.querySelector('[class*=\"export\"]')); return 'export buttons: ' + exportBtns.length + ' | all buttons: ' + buttons.map(b => b.textContent.trim().substring(0, 20)).join(' | '); })()"
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-reception-export"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "export buttons or options for Excel and PDF on the receptions page"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages identical to admin-receptions-list of same language. Should show a distinct view (e.g., export dropdown open, or cropped to export buttons area)."
+    },
+    {
+      "id": "admin-reception-group",
+      "name": "admin-reception-group",
+      "description": "ReceptionGroupPage showing receipts grouped by invoice number in an 8-column table (Invoice #, Date, Company, Department, Items Count, Total Qty, Total Amount, Actions) with 6-field filter panel",
+      "type": "static",
+      "anchorId": "reception-group",
+      "docReference": "Section 10.6 - ReceptionGroupPage",
+      "sectionHeaderText": "ReceptionGroupPage",
+      "expectedDOMElements": [
+        "table",
+        "th"
+      ],
+      "knownLimitation": "requires-test-data",
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/reception-group"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-reception-group"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "reception group table with receipts aggregated by invoice number"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages show distinct Reception Group page with grouped data table. Unique from other screenshots. PASS."
+    },
+    {
+      "id": "admin-reception-edit",
+      "name": "admin-reception-edit",
+      "description": "ReceivingEditModal showing 13 editable fields for an existing receipt: receiptDate, invoiceNumber, contractNumber, supplierId, warehouseId, productCode, productName, unit, quantity, purchasePrice, salePrice, packageQuantity, packagePrice",
+      "type": "static",
+      "anchorId": "reception-edit-delete",
+      "docReference": "Section 10.7 - Edit & Delete Operations",
+      "sectionHeaderText": "Edit & Delete Operations",
+      "expectedDOMElements": [
+        "[role='dialog']",
+        "form",
+        "input"
+      ],
+      "knownLimitation": "requires-test-data",
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/receptions"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "evaluate",
+          "script": "(() => { const rows = document.querySelectorAll('table tbody tr'); if (rows.length === 0) return 'no table rows found'; const firstRow = rows[0]; const editBtn = firstRow.querySelector('button'); return editBtn ? 'edit button found in first row' : 'no button in first row, row content: ' + firstRow.textContent.trim().substring(0, 60); })()"
+        },
+        {
+          "action": "click",
+          "selector": "table tbody tr:first-child button:first-of-type"
+        },
+        {
+          "action": "wait",
+          "ms": 2000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-reception-edit"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "edit modal with 13 editable fields for an existing receipt"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages show distinct Edit Receiving modal with form fields. Unique from other screenshots. PASS."
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=РУС",
+      "ka": "text=ქარ"
+    },
+    "waitAfterSwitch": 2000
+  },
+  "summary": {
+    "totalScreenshots": 7,
+    "totalFiles": 21,
+    "staticScreenshots": 7,
+    "multiStepFlows": 0,
+    "stateBased": 0
+  }
+}

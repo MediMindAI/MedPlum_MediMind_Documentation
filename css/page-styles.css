@@ -529,13 +529,17 @@ body { font-family: 'Noto Sans Georgian', sans-serif; }
   transform: rotate(90deg);
 }
 .toc-children {
-  display: none;
   margin-left: 26px;
   padding-left: 12px;
   border-left: 1px solid rgba(100, 116, 139, 0.3);
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
 }
 .toc-item.open > .toc-children {
-  display: block;
+  max-height: 2000px;
+  opacity: 1;
 }
 .toc-link {
   display: flex;

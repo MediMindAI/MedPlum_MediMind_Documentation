@@ -51,7 +51,7 @@
   <p>Подраздел <strong>группы приёмки</strong> позволяет организовывать приёмки в логические группы для пакетной обработки и совместного отслеживания связанных поставок.</p>
 
   <h4>Поиск и фильтры</h4>
-  <p>Сворачиваемая панель <strong>поиска и фильтров</strong> предоставляет семь полей фильтрации для сужения записей приёмок:</p>
+  <p>Сворачиваемая панель <strong>поиска и фильтров</strong> предоставляет девять полей фильтрации для сужения записей приёмок:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
@@ -90,6 +90,14 @@
           <td><strong>Название товара</strong></td>
           <td>Поиск по названию продукта в приёмках</td>
         </tr>
+        <tr>
+          <td><strong>Цена от</strong></td>
+          <td>Минимальная цена для фильтрации приёмок</td>
+        </tr>
+        <tr>
+          <td><strong>Цена до</strong></td>
+          <td>Максимальная цена для фильтрации приёмок</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -127,8 +135,24 @@
           <td>Принимающее отделение/склад</td>
         </tr>
         <tr>
+          <td><strong>Товар</strong></td>
+          <td>Название товара/продукта</td>
+        </tr>
+        <tr>
           <td><strong>Количество</strong></td>
           <td>Общее количество принятых товаров</td>
+        </tr>
+        <tr>
+          <td><strong>Цена за единицу</strong></td>
+          <td>Цена одной единицы товара</td>
+        </tr>
+        <tr>
+          <td><strong>Кол-во в упаковке</strong></td>
+          <td>Количество единиц в упаковке</td>
+        </tr>
+        <tr>
+          <td><strong>Цена упаковки</strong></td>
+          <td>Цена за одну упаковку</td>
         </tr>
         <tr>
           <td><strong>Итого</strong></td>
@@ -266,17 +290,17 @@
         <tr>
           <td><strong>Отделение-источник</strong></td>
           <td>Исходное отделение (выбор загружает доступный инвентарь в левую панель)</td>
-          <td>Extension: fromDepartment (ссылка на Location)</td>
+          <td>Extension: source-department (ссылка на Location)</td>
         </tr>
         <tr>
           <td><strong>Отделение назначения</strong></td>
           <td>Целевое отделение</td>
-          <td>Extension: toDepartment (ссылка на Location)</td>
+          <td>Extension: dest-department (ссылка на Location)</td>
         </tr>
         <tr>
           <td><strong>Прямое списание</strong></td>
           <td>При включении пропускает этап подтверждения и немедленно завершает трансфер</td>
-          <td>Extension: directWriteOff</td>
+          <td>SupplyDelivery.status = 'completed' (через параметр)</td>
         </tr>
       </tbody>
     </table>
@@ -346,9 +370,14 @@
           <td>SupplyRequest.status = active</td>
         </tr>
         <tr>
+          <td><strong>Подтверждён</strong></td>
+          <td>Заказ подтверждён получателем, готов к исполнению</td>
+          <td>Extension: confirmed</td>
+        </tr>
+        <tr>
           <td><strong>Завершён</strong></td>
           <td>Заказ исполнен -- запасы доставлены</td>
-          <td>SupplyRequest.status = completed</td>
+          <td>Extension: complete</td>
         </tr>
         <tr>
           <td><strong>Отменён</strong></td>
@@ -383,7 +412,7 @@
         <tr>
           <td><strong>Дата</strong></td>
           <td>Дата заказа</td>
-          <td>SupplyRequest.authoredOn</td>
+          <td>SupplyRequest.occurrenceDateTime</td>
         </tr>
         <tr>
           <td><strong>Номер документа</strong></td>
@@ -393,12 +422,12 @@
         <tr>
           <td><strong>Отделение-заказчик</strong></td>
           <td>Отделение, размещающее заказ</td>
-          <td>SupplyRequest.requester (ссылка на Location)</td>
+          <td>Extension: requester-department (ссылка на Location)</td>
         </tr>
         <tr>
           <td><strong>Отделение-получатель</strong></td>
           <td>Склад/поставщик, исполняющий заказ (выбор загружает доступный инвентарь)</td>
-          <td>SupplyRequest.supplier (ссылка на Location)</td>
+          <td>Extension: receiver-department (ссылка на Location)</td>
         </tr>
       </tbody>
     </table>
@@ -678,12 +707,12 @@
         <tr>
           <td><strong>Отделение</strong></td>
           <td>Исходное отделение, из которого списываются товары</td>
-          <td>Extension: fromDepartment (ссылка на Location)</td>
+          <td>Extension: source-department (ссылка на Location)</td>
         </tr>
         <tr>
           <td><strong>Причина</strong></td>
           <td>Причина списания (свободный текст или предопределённая категория)</td>
-          <td>Extension: writeOffReason</td>
+          <td>Extension: writeoff-reason</td>
         </tr>
       </tbody>
     </table>
@@ -837,6 +866,16 @@
           <td><strong>Получен</strong></td>
           <td>Товары доставлены и оприходованы в инвентарь</td>
           <td>SupplyRequest.status = completed</td>
+        </tr>
+        <tr>
+          <td><strong>Частично получен</strong></td>
+          <td>Доставлена только часть запрошенных товаров</td>
+          <td>Extension: partially-received</td>
+        </tr>
+        <tr>
+          <td><strong>Отклонён</strong></td>
+          <td>Запрос отклонён утверждающим органом</td>
+          <td>Extension: rejected</td>
         </tr>
         <tr>
           <td><strong>Отменён</strong></td>

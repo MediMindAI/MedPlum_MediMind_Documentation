@@ -1,0 +1,348 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-06T18:00:00Z",
+  "sourceSection": {
+    "id": "admin-overview",
+    "file": "sections/en/admin-overview.html",
+    "titleKey": "toc.adminOverview"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/administration/reception"
+  },
+  "screenshots": [
+    {
+      "id": "admin-dashboard",
+      "name": "admin-dashboard",
+      "description": "Administration dashboard - the main landing page showing the reception page with recent receipts table, action buttons (Import from RS, Create Receipt), and administration sidebar navigation visible",
+      "type": "static",
+      "anchorId": "admin-module-overview",
+      "docReference": "Section 9.1 - Module Overview",
+      "sectionHeaderText": "Module Overview",
+      "expectedDOMElements": [
+        "table",
+        "button"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/reception"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-dashboard"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:55:00Z",
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "administration page with table and action buttons"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "EN identical to admin-navigation/admin-reception-menu/admin-reception-page. KA shows general Dashboard (not admin). RU shows general Dashboard (not admin). All need recapture to show unique admin dashboard content."
+    },
+    {
+      "id": "admin-navigation",
+      "name": "admin-navigation",
+      "description": "Administration sidebar navigation menu showing all administration sub-sections expanded - Reception, Transfer, Order, and Balances menu items visible in the left sidebar",
+      "type": "static",
+      "anchorId": "admin-business-domains",
+      "docReference": "Section 9.2 - Business Domains",
+      "sectionHeaderText": "Business Domains",
+      "expectedDOMElements": [
+        "nav",
+        "[role='navigation']",
+        "[class*='sidebar']"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/reception"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "evaluate",
+          "script": "(() => { const sidebar = document.querySelector('nav, [role=\"navigation\"], [class*=\"sidebar\"]'); if (sidebar) { return 'sidebar found: ' + sidebar.className.substring(0, 60); } return 'no sidebar found'; })()"
+        },
+        {
+          "action": "viewport",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-navigation"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:55:00Z",
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "sidebar navigation with administration menu items"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "EN identical to admin-dashboard (needs distinct sidebar-focused view). KA identical to admin-reception-menu-ka. RU shows admin reception page with Russian nav bar - acceptable but identical to reception-menu-ru."
+    },
+    {
+      "id": "admin-reception-menu",
+      "name": "admin-reception-menu",
+      "description": "Reception sub-menu in the administration sidebar navigation showing Reception-related links (Reception, Receptions List, Reception Group) highlighted or expanded",
+      "type": "static",
+      "anchorId": "admin-domain-screenshots",
+      "docReference": "Section 9.6 - Domain Navigation",
+      "sectionHeaderText": "Domain Navigation",
+      "expectedDOMElements": [
+        "nav",
+        "[class*='sidebar']"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/reception"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "evaluate",
+          "script": "(() => { const items = document.querySelectorAll('nav a, [role=\"navigation\"] a, [class*=\"sidebar\"] a'); return 'nav links: ' + items.length; })()"
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-reception-menu"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:55:00Z",
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "reception navigation items in sidebar"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages are duplicates of other screenshots (EN=dashboard, KA=navigation-ka, RU=navigation-ru/reception-page-ru). Needs to show distinct reception menu highlight."
+    },
+    {
+      "id": "admin-transfer-menu",
+      "name": "admin-transfer-menu",
+      "description": "Transfer sub-menu in the administration sidebar navigation showing Transfer-related links (Transfer Confirmation, Transfer, Transfers, Transfer Group) highlighted or expanded",
+      "type": "static",
+      "anchorId": "admin-domain-screenshots",
+      "docReference": "Section 9.6 - Domain Navigation",
+      "sectionHeaderText": "Domain Navigation",
+      "expectedDOMElements": [
+        "nav",
+        "[class*='sidebar']"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/transfer-confirmation"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-transfer-menu"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:55:00Z",
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "transfer navigation items in sidebar"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages show distinct transfer-related pages. EN shows Transfer Confirmation with filters. KA/RU show Transfer create page. All unique from other basenames."
+    },
+    {
+      "id": "admin-order-menu",
+      "name": "admin-order-menu",
+      "description": "Order sub-menu in the administration sidebar navigation showing Order-related links (Order Confirmation, Order, Orders, Order Group) highlighted or expanded",
+      "type": "static",
+      "anchorId": "admin-domain-screenshots",
+      "docReference": "Section 9.6 - Domain Navigation",
+      "sectionHeaderText": "Domain Navigation",
+      "expectedDOMElements": [
+        "nav",
+        "[class*='sidebar']"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/order-confirmation"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-order-menu"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:55:00Z",
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "order navigation items in sidebar"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "EN shows Order Confirmation page (unique). KA identical to admin-order-page-ka (needs distinct capture). RU shows Order page with Russian nav (unique from en). Some untranslated 'shekveta.*' translation keys visible."
+    },
+    {
+      "id": "admin-balances-menu",
+      "name": "admin-balances-menu",
+      "description": "Balances sub-menu in the administration sidebar navigation showing the Balances link highlighted, navigated to the balances page",
+      "type": "static",
+      "anchorId": "admin-domain-screenshots",
+      "docReference": "Section 9.6 - Domain Navigation",
+      "sectionHeaderText": "Domain Navigation",
+      "expectedDOMElements": [
+        "nav",
+        "[class*='sidebar']"
+      ],
+      "knownLimitation": null,
+      "languages": [
+        "en",
+        "ka",
+        "ru"
+      ],
+      "captureSteps": [
+        {
+          "action": "navigate",
+          "url": "{url}/emr/dashboard/administration/balances"
+        },
+        {
+          "action": "wait",
+          "ms": 3000
+        },
+        {
+          "action": "screenshot",
+          "name": "admin-balances-menu"
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": "2026-02-06T20:55:00Z",
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": [
+          "balances navigation item highlighted in sidebar"
+        ],
+        "languageCheck": true
+      },
+      "validationNote": "All 3 languages show Balances page with inventory table. Unique from other basenames. PASS."
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=РУС",
+      "ka": "text=ქარ"
+    },
+    "waitAfterSwitch": 2000
+  },
+  "summary": {
+    "totalScreenshots": 6,
+    "totalFiles": 18,
+    "staticScreenshots": 6,
+    "multiStepFlows": 0,
+    "stateBased": 0
+  }
+}

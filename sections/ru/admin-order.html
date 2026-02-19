@@ -1,0 +1,615 @@
+<section class="doc-section" id="admin-order">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">12</span> Order System</h2>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 12.1 Overview -->
+  <!-- ========================== -->
+  <h3 id="order-overview">12.1 Overview</h3>
+  <p>The <strong>Order System</strong> manages inter-departmental supply orders within the MediMind EMR Administration module. Unlike the Transfer System which handles actual inventory movement, the Order System handles <strong>requests for supplies</strong> between departments.</p>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Key Distinction - Orders vs. Transfers:</strong>
+      <ul>
+        <li><strong>Orders</strong> = Requests for supplies. Quantity-only (no price or total). Uses FHIR <code>SupplyRequest</code>.</li>
+        <li><strong>Transfers</strong> = Actual movement of inventory. Includes price and totals. Uses FHIR <code>SupplyDelivery</code>.</li>
+        <li>Orders do <strong>not</strong> store prices; prices are looked up from inventory balances at display time</li>
+        <li>An order may lead to one or more transfers when it is dispatched and delivered</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="doc-features-grid">
+    <div class="doc-feature-card">
+      <h4>OrderPage</h4>
+      <p>Create new supply orders using book-style or waybill modal interfaces</p>
+    </div>
+    <div class="doc-feature-card">
+      <h4>OrderConfirmationPage</h4>
+      <p>Three-section layout for order review, item entry, and confirmation</p>
+    </div>
+    <div class="doc-feature-card">
+      <h4>OrdersPage</h4>
+      <p>Flat line item view with price lookup and delivered quantity tracking</p>
+    </div>
+    <div class="doc-feature-card">
+      <h4>OrderGroupPage</h4>
+      <p>Aggregated view grouped by document number with detail modals</p>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 12.2 Status Lifecycle -->
+  <!-- ========================== -->
+  <h3 id="order-status">12.2 Status Lifecycle</h3>
+  <p>Orders follow a multi-step status lifecycle from creation through delivery. The system maps application statuses to FHIR <code>SupplyRequest</code> statuses.</p>
+
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+stateDiagram-v2
+    [*] --> draft : Create Order
+    draft --> active : Submit
+    active --> confirmed : Confirm
+    confirmed --> dispatched : Dispatch
+    dispatched --> delivered : Deliver
+    delivered --> complete : Finalize
+    confirmed --> cancelled : Cancel
+    complete --> [*]
+    cancelled --> [*]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Custom FHIR Mapping:</strong>
+      <p>The application status <code>confirmed</code> maps to the FHIR status <code>suspended</code>. This is because FHIR R4 <code>SupplyRequest</code> does not have a native "confirmed" status. The <code>suspended</code> status was chosen as the closest semantic match to indicate an order that has been verified but not yet dispatched.</p>
+    </div>
+  </div>
+
+  <!-- Status Mapping Table -->
+  <h4 id="order-status-mapping">Status Mapping</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>App Status</th>
+          <th>FHIR Status</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>draft</strong></td>
+          <td><code>draft</code></td>
+          <td>Order created but not yet submitted</td>
+        </tr>
+        <tr>
+          <td><strong>active</strong></td>
+          <td><code>active</code></td>
+          <td>Order submitted and awaiting review</td>
+        </tr>
+        <tr>
+          <td><strong>confirmed</strong></td>
+          <td><code>suspended</code></td>
+          <td>Order reviewed and approved; awaiting dispatch</td>
+        </tr>
+        <tr>
+          <td><strong>dispatched</strong></td>
+          <td><code>active</code> + extension</td>
+          <td>Items have been sent from the supplying department</td>
+        </tr>
+        <tr>
+          <td><strong>delivered</strong></td>
+          <td><code>active</code> + extension</td>
+          <td>Items received by the requesting department</td>
+        </tr>
+        <tr>
+          <td><strong>complete</strong></td>
+          <td><code>completed</code></td>
+          <td>Order finalized and closed</td>
+        </tr>
+        <tr>
+          <td><strong>cancelled</strong></td>
+          <td><code>cancelled</code></td>
+          <td>Order cancelled before dispatch</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 12.3 OrderPage -->
+  <!-- ========================== -->
+  <h3 id="order-page">12.3 OrderPage</h3>
+  <p>The <strong>OrderPage</strong> is the entry point for creating new supply orders. It provides two creation modals and a filterable table of existing orders.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-order-page-en.png" alt="OrderPage with creation buttons and existing orders table" class="doc-screenshot-image" data-i18n-img="admin-order-page">
+  </div>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">OrderBookModal</div>
+        <div class="doc-action-desc">Dual-panel book-style interface for quick item selection from department inventory. Best for visual selection.</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">WaybillCreationModal</div>
+        <div class="doc-action-desc">Standard waybill form with item search, optional order linking, and supplier selection. Best for structured entry.</div>
+      </div>
+    </div>
+  </div>
+
+  <p>Below the creation buttons, a filterable <strong>OrderTable</strong> displays existing orders with status badges, department information, and action buttons.</p>
+
+  <!-- ========================== -->
+  <!-- 12.4 OrderBookModal -->
+  <!-- ========================== -->
+  <h3 id="order-book">12.4 OrderBookModal</h3>
+  <p>The <strong>OrderBookModal</strong> provides a dual-panel interface for creating supply orders, allowing users to visually browse and select items from the receiver department's inventory.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-order-book-en.png" alt="OrderBookModal dual-panel interface with available and selected items" class="doc-screenshot-image" data-i18n-img="admin-order-book">
+  </div>
+
+  <!-- Header Fields -->
+  <h4 id="order-book-header">Header Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Component</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>DatePicker</td>
+          <td>Order date, defaults to current date</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td>Auto-generated</td>
+          <td>Format: <code>ORD-YYYY-NNN</code> (e.g., ORD-2026-001)</td>
+        </tr>
+        <tr>
+          <td><strong>Requester Department</strong></td>
+          <td>Select</td>
+          <td>Department requesting the supplies (requesterDeptId)</td>
+        </tr>
+        <tr>
+          <td><strong>Receiver Department</strong></td>
+          <td>Select</td>
+          <td>Department supplying the items (receiverDeptId). Inventory is loaded from this department.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Panels -->
+  <h4 id="order-book-panels">Dual-Panel Layout</h4>
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #3182ce);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Left Panel: Available Items</div>
+        <div class="doc-action-desc">Displays items from the receiver department's inventory via the <code>useDepartmentInventory</code> hook. Includes text filter for narrowing results.</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Right Panel: Selected Items</div>
+        <div class="doc-action-desc">Shows items selected for the order with quantity input fields (yellow background <code>#FAFAAC</code>). Maximum quantity equals current stock.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Form Validation:</strong>
+      <ul>
+        <li>Requester and receiver departments <strong>must be different</strong></li>
+        <li>At least <strong>one item</strong> must be selected to submit the order</li>
+        <li>Quantity for each item must be between 1 and the available stock</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 12.5 WaybillCreationModal -->
+  <!-- ========================== -->
+  <h3 id="order-waybill">12.5 WaybillCreationModal</h3>
+  <p>The <strong>WaybillCreationModal</strong> provides a standard waybill form for creating orders with additional fields for linking to existing orders and suppliers.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-order-waybill-en.png" alt="WaybillCreationModal with header fields and item entry" class="doc-screenshot-image" data-i18n-img="admin-order-waybill">
+  </div>
+
+  <!-- Header Fields -->
+  <h4 id="order-waybill-header">Header Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Component</th>
+          <th>Required</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date/Time</strong></td>
+          <td>DateTimePicker</td>
+          <td>Yes</td>
+          <td>Order date and time, defaults to current</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td>Auto-generated</td>
+          <td>Yes</td>
+          <td>Format: <code>ORD-YYYY-NNN</code></td>
+        </tr>
+        <tr>
+          <td><strong>Receiver Department</strong></td>
+          <td>Select</td>
+          <td>Yes</td>
+          <td>Department supplying the items (receiverDeptId)</td>
+        </tr>
+        <tr>
+          <td><strong>Sender Department</strong></td>
+          <td>Select</td>
+          <td>Yes</td>
+          <td>Department requesting the supplies (senderDeptId)</td>
+        </tr>
+        <tr>
+          <td><strong>Order ID</strong></td>
+          <td>TextInput</td>
+          <td>No</td>
+          <td>Optional link to an existing order for fulfillment tracking</td>
+        </tr>
+        <tr>
+          <td><strong>Supplier ID</strong></td>
+          <td>Select</td>
+          <td>No</td>
+          <td>Optional external supplier reference</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Item Entry -->
+  <h4 id="order-waybill-items">Item Entry</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Component</th>
+          <th>Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Search Query</strong></td>
+          <td>TextInput with dropdown</td>
+          <td>Triggers <code>searchCatalogItems</code> function. Displays max <strong>20 results</strong> in dropdown.</td>
+        </tr>
+        <tr>
+          <td><strong>Unit</strong></td>
+          <td>Read-only</td>
+          <td>Auto-populated from selected catalog item</td>
+        </tr>
+        <tr>
+          <td><strong>Quantity</strong></td>
+          <td>NumberInput</td>
+          <td>Minimum value: 1. No upper limit (orders are requests, not actual inventory movements).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Added items appear in an <strong>items table</strong> with inline quantity editing. Items can be removed individually.</p>
+
+  <!-- ========================== -->
+  <!-- 12.6 OrderConfirmationPage -->
+  <!-- ========================== -->
+  <h3 id="order-confirmation">12.6 OrderConfirmationPage</h3>
+  <p>The <strong>OrderConfirmationPage</strong> uses a unique <strong>3-section layout</strong> to manage order review and confirmation in a single view.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-order-confirmation-en.png" alt="OrderConfirmationPage with 3-section layout" class="doc-screenshot-image" data-i18n-img="admin-order-confirmation">
+  </div>
+
+  <!-- Section 1: Item Entry Form -->
+  <h4 id="order-confirm-entry">Section 1: Item Entry Form (OrderConfirmationItemForm)</h4>
+  <p>This section is <strong>only visible for orders with status <code>active</code></strong>. It allows adding additional items to an order before confirmation.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-order-item-entry-en.png" alt="OrderConfirmationItemForm for adding items to active orders" class="doc-screenshot-image" data-i18n-img="admin-order-item-entry">
+  </div>
+
+  <!-- Section 2: Main Orders Table -->
+  <h4 id="order-confirm-table">Section 2: Main Orders Table</h4>
+  <p>Displays all orders with an <strong>inline filter row</strong> for quick searching. Each row shows the order document number, departments, date, status, and item count.</p>
+
+  <!-- Section 3: Order Details -->
+  <h4 id="order-confirm-details">Section 3: Order Details (Inline)</h4>
+  <p>When an order is selected in the table, its details expand <strong>inline below the selected row</strong>, showing all line items.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-order-details-en.png" alt="Inline order details showing line items with editable quantities" class="doc-screenshot-image" data-i18n-img="admin-order-details">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Line Items Display</strong> - Shows item name, code, unit, and quantity for each line item</li>
+    <li><strong>Inline Editing</strong> - Click on a quantity value to transform it into a NumberInput field</li>
+    <li><strong>Keyboard Support</strong> - Press <kbd>Enter</kbd> to save the edited value, <kbd>Escape</kbd> to cancel</li>
+    <li><strong>Confirm Button</strong> - Changes order status to <code>confirmed</code> (FHIR: <code>suspended</code>)</li>
+  </ul>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Confirmation Behavior:</strong>
+      <ul>
+        <li>Only orders with status <code>active</code> can be confirmed</li>
+        <li>Confirming an order changes its status to <code>confirmed</code>, which maps to FHIR <code>suspended</code></li>
+        <li>After confirmation, the Item Entry Form (Section 1) becomes hidden for that order</li>
+        <li>Confirmed orders proceed to the dispatch and delivery workflow</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 12.7 OrdersPage -->
+  <!-- ========================== -->
+  <h3 id="orders-list">12.7 OrdersPage</h3>
+  <p>The <strong>OrdersPage</strong> provides a <strong>flat line item view</strong> of all orders, displaying each item as a separate row rather than grouping by order. This makes it easy to search for specific items across all orders.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-orders-list-en.png" alt="OrdersPage with flat line item view showing prices and delivery status" class="doc-screenshot-image" data-i18n-img="admin-orders-list">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>OrderLineItemRow</strong></td>
+          <td>Each row represents a single line item with a compound ID: <code>orderId-itemId</code></td>
+        </tr>
+        <tr>
+          <td><strong>Price Lookup (priceMap)</strong></td>
+          <td>Prices are not stored on orders; they are looked up from warehouse inventory balances at display time</td>
+        </tr>
+        <tr>
+          <td><strong>Delivered Quantity (deliveredMap)</strong></td>
+          <td>Tracks quantities already delivered via completed transfers, calculated from associated transfer records</td>
+        </tr>
+        <tr>
+          <td><strong>Remaining Quantity</strong></td>
+          <td>Calculated as: ordered quantity minus delivered quantity</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Price Lookup Note:</strong> Orders do not store prices. Instead, prices are looked up from inventory balances at display time using the <code>priceMap</code>. This means the displayed price always reflects the <strong>current</strong> inventory valuation, not the price at the time the order was placed.
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 12.8 OrderGroupPage -->
+  <!-- ========================== -->
+  <h3 id="order-group">12.8 OrderGroupPage</h3>
+  <p>The <strong>OrderGroupPage</strong> provides an aggregated view of orders, grouping all line items by document number for summary reporting.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-order-group-en.png" alt="OrderGroupPage with aggregated order data grouped by document number" class="doc-screenshot-image" data-i18n-img="admin-order-group">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Grouping Key</strong></td>
+          <td>Groups by <code>documentNumber</code></td>
+        </tr>
+        <tr>
+          <td><strong>Summary View</strong></td>
+          <td>Each group row shows document number, date, departments, and aggregate counts</td>
+        </tr>
+        <tr>
+          <td><strong>Details Modal</strong></td>
+          <td>Clicking a group row opens a modal showing all individual line items within that order group</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The details modal displays the complete list of line items across all orders sharing the same document number, including item name, code, unit, quantity, and status.</p>
+
+  <!-- ========================== -->
+  <!-- 12.9 Line Items Storage -->
+  <!-- ========================== -->
+  <h3 id="order-line-items">12.9 Line Items Storage</h3>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>JSON Extension Storage Pattern:</strong>
+      <ul>
+        <li>Order line items are stored as a <strong>JSON string</strong> in the <code>ORDER_LINE_ITEMS</code> extension on the SupplyRequest resource</li>
+        <li>The JSON string is <strong>parsed on read</strong> and <strong>serialized on write</strong></li>
+        <li>Each order is a <strong>single SupplyRequest</strong> resource containing all its line items in the extension (unlike receipts and transfers, where each line item is a separate FHIR resource)</li>
+        <li>This design reduces the number of FHIR resources but requires careful JSON serialization handling</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">SupplyRequest (Order)
+├── status: draft | active | suspended | completed | cancelled
+├── occurrenceDateTime: order date
+├── identifier: ORD-YYYY-NNN document number
+├── requester: requesting department reference
+├── supplier: supplying department reference
+└── extension[]
+    ├── ORDER_LINE_ITEMS: "[{\"itemId\":\"...\",\"itemName\":\"...\",\"itemCode\":\"...\",\"unit\":\"...\",\"quantity\":5}, ...]"
+    ├── REQUESTER_DEPT_NAME: department display name
+    └── RECEIVER_DEPT_NAME: department display name</code></pre>
+  </div>
+
+  <p>This differs from the Transfer System where each line item creates a separate <code>SupplyDelivery</code> resource. The single-resource approach for orders simplifies order-level operations (status changes, confirmation) but means line item updates require reading and rewriting the entire JSON array.</p>
+
+  <!-- ========================== -->
+  <!-- 12.10 Troubleshooting -->
+  <!-- ========================== -->
+  <h3 id="order-troubleshooting">12.10 Troubleshooting</h3>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>Cause</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Same department selected for requester and receiver</strong></td>
+          <td>Validation rule requires departments to be different</td>
+          <td>Select a different department for either the requester or receiver field</td>
+        </tr>
+        <tr>
+          <td><strong>No items in left panel</strong></td>
+          <td>Receiver department has no inventory or <code>useDepartmentInventory</code> hook returned empty</td>
+          <td>Verify the receiver department has inventory; check network connection and try again</td>
+        </tr>
+        <tr>
+          <td><strong>Order cannot be confirmed</strong></td>
+          <td>Order status is not <code>active</code>; only active orders can be confirmed</td>
+          <td>Check the order status; it may already be confirmed, completed, or cancelled</td>
+        </tr>
+        <tr>
+          <td><strong>Prices showing as zero or empty</strong></td>
+          <td>Price lookup from warehouse balances returned no match</td>
+          <td>Verify that the item exists in the warehouse inventory with a valid price</td>
+        </tr>
+        <tr>
+          <td><strong>Delivered quantity not updating</strong></td>
+          <td>Associated transfers are still in <code>in-progress</code> status</td>
+          <td>Confirm pending transfers; only completed transfers contribute to the delivered quantity</td>
+        </tr>
+        <tr>
+          <td><strong>Item search returns no results</strong></td>
+          <td><code>searchCatalogItems</code> found no matching catalog entries</td>
+          <td>Verify search terms; try a broader query or check that the catalog is populated</td>
+        </tr>
+        <tr>
+          <td><strong>Confirmed status shows as "suspended" in FHIR</strong></td>
+          <td>Expected behavior: app <code>confirmed</code> maps to FHIR <code>suspended</code></td>
+          <td>This is by design; FHIR R4 SupplyRequest lacks a native "confirmed" status</td>
+        </tr>
+        <tr>
+          <td><strong>Line items lost after edit</strong></td>
+          <td>JSON serialization error in ORDER_LINE_ITEMS extension</td>
+          <td>Check for special characters in item names; ensure valid JSON structure on save</td>
+        </tr>
+        <tr>
+          <td><strong>Group details modal is empty</strong></td>
+          <td>No line items found for the selected document number group</td>
+          <td>The orders in this group may have been deleted; check the OrdersPage for individual records</td>
+        </tr>
+        <tr>
+          <td><strong>Cannot submit order - no items selected</strong></td>
+          <td>Validation requires at least one item in the order</td>
+          <td>Add at least one item from the available panel before submitting</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>

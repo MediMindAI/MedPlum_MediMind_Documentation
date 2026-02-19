@@ -250,22 +250,22 @@
         <tr>
           <td><strong>Product Group</strong></td>
           <td>Parent group from Level 2</td>
-          <td>Extension: general-group</td>
+          <td>Extension: item-group-ref (general-group deprecated)</td>
         </tr>
         <tr>
           <td><strong>Generic Name</strong></td>
           <td>Generic name from Level 4</td>
-          <td>Extension: general-name</td>
+          <td>Extension: medical-item-ref (general-name deprecated)</td>
         </tr>
         <tr>
           <td><strong>Category</strong></td>
           <td>Top-level category (Consumables, Medications, etc.)</td>
-          <td>SupplyDelivery.type</td>
+          <td>Extension: warehouse-category</td>
         </tr>
         <tr>
           <td><strong>Unit</strong></td>
           <td>Measurement unit (piece, ml, box, ampoule, etc.)</td>
-          <td>SupplyDelivery.suppliedItem.quantity.unit</td>
+          <td>Extension: warehouse-unit</td>
         </tr>
         <tr>
           <td><strong>Manufacturer</strong></td>
@@ -275,17 +275,17 @@
         <tr>
           <td><strong>Quantity</strong></td>
           <td>Current stock quantity</td>
-          <td>SupplyDelivery.suppliedItem.quantity.value</td>
+          <td>Extension: warehouse-quantity</td>
         </tr>
         <tr>
           <td><strong>Description</strong></td>
           <td>Additional product description</td>
-          <td>Extension: description</td>
+          <td>SupplyDelivery.suppliedItem.itemCodeableConcept.coding[0].display</td>
         </tr>
         <tr>
           <td><strong>Deleted</strong></td>
           <td>Soft-delete status (Yes/No)</td>
-          <td>SupplyDelivery.status</td>
+          <td>Extension: is-deleted + SupplyDelivery.status</td>
         </tr>
         <tr>
           <td><strong>Parent</strong></td>
@@ -295,7 +295,7 @@
         <tr>
           <td><strong>Price Calculation</strong></td>
           <td>Pricing visibility rules for billing</td>
-          <td>Extension: price-calculation-mode</td>
+          <td>Extension: price-calculation</td>
         </tr>
       </tbody>
     </table>
@@ -307,10 +307,6 @@
     <li><strong>Category filter</strong> — Dropdown to filter by top-level category</li>
     <li><strong>Status filter</strong> — Show active items, deleted items, or all</li>
   </ul>
-
-  <div class="doc-warning-box">
-    <strong>Note:</strong> Deleted items appear with a <strong>red highlight</strong> in the table. Items are soft-deleted (marked as deleted) rather than permanently removed, preserving the audit trail for compliance.
-  </div>
 
   <h4>Editing a Catalog Item</h4>
   <p>Click the edit button on any catalog item to open a detailed edit modal. The modal has two tabs:</p>

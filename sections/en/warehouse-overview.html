@@ -20,7 +20,7 @@
   <!-- Dashboard Layout -->
   <h3 id="wh-dashboard">Dashboard Layout</h3>
 
-  <p>The dashboard is organized into six visual sections, stacked vertically. Each section appears conditionally -- if there is no data to show (e.g., no critical alerts, no pending transfers), that section is hidden automatically to keep the view clean.</p>
+  <p>The dashboard is organized into seven visual sections, stacked vertically. Four sections are always visible (KPI Metrics, Quick Actions, Recent Activity, and Notifications). Three sections appear conditionally -- the Critical Alerts Banner, Intelligence Grid, and Analytics Grid are hidden automatically when there is no relevant data to display.</p>
 
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
@@ -37,7 +37,7 @@
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">60s</span>
-      <span class="doc-stat-inline-label">Auto-Refresh</span>
+      <span class="doc-stat-inline-label">Notification Refresh</span>
     </div>
   </div>
 
@@ -55,7 +55,7 @@
       <tbody>
         <tr>
           <td><strong>Critical Alerts Banner</strong></td>
-          <td>Red/orange banner warning about stock-outs or expired items</td>
+          <td>Single banner warning about stock-outs or expired items. Red border when stock-outs exist (priority); orange border when only expired items are present</td>
           <td>Only when stock-outs or expired items exist</td>
         </tr>
         <tr>
@@ -93,8 +93,8 @@
   </div>
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
-    <strong>Auto-Refresh:</strong>
-    The dashboard automatically refreshes all data every 60 seconds. A "last updated" timestamp appears in the page subtitle (e.g., "Updated 2 min ago"). You can also manually refresh by clicking the retry button if an error occurs.
+    <strong>Data Refresh:</strong>
+    Only the Notification Feed auto-refreshes every 60 seconds. The main dashboard data (KPI metrics, analytics, activity) loads when the page opens and is cached for 60 seconds -- it does not auto-refresh on a timer. A "last updated" timestamp appears in the page subtitle (e.g., "Updated 2 min ago"). A retry button appears only if a data loading error occurs.
   </div>
 
   <!-- KPI Metrics -->
@@ -127,19 +127,19 @@
           <td><strong>Stock-Outs</strong></td>
           <td>Red (error)</td>
           <td>Items with zero stock quantity -- requires immediate attention</td>
-          <td>InventoryReport balance where quantity = 0</td>
+          <td>Basic/StockQuant balance where quantity = 0</td>
         </tr>
         <tr>
           <td><strong>Low Stock Items</strong></td>
           <td>Amber (warning)</td>
           <td>Items below 50% of their minimum reorder point (default threshold: 10 units)</td>
-          <td>InventoryReport balance vs. minimum quantity</td>
+          <td>Basic/StockQuant balance vs. minimum quantity</td>
         </tr>
         <tr>
           <td><strong>Expiring in 30 Days</strong></td>
           <td>Blue (info)</td>
           <td>Items whose expiry date falls within the next 30 days</td>
-          <td>InventoryReport item expiry date</td>
+          <td>Basic/StockQuant item expiry date</td>
         </tr>
         <tr>
           <td><strong>Receipts Today</strong></td>
@@ -207,7 +207,7 @@
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>Critical Alerts Banner:</strong>
-    When stock-outs or expired items are detected, a colored banner appears at the top of the dashboard. A red border indicates stock-outs; an orange border indicates expired items. Clicking "View Details" navigates to the inventory page with a stock view filter.
+    When stock-outs or expired items are detected, a single colored banner appears at the top of the dashboard. If stock-outs exist, the banner displays a red border (highest priority). If only expired items are present (no stock-outs), the banner displays an orange border instead. Only one banner is shown at a time -- stock-outs take priority. Clicking "View Details" navigates to the inventory page with a stock view filter.
   </div>
 
   <!-- Quick Actions -->
@@ -339,23 +339,13 @@
           <td>Blue</td>
           <td>Stock moved between departments, showing source and destination</td>
         </tr>
-        <tr>
-          <td><strong>Request</strong></td>
-          <td>Cyan</td>
-          <td>Stock request submitted by a department</td>
-        </tr>
-        <tr>
-          <td><strong>Adjustment</strong></td>
-          <td>Orange</td>
-          <td>Manual stock correction or reconciliation</td>
-        </tr>
-        <tr>
-          <td><strong>Expiry</strong></td>
-          <td>Red</td>
-          <td>Item expiry alert triggered</td>
-        </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Note:</strong>
+    Currently only Receipt and Transfer events are populated in the activity timeline. The type system supports three additional event types -- Request (cyan), Adjustment (orange), and Expiry (red) -- which will be enabled in a future update.
   </div>
 
   <p>Timestamps display as relative time (e.g., "3 min ago", "2 hours ago", "5 days ago") and fall back to a formatted date for events older than 7 days. Clicking on an activity item navigates to the relevant page (receipts or transfers).</p>
@@ -391,29 +381,34 @@
       </thead>
       <tbody>
         <tr>
-          <td><strong>Transfer</strong></td>
-          <td>High</td>
-          <td>Incoming transfer requests, approvals, and rejections</td>
+          <td><strong>Receipt Created</strong></td>
+          <td>routine</td>
+          <td>A new goods receipt batch was recorded, showing invoice number and item count</td>
         </tr>
         <tr>
-          <td><strong>Procurement</strong></td>
-          <td>Medium</td>
-          <td>Procurement status changes (submitted, approved, ordered, received)</td>
+          <td><strong>Transfer Initiated</strong></td>
+          <td>asap</td>
+          <td>A new inter-department transfer was created, notifying managers of source and destination departments</td>
         </tr>
         <tr>
-          <td><strong>Stock Alert</strong></td>
-          <td>High</td>
-          <td>Stock-out warnings and low stock threshold notifications</td>
+          <td><strong>Transfer Completed</strong></td>
+          <td>routine</td>
+          <td>A transfer has been confirmed and completed at the receiving department</td>
         </tr>
         <tr>
-          <td><strong>Expiry</strong></td>
-          <td>Medium</td>
-          <td>Items approaching or past their expiration date</td>
+          <td><strong>Procurement Submitted</strong></td>
+          <td>routine</td>
+          <td>A new procurement request was submitted by a department</td>
         </tr>
         <tr>
-          <td><strong>System</strong></td>
-          <td>Low</td>
-          <td>General system events (imports completed, reports generated)</td>
+          <td><strong>Procurement Status Changed</strong></td>
+          <td>routine</td>
+          <td>A procurement request status was updated (e.g., approved, ordered, received)</td>
+        </tr>
+        <tr>
+          <td><strong>Write-Off Recorded</strong></td>
+          <td>routine</td>
+          <td>A stock write-off was recorded, showing item count and reason</td>
         </tr>
       </tbody>
     </table>
@@ -421,7 +416,7 @@
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>Data Sources:</strong>
-    The dashboard aggregates data from FHIR SupplyDelivery resources (for receipts and transfers) and InventoryReport resources (for stock balances and expiry tracking). All calculations happen in real-time using the Medplum FHIR API, with a 60-second client-side cache to reduce redundant API calls.
+    The dashboard aggregates data from FHIR SupplyDelivery resources (for receipts and transfers), Basic/StockQuant resources (for stock balances and expiry tracking), and Communication resources (for notifications). Main dashboard data loads on page open with a 60-second cache. Only the Notification Feed auto-refreshes every 60 seconds via a separate polling interval.
   </div>
 
 </section>

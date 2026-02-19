@@ -1,0 +1,843 @@
+<section class="doc-section" id="admin-reception">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">10</span> Reception System</h2>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.1 Overview -->
+  <!-- ========================== -->
+  <h3 id="reception-overview">10.1 Overview</h3>
+  <p>The Reception system consists of <strong>3 interconnected pages</strong> for receiving goods from external suppliers into the hospital warehouse. All receipt data is stored as <strong>FHIR SupplyDelivery</strong> resources with <code>type=receipt</code>, providing a complete audit trail of every incoming shipment.</p>
+
+  <ul class="doc-list">
+    <li><strong>ReceptionPage</strong> - Quick entry interface with last 20 receipts and fast creation</li>
+    <li><strong>ReceptionsPage</strong> - Full receivings list with comprehensive filtering and export</li>
+    <li><strong>ReceptionGroupPage</strong> - Aggregated view grouped by invoice number</li>
+  </ul>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>FHIR Resource:</strong> Each receipt and its line items are stored as individual <code>SupplyDelivery</code> resources with <code>type: "receipt"</code>. The header document and each line item are separate resources, linked by a shared document number identifier.
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.2 ReceptionPage (Quick Entry) -->
+  <!-- ========================== -->
+  <h3 id="reception-page">10.2 ReceptionPage (Quick Entry)</h3>
+  <p>The ReceptionPage serves as the <strong>primary entry point</strong> for warehouse staff to create new receipts and review recent receiving activity. It displays the last 20 receipt entries with pagination for quick reference.</p>
+
+  <!-- ReceptionPage Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/admin-reception-page-en.png" alt="ReceptionPage - quick entry interface with recent receipts table" class="doc-screenshot-image" data-i18n-img="admin-reception-page">
+  </div>
+
+  <h4 id="reception-page-table">Recent Receipts Table</h4>
+  <p>The main table displays the most recent 20 receipt entries:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+          <th>Data Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>Receipt creation date</td>
+          <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+        </tr>
+        <tr>
+          <td><strong>Receipt Number</strong></td>
+          <td>10-digit auto-generated document number</td>
+          <td><code>SupplyDelivery.identifier</code></td>
+        </tr>
+        <tr>
+          <td><strong>Company Name</strong></td>
+          <td>Supplier organization name</td>
+          <td><code>SupplyDelivery.supplier.display</code></td>
+        </tr>
+        <tr>
+          <td><strong>Quantity</strong></td>
+          <td>Total item quantity in the receipt</td>
+          <td><code>SupplyDelivery.suppliedItem.quantity</code></td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td>Total monetary value of the receipt</td>
+          <td>Computed from line items</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 id="reception-page-actions">Action Buttons</h4>
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Import from RS</div>
+        <div class="doc-action-desc">Import receipt data from the Revenue Service (RS) system for bulk receipt creation from official invoices</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Create Receipt</div>
+        <div class="doc-action-desc">Opens the ReceiptFormModal for manual receipt entry with header fields and line items</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.3 Receipt Creation -->
+  <!-- ========================== -->
+  <h3 id="receipt-creation">10.3 Receipt Creation</h3>
+  <p>The <strong>ReceiptFormModal</strong> provides a two-part form for creating new receipts: a header section with document metadata and a line items section for individual products.</p>
+
+  <!-- Receipt Creation Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/admin-reception-create-en.png" alt="Receipt creation form with header and line items" class="doc-screenshot-image" data-i18n-img="admin-reception-create">
+  </div>
+
+  <h4 id="receipt-header-fields">Header Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>receiptDate</strong></td>
+          <td>DatePicker</td>
+          <td>Date of the receipt, defaults to today</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>receiptNumber</strong></td>
+          <td>Auto-generated</td>
+          <td>10-digit unique document number, generated on creation</td>
+          <td>Auto</td>
+        </tr>
+        <tr>
+          <td><strong>supplierId</strong></td>
+          <td>Select</td>
+          <td>Supplier company selection from ~495 registered organizations</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>warehouseId</strong></td>
+          <td>Select</td>
+          <td>Target warehouse/department receiving the goods</td>
+          <td>Yes</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 id="receipt-line-items">Line Item Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>productCode / productSearch</strong></td>
+          <td>Autocomplete</td>
+          <td>Bidirectional product search across ~33,900 items (search by code or name)</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>unit</strong></td>
+          <td>Text</td>
+          <td>Unit of measure (e.g., pcs, box, vial)</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>quantity</strong></td>
+          <td>Number</td>
+          <td>Number of units received</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>purchasePrice</strong></td>
+          <td>Number</td>
+          <td>Purchase price per unit from the supplier</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>salePrice</strong></td>
+          <td>Number</td>
+          <td>Sale price per unit for internal pricing</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>unitTotal</strong></td>
+          <td>Computed</td>
+          <td>Auto-calculated: <code>quantity x purchasePrice</code></td>
+          <td>Auto</td>
+        </tr>
+        <tr>
+          <td><strong>saleTotal</strong></td>
+          <td>Computed</td>
+          <td>Auto-calculated: <code>quantity x salePrice</code></td>
+          <td>Auto</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Bidirectional Autocomplete:</strong>
+      <p>The product search field supports bidirectional lookup across approximately 33,900 items. You can type a <strong>product code</strong> to find the item name, or type a <strong>product name</strong> to find its code. Results appear as you type with debounced server-side search for optimal performance.</p>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.4 ReceptionsPage (Full List) -->
+  <!-- ========================== -->
+  <h3 id="receptions-page">10.4 ReceptionsPage (Full List)</h3>
+  <p>The ReceptionsPage provides a <strong>comprehensive view of all receivings</strong> with powerful filtering, sorting, and export capabilities. Unlike the ReceptionPage which shows only the last 20 entries, this page enables full historical search.</p>
+
+  <!-- Receptions List Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/admin-receptions-list-en.png" alt="ReceptionsPage - full receivings list with 11-column table" class="doc-screenshot-image" data-i18n-img="admin-receptions-list">
+  </div>
+
+  <h4 id="receptions-table-columns">Table Columns</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Date</strong></td>
+          <td>Receipt date</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Invoice #</strong></td>
+          <td>Supplier invoice number</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Contract #</strong></td>
+          <td>Associated contract number</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Company</strong></td>
+          <td>Supplier organization name</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Department</strong></td>
+          <td>Receiving department/warehouse</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Item</strong></td>
+          <td>Product name</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Qty</strong></td>
+          <td>Quantity received</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>Price</strong></td>
+          <td>Unit purchase price</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>Pkg Qty</strong></td>
+          <td>Package quantity</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><strong>Pkg Price</strong></td>
+          <td>Package price</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><strong>Total</strong></td>
+          <td>Line total amount</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Receptions Filters Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/admin-receptions-filters-en.png" alt="ReceptionsPage - 11-field filter panel" class="doc-screenshot-image" data-i18n-img="admin-receptions-filters">
+  </div>
+
+  <h4 id="receptions-filters">Filter Panel (11 Fields)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Filter Field</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>dateFrom</strong></td>
+          <td>DatePicker</td>
+          <td>Start date for date range filter</td>
+        </tr>
+        <tr>
+          <td><strong>dateTo</strong></td>
+          <td>DatePicker</td>
+          <td>End date for date range filter</td>
+        </tr>
+        <tr>
+          <td><strong>invoiceNumber</strong></td>
+          <td>Text</td>
+          <td>Filter by supplier invoice number</td>
+        </tr>
+        <tr>
+          <td><strong>contractNumber</strong></td>
+          <td>Text</td>
+          <td>Filter by contract number</td>
+        </tr>
+        <tr>
+          <td><strong>companyId</strong></td>
+          <td>Select</td>
+          <td>Filter by supplier company</td>
+        </tr>
+        <tr>
+          <td><strong>departmentId</strong></td>
+          <td>Select</td>
+          <td>Filter by receiving department</td>
+        </tr>
+        <tr>
+          <td><strong>itemName</strong></td>
+          <td>Text</td>
+          <td>Filter by product name (partial match)</td>
+        </tr>
+        <tr>
+          <td><strong>priceFrom</strong></td>
+          <td>Number</td>
+          <td>Minimum unit price</td>
+        </tr>
+        <tr>
+          <td><strong>priceTo</strong></td>
+          <td>Number</td>
+          <td>Maximum unit price</td>
+        </tr>
+        <tr>
+          <td><strong>totalFrom</strong></td>
+          <td>Number</td>
+          <td>Minimum line total</td>
+        </tr>
+        <tr>
+          <td><strong>totalTo</strong></td>
+          <td>Number</td>
+          <td>Maximum line total</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.5 Export Functionality -->
+  <!-- ========================== -->
+  <h3 id="reception-export">10.5 Export Functionality</h3>
+  <p>The Receptions list supports data export for reporting and analysis purposes:</p>
+
+  <!-- Export Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/admin-reception-export-en.png" alt="Reception export functionality - Excel and PDF options" class="doc-screenshot-image" data-i18n-img="admin-reception-export">
+  </div>
+
+  <div class="doc-features-grid">
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">Excel Export</div>
+      <div class="doc-feature-desc">Dynamic import of xlsx library. Generates spreadsheet with Georgian-language column headers, all filtered data rows, and a summary row with totals. Filename includes date stamp (e.g., "Receptions_2024-01-15.xlsx").</div>
+    </div>
+    <div class="doc-feature-card">
+      <div class="doc-feature-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div class="doc-feature-title">PDF Export</div>
+      <div class="doc-feature-desc">PDF export functionality (placeholder - planned for future implementation). Will generate a printable document with the same data and layout as the Excel export.</div>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Excel Export Details:</strong>
+      <ul>
+        <li>Uses dynamic <code>import('xlsx')</code> to minimize initial bundle size</li>
+        <li>Column headers are in <strong>Georgian language</strong> for local compliance</li>
+        <li>Includes a <strong>summary row</strong> at the bottom with column totals</li>
+        <li>Filename format: <code>Receptions_YYYY-MM-DD.xlsx</code> with the current date</li>
+        <li>Exports only the currently <strong>filtered dataset</strong>, not all records</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.6 ReceptionGroupPage -->
+  <!-- ========================== -->
+  <h3 id="reception-group">10.6 ReceptionGroupPage</h3>
+  <p>The ReceptionGroupPage provides an <strong>aggregated view of receipts grouped by invoice number</strong>, useful for reconciling supplier invoices and tracking shipments that span multiple receipt entries.</p>
+
+  <!-- Reception Group Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/admin-reception-group-en.png" alt="ReceptionGroupPage - receipts grouped by invoice number" class="doc-screenshot-image" data-i18n-img="admin-reception-group">
+  </div>
+
+  <h4 id="group-table">Grouped Table (8 Columns)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Invoice #</strong></td>
+          <td>Supplier invoice number (grouping key)</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Date</strong></td>
+          <td>Receipt date of the group</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Company</strong></td>
+          <td>Supplier organization name</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Department</strong></td>
+          <td>Receiving department</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Items Count</strong></td>
+          <td>Number of line items in the group</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Total Qty</strong></td>
+          <td>Sum of all quantities in the group</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Total Amount</strong></td>
+          <td>Sum of all line totals</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>Actions</strong></td>
+          <td>View details, expand/collapse group</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 id="group-filters">Group Filters (6 Fields)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Filter</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>dateFrom</strong></td>
+          <td>DatePicker</td>
+          <td>Start date</td>
+        </tr>
+        <tr>
+          <td><strong>dateTo</strong></td>
+          <td>DatePicker</td>
+          <td>End date</td>
+        </tr>
+        <tr>
+          <td><strong>invoiceNumber</strong></td>
+          <td>Text</td>
+          <td>Invoice number search</td>
+        </tr>
+        <tr>
+          <td><strong>companyId</strong></td>
+          <td>Select</td>
+          <td>Supplier company filter</td>
+        </tr>
+        <tr>
+          <td><strong>departmentId</strong></td>
+          <td>Select</td>
+          <td>Department filter</td>
+        </tr>
+        <tr>
+          <td><strong>contractNumber</strong></td>
+          <td>Text</td>
+          <td>Contract number search</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Composite Grouping Key:</strong>
+      <p>Receipts are grouped using a composite key derived from: <code>invoiceNumber + supplierId + warehouseId + date</code>. This ensures that multiple deliveries from the same supplier on the same invoice are correctly aggregated, even if they arrive on different dates or to different warehouses.</p>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.7 Edit & Delete Operations -->
+  <!-- ========================== -->
+  <h3 id="reception-edit-delete">10.7 Edit & Delete Operations</h3>
+  <p>Existing receipts can be edited or deleted through the <strong>ReceivingEditModal</strong>, accessible from any receipt row in the table views.</p>
+
+  <!-- Edit Screenshot -->
+  <div class="doc-screenshot-full">
+    <img src="images/admin-reception-edit-en.png" alt="Receipt edit modal with 13 editable fields" class="doc-screenshot-image" data-i18n-img="admin-reception-edit">
+  </div>
+
+  <h4 id="edit-flow">Edit Flow</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+flowchart LR
+    A[Click Edit on Row] --> B[Open ReceivingEditModal]
+    B --> C[Load Current Values]
+    C --> D[Modify Fields]
+    D --> E{Validate}
+    E -->|Valid| F[Update SupplyDelivery]
+    E -->|Invalid| D
+    F --> G[Refresh Table]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <h4 id="editable-fields">Editable Fields (13 Fields)</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Field</th>
+          <th>Editable</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>receiptDate</strong></td>
+          <td>Yes</td>
+          <td>Date can be changed after creation</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>invoiceNumber</strong></td>
+          <td>Yes</td>
+          <td>Supplier invoice reference</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>contractNumber</strong></td>
+          <td>Yes</td>
+          <td>Associated contract</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>supplierId</strong></td>
+          <td>Yes</td>
+          <td>Change supplier company</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>warehouseId</strong></td>
+          <td>Yes</td>
+          <td>Change receiving warehouse</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>productCode</strong></td>
+          <td>Yes</td>
+          <td>Product identifier</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>productName</strong></td>
+          <td>Yes</td>
+          <td>Product display name</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>unit</strong></td>
+          <td>Yes</td>
+          <td>Unit of measure</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>quantity</strong></td>
+          <td>Yes</td>
+          <td>Recalculates totals on change</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><strong>purchasePrice</strong></td>
+          <td>Yes</td>
+          <td>Recalculates unitTotal on change</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><strong>salePrice</strong></td>
+          <td>Yes</td>
+          <td>Recalculates saleTotal on change</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><strong>packageQuantity</strong></td>
+          <td>Yes</td>
+          <td>Package-level quantity</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td><strong>packagePrice</strong></td>
+          <td>Yes</td>
+          <td>Package-level price</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Delete Operation:</strong>
+      <p>Deleting a receipt permanently removes the SupplyDelivery resource from the FHIR server. This operation <strong>cannot be undone</strong>. Only receipts with <code>status=draft</code> or <code>status=in-progress</code> can be deleted. Completed receipts that have already affected inventory balances require an offsetting transaction instead.</p>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.8 FHIR Mapping -->
+  <!-- ========================== -->
+  <h3 id="reception-fhir-mapping">10.8 FHIR Mapping</h3>
+  <p>The Reception system maps warehouse receipt operations to <strong>FHIR SupplyDelivery</strong> resources:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Receipt Concept</th>
+          <th>FHIR Path</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Resource Type</strong></td>
+          <td><code>SupplyDelivery</code></td>
+          <td>Base FHIR resource for all receipts</td>
+        </tr>
+        <tr>
+          <td><strong>Receipt Type</strong></td>
+          <td><code>SupplyDelivery.type</code></td>
+          <td>Set to <code>"receipt"</code> to distinguish from transfers</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td><code>SupplyDelivery.status</code></td>
+          <td>draft | in-progress | completed | abandoned</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td><code>SupplyDelivery.identifier[0]</code></td>
+          <td>10-digit auto-generated receipt number</td>
+        </tr>
+        <tr>
+          <td><strong>Invoice Number</strong></td>
+          <td><code>SupplyDelivery.identifier[1]</code></td>
+          <td>Supplier invoice reference</td>
+        </tr>
+        <tr>
+          <td><strong>Receipt Date</strong></td>
+          <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+          <td>When the goods were received</td>
+        </tr>
+        <tr>
+          <td><strong>Supplier</strong></td>
+          <td><code>SupplyDelivery.supplier</code></td>
+          <td>Reference to Organization resource</td>
+        </tr>
+        <tr>
+          <td><strong>Warehouse</strong></td>
+          <td><code>SupplyDelivery.destination</code></td>
+          <td>Reference to Location resource</td>
+        </tr>
+        <tr>
+          <td><strong>Product</strong></td>
+          <td><code>SupplyDelivery.suppliedItem.itemReference</code></td>
+          <td>Reference to Device or Medication resource</td>
+        </tr>
+        <tr>
+          <td><strong>Quantity</strong></td>
+          <td><code>SupplyDelivery.suppliedItem.quantity</code></td>
+          <td>Number of units received</td>
+        </tr>
+        <tr>
+          <td><strong>Pricing</strong></td>
+          <td><code>SupplyDelivery.extension</code></td>
+          <td>Custom extensions for purchase/sale prices</td>
+        </tr>
+        <tr>
+          <td><strong>Tag</strong></td>
+          <td><code>SupplyDelivery.meta.tag</code></td>
+          <td>Used with <code>_tag</code> parameter for efficient server-side filtering</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 10.9 Troubleshooting -->
+  <!-- ========================== -->
+  <h3 id="reception-troubleshooting">10.9 Troubleshooting</h3>
+  <p>Common issues encountered when using the Reception system:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>Cause</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Product search returns no results</strong></td>
+          <td>Search term is too short or product catalog not loaded</td>
+          <td>Enter at least 3 characters. Check network connectivity and refresh the page.</td>
+        </tr>
+        <tr>
+          <td><strong>Supplier dropdown is empty</strong></td>
+          <td>Organization resources not loaded from FHIR server</td>
+          <td>Refresh the page. Verify the Medplum server is accessible and Organization resources exist.</td>
+        </tr>
+        <tr>
+          <td><strong>Receipt number not generated</strong></td>
+          <td>Server-side number generation failed</td>
+          <td>Check FHIR server connectivity. The 10-digit number is generated on resource creation.</td>
+        </tr>
+        <tr>
+          <td><strong>Excel export produces empty file</strong></td>
+          <td>No data matches the current filter criteria</td>
+          <td>Clear or adjust filters to include data. The export only includes filtered results.</td>
+        </tr>
+        <tr>
+          <td><strong>RS import fails</strong></td>
+          <td>Revenue Service connection issue or invalid data format</td>
+          <td>Verify RS service availability. Check that the import data format matches expected schema.</td>
+        </tr>
+        <tr>
+          <td><strong>Cannot delete completed receipt</strong></td>
+          <td>Completed receipts are protected to maintain inventory integrity</td>
+          <td>Only draft or in-progress receipts can be deleted. Create an offsetting transaction for corrections.</td>
+        </tr>
+        <tr>
+          <td><strong>Totals not recalculating</strong></td>
+          <td>Computed fields require both quantity and price to be set</td>
+          <td>Ensure both quantity and price fields have valid numeric values. Check for non-numeric characters.</td>
+        </tr>
+        <tr>
+          <td><strong>Group view shows duplicate entries</strong></td>
+          <td>Multiple receipts with the same invoice number but different dates/warehouses</td>
+          <td>This is expected behavior. The composite grouping key includes date and warehouse. Use filters to narrow results.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>

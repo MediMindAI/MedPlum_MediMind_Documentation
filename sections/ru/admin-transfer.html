@@ -1,0 +1,689 @@
+<section class="doc-section" id="admin-transfer">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+      </svg>
+    </div>
+    <h2><span class="doc-section-number">11</span> Transfer System</h2>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 11.1 Overview -->
+  <!-- ========================== -->
+  <h3 id="transfer-overview">11.1 Overview</h3>
+  <p>The <strong>Transfer System</strong> manages inter-departmental inventory movements within the MediMind EMR Administration module. All transfer data is stored as FHIR <code>SupplyDelivery</code> resources with <code>type='transfer'</code>.</p>
+
+  <p>The module consists of <strong>4 pages</strong> that cover the complete transfer lifecycle:</p>
+
+  <div class="doc-features-grid">
+    <div class="doc-feature-card">
+      <h4>TransferCreatePage</h4>
+      <p>Create new inter-department transfers using waybill or book-style interfaces</p>
+    </div>
+    <div class="doc-feature-card">
+      <h4>TransferConfirmationPage</h4>
+      <p>Approval queue for pending transfers awaiting department confirmation</p>
+    </div>
+    <div class="doc-feature-card">
+      <h4>TransferPage</h4>
+      <p>Browse, filter, edit, and delete completed transfers</p>
+    </div>
+    <div class="doc-feature-card">
+      <h4>TransferGroupPage</h4>
+      <p>Aggregated view grouped by departments and date with CSV export</p>
+    </div>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Transfer Status Lifecycle:</strong>
+      <ul>
+        <li><strong>in-progress</strong> - Transfer created, awaiting confirmation from receiving department</li>
+        <li><strong>completed</strong> - Transfer confirmed and inventory updated in both departments</li>
+        <li><strong>abandoned</strong> - Transfer rejected or cancelled before confirmation</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Transfer Lifecycle Diagram -->
+  <h4 id="transfer-lifecycle">Transfer Lifecycle</h4>
+  <div class="mermaid-container">
+    <div class="mermaid mermaid-zoomable">
+stateDiagram-v2
+    [*] --> in_progress : Create Transfer
+    in_progress --> completed : Confirm
+    in_progress --> abandoned : Reject / Cancel
+    completed --> [*]
+    abandoned --> [*]
+    </div>
+    <div class="mermaid-controls">
+      <button class="mermaid-zoom-btn" title="Toggle Zoom" onclick="toggleZoom(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+          <path d="M11 8v6M8 11h6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 11.2 TransferCreatePage -->
+  <!-- ========================== -->
+  <h3 id="transfer-create">11.2 TransferCreatePage</h3>
+  <p>The <strong>TransferCreatePage</strong> is the entry point for creating new inter-department transfers. It provides two distinct modal interfaces for different workflows and displays a table of recent transfers.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-transfer-create-en.png" alt="TransferCreatePage with action buttons and recent transfers table" class="doc-screenshot-image" data-i18n-img="admin-transfer-create">
+  </div>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #1a365d);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">TransferWaybillModal</div>
+        <div class="doc-action-desc">Standard waybill form with header fields, item search, and line item management. Best for structured entry.</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">TransferBookModal</div>
+        <div class="doc-action-desc">Dual-panel book-style interface. Click items to move between available and selected panels. Best for quick selection.</div>
+      </div>
+    </div>
+  </div>
+
+  <p>Below the action buttons, a table displays the <strong>most recent 20 transfers</strong> with status indicators. Completed transfers are highlighted with a <strong>green background</strong> for quick visual identification.</p>
+
+  <!-- ========================== -->
+  <!-- 11.3 TransferWaybillModal -->
+  <!-- ========================== -->
+  <h3 id="transfer-waybill">11.3 TransferWaybillModal</h3>
+  <p>The <strong>TransferWaybillModal</strong> provides a standard waybill form for creating transfers with precise control over each field.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-transfer-waybill-en.png" alt="TransferWaybillModal with header fields and item entry" class="doc-screenshot-image" data-i18n-img="admin-transfer-waybill">
+  </div>
+
+  <!-- Header Fields -->
+  <h4 id="waybill-header">Header Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Component</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>DatePicker</td>
+          <td>Transfer date, defaults to current date</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td>Auto-generated</td>
+          <td>Format: <code>DD/MM/YY-NNN</code> (e.g., 06/02/26-001)</td>
+        </tr>
+        <tr>
+          <td><strong>From Department</strong></td>
+          <td>Select</td>
+          <td>Source department (sender)</td>
+        </tr>
+        <tr>
+          <td><strong>To Department</strong></td>
+          <td>Select</td>
+          <td>Destination department (receiver)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Item Entry -->
+  <h4 id="waybill-item-entry">Item Entry</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Component</th>
+          <th>Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Search Query</strong></td>
+          <td>TextInput with dropdown</td>
+          <td>Searches inventory of the source department. Displays max <strong>5 results</strong> in dropdown.</td>
+        </tr>
+        <tr>
+          <td><strong>Unit</strong></td>
+          <td>Read-only</td>
+          <td>Auto-populated from selected item (e.g., pcs, kg, ml)</td>
+        </tr>
+        <tr>
+          <td><strong>Quantity</strong></td>
+          <td>NumberInput</td>
+          <td>Maximum value equals current stock in source department</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Items Table -->
+  <h4 id="waybill-items-table">Items Table</h4>
+  <p>Added items appear in a line items table with the following columns:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+          <th>Editable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Item Code</strong></td>
+          <td>Unique inventory item code</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Item Name</strong></td>
+          <td>Full name of the inventory item</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Unit</strong></td>
+          <td>Unit of measure</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Quantity</strong></td>
+          <td>Transfer quantity</td>
+          <td>Yes (inline editing)</td>
+        </tr>
+        <tr>
+          <td><strong>Price</strong></td>
+          <td>Unit price (4 decimal places)</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td>Calculated: quantity x price</td>
+          <td>No (auto-calculated)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer Fields -->
+  <h4 id="waybill-footer">Footer Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Component</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Direct Write-Off</strong></td>
+          <td>Checkbox</td>
+          <td>When checked, skips confirmation step and creates transfer as <code>completed</code> immediately</td>
+        </tr>
+        <tr>
+          <td><strong>Department Password</strong></td>
+          <td>PasswordInput</td>
+          <td>Required. Validates authority to transfer from the source department.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Stock Validation:</strong>
+      <ul>
+        <li>Quantity cannot exceed current stock in the source department</li>
+        <li>Inline error messages appear if quantity exceeds available stock</li>
+        <li>Stock levels are checked in real-time when selecting items</li>
+        <li>If stock changes between selection and submission, the system re-validates</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 11.4 TransferBookModal -->
+  <!-- ========================== -->
+  <h3 id="transfer-book">11.4 TransferBookModal</h3>
+  <p>The <strong>TransferBookModal</strong> provides a dual-panel book-style interface designed for fast, visual item selection.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-transfer-book-en.png" alt="TransferBookModal dual-panel interface with available and selected items" class="doc-screenshot-image" data-i18n-img="admin-transfer-book">
+  </div>
+
+  <div class="doc-action-cards">
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #2b6cb0, #3182ce);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Left Panel: Available Items</div>
+        <div class="doc-action-desc">Displays all items from the source department inventory. Includes a text filter to narrow results. Click any item to move it to the selected panel.</div>
+      </div>
+    </div>
+    <div class="doc-action-card">
+      <div class="doc-action-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="doc-action-content">
+        <div class="doc-action-title">Right Panel: Selected Items</div>
+        <div class="doc-action-desc">Shows items selected for transfer with inline quantity editing. Quantity fields have a yellow background (<code>#FAFAAC</code>) for visibility. Click to remove items.</div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Click to Move</strong> - Click an item in the left panel to add it to the right panel; click in the right panel to remove it</li>
+    <li><strong>Inline Quantity Editing</strong> - Adjust quantities directly in the selected items panel</li>
+    <li><strong>Yellow Highlight</strong> - Quantity input fields use background color <code>#FAFAAC</code> for clear visual distinction</li>
+    <li><strong>Totals Summary</strong> - Footer displays sum of all line item totals</li>
+    <li><strong>Filter</strong> - Text filter on the left panel narrows the available items list</li>
+  </ul>
+
+  <!-- ========================== -->
+  <!-- 11.5 TransferConfirmationPage -->
+  <!-- ========================== -->
+  <h3 id="transfer-confirmation">11.5 TransferConfirmationPage</h3>
+  <p>The <strong>TransferConfirmationPage</strong> displays an approval queue of pending transfers (status = <code>in-progress</code>) awaiting confirmation from the receiving department.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-transfer-confirmation-en.png" alt="TransferConfirmationPage with pending transfers queue" class="doc-screenshot-image" data-i18n-img="admin-transfer-confirmation">
+  </div>
+
+  <!-- Filters -->
+  <h4 id="confirmation-filters">Confirmation Filters</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Filter</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date From</strong></td>
+          <td>DatePicker</td>
+          <td>Start of date range for filtering transfers</td>
+        </tr>
+        <tr>
+          <td><strong>Date To</strong></td>
+          <td>DatePicker</td>
+          <td>End of date range for filtering transfers</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td>TextInput</td>
+          <td>Search by document number (partial match)</td>
+        </tr>
+        <tr>
+          <td><strong>From Department</strong></td>
+          <td>Select</td>
+          <td>Filter by source department</td>
+        </tr>
+        <tr>
+          <td><strong>To Department</strong></td>
+          <td>Select</td>
+          <td>Filter by destination department</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The table displays all transfers with <code>status=in-progress</code>. Clicking a transfer row opens the <strong>Confirmation Modal</strong>.</p>
+
+  <!-- Confirmation Modal -->
+  <h4 id="confirmation-modal">Confirmation Modal</h4>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-transfer-confirm-modal-en.png" alt="Transfer confirmation modal with editable department fields" class="doc-screenshot-image" data-i18n-img="admin-transfer-confirm-modal">
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>Confirmation Process:</strong>
+      <ul>
+        <li>The confirmation modal allows editing the <strong>From Department</strong> and <strong>To Department</strong> before finalizing</li>
+        <li>On confirmation, the transfer status changes from <code>in-progress</code> to <code>completed</code></li>
+        <li>Inventory is updated in both departments: source stock decreases, destination stock increases</li>
+        <li>Rejected transfers are marked as <code>abandoned</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 11.6 TransferPage -->
+  <!-- ========================== -->
+  <h3 id="transfer-list">11.6 TransferPage</h3>
+  <p>The <strong>TransferPage</strong> displays a searchable, filterable list of all completed transfers with options to edit and delete records.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-transfer-list-en.png" alt="TransferPage with completed transfers list and filters" class="doc-screenshot-image" data-i18n-img="admin-transfer-list">
+  </div>
+
+  <!-- Filters -->
+  <h4 id="transfer-list-filters">Filter Fields</h4>
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Filter</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>dateFrom</strong></td>
+          <td>DatePicker</td>
+          <td>Start date for the filter range</td>
+        </tr>
+        <tr>
+          <td><strong>dateTo</strong></td>
+          <td>DatePicker</td>
+          <td>End date for the filter range</td>
+        </tr>
+        <tr>
+          <td><strong>fromDept</strong></td>
+          <td>Select</td>
+          <td>Source department filter</td>
+        </tr>
+        <tr>
+          <td><strong>toDept</strong></td>
+          <td>Select</td>
+          <td>Destination department filter</td>
+        </tr>
+        <tr>
+          <td><strong>goodsSearch</strong></td>
+          <td>TextInput</td>
+          <td>Search by item name or item code</td>
+        </tr>
+        <tr>
+          <td><strong>generalSearch</strong></td>
+          <td>TextInput</td>
+          <td>General search across all fields (document number, department names, etc.)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Modal -->
+  <h4 id="transfer-edit">Edit Modal</h4>
+  <p>Clicking an existing transfer opens the edit modal with the following editable fields:</p>
+
+  <ul class="doc-list">
+    <li><strong>fromDeptId</strong> - Change the source department</li>
+    <li><strong>toDeptId</strong> - Change the destination department</li>
+    <li><strong>quantity</strong> - Adjust the transferred quantity</li>
+    <li><strong>price</strong> - Update the unit price</li>
+  </ul>
+
+  <p>Deleting a transfer requires a <strong>confirmation dialog</strong> before the record is permanently removed.</p>
+
+  <!-- ========================== -->
+  <!-- 11.7 TransferGroupPage -->
+  <!-- ========================== -->
+  <h3 id="transfer-group">11.7 TransferGroupPage</h3>
+  <p>The <strong>TransferGroupPage</strong> provides an aggregated view of transfers, grouping related records together for summary reporting.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/admin-transfer-group-en.png" alt="TransferGroupPage with aggregated transfer data" class="doc-screenshot-image" data-i18n-img="admin-transfer-group">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Grouping Key</strong></td>
+          <td>Groups by: <code>fromDeptId</code> + <code>toDeptId</code> + <code>date</code></td>
+        </tr>
+        <tr>
+          <td><strong>Quantity Aggregate</strong></td>
+          <td><code>sum(quantity)</code> across all transfers in the group</td>
+        </tr>
+        <tr>
+          <td><strong>Total Aggregate</strong></td>
+          <td><code>sum(total)</code> across all line items in the group</td>
+        </tr>
+        <tr>
+          <td><strong>CSV Export</strong></td>
+          <td>Export grouped data to CSV with <strong>UTF-8 BOM</strong> encoding for proper character display</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-info-box">
+    <div class="doc-info-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-info-content">
+      <strong>CSV Export Details:</strong>
+      <ul>
+        <li>Exported files include a UTF-8 BOM (<code>\uFEFF</code>) prefix for proper display of Georgian and Russian characters in Excel</li>
+        <li>Columns include: Date, From Department, To Department, Total Quantity, Total Amount</li>
+        <li>File name format: <code>transfers-group-YYYY-MM-DD.csv</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 11.8 FHIR Resource Mapping -->
+  <!-- ========================== -->
+  <h3 id="transfer-fhir">11.8 FHIR Resource Mapping</h3>
+  <p>Each transfer line item is stored as a FHIR <strong>SupplyDelivery</strong> resource with <code>type='transfer'</code>. The resource uses custom extensions to store transfer-specific data.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Extension</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOURCE_DEPARTMENT</strong></td>
+          <td>Reference</td>
+          <td>ID of the source (sending) department</td>
+        </tr>
+        <tr>
+          <td><strong>SOURCE_DEPARTMENT_NAME</strong></td>
+          <td>String</td>
+          <td>Display name of the source department</td>
+        </tr>
+        <tr>
+          <td><strong>DEST_DEPARTMENT</strong></td>
+          <td>Reference</td>
+          <td>ID of the destination (receiving) department</td>
+        </tr>
+        <tr>
+          <td><strong>DEST_DEPARTMENT_NAME</strong></td>
+          <td>String</td>
+          <td>Display name of the destination department</td>
+        </tr>
+        <tr>
+          <td><strong>ITEM_NAME</strong></td>
+          <td>String</td>
+          <td>Name of the inventory item being transferred</td>
+        </tr>
+        <tr>
+          <td><strong>ITEM_CODE</strong></td>
+          <td>String</td>
+          <td>Unique code identifying the inventory item</td>
+        </tr>
+        <tr>
+          <td><strong>UNIT_OF_MEASURE</strong></td>
+          <td>String</td>
+          <td>Unit of measurement (e.g., pcs, kg, ml)</td>
+        </tr>
+        <tr>
+          <td><strong>UNIT_PRICE</strong></td>
+          <td>Decimal</td>
+          <td>Price per unit (up to 4 decimal places)</td>
+        </tr>
+        <tr>
+          <td><strong>LINE_TOTAL</strong></td>
+          <td>Decimal</td>
+          <td>Calculated total: quantity x unit price</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-code-block">
+    <pre><code class="language-text">SupplyDelivery (type='transfer')
+├── status: in-progress | completed | abandoned
+├── occurrenceDateTime: transfer date
+├── identifier: DD/MM/YY-NNN document number
+├── suppliedItem.quantity: transfer quantity
+└── extension[]
+    ├── SOURCE_DEPARTMENT / SOURCE_DEPARTMENT_NAME
+    ├── DEST_DEPARTMENT / DEST_DEPARTMENT_NAME
+    ├── ITEM_NAME / ITEM_CODE
+    ├── UNIT_OF_MEASURE
+    ├── UNIT_PRICE
+    └── LINE_TOTAL</code></pre>
+  </div>
+
+  <p><strong>Document Number Format:</strong> <code>DD/MM/YY-NNN</code> where <code>DD</code> is day, <code>MM</code> is month, <code>YY</code> is two-digit year, and <code>NNN</code> is a sequential counter. Example: <code>06/02/26-001</code>.</p>
+
+  <!-- ========================== -->
+  <!-- 11.9 Direct Write-Off -->
+  <!-- ========================== -->
+  <h3 id="transfer-direct-writeoff">11.9 Direct Write-Off</h3>
+
+  <div class="doc-warning-box">
+    <div class="doc-warning-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="doc-warning-content">
+      <strong>Direct Write-Off Mode:</strong>
+      <p>When the <strong>Direct Write-Off</strong> checkbox is enabled in the TransferWaybillModal, transfers are created with <code>status='completed'</code> immediately, <strong>bypassing the confirmation step entirely</strong>.</p>
+      <ul>
+        <li><strong>Inventory impact is immediate</strong> - Source department stock decreases and destination department stock increases at the moment of creation</li>
+        <li>The transfer will <strong>not</strong> appear in the TransferConfirmationPage approval queue</li>
+        <li>Use this option only when the receiving department does not need to verify the transfer</li>
+        <li>This action cannot be undone through the confirmation workflow; manual editing on TransferPage is required for corrections</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- 11.10 Troubleshooting -->
+  <!-- ========================== -->
+  <h3 id="transfer-troubleshooting">11.10 Troubleshooting</h3>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>Cause</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Quantity exceeds stock</strong></td>
+          <td>Requested quantity is higher than available inventory in source department</td>
+          <td>Reduce quantity or check current stock levels in the source department</td>
+        </tr>
+        <tr>
+          <td><strong>Transfer not appearing in confirmation queue</strong></td>
+          <td>Transfer was created with Direct Write-Off enabled</td>
+          <td>Check TransferPage for completed transfers instead; direct write-offs skip the confirmation step</td>
+        </tr>
+        <tr>
+          <td><strong>Invalid department password</strong></td>
+          <td>Incorrect password entered for the source department</td>
+          <td>Verify the department password with an administrator</td>
+        </tr>
+        <tr>
+          <td><strong>Item not found in search</strong></td>
+          <td>No matching inventory items in the selected source department</td>
+          <td>Verify the source department is correctly selected and has stock for the desired item</td>
+        </tr>
+        <tr>
+          <td><strong>Duplicate document number</strong></td>
+          <td>Sequential counter collision on the same date</td>
+          <td>The system auto-increments the NNN counter; retry the operation</td>
+        </tr>
+        <tr>
+          <td><strong>CSV export shows garbled characters</strong></td>
+          <td>Spreadsheet application not detecting UTF-8 encoding</td>
+          <td>The export includes a UTF-8 BOM; open in Excel using "Data > From Text/CSV" with UTF-8 encoding</td>
+        </tr>
+        <tr>
+          <td><strong>Cannot edit completed transfer</strong></td>
+          <td>Transfer has already been confirmed and inventory updated</td>
+          <td>Use the edit modal on TransferPage to adjust fields; note that inventory adjustments may be needed</td>
+        </tr>
+        <tr>
+          <td><strong>Confirmation modal not loading</strong></td>
+          <td>Network error or session timeout</td>
+          <td>Refresh the page and try again; check internet connection</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>

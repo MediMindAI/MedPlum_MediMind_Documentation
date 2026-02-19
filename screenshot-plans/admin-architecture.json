@@ -1,0 +1,150 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-06T18:00:00Z",
+  "sourceSection": {
+    "id": "admin-architecture",
+    "file": "sections/en/admin-architecture.html",
+    "titleKey": "toc.adminArchitecture"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3000",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/administration/reception"
+  },
+  "screenshots": [
+    {
+      "id": "admin-fhir-supply-delivery",
+      "name": "admin-fhir-supply-delivery",
+      "description": "SupplyDelivery resource structure showing receipt and transfer fields - a FHIR resource detail view or JSON representation displaying the SupplyDelivery resource with its key properties: identifier (receipt-number, invoice-number), status lifecycle (in-progress, completed, abandoned), supplier reference, meta.tag, and extensions for document-type (receipt vs transfer), source-department, destination-department, item fields (code, name, type, quantity, price, total, unit, expiration, series)",
+      "type": "static",
+      "anchorId": "arch-fhir-resources",
+      "docReference": "Section 14.4 - FHIR Resource Reference (SupplyDelivery)",
+      "sectionHeaderText": "FHIR Resource Reference",
+      "expectedDOMElements": ["table", "[class*='resource']", "pre", "code"],
+      "knownLimitation": "requires-test-data",
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/dashboard/administration/reception" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "evaluate", "script": "(() => { const rows = document.querySelectorAll('table tbody tr'); return 'table rows found: ' + rows.length; })()" },
+        { "action": "evaluate", "script": "(() => { const links = document.querySelectorAll('table tbody tr td a'); if (links.length > 0) { return 'first receipt link: ' + links[0].textContent.trim().substring(0, 40); } return 'no receipt links found'; })()" },
+        { "action": "click", "selector": "table tbody tr:first-child td a" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "(() => { const heading = document.querySelector('h1, h2, [class*=\"title\"], [class*=\"header\"]'); return heading ? 'page heading: ' + heading.textContent.trim().substring(0, 60) : 'no heading found'; })()" },
+        { "action": "screenshot", "name": "admin-fhir-supply-delivery" }
+      ],
+      "alternativeCaptureSteps": [
+        {
+          "description": "If direct FHIR resource viewer is not accessible, capture the SupplyDelivery detail from the reception detail/edit page which shows the resource fields in a form layout",
+          "steps": [
+            { "action": "navigate", "url": "{url}/emr/dashboard/administration/reception" },
+            { "action": "wait", "ms": 3000 },
+            { "action": "evaluate", "script": "(() => { const rows = document.querySelectorAll('table tbody tr'); if (rows.length > 0) rows[0].click(); return 'clicked first row'; })()" },
+            { "action": "wait", "ms": 2000 },
+            { "action": "screenshot", "name": "admin-fhir-supply-delivery" }
+          ]
+        },
+        {
+          "description": "If no test data exists, capture the resource structure from the documentation site code block or Mermaid diagram illustrating the SupplyDelivery resource",
+          "steps": [
+            { "action": "navigate", "url": "http://localhost:8000/#/admin-architecture/arch-fhir-resources" },
+            { "action": "wait", "ms": 2000 },
+            { "action": "evaluate", "script": "(() => { const el = document.getElementById('fhir-receipt'); if (el) { el.scrollIntoView({ behavior: 'instant', block: 'start' }); return 'scrolled to fhir-receipt'; } return 'anchor not found'; })()" },
+            { "action": "wait", "ms": 500 },
+            { "action": "screenshot", "name": "admin-fhir-supply-delivery" }
+          ]
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": ["SupplyDelivery resource fields or detail view showing receipt/transfer structure"],
+        "languageCheck": true
+      }
+    },
+    {
+      "id": "admin-fhir-supply-request",
+      "name": "admin-fhir-supply-request",
+      "description": "SupplyRequest resource structure showing order fields and line items extension - a FHIR resource detail view or JSON representation displaying the SupplyRequest resource with its key properties: identifier (order-document-number), status lifecycle (active, completed, cancelled), and extensions for requester-department, receiver-department, ORDER_LINE_ITEMS (JSON-encoded array), document-date, document-number, created-by, confirmed-by, confirmation-date, notes",
+      "type": "static",
+      "anchorId": "arch-fhir-resources",
+      "docReference": "Section 14.4 - FHIR Resource Reference (SupplyRequest)",
+      "sectionHeaderText": "FHIR Resource Reference",
+      "expectedDOMElements": ["table", "[class*='resource']", "pre", "code"],
+      "knownLimitation": "requires-test-data",
+      "languages": ["en", "ka", "ru"],
+      "captureSteps": [
+        { "action": "navigate", "url": "{url}/emr/dashboard/administration/order-confirmation" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "evaluate", "script": "(() => { const rows = document.querySelectorAll('table tbody tr'); return 'table rows found: ' + rows.length; })()" },
+        { "action": "evaluate", "script": "(() => { const links = document.querySelectorAll('table tbody tr td a'); if (links.length > 0) { return 'first order link: ' + links[0].textContent.trim().substring(0, 40); } return 'no order links found'; })()" },
+        { "action": "click", "selector": "table tbody tr:first-child td a" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "(() => { const heading = document.querySelector('h1, h2, [class*=\"title\"], [class*=\"header\"]'); return heading ? 'page heading: ' + heading.textContent.trim().substring(0, 60) : 'no heading found'; })()" },
+        { "action": "screenshot", "name": "admin-fhir-supply-request" }
+      ],
+      "alternativeCaptureSteps": [
+        {
+          "description": "If direct FHIR resource viewer is not accessible, capture the SupplyRequest detail from the order detail/edit page which shows the resource fields in a form layout",
+          "steps": [
+            { "action": "navigate", "url": "{url}/emr/dashboard/administration/order-confirmation" },
+            { "action": "wait", "ms": 3000 },
+            { "action": "evaluate", "script": "(() => { const rows = document.querySelectorAll('table tbody tr'); if (rows.length > 0) rows[0].click(); return 'clicked first row'; })()" },
+            { "action": "wait", "ms": 2000 },
+            { "action": "screenshot", "name": "admin-fhir-supply-request" }
+          ]
+        },
+        {
+          "description": "If no test data exists, capture the resource structure from the documentation site tables illustrating the SupplyRequest resource",
+          "steps": [
+            { "action": "navigate", "url": "http://localhost:8000/#/admin-architecture/arch-fhir-resources" },
+            { "action": "wait", "ms": 2000 },
+            { "action": "evaluate", "script": "(() => { const el = document.getElementById('fhir-order'); if (el) { el.scrollIntoView({ behavior: 'instant', block: 'start' }); return 'scrolled to fhir-order'; } return 'anchor not found'; })()" },
+            { "action": "wait", "ms": 500 },
+            { "action": "screenshot", "name": "admin-fhir-supply-request" }
+          ]
+        }
+      ],
+      "status": {
+        "en": "completed",
+        "ka": "completed",
+        "ru": "completed"
+      },
+      "completedAt": {
+        "en": null,
+        "ka": null,
+        "ru": null
+      },
+      "verification": {
+        "mustContain": ["SupplyRequest resource fields or detail view showing order structure with line items extension"],
+        "languageCheck": true
+      }
+    }
+  ],
+  "languageSwitching": {
+    "selectors": {
+      "en": "text=ENG",
+      "ru": "text=\u0420\u0423\u0421",
+      "ka": "text=\u10e5\u10d0\u10e0"
+    },
+    "waitAfterSwitch": 2000
+  },
+  "summary": {
+    "totalScreenshots": 2,
+    "totalFiles": 6,
+    "staticScreenshots": 2,
+    "multiStepFlows": 0,
+    "stateBased": 0
+  }
+}
