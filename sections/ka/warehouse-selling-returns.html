@@ -1,0 +1,1041 @@
+<!-- ============================================================
+     საწყობის გაყიდვა და გაბრუნება - დოკუმენტაცია
+     Section ID: warehouse-selling-returns
+     Anchors: selling, returns
+     ============================================================ -->
+
+<!-- ============================================================
+     სექცია 1: გაყიდვა
+     ============================================================ -->
+<section class="doc-section" id="selling">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">1</div>
+    <h2>გაყიდვა</h2>
+  </div>
+
+  <p><strong>გაყიდვის</strong> მოდული მართავს სასაწყობო ნომენკლატურის გაყიდვას გარე მყიდველ კომპანიებზე. საქონლის გაყიდვისას ის ამოიწერება განყოფილების მარაგიდან და იქმნება გაყიდვის ზედნადები. თითოეული გაყიდვის ტრანზაქცია გადის <strong>ორეტაპიან დამტკიცების პროცესს</strong> -- ოპერატორი ქმნის ზედნადებს, ხოლო უფლებამოსილი მომხმარებელი ადასტურებს ან უარყოფს მას.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR რესურსი:</strong> თითოეული გაყიდვის პოზიცია ინახება როგორც <strong>SupplyDelivery</strong> რესურსი ტიპის კოდით <code>selling</code>. სტატუსის სასიცოცხლო ციკლი: <code>in-progress</code> (მოლოდინში) &rarr; <code>completed</code> (დადასტურებული) ან <code>abandoned</code> (უარყოფილი).
+  </div>
+
+  <!-- 1.1 გვერდის განლაგება და ჩანართები -->
+  <h3 id="selling-layout">1.1 გვერდის განლაგება</h3>
+
+  <p>გაყიდვის გვერდი იყენებს სტანდარტულ სამჩანართიან განლაგებას, რომელიც საერთოა საწყობის ყველა ოპერაციული მოდულისთვის:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">ჩანართი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">10</span>
+      <span class="doc-stat-inline-label">ცხრილის სვეტი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">KPI ბარათი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">7</span>
+      <span class="doc-stat-inline-label">ფილტრის ველი</span>
+    </div>
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ჩანართი</th>
+        <th>დანიშნულება</th>
+        <th>ბეჯი</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ისტორია</strong></td>
+        <td>გაყიდვის ცალკეული პოზიციების სრული სია ფილტრებით, სორტირებით, პაგინაციითა და კორექტირების მოქმედებებით</td>
+        <td>ლურჯი -- ჩანაწერების საერთო რაოდენობა</td>
+      </tr>
+      <tr>
+        <td><strong>ანალიტიკა</strong></td>
+        <td>KPI შემაჯამებელი ზოლი, ტოპ 5 გაყიდული პროდუქტი, მყიდველთა აქტივობის დიაგრამა, განყოფილება-მყიდველის სითბური რუკა, პერიოდის შეჯამება და დაჯგუფებული დოკუმენტების ცხრილი</td>
+        <td>ფირუზისფერი -- დაჯგუფებული დოკუმენტების რაოდენობა</td>
+      </tr>
+      <tr>
+        <td><strong>დადასტურების მოლოდინში</strong></td>
+        <td>მიმდინარე გაყიდვის ჯგუფები, რომლებიც დამტკიცებას ელოდება; დადასტურების (მწვანე) ან უარყოფის (წითელი) ღილაკები დამატებითი ავტორიზაციით</td>
+        <td>ნარინჯისფერი -- მოლოდინში მყოფი ჯგუფების რაოდენობა</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>გვერდის სათაურში განთავსებულია <strong>„ზედნადების შექმნა"</strong> ღილაკი, რომელიც ხსნის გაყიდვის შექმნის მოდალურ ფანჯარას.</p>
+
+  <!-- 1.2 ისტორიის ჩანართი -->
+  <h3 id="selling-history">1.2 ისტორიის ჩანართი</h3>
+
+  <p>ისტორიის ჩანართი აჩვენებს გაყიდვის ყველა ცალკეულ პოზიციას პაგინირებულ, სორტირებად ცხრილში. მობილურ მოწყობილობებზე ცხრილი იცვლება ბარათებზე დაფუძნებული განლაგებით, რომელიც ძირითად ინფორმაციას ერთი შეხედვით აჩვენებს.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-history-ka.png" alt="გაყიდვის ისტორიის ცხრილი" class="doc-screenshot-image" data-i18n-img="wh-selling-history">
+  </div>
+
+  <h4>ცხრილის სვეტები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>სვეტი</th>
+        <th>აღწერა</th>
+        <th>სორტირებადი</th>
+        <th>მობილური</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>თარიღი</strong></td>
+        <td>გაყიდვის ტრანზაქციის თარიღი და დრო</td>
+        <td>დიახ</td>
+        <td>ხილული</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>სტატუსი</strong></td>
+        <td>ფერით კოდირებული ბეჯი: <code>in-progress</code>, <code>completed</code>, ან <code>abandoned</code></td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>დოკ. #</strong></td>
+        <td>ავტომატურად გენერირებული დოკუმენტის ნომერი (ფორმატი: <code>SELL-{timestamp}</code>)</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>განყოფილება</strong></td>
+        <td>წყაროს განყოფილება, სადაც გაყიდვა განხორციელდა</td>
+        <td>დიახ</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>მყიდველი</strong></td>
+        <td>გარე მყიდველი კომპანიის დასახელება</td>
+        <td>დიახ</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>დასახელება</strong></td>
+        <td>პროდუქტის დასახელება, ქვემოთ ნაჩვენები პროდუქტის კოდით</td>
+        <td>დიახ</td>
+        <td>ხილული</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>ერთეული</strong></td>
+        <td>ზომის ერთეული</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>რაოდ.</strong></td>
+        <td>გაყიდული რაოდენობა</td>
+        <td>არა</td>
+        <td>ხილული</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>გასაყიდი ფასი</strong></td>
+        <td>ერთეულის გასაყიდი ფასი ლარში</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>ჯამი</strong></td>
+        <td>პოზიციის ჯამი (რაოდ. x გასაყიდი ფასი) ლარში</td>
+        <td>დიახ</td>
+        <td>ხილული</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ფილტრები</h4>
+
+  <p>ფილტრის პანელი მხარს უჭერს 7 საძიებო კრიტერიუმს დასაკეცი განლაგებით:</p>
+
+  <ul class="doc-list">
+    <li><strong>თარიღიდან / თარიღამდე</strong> -- ფილტრაცია თარიღის დიაპაზონით</li>
+    <li><strong>განყოფილება</strong> -- სასაწყობო განყოფილებების ჩამოსაშლელი სია</li>
+    <li><strong>საწყობის ჯგუფი</strong> -- ფილტრაცია პროდუქტის კატეგორიით</li>
+    <li><strong>მყიდველი</strong> -- ყველა მყიდველი კომპანიის ჩამოსაშლელი სია</li>
+    <li><strong>პროდუქტის ძიება</strong> -- ტექსტური ძიება პროდუქტის დასახელებით</li>
+    <li><strong>დოკუმენტის ნომერი</strong> -- ძიება დოკუმენტის ნომრით</li>
+  </ul>
+
+  <p>ბოლოში <strong>შემაჯამებელი ქვედა ზოლი</strong> აჩვენებს ჩანაწერების საერთო რაოდენობას და ფილტრირებული გაყიდვის ჯამურ ღირებულებას ლარში.</p>
+
+  <h4>კორექტირების მოქმედება</h4>
+
+  <p>დასრულებული გაყიდვის ჩანაწერებისთვის მოქმედებების სვეტში ჩნდება <strong>კორექტირების</strong> ღილაკი. ის ხსნის საწყობის კორექტირების მოდალურ ფანჯარას, რომელიც უფლებამოსილ მომხმარებლებს საშუალებას აძლევს შეცვალონ რაოდენობა ან გააუქმონ ტრანზაქციები ფაქტის შემდეგ.</p>
+
+  <!-- 1.3 ანალიტიკის ჩანართი -->
+  <h3 id="selling-analytics">1.3 ანალიტიკის ჩანართი</h3>
+
+  <p>ანალიტიკის ჩანართი უზრუნველყოფს გაყიდვის აქტივობის ყოვლისმომცველ მიმოხილვას KPI ბარათების, ვიზუალური დიაგრამებისა და პერიოდების შედარების მეშვეობით.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-analytics-ka.png" alt="გაყიდვის ანალიტიკის პანელი" class="doc-screenshot-image" data-i18n-img="wh-selling-analytics">
+  </div>
+
+  <h4>KPI შემაჯამებელი ზოლი</h4>
+
+  <p>ანალიტიკის ჩანართის ზედა ნაწილში გამოჩნდება ხუთი KPI ბარათი, თითოეული სპარკლაინ ტრენდითა და თვიური შედარებით:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>KPI</th>
+        <th>აღწერა</th>
+        <th>ტრენდი</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>დოკუმენტების საერთო რაოდენობა</strong></td>
+        <td>შექმნილი გაყიდვის ზედნადებების რაოდენობა</td>
+        <td>30-დღიანი სპარკლაინი + %-იანი ცვლილება წინა თვესთან შედარებით</td>
+      </tr>
+      <tr>
+        <td><strong>ჯამური ღირებულება</strong></td>
+        <td>გაყიდვის ყველა თანხის ჯამი ლარში</td>
+        <td>30-დღიანი სპარკლაინი + %-იანი ცვლილება წინა თვესთან შედარებით</td>
+      </tr>
+      <tr>
+        <td><strong>მთავარი მყიდველი</strong></td>
+        <td>ყველაზე მეტი ტრანზაქციის მქონე მყიდველი კომპანია</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>საშ. პოზიციები/დოკ.</strong></td>
+        <td>ზედნადებში პოზიციების საშუალო რაოდენობა</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>ყველაზე დატვირთული დღე</strong></td>
+        <td>კვირის დღე ყველაზე მაღალი გაყიდვის მოცულობით</td>
+        <td>აჩვენებს ტრანზაქციების რაოდენობას</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ანალიტიკის სექციები</h4>
+
+  <p>KPI ზოლის ქვემოთ ოთხი დასაკეცი ანალიტიკის სექცია უზრუნველყოფს უფრო ღრმა ანალიზს:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>სექცია</th>
+        <th>ვიზუალიზაცია</th>
+        <th>აღწერა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ტოპ 5 გაყიდული პროდუქტი</strong></td>
+        <td>რანჟირებული სია ბეჯებით</td>
+        <td>რაოდენობით ყველაზე ხშირად გაყიდული პროდუქტები, თითოეულისთვის ჯამური ღირებულების ჩვენებით</td>
+      </tr>
+      <tr>
+        <td><strong>მყიდველთა აქტივობა</strong></td>
+        <td>ჰორიზონტალური სვეტოვანი დიაგრამა</td>
+        <td>ტრანზაქციების რაოდენობა მყიდველ კომპანიაზე, სიხშირით დალაგებული</td>
+      </tr>
+      <tr>
+        <td><strong>განყოფილება &rarr; მყიდველი - სითბური რუკა</strong></td>
+        <td>ფერის ინტენსივობის ბადე</td>
+        <td>აჩვენებს რომელი განყოფილებები ყიდიან რომელ მყიდველებს ყველაზე ხშირად; მუქი უჯრედები მიუთითებს მაღალ მოცულობაზე</td>
+      </tr>
+      <tr>
+        <td><strong>პერიოდის შეჯამება</strong></td>
+        <td>ცხრილი გადამრთველით</td>
+        <td>კვირეული (4 კვირა) ან თვიური (6 თვე) ხედი, რომელიც აჩვენებს დოკუმენტების რაოდენობას და ჯამურ ღირებულებას პერიოდის მიხედვით</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>პერიოდის გადამრთველი:</strong> პერიოდის შეჯამების სექცია მოიცავს <strong>კვირეული / თვიური</strong> გადამრთველს, რომელიც გაყიდვის აქტივობის 4-კვირეულ დაშლასა და 6-თვიურ დაშლას შორის გადართავს.
+  </div>
+
+  <!-- 1.4 ზედნადების შექმნის მოდალური ფანჯარა -->
+  <h3 id="selling-create">1.4 გაყიდვის ზედნადების შექმნა</h3>
+
+  <p>გვერდის სათაურში <strong>„ზედნადების შექმნა"</strong> ღილაკზე დაჭერით გაიხსნება ორპანელიანი შექმნის მოდალური ფანჯარა. მოდალური ფანჯარა იყენებს საერთო BookModal განლაგებას (იგივე ორპანელიანი ინტერფეისი, რომელიც გამოიყენება გადაწერებისა და შეკვეთებისთვის).</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-create-ka.png" alt="გაყიდვის ზედნადების შექმნის მოდალური ფანჯარა" class="doc-screenshot-image" data-i18n-img="wh-selling-create">
+  </div>
+
+  <h4>მოდალური ფანჯრის სათაურის ველები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ველი</th>
+        <th>სავალდებულო</th>
+        <th>აღწერა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>თარიღი</strong></td>
+        <td>დიახ</td>
+        <td>ტრანზაქციის თარიღი (ნაგულისხმევად დღევანდელი)</td>
+      </tr>
+      <tr>
+        <td><strong>დოკუმენტის ნომერი</strong></td>
+        <td>ავტო</td>
+        <td>ავტომატურად გენერირებული ფორმატით <code>SELL-{timestamp}</code>; ველი მხოლოდ წასაკითხია</td>
+      </tr>
+      <tr>
+        <td><strong>განყოფილება</strong></td>
+        <td>დიახ</td>
+        <td>სასაწყობო განყოფილებების საძიებო ჩამოსაშლელი სია; ცვლილებისას მარცხენა პანელში ხელმისაწვდომი მარაგი ხელახლა იტვირთება</td>
+      </tr>
+      <tr>
+        <td><strong>მყიდველი</strong></td>
+        <td>დიახ</td>
+        <td>მყიდველი კომპანიების საძიებო ჩამოსაშლელი სია, რომელიც იტვირთება მომწოდებელ-კლიენტების მონაცემთა ფაილიდან; დედუპლიკაცია კომპანიის კოდით</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ორპანელიანი პროდუქტის შერჩევა</h4>
+
+  <p>მოდალური ფანჯრის ტანი შეიცავს ორ პანელს:</p>
+
+  <ul class="doc-list">
+    <li><strong>მარცხენა პანელი (ხელმისაწვდომი მარაგი)</strong> -- აჩვენებს არჩეულ განყოფილებაში არსებულ ყველა პროდუქტს. პროდუქტზე დაჭერით ის გადადის მარჯვენა პანელში. ფილტრის ზოლი შედეგებს ავიწროებს დასახელებით ან კოდით.</li>
+    <li><strong>მარჯვენა პანელი (არჩეული პროდუქტები)</strong> -- ამ ზედნადებისთვის არჩეული პროდუქტები. თითოეული პროდუქტი აჩვენებს რედაქტირებად <strong>რაოდენობისა</strong> და <strong>გასაყიდი ფასის</strong> ველებს. გასაყიდი ფასი ნაგულისხმევად თვითღირებულებას ემთხვევა, მაგრამ შეცვლა შესაძლებელია. ხელმისაწვდომ მარაგზე მეტი რაოდენობის პროდუქტები შეცდომის ინდიკატორს აჩვენებს.</li>
+  </ul>
+
+  <p>ბოლოში <strong>ჯამების ზოლი</strong> აჯამებს პროდუქტების საერთო რაოდენობასა და გაყიდვის ჯამურ ღირებულებას.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>დამატებითი ავტორიზაცია:</strong> ზედნადების გაგზავნამდე სისტემა მოითხოვს <strong>პაროლის ხელახლა შეყვანას</strong> (დამატებითი ავტორიზაცია). ეს ხელს უშლის არაავტორიზებულ გაყიდვის ტრანზაქციებს იმ შემთხვევაშიც კი, თუ სესია ღია დარჩა.
+  </div>
+
+  <h4>შეუნახავი ცვლილებების გაფრთხილება</h4>
+
+  <p>თუ მოდალურ ფანჯარას დახურავთ, როცა პროდუქტები ჯერ კიდევ მარჯვენა პანელშია, ბრაუზერის დადასტურების დიალოგი გამოჩნდება და გკითხავთ, გსურთ თუ არა შეუნახავი ცვლილებების გაუქმება.</p>
+
+  <!-- 1.5 დადასტურების მოლოდინში -->
+  <h3 id="selling-confirmation">1.5 დადასტურების მოლოდინში</h3>
+
+  <p>ახლად შექმნილი გაყიდვის ზედნადებები იწყება <code>in-progress</code> სტატუსით და ჩნდება <strong>დადასტურების მოლოდინში</strong> ჩანართში. უფლებამოსილ მომხმარებლებს შეუძლიათ თითოეული დოკუმენტის ჯგუფის განხილვა და მისი <strong>დადასტურება</strong> ან <strong>უარყოფა</strong>.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>მოქმედება</th>
+        <th>ღილაკი</th>
+        <th>ეფექტი</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>დადასტურება</strong></td>
+        <td>მწვანე ღილაკი</td>
+        <td>ჯგუფის ყველა პოზიციას ენიჭება <code>completed</code> სტატუსი. მარაგი ჩამოიწერება განყოფილების საწყობიდან.</td>
+      </tr>
+      <tr>
+        <td><strong>უარყოფა</strong></td>
+        <td>წითელი ღილაკი</td>
+        <td>იხსნება უარყოფის მიზეზის მოდალური ფანჯარა. ყველა პოზიციას ენიჭება <code>abandoned</code> სტატუსი. პროდუქტები მარაგში რჩება.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>ორივე მოქმედება მოითხოვს <strong>დამატებით ავტორიზაციას</strong> (პაროლის ხელახლა შეყვანა) და <code>confirm-selling</code> უფლებას. ადმინისტრატორი მომხმარებლები უფლებების შემოწმებას გვერდს უვლიან.</p>
+
+  <p>დადასტურების ცხრილი პოზიციებს აჯგუფებს დოკუმენტის ნომრის მიხედვით და აჩვენებს გასაშლელ/დასაკეცი დეტალურ ხედს ყველა პოზიციით, მათი რაოდენობებით, ფასებითა და ჯამებით.</p>
+
+  <!-- 1.6 FHIR მონაცემთა მოდელი -->
+  <h3 id="selling-fhir">1.6 FHIR მონაცემთა მოდელი</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ველი</th>
+        <th>FHIR გზა / გაფართოება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>დოკუმენტის ნომერი</td>
+        <td><code>SupplyDelivery.identifier</code> (system: selling-document-number)</td>
+      </tr>
+      <tr>
+        <td>სტატუსი</td>
+        <td><code>SupplyDelivery.status</code></td>
+      </tr>
+      <tr>
+        <td>თარიღი</td>
+        <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+      </tr>
+      <tr>
+        <td>რაოდენობა</td>
+        <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
+      </tr>
+      <tr>
+        <td>განყოფილების ID</td>
+        <td>Extension: <code>source-department</code></td>
+      </tr>
+      <tr>
+        <td>განყოფილების დასახელება</td>
+        <td>Extension: <code>source-department-name</code></td>
+      </tr>
+      <tr>
+        <td>მყიდველის ID</td>
+        <td>Extension: <code>selling-buyer-id</code></td>
+      </tr>
+      <tr>
+        <td>მყიდველის დასახელება</td>
+        <td>Extension: <code>selling-buyer-name</code></td>
+      </tr>
+      <tr>
+        <td>პროდუქტის კოდი</td>
+        <td>Extension: <code>item-code</code></td>
+      </tr>
+      <tr>
+        <td>პროდუქტის დასახელება</td>
+        <td>Extension: <code>item-name</code></td>
+      </tr>
+      <tr>
+        <td>ერთეული</td>
+        <td>Extension: <code>unit-of-measure</code></td>
+      </tr>
+      <tr>
+        <td>ერთეულის ფასი</td>
+        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>გასაყიდი ფასი</td>
+        <td>Extension: <code>selling-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>პოზიციის ჯამი</td>
+        <td>Extension: <code>line-total</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>სერიის ნომერი</td>
+        <td>Extension: <code>lot-number</code></td>
+      </tr>
+      <tr>
+        <td>ვარგისიანობის ვადა</td>
+        <td>Extension: <code>expiry-date</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+
+<!-- ============================================================
+     სექცია 2: გაბრუნება
+     ============================================================ -->
+<section class="doc-section" id="returns">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">2</div>
+    <h2>მომწოდებლისთვის გაბრუნება</h2>
+  </div>
+
+  <p><strong>გაბრუნების</strong> მოდული მართავს პროდუქტების თავდაპირველ მომწოდებელზე უკან გაგზავნას. ეს ჩვეულებრივ გამოიყენება დეფექტური საქონლის, ვადაგასული პროდუქტების ან შეცდომით მიღებული ნაშთისთვის. გაბრუნება მიჰყვება იმავე სამჩანართიან განლაგებას და ორეტაპიან დამტკიცების პროცესს, რაც გაყიდვას, მაგრამ ერთი მნიშვნელოვანი განსხვავებით: გაბრუნება უკავშირდება <strong>მიღების თავდაპირველ ზედნადებს</strong>, რათა მომწოდებელმა იცოდეს რომელი მოწოდებიდან მოდის პროდუქტები.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR რესურსი:</strong> თითოეული გაბრუნების პოზიცია ინახება როგორც <strong>SupplyDelivery</strong> რესურსი ტიპის კოდით <code>return</code>. სტატუსის სასიცოცხლო ციკლი: <code>in-progress</code> (მოლოდინში) &rarr; <code>completed</code> (დადასტურებული) ან <code>abandoned</code> (უარყოფილი).
+  </div>
+
+  <!-- 2.1 გვერდის განლაგება -->
+  <h3 id="returns-layout">2.1 გვერდის განლაგება</h3>
+
+  <p>გაბრუნებების გვერდი სრულად იმეორებს გაყიდვის განლაგებას, სამი ჩანართითა და „გაბრუნების შექმნა" ღილაკით სათაურში:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">ჩანართი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">11</span>
+      <span class="doc-stat-inline-label">ცხრილის სვეტი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">KPI ბარათი</span>
+    </div>
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ჩანართი</th>
+        <th>დანიშნულება</th>
+        <th>ბეჯი</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ისტორია</strong></td>
+        <td>გაბრუნების ცალკეული პოზიციების სრული სია 11-სვეტიანი ცხრილით, რომელიც მოიცავს მომწოდებლისა და მიღების ზედნადების სვეტებს</td>
+        <td>ლურჯი -- ჩანაწერების საერთო რაოდენობა</td>
+      </tr>
+      <tr>
+        <td><strong>ანალიტიკა</strong></td>
+        <td>KPI შემაჯამებელი ზოლი, ტოპ 5 გაბრუნებული პროდუქტი, მომწოდებელთა აქტივობის დიაგრამა, მომწოდებელი-განყოფილება სითბური რუკა, პერიოდის შეჯამება</td>
+        <td>ფირუზისფერი -- დაჯგუფებული დოკუმენტების რაოდენობა</td>
+      </tr>
+      <tr>
+        <td><strong>დადასტურების მოლოდინში</strong></td>
+        <td>მიმდინარე გაბრუნების ჯგუფები, რომლებიც დამტკიცებას ელოდება; დადასტურების/უარყოფის პროცესი გაყიდვის იდენტურია</td>
+        <td>ნარინჯისფერი -- მოლოდინში მყოფი ჯგუფების რაოდენობა</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.2 ისტორიის ჩანართი -->
+  <h3 id="returns-history">2.2 ისტორიის ჩანართი</h3>
+
+  <p>გაბრუნებების ისტორიის ცხრილს აქვს <strong>11 სვეტი</strong> -- ორით მეტი ვიდრე გაყიდვის ცხრილს. დამატებითი სვეტები აღრიცხავს მომწოდებელსა და მიღების თავდაპირველ ზედნადებს, რაც აუცილებელია გაბრუნების თავდაპირველ მოწოდებასთან დაკავშირებისთვის.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-history-ka.png" alt="გაბრუნებების ისტორიის ცხრილი" class="doc-screenshot-image" data-i18n-img="wh-returns-history">
+  </div>
+
+  <h4>ცხრილის სვეტები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>სვეტი</th>
+        <th>აღწერა</th>
+        <th>სორტირებადი</th>
+        <th>მობილური</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>თარიღი</strong></td>
+        <td>გაბრუნების თარიღი და დრო</td>
+        <td>დიახ</td>
+        <td>ხილული</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>სტატუსი</strong></td>
+        <td>ფერით კოდირებული სტატუსის ბეჯი</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>დოკ. #</strong></td>
+        <td>ავტომატურად გენერირებული დოკუმენტის ნომერი (ფორმატი: <code>RET-{YYYY}-{NNN}</code>)</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>განყოფილება</strong></td>
+        <td>განყოფილება, საიდანაც პროდუქტები ბრუნდება</td>
+        <td>დიახ</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>მომწოდებელი</strong></td>
+        <td>მომწოდებელი კომპანია, რომელსაც გაბრუნებული საქონელი მიეწოდება. გრძელი დასახელებები შემოკლებულია, სრული სახელის ჩვენებით მინიშნებაში.</td>
+        <td>დიახ</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>მიღების ზედნადები</strong></td>
+        <td>მიღების თავდაპირველი ზედნადების ნომერზე მითითება, რომელიც ამ გაბრუნებას კონკრეტულ შემოსულ მოწოდებასთან აკავშირებს</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>დასახელება</strong></td>
+        <td>პროდუქტის დასახელება, ქვემოთ ნაჩვენები პროდუქტის კოდით</td>
+        <td>დიახ</td>
+        <td>ხილული</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>ერთეული</strong></td>
+        <td>ზომის ერთეული</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>რაოდ.</strong></td>
+        <td>გასაბრუნებელი რაოდენობა</td>
+        <td>არა</td>
+        <td>ხილული</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>ფასი</strong></td>
+        <td>ერთეულის ფასი ლარში</td>
+        <td>არა</td>
+        <td>დამალული</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>ჯამი</strong></td>
+        <td>პოზიციის ჯამი (რაოდ. x ფასი) ლარში</td>
+        <td>დიახ</td>
+        <td>ხილული</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>გაყიდვის ცხრილის მსგავსად, დასრულებული გაბრუნების პოზიციებს აქვთ <strong>კორექტირების</strong> ღილაკი ფაქტის შემდგომი კორექტირებისთვის.</p>
+
+  <!-- 2.3 ანალიტიკის ჩანართი -->
+  <h3 id="returns-analytics">2.3 ანალიტიკის ჩანართი</h3>
+
+  <p>გაბრუნებების ანალიტიკის ჩანართი მიჰყვება გაყიდვის ანალიტიკის იმავე სტრუქტურას, მაგრამ ფოკუსირებულია <strong>მომწოდებელთა</strong> აქტივობაზე მყიდველთა აქტივობის ნაცვლად.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-analytics-ka.png" alt="გაბრუნებების ანალიტიკის პანელი" class="doc-screenshot-image" data-i18n-img="wh-returns-analytics">
+  </div>
+
+  <h4>KPI შემაჯამებელი ზოლი</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>KPI</th>
+        <th>აღწერა</th>
+        <th>განსხვავება გაყიდვისგან</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>დოკუმენტების საერთო რაოდენობა</strong></td>
+        <td>შექმნილი გაბრუნების ზედნადებების რაოდენობა</td>
+        <td>იგივე</td>
+      </tr>
+      <tr>
+        <td><strong>ჯამური ღირებულება</strong></td>
+        <td>გაბრუნების ყველა თანხის ჯამი ლარში</td>
+        <td>იგივე</td>
+      </tr>
+      <tr>
+        <td><strong>მთავარი მომწოდებელი</strong></td>
+        <td>ყველაზე მეტი გაბრუნების ტრანზაქციის მქონე მომწოდებელი</td>
+        <td>გაყიდვაში ნაჩვენებია „მთავარი მყიდველი"</td>
+      </tr>
+      <tr>
+        <td><strong>საშ. პოზიციები/დოკ.</strong></td>
+        <td>გაბრუნების დოკუმენტში პოზიციების საშუალო რაოდენობა</td>
+        <td>იგივე</td>
+      </tr>
+      <tr>
+        <td><strong>ყველაზე დატვირთული დღე</strong></td>
+        <td>კვირის დღე ყველაზე მაღალი გაბრუნების მოცულობით</td>
+        <td>იგივე</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ანალიტიკის სექციები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>სექცია</th>
+        <th>ვიზუალიზაცია</th>
+        <th>განსხვავება გაყიდვისგან</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ტოპ 5 გაბრუნებული პროდუქტი</strong></td>
+        <td>რანჟირებული სია ბეჯებით</td>
+        <td>იგივე სტრუქტურა, აღრიცხავს გაბრუნებულ პროდუქტებს გაყიდულის ნაცვლად</td>
+      </tr>
+      <tr>
+        <td><strong>მომწოდებელთა აქტივობა</strong></td>
+        <td>ჰორიზონტალური სვეტოვანი დიაგრამა</td>
+        <td>აჩვენებს გაბრუნებების რაოდენობას მომწოდებელზე (გაყიდვაში -- მყიდველზე)</td>
+      </tr>
+      <tr>
+        <td><strong>მომწოდებელი &rarr; განყოფილება - სითბური რუკა</strong></td>
+        <td>ფერის ინტენსივობის ბადე</td>
+        <td>სტრიქონები = მომწოდებლები, სვეტები = განყოფილებები (გაყიდვაში: განყოფილება &rarr; მყიდველი)</td>
+      </tr>
+      <tr>
+        <td><strong>პერიოდის შეჯამება</strong></td>
+        <td>ცხრილი კვირეული/თვიური გადამრთველით</td>
+        <td>იგივე სტრუქტურა</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.4 გაბრუნების შექმნის მოდალური ფანჯარა -->
+  <h3 id="returns-create">2.4 გაბრუნების შექმნა</h3>
+
+  <p>გვერდის სათაურში <strong>„გაბრუნების შექმნა"</strong> ღილაკზე დააჭირეთ. გაბრუნების შექმნის მოდალური ფანჯარა იყენებს გაყიდვის იმავე ორპანელიან განლაგებას, მაგრამ დაემატა ორი უნიკალური ველი: <strong>მომწოდებელი</strong> და <strong>მიღების ზედნადები</strong>.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-create-ka.png" alt="გაბრუნების შექმნის მოდალური ფანჯარა" class="doc-screenshot-image" data-i18n-img="wh-returns-create">
+  </div>
+
+  <h4>მოდალური ფანჯრის სათაურის ველები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ველი</th>
+        <th>სავალდებულო</th>
+        <th>აღწერა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>თარიღი</strong></td>
+        <td>დიახ</td>
+        <td>ტრანზაქციის თარიღი (ნაგულისხმევად დღევანდელი)</td>
+      </tr>
+      <tr>
+        <td><strong>დოკუმენტის ნომერი</strong></td>
+        <td>ავტო</td>
+        <td>ავტომატურად გენერირებული ფორმატით <code>RET-{YYYY}-{NNN}</code>; ველი მხოლოდ წასაკითხია</td>
+      </tr>
+      <tr>
+        <td><strong>განყოფილება</strong></td>
+        <td>დიახ</td>
+        <td>სასაწყობო განყოფილებების საძიებო ჩამოსაშლელი სია</td>
+      </tr>
+      <tr>
+        <td><strong>მომწოდებელი</strong></td>
+        <td>დიახ</td>
+        <td>საძიებო ჩამოსაშლელი სია, რომელიც ფილტრავს მხოლოდ მომწოდებლებს (ტიპი = „supplier"). ეს არის მთავარი განსხვავება გაყიდვისგან.</td>
+      </tr>
+      <tr>
+        <td><strong>მიღების ზედნადები</strong></td>
+        <td>არა</td>
+        <td>მომწოდებლის არჩევისას ეს ჩამოსაშლელი სია <strong>ავტომატურად ივსება</strong> ამ მომწოდებლისგან წინა მიღების ზედნადებების ნომრებით. ფორმატი: <code>ზედნადების_ნომერი (თარიღი, X პოზიცია)</code>. გათიშულია სანამ მომწოდებელი არ არის არჩეული.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>მიღების ზედნადების ძიება:</strong> მომწოდებლის არჩევისას სისტემა ავტომატურად ეძებს ამ მომწოდებლისგან მიღებულ ყველა ზედნადებს. ეს საშუალებას გაძლევთ გაბრუნება დაუკავშიროთ კონკრეტულ შემოსულ მოწოდებას, რაც აუცილებელია მომწოდებელთან შედარებისა და ბუღალტრული აღრიცხვისთვის.
+  </div>
+
+  <h4>ორპანელიანი პროდუქტის შერჩევა</h4>
+
+  <p>პროდუქტის შერჩევა იდენტურად მუშაობს გაყიდვის მოდალური ფანჯრის მსგავსად:</p>
+
+  <ul class="doc-list">
+    <li><strong>მარცხენა პანელი</strong> -- არჩეულ განყოფილებაში ხელმისაწვდომი მარაგი, ფილტრაცია დასახელებით/კოდით</li>
+    <li><strong>მარჯვენა პანელი</strong> -- არჩეული პროდუქტები რედაქტირებადი რაოდენობით. გაყიდვისგან განსხვავებით, გაბრუნებას <strong>არ</strong> აქვს რედაქტირებადი გასაყიდი ფასის ველი (პროდუქტები ბრუნდება თავდაპირველ თვითღირებულებაზე)</li>
+  </ul>
+
+  <p>გაბრუნების გაგზავნა მოითხოვს <strong>დამატებით ავტორიზაციას</strong> (პაროლის ხელახლა შეყვანა). პროდუქტები, რომლებიც აღემატება ხელმისაწვდომ მარაგს, დაბლოკილია გაგზავნისგან.</p>
+
+  <!-- 2.5 დადასტურების მოლოდინში -->
+  <h3 id="returns-confirmation">2.5 დადასტურების მოლოდინში</h3>
+
+  <p>გაბრუნებების დადასტურების პროცესი გაყიდვის იდენტურია:</p>
+
+  <ul class="doc-list">
+    <li>ახალი გაბრუნება ჩნდება <code>in-progress</code> სტატუსით</li>
+    <li><strong>დადასტურება</strong> (მწვანე) პოზიციებს ანიჭებს <code>completed</code> სტატუსს და ჩამოწერს მარაგიდან</li>
+    <li><strong>უარყოფა</strong> (წითელი) ხსნის უარყოფის მიზეზის მოდალურ ფანჯარას და პოზიციებს ანიჭებს <code>abandoned</code> სტატუსს</li>
+    <li>ორივე მოქმედება მოითხოვს დამატებით ავტორიზაციას და <code>confirm-return</code> უფლებას</li>
+  </ul>
+
+  <!-- 2.6 FHIR მონაცემთა მოდელი -->
+  <h3 id="returns-fhir">2.6 FHIR მონაცემთა მოდელი</h3>
+
+  <p>გაბრუნება იყენებს გაყიდვის იგივე FHIR SupplyDelivery სტრუქტურას, ამ დამატებითი ველებით, რომლებიც სპეციფიკურია მომწოდებლისთვის გაბრუნებისთვის:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ველი</th>
+        <th>FHIR გზა / გაფართოება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>დოკუმენტის ნომერი</td>
+        <td><code>SupplyDelivery.identifier</code> (system: return-document-number)</td>
+      </tr>
+      <tr>
+        <td>სტატუსი</td>
+        <td><code>SupplyDelivery.status</code></td>
+      </tr>
+      <tr>
+        <td>თარიღი</td>
+        <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+      </tr>
+      <tr>
+        <td>რაოდენობა</td>
+        <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
+      </tr>
+      <tr>
+        <td>განყოფილების ID</td>
+        <td>Extension: <code>source-department</code></td>
+      </tr>
+      <tr>
+        <td>განყოფილების დასახელება</td>
+        <td>Extension: <code>source-department-name</code></td>
+      </tr>
+      <tr>
+        <td>მომწოდებლის ID</td>
+        <td>Extension: <code>return-supplier-id</code></td>
+      </tr>
+      <tr>
+        <td>მომწოდებლის დასახელება</td>
+        <td>Extension: <code>return-supplier-name</code></td>
+      </tr>
+      <tr>
+        <td>მიღების ზედნადების მითითება</td>
+        <td>Extension: <code>receiving-waybill-ref</code></td>
+      </tr>
+      <tr>
+        <td>პროდუქტის კოდი</td>
+        <td>Extension: <code>item-code</code></td>
+      </tr>
+      <tr>
+        <td>პროდუქტის დასახელება</td>
+        <td>Extension: <code>item-name</code></td>
+      </tr>
+      <tr>
+        <td>ერთეული</td>
+        <td>Extension: <code>unit-of-measure</code></td>
+      </tr>
+      <tr>
+        <td>ერთეულის ფასი</td>
+        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>პოზიციის ჯამი</td>
+        <td>Extension: <code>line-total</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>სერიის ნომერი</td>
+        <td>Extension: <code>lot-number</code></td>
+      </tr>
+      <tr>
+        <td>ვარგისიანობის ვადა</td>
+        <td>Extension: <code>expiry-date</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+
+<!-- ============================================================
+     სექცია 3: საერთო შაბლონები
+     ============================================================ -->
+<section class="doc-section" id="selling-returns-shared">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">3</div>
+    <h2>გაყიდვა vs გაბრუნება: პარალელური შედარება</h2>
+  </div>
+
+  <p>ორივე მოდული იზიარებს ერთსა და იმავე ბაზისურ არქიტექტურასა და ინტერფეისის შაბლონებს. ქვემოთ მოცემული ცხრილი აჯამებს მათ განსხვავებებს:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ასპექტი</th>
+        <th>გაყიდვა</th>
+        <th>გაბრუნება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>მიმართულება</strong></td>
+        <td>პროდუქტები ტოვებს საავადმყოფოს გარე მყიდველისკენ</td>
+        <td>პროდუქტები ტოვებს საავადმყოფოს თავდაპირველი მომწოდებლისკენ</td>
+      </tr>
+      <tr>
+        <td><strong>FHIR ტიპის კოდი</strong></td>
+        <td><code>selling</code></td>
+        <td><code>return</code></td>
+      </tr>
+      <tr>
+        <td><strong>დოკ. # ფორმატი</strong></td>
+        <td><code>SELL-{timestamp}</code></td>
+        <td><code>RET-{YYYY}-{NNN}</code></td>
+      </tr>
+      <tr>
+        <td><strong>კონტრაგენტის ველი</strong></td>
+        <td>მყიდველი (ყველა კომპანია)</td>
+        <td>მომწოდებელი (მხოლოდ ტიპის „supplier" ფილტრით)</td>
+      </tr>
+      <tr>
+        <td><strong>მიღების ზედნადები</strong></td>
+        <td>არ გამოიყენება</td>
+        <td>არასავალდებულო ჩამოსაშლელი სია, წინა მიღების მოწოდებასთან დაკავშირებით</td>
+      </tr>
+      <tr>
+        <td><strong>ფასის სვეტი</strong></td>
+        <td>რედაქტირებადი „გასაყიდი ფასი" (შეიძლება განსხვავდებოდეს თვითღირებულებისგან)</td>
+        <td>მხოლოდ წასაკითხი „ფასი" (ბრუნდება თავდაპირველ თვითღირებულებაზე)</td>
+      </tr>
+      <tr>
+        <td><strong>ისტორიის სვეტები</strong></td>
+        <td>10 სვეტი</td>
+        <td>11 სვეტი (+მომწოდებელი, +მიღების ზედნადები)</td>
+      </tr>
+      <tr>
+        <td><strong>ანალიტიკის მთავარი მეტრიკა</strong></td>
+        <td>მთავარი მყიდველი, მყიდველთა აქტივობა</td>
+        <td>მთავარი მომწოდებელი, მომწოდებელთა აქტივობა</td>
+      </tr>
+      <tr>
+        <td><strong>სითბური რუკის ღერძები</strong></td>
+        <td>განყოფილება &rarr; მყიდველი</td>
+        <td>მომწოდებელი &rarr; განყოფილება</td>
+      </tr>
+      <tr>
+        <td><strong>დამტკიცების უფლება</strong></td>
+        <td><code>confirm-selling</code></td>
+        <td><code>confirm-return</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="shared-workflow">3.1 საერთო სამუშაო პროცესი</h3>
+
+  <p>ორივე მოდული მიჰყვება ერთსა და იმავე თავიდან ბოლომდე პროცესს:</p>
+
+  <div style="padding: 24px 0;">
+    <!-- სამუშაო პროცესის ნაბიჯები -->
+    <div style="display: flex; flex-direction: column; gap: 0; max-width: 680px; margin: 0 auto;">
+
+      <!-- ნაბიჯი 1 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--emr-gradient-primary, linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">1</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">ზედნადების / გაბრუნების შექმნა</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">ოპერატორი ირჩევს განყოფილებას, კონტრაგენტსა და პროდუქტებს ორპანელიანი მოდალური ფანჯრის გამოყენებით. საჭიროა დამატებითი ავტორიზაცია.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- ნაბიჯი 2 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">2</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">დადასტურების მოლოდინში</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">პოზიციები იქმნება <code>in-progress</code> სტატუსით. ისინი ჩნდება დადასტურების მოლოდინში ჩანართში განხილვისთვის.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- ნაბიჯი 3 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #059669 0%, #10b981 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">3</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">დადასტურება ან უარყოფა</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">უფლებამოსილი მომხმარებელი განიხილავს და ადასტურებს (ჩამოწერს მარაგიდან) ან უარყოფს (აბრუნებს მარაგში). საჭიროა დამატებითი ავტორიზაცია.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- ნაბიჯი 4 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--emr-gradient-secondary, linear-gradient(135deg, #2b6cb0 0%, #3182ce 50%, #63b3ed 100%)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">4</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">ისტორია და ანალიტიკა</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">დასრულებული და უარყოფილი პოზიციები ჩნდება ისტორიის ჩანართში. ანალიტიკა რეალურ დროში განახლდება KPI-ებითა და დიაგრამებით.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <h3 id="shared-permissions">3.2 უფლებების ცნობარი</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>უფლება</th>
+        <th>მოდული</th>
+        <th>აძლევს წვდომას</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>confirm-selling</code></td>
+        <td>გაყიდვა</td>
+        <td>მოლოდინში მყოფი გაყიდვის ზედნადებების დადასტურება ან უარყოფა დადასტურების მოლოდინში ჩანართში</td>
+      </tr>
+      <tr>
+        <td><code>confirm-return</code></td>
+        <td>გაბრუნება</td>
+        <td>მოლოდინში მყოფი გაბრუნების ზედნადებების დადასტურება ან უარყოფა დადასტურების მოლოდინში ჩანართში</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>ადმინისტრატორის გადალახვა:</strong> ადმინისტრატორის პრივილეგიების მქონე მომხმარებლებს ავტომატურად აქვთ წვდომა დადასტურებისა და უარყოფის მოქმედებებზე, მიუხედავად ინდივიდუალური უფლებების პარამეტრებისა.
+  </div>
+
+  <h3 id="shared-mobile">3.3 მობილური გამოცდილება</h3>
+
+  <p>გაყიდვისა და გაბრუნებების ცხრილები 768px-ზე ვიწრო ეკრანებზე გადადის <strong>მობილურ ბარათების განლაგებაზე</strong>. თითოეული ბარათი აჩვენებს:</p>
+
+  <ul class="doc-list">
+    <li>პროდუქტის ხატულას და დასახელებას ზემოთ</li>
+    <li>თარიღსა და სტატუსის ბეჯს</li>
+    <li>განყოფილებისა და კონტრაგენტის (მყიდველი ან მომწოდებელი) ინფორმაციას</li>
+    <li>რაოდენობას, ერთეულის ფასსა და ჯამურ თანხას</li>
+  </ul>
+
+  <p>ბარათების განლაგება ინარჩუნებს ყველა არსებით ინფორმაციას და ბუნებრივად ერგება პატარა ეკრანებს. სვეტები, რომლებიც მობილურზე დამალულია (როგორიცაა ერთეული, დოკ. # და კონტრაგენტი), ჩართულია ბარათის ტანში მეორეხარისხოვან ტექსტად.</p>
+
+</section>

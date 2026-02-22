@@ -1,13 +1,13 @@
 {
   "planVersion": "1.0",
-  "generatedAt": "2026-02-16T14:00:00Z",
+  "generatedAt": "2026-02-22T12:00:00Z",
   "sourceSection": {
     "id": "warehouse-operations",
     "file": "sections/en/warehouse-operations.html",
     "titleKey": "toc.warehouseOperations"
   },
   "emrConfig": {
-    "baseUrl": "http://localhost:3000",
+    "baseUrl": "http://localhost:3005",
     "loginCredentials": {
       "email": "admin@medimind.ge",
       "password": "MediMind2024"
@@ -16,460 +16,334 @@
   },
   "screenshots": [
     {
-      "number": 1,
       "id": "wh-receiving-list",
+      "number": 1,
       "name": "wh-receiving-list",
-      "description": "Restructured receiving page with tab switcher (Receiving History + Analytics), collapsible search filters, and new table columns (Date, Invoice Number, Contract Number, Company, Department, Quantity, Total)",
-      "desiredState": "Receiving page fully loaded with Receiving History tab active. Page header shows Import from RS and + Create Receipt buttons. Tab bar shows Receiving History (with count badge) and Analytics tabs. Collapsible search filter panel visible. Table shows rows with columns: Date, Invoice Number, Contract Number, Company, Department, Quantity, Total.",
-      "differentiator": "Shows the restructured receiving page with new tab layout, filters panel, and updated table columns — not the old list/grouped view",
-      "stateSetup": null,
-      "type": "static",
-      "anchorId": "wh-receiving",
-      "docReference": "Section 3.1 - Goods Receiving",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
+      "description": "Receiving history tab showing grouped invoice table with filters",
+      "desiredState": "Receiving page loaded, History tab active, Search clicked to load data",
+      "differentiator": "Shows history list/table of receipts — NOT analytics tab or create modal",
+      "stateSetup": {
+        "description": "Navigate to receiving, click Search to load data",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
       "knownLimitation": null,
       "verificationCriteria": {
-        "mustShow": ["Receipt table rows", "Status badges", "Tab switcher"],
-        "mustNotShow": ["Loading skeletons", "Error message"]
+        "mustShow": ["Table with receiving/invoice rows", "Filter section"],
+        "mustNotShow": ["Login page", "Empty table"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
-        { "action": "navigate", "url": "/emr/dashboard/warehouse/receiving" },
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/receiving" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Search')" },
         { "action": "wait", "ms": 2000 },
         { "action": "screenshot", "name": "wh-receiving-list" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+      ]
     },
     {
+      "id": "wh-receiving-analytics",
       "number": 2,
-      "id": "wh-receiving-review",
-      "name": "wh-receiving-review",
-      "description": "Review Items modal showing document info cards (Document #, Date, Company, Amount), matched items with lot/expiry tracking, and department selector",
-      "desiredState": "Review Items modal is open showing document info cards at top, department selector with Receive without contract checkbox, matched items table with Quantity, Price, Total columns and Unmatch buttons, and per-item Lot Number and Expiry Date fields.",
-      "differentiator": "Shows the Review Items modal — not the receiving list page, not the Create Receipt wizard",
+      "name": "wh-receiving-analytics",
+      "description": "Receiving analytics tab with KPI cards and trend charts",
+      "desiredState": "Analytics tab active showing KPI strip and detailed analytics sections",
+      "differentiator": "Shows analytics/charts tab — NOT the history list tab",
       "stateSetup": {
-        "description": "Navigate to receiving page, click on a receipt row to open the Review Items modal",
-        "interactionSequence": [
-          { "action": "navigate", "url": "/emr/dashboard/warehouse/receiving" },
-          { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var rows = document.querySelectorAll('tr[data-row-key], tbody tr'); for (var r of rows) { if (r.querySelector('td')) { r.click(); return 'clicked first data row'; } } return 'no data rows found'; })()" },
+        "description": "Switch to Analytics tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Analytics')" },
           { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
+        ]
       },
-      "type": "state-based",
-      "anchorId": "wh-receiving",
-      "docReference": "Section 3.1 - Reviewing Imported Items",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
-      "knownLimitation": "The row click selector may need adjustment. The Review Items modal may only appear for RS-imported receipts.",
-      "verificationCriteria": {
-        "mustShow": ["Modal/dialog overlay", "Document info cards", "Matched items table", "Lot Number and Expiry Date fields"],
-        "mustNotShow": ["Only the list page without modal"]
-      },
-      "languages": ["en", "ka", "ru"],
-      "captureSteps": [
-        { "action": "wait", "ms": 500 },
-        { "action": "screenshot", "name": "wh-receipt-wizard" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    },
-    {
-      "number": 3,
-      "id": "wh-transfers-list",
-      "name": "wh-transfers-list",
-      "description": "Transfers page showing grouped view with transfer records, status badges, and tab bar including Pending Approval tab with orange count badge",
-      "desiredState": "Transfers page fully loaded. Tab bar shows All Transfers, Grouped View, and Pending Approval tabs. The Pending Approval tab has an orange badge with the count of pending items. Table displays transfer records with columns: document number, date, source/destination departments, status.",
-      "differentiator": "Shows the transfers list page with the tab bar visible (especially the Pending Approval tab with badge) — not the transfer creation modal",
-      "stateSetup": null,
-      "type": "static",
-      "anchorId": "wh-transfers",
-      "docReference": "Section 3.2 - Transfers",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
+      "type": "interactive",
+      "expectedDOMElements": ["[role='tabpanel']"],
       "knownLimitation": null,
       "verificationCriteria": {
-        "mustShow": ["Transfer table rows or empty state", "Tab switcher with multiple tabs", "Page header"],
-        "mustNotShow": ["Loading skeletons", "Error message"]
+        "mustShow": ["KPI cards or chart area"],
+        "mustNotShow": ["Login page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
-        { "action": "navigate", "url": "/emr/dashboard/warehouse/transfers" },
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/receiving" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Analytics')" },
         { "action": "wait", "ms": 2000 },
-        { "action": "screenshot", "name": "wh-transfers-list" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+        { "action": "screenshot", "name": "wh-receiving-analytics" }
+      ]
     },
     {
-      "number": 4,
-      "id": "wh-transfer-create",
-      "name": "wh-transfer-create",
-      "description": "Transfer creation modal (Transfer Book) with source/destination department selectors and dual-panel item picker for selecting inventory items",
-      "desiredState": "Transfer Book modal is open showing the dual-panel interface. Header has date, document number, From Department dropdown, To Department dropdown, and Direct Write-Off toggle. Left panel shows available items from source department. Right panel shows selected items for transfer.",
-      "differentiator": "Shows the Transfer Book modal with dual panels — not the transfers list page, not the approval tab",
+      "id": "wh-receiving-create",
+      "number": 3,
+      "name": "wh-receiving-create",
+      "description": "New receipt creation form with supplier and item fields",
+      "desiredState": "Create receipt modal/form open showing supplier selection and item entry fields",
+      "differentiator": "Shows the create/new modal — NOT the list or analytics tab",
       "stateSetup": {
-        "description": "Navigate to transfers page and click the New Transfer button to open the Transfer Book modal",
-        "interactionSequence": [
-          { "action": "navigate", "url": "/emr/dashboard/warehouse/transfers" },
-          { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var btns = document.querySelectorAll('button'); for (var b of btns) { var rect = b.getBoundingClientRect(); if (rect.top < 120 && b.textContent.trim().length > 0 && rect.width > 80) { b.click(); return 'clicked header action button'; } } return 'no button found'; })()" },
+        "description": "Click Create Receipt button in header to open modal",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Create'), button:has-text('New')" },
           { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
+        ]
       },
       "type": "state-based",
-      "anchorId": "wh-transfers",
-      "docReference": "Section 3.2 - Creating a Transfer",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
-      "knownLimitation": "The New Transfer button selector may need adjustment based on actual DOM structure. Look for a prominent action button in the page header.",
-      "verificationCriteria": {
-        "mustShow": ["Modal/dialog overlay", "From Department dropdown", "To Department dropdown", "Dual panel layout or item picker area"],
-        "mustNotShow": ["Only the list page without modal"]
-      },
-      "languages": ["en", "ka", "ru"],
-      "captureSteps": [
-        { "action": "wait", "ms": 500 },
-        { "action": "screenshot", "name": "wh-transfer-create" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    },
-    {
-      "number": 5,
-      "id": "wh-transfer-approval",
-      "name": "wh-transfer-approval",
-      "description": "Pending Approval tab on the Transfers page showing transfers awaiting confirmation with confirm and delete action buttons",
-      "desiredState": "Transfers page with the Pending Approval tab active. The tab shows a list of transfers that need confirmation from the receiving department. Each row has transfer details (document number, items, source/destination) and action buttons (confirm, delete).",
-      "differentiator": "Shows the Pending Approval tab content — not the All Transfers or Grouped View tabs, not the Transfer Book modal",
-      "stateSetup": {
-        "description": "Navigate to transfers page and click the Pending Approval tab",
-        "interactionSequence": [
-          { "action": "navigate", "url": "/emr/dashboard/warehouse/transfers" },
-          { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var tabs = document.querySelectorAll('[role=\"tab\"]'); for (var t of tabs) { var badge = t.querySelector('[class*=\"badge\"], [class*=\"Badge\"], span[style]'); if (badge || tabs.length >= 3) { if (t === tabs[tabs.length - 1]) { t.click(); return 'clicked last tab (pending approval)'; } } } if (tabs.length >= 3) { tabs[2].click(); return 'clicked third tab'; } return 'tabs not found, count: ' + tabs.length; })()" },
-          { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
-      },
-      "type": "state-based",
-      "anchorId": "wh-transfers",
-      "docReference": "Section 3.2 - Transfer Approval",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
-      "knownLimitation": "The Pending Approval tab may be the 3rd tab. If no pending transfers exist, an empty state will be shown. The orange badge count depends on live data.",
-      "verificationCriteria": {
-        "mustShow": ["Pending Approval tab selected/active", "Transfer rows with action buttons or empty state"],
-        "mustNotShow": ["Loading skeletons", "Transfer Book modal"]
-      },
-      "languages": ["en", "ka", "ru"],
-      "captureSteps": [
-        { "action": "wait", "ms": 500 },
-        { "action": "screenshot", "name": "wh-transfer-approval" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    },
-    {
-      "number": 6,
-      "id": "wh-orders-list",
-      "name": "wh-orders-list",
-      "description": "Orders page showing all orders list with status badges (draft, active, completed, cancelled) and confirmation queue tab",
-      "desiredState": "Orders page fully loaded with All Orders tab active. Table shows order rows with columns: document number, date, requester department, receiver department, status badge. Tab bar shows All Orders, Grouped View, and Confirmation Queue tabs (confirmation queue tab may have orange badge).",
-      "differentiator": "Shows the orders list page with status badges — not the Order Book modal, not the confirmation queue tab",
-      "stateSetup": null,
-      "type": "static",
-      "anchorId": "wh-orders",
-      "docReference": "Section 3.3 - Orders",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
+      "expectedDOMElements": ["[role='dialog']", "[class*='modal']"],
       "knownLimitation": null,
       "verificationCriteria": {
-        "mustShow": ["Order table rows or empty state", "Tab switcher", "Page header"],
-        "mustNotShow": ["Loading skeletons", "Error message"]
+        "mustShow": ["Modal with supplier field", "Item entry area"],
+        "mustNotShow": ["Login page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
-        { "action": "navigate", "url": "/emr/dashboard/warehouse/orders" },
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/receiving" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Create'), button:has-text('New')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-receiving-create" }
+      ]
+    },
+    {
+      "id": "wh-transfer-list",
+      "number": 4,
+      "name": "wh-transfer-list",
+      "description": "All Transfers tab showing individual transfer line items",
+      "desiredState": "Transfers page loaded, All tab active, Search clicked to load data",
+      "differentiator": "Shows the All transfers list — NOT grouped or approval tabs",
+      "stateSetup": {
+        "description": "Navigate to transfers, click Search",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with transfer rows"],
+        "mustNotShow": ["Login page", "Empty table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/transfers" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Search')" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-transfer-list" }
+      ]
+    },
+    {
+      "id": "wh-transfer-grouped",
+      "number": 5,
+      "name": "wh-transfer-grouped",
+      "description": "Transfers grouped view with analytics summary cards",
+      "desiredState": "Grouped tab active showing grouped transfer documents with summary cards",
+      "differentiator": "Shows grouped/document view — NOT individual line items or approval tab",
+      "stateSetup": {
+        "description": "Switch to Grouped tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Grouped'), [role='tab']:has-text('Group')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[role='tabpanel']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Grouped document table or cards"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "skipped", "ka": "skipped", "ru": "skipped" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/transfers" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Grouped'), [role='tab']:has-text('Group')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-transfer-grouped" }
+      ]
+    },
+    {
+      "id": "wh-transfer-approval",
+      "number": 6,
+      "name": "wh-transfer-approval",
+      "description": "Transfer approval workflow with lifecycle badges and confirmation actions",
+      "desiredState": "Approval tab active showing pending transfers with approve/reject buttons",
+      "differentiator": "Shows approval workflow — NOT the all list or grouped view",
+      "stateSetup": {
+        "description": "Switch to Approval tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Approval'), [role='tab']:has-text('Confirm')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "state-based",
+      "expectedDOMElements": ["[role='tabpanel']"],
+      "knownLimitation": "May show empty state if no pending approvals",
+      "verificationCriteria": {
+        "mustShow": ["Approval tab content"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/transfers" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Approval'), [role='tab']:has-text('Confirm')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-transfer-approval" }
+      ]
+    },
+    {
+      "id": "wh-orders-list",
+      "number": 7,
+      "name": "wh-orders-list",
+      "description": "All Orders tab showing order line items with status badges",
+      "desiredState": "Orders page loaded, All tab active, Search clicked to load data",
+      "differentiator": "Shows all orders list — NOT grouped or confirmation tabs",
+      "stateSetup": {
+        "description": "Navigate to orders, click Search",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with order rows", "Status badges"],
+        "mustNotShow": ["Login page", "Empty table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/orders" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Search')" },
         { "action": "wait", "ms": 2000 },
         { "action": "screenshot", "name": "wh-orders-list" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+      ]
     },
     {
-      "number": 7,
-      "id": "wh-order-create",
-      "name": "wh-order-create",
-      "description": "Order Book modal with requester and receiver department selectors and dual-panel item picker for selecting products to order",
-      "desiredState": "Order Book modal is open showing the dual-panel interface. Header has date, document number, Requester Department dropdown, and Receiver Department dropdown. Left panel shows available items from the receiver's inventory. Right panel shows selected items for the order.",
-      "differentiator": "Shows the Order Book modal with dual panels — not the orders list page, not the confirmation queue",
-      "stateSetup": {
-        "description": "Navigate to orders page and click the Order Book button to open the order creation modal",
-        "interactionSequence": [
-          { "action": "navigate", "url": "/emr/dashboard/warehouse/orders" },
-          { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var btns = document.querySelectorAll('button'); for (var b of btns) { var rect = b.getBoundingClientRect(); if (rect.top < 120 && b.textContent.trim().length > 0 && rect.width > 80) { b.click(); return 'clicked header action button'; } } return 'no button found'; })()" },
-          { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
-      },
-      "type": "state-based",
-      "anchorId": "wh-orders",
-      "docReference": "Section 3.3 - Creating an Order",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
-      "knownLimitation": "The orders page may have two buttons (Order Book and Create Waybill). The first/leftmost prominent button is typically Order Book. If the wrong modal opens, the button selection logic may need adjustment.",
-      "verificationCriteria": {
-        "mustShow": ["Modal/dialog overlay", "Requester Department dropdown", "Receiver Department dropdown", "Dual panel layout or item picker area"],
-        "mustNotShow": ["Only the list page without modal"]
-      },
-      "languages": ["en", "ka", "ru"],
-      "captureSteps": [
-        { "action": "wait", "ms": 500 },
-        { "action": "screenshot", "name": "wh-order-create" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    },
-    {
+      "id": "wh-orders-grouped",
       "number": 8,
-      "id": "wh-inventory-balances",
-      "name": "wh-inventory-balances",
-      "description": "Stock balances table showing inventory levels with department filter, search fields, quantity columns, and expiry status badges",
-      "desiredState": "Inventory page loaded with the Stock Levels tab active. Table shows stock items with columns: code, goods name, type, quantity, price, total, unit, expiration (with color-coded badges), and series/lot. Filter panel visible with department dropdown and filter options.",
-      "differentiator": "Shows the stock balances table with filter panel — not the picking queue tab, not any modal",
-      "stateSetup": null,
-      "type": "static",
-      "anchorId": "wh-inventory",
-      "docReference": "Section 3.4 - Inventory & Stock",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
+      "name": "wh-orders-grouped",
+      "description": "Orders grouped view with analytics cards and document table",
+      "desiredState": "Grouped tab active showing grouped order documents",
+      "differentiator": "Shows grouped/document view — NOT individual line items",
+      "stateSetup": {
+        "description": "Switch to Grouped tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Grouped'), [role='tab']:has-text('Group')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[role='tabpanel']"],
       "knownLimitation": null,
       "verificationCriteria": {
-        "mustShow": ["Stock balance table rows or empty state", "Filter panel with department dropdown", "Column headers"],
-        "mustNotShow": ["Loading skeletons", "Error message"]
+        "mustShow": ["Grouped document table"],
+        "mustNotShow": ["Login page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "skipped", "ka": "skipped", "ru": "skipped" },
       "captureSteps": [
-        { "action": "navigate", "url": "/emr/dashboard/warehouse/inventory" },
-        { "action": "wait", "ms": 2000 },
-        { "action": "screenshot", "name": "wh-inventory-balances" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/orders" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Grouped'), [role='tab']:has-text('Group')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-orders-grouped" }
+      ]
     },
     {
+      "id": "wh-order-confirmation",
       "number": 9,
-      "id": "wh-inventory-picking",
-      "name": "wh-inventory-picking",
-      "description": "FEFO picking queue tab showing approved transfer request cards and pick list table with lot-level suggestions sorted by expiration date",
-      "desiredState": "Inventory page with the Picking Queue tab active. Left side shows transfer request cards (each with item name, source/destination departments, quantity needed). Right side or below shows the pick list table with lot-level rows sorted by expiration (FEFO), including columns: product code/name, bin location, lot number, expiration date, quantity requested, suggested pick, confirmed pick.",
-      "differentiator": "Shows the FEFO picking queue tab — not the stock balances tab, not any modal",
+      "name": "wh-order-confirmation",
+      "description": "Order confirmation workflow with review and issued quantity editing",
+      "desiredState": "Confirmation tab active showing orders pending confirmation",
+      "differentiator": "Shows confirmation/approval workflow — NOT list or grouped view",
       "stateSetup": {
-        "description": "Navigate to inventory page and click the Picking Queue tab",
-        "interactionSequence": [
-          { "action": "navigate", "url": "/emr/dashboard/warehouse/inventory" },
-          { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var tabs = document.querySelectorAll('[role=\"tab\"]'); for (var i = 0; i < tabs.length; i++) { if (i >= 1) { tabs[i].click(); return 'clicked tab index ' + i; } } return 'tabs not found, count: ' + tabs.length; })()" },
+        "description": "Switch to Confirmation tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Confirm')" },
           { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
+        ]
       },
       "type": "state-based",
-      "anchorId": "wh-inventory",
-      "docReference": "Section 3.4 - Picking Queue (FEFO)",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
-      "knownLimitation": "The Picking Queue tab position may vary. If no approved transfers exist, the queue will show an empty state. FEFO lot suggestions depend on actual inventory data.",
+      "expectedDOMElements": ["[role='tabpanel']"],
+      "knownLimitation": "May show empty state if no pending confirmations",
       "verificationCriteria": {
-        "mustShow": ["Picking Queue tab selected/active", "Transfer request cards or pick list or empty state"],
-        "mustNotShow": ["Loading skeletons", "Stock balances table from the first tab"]
+        "mustShow": ["Confirmation tab content"],
+        "mustNotShow": ["Login page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
-        { "action": "wait", "ms": 500 },
-        { "action": "screenshot", "name": "wh-inventory-picking" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/orders" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Confirm')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-order-confirmation" }
+      ]
     },
     {
+      "id": "wh-order-create",
       "number": 10,
-      "id": "wh-receipt-create",
-      "name": "wh-receipt-create",
-      "description": "Create Receipt 3-step wizard showing Step 1: Shipment Details with supplier, department, invoice number, and delivery date fields",
-      "desiredState": "Create Receipt wizard is open showing Step 1 (Shipment Details). Form shows fields for supplier, department, invoice number, and delivery date. Step indicators visible at top showing 3 steps.",
-      "differentiator": "Shows the Create Receipt wizard Step 1 — not the Review Items modal, not the receiving list page",
+      "name": "wh-order-create",
+      "description": "Order Book modal with requester/receiver department selection and item list",
+      "desiredState": "New Order modal open showing department selection and item entry form",
+      "differentiator": "Shows the create order modal — NOT the list or confirmation views",
       "stateSetup": {
-        "description": "Navigate to receiving page and click + Create Receipt button to open the wizard",
-        "interactionSequence": [
-          { "action": "navigate", "url": "/emr/dashboard/warehouse/receiving" },
-          { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var btns = document.querySelectorAll('button'); for (var b of btns) { var t = b.textContent.trim(); if (t.indexOf('Create') !== -1 || t.indexOf('+') !== -1) { var rect = b.getBoundingClientRect(); if (rect.top < 120) { b.click(); return 'clicked create receipt button'; } } } return 'no button found'; })()" },
+        "description": "Click New Order button in header to open modal",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
           { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
+        ]
       },
       "type": "state-based",
-      "anchorId": "wh-receiving",
-      "docReference": "Section 3.1 - Creating a Receipt",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
-      "knownLimitation": "The Create Receipt button may be the second button in the header (after Import from RS).",
+      "expectedDOMElements": ["[role='dialog']", "[class*='modal']"],
+      "knownLimitation": null,
       "verificationCriteria": {
-        "mustShow": ["Wizard/modal overlay", "Step indicators", "Supplier field", "Department field"],
-        "mustNotShow": ["Only the list page without modal"]
+        "mustShow": ["Modal with department fields", "Item entry area"],
+        "mustNotShow": ["Login page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
-        { "action": "wait", "ms": 500 },
-        { "action": "screenshot", "name": "wh-receipt-create" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    },
-    {
-      "number": 11,
-      "id": "wh-receiving-analytics",
-      "name": "wh-receiving-analytics",
-      "description": "Analytics tab on the receiving page showing summary statistics and charts for receiving operations",
-      "desiredState": "Receiving page with the Analytics tab active. Shows summary statistics and visual charts for receiving operations trends.",
-      "differentiator": "Shows the Analytics tab content — not the Receiving History tab, not any modal",
-      "stateSetup": {
-        "description": "Navigate to receiving page and click the Analytics tab",
-        "interactionSequence": [
-          { "action": "navigate", "url": "/emr/dashboard/warehouse/receiving" },
-          { "action": "wait", "ms": 2000 },
-          { "action": "evaluate", "script": "(() => { var tabs = document.querySelectorAll('[role=\"tab\"]'); for (var i = 0; i < tabs.length; i++) { var t = tabs[i].textContent.toLowerCase(); if (t.indexOf('analytics') !== -1 || t.indexOf('analytic') !== -1) { tabs[i].click(); return 'clicked analytics tab'; } } if (tabs.length >= 2) { tabs[1].click(); return 'clicked second tab'; } return 'tabs not found'; })()" },
-          { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
-      },
-      "type": "state-based",
-      "anchorId": "wh-receiving",
-      "docReference": "Section 3.1 - Analytics",
-      "sectionHeaderText": null,
-      "expectedDOMElements": [],
-      "knownLimitation": "The Analytics tab may be the second tab. Content depends on available data.",
-      "verificationCriteria": {
-        "mustShow": ["Analytics tab selected/active", "Statistics or charts or empty state"],
-        "mustNotShow": ["Loading skeletons", "Receiving History table"]
-      },
-      "languages": ["en", "ka", "ru"],
-      "captureSteps": [
-        { "action": "wait", "ms": 500 },
-        { "action": "screenshot", "name": "wh-receiving-analytics" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/orders" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-order-create" }
+      ]
     }
   ],
   "languageSwitching": {
-    "selectors": {
-      "en": "text=ENG",
-      "ru": "text=РУС",
-      "ka": "text=ქარ"
-    },
+    "selectors": { "en": "text=ENG", "ru": "text=РУС", "ka": "text=ქარ" },
     "waitAfterSwitch": 2000
   },
-  "summary": {
-    "totalScreenshots": 11,
-    "totalFiles": 33,
-    "staticScreenshots": 4,
-    "multiStepFlows": 0,
-    "stateBased": 7
-  }
+  "captureOrder": [
+    "wh-receiving-list", "wh-receiving-analytics", "wh-receiving-create",
+    "wh-transfer-list", "wh-transfer-grouped", "wh-transfer-approval",
+    "wh-orders-list", "wh-orders-grouped", "wh-order-confirmation", "wh-order-create"
+  ],
+  "notes": "Spans 3 routes: /receiving (3 shots), /transfers (3 shots), /orders (4 shots). Each route needs its own navigation. Search click needed on each history tab."
 }

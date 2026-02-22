@@ -1,459 +1,889 @@
+<!-- საწყობის ნომენკლატურის დოკუმენტაცია - ქართული -->
+
+<!-- ============================================================ -->
+<!-- სექცია 1: მიმოხილვა -->
+<!-- ============================================================ -->
 <section class="doc-section" id="warehouse-nomenclature">
   <div class="doc-section-header">
     <div class="doc-section-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 3h7v7H3V3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M14 3h7v7h-7V3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3 14h7v7H3v-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M17.5 14v7M14 17.5h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
       </svg>
     </div>
-    <div>
-      <h2>პროდუქციის ნომენკლატურა</h2>
-    </div>
+    <div class="doc-section-number">1</div>
+    <h2>სასაქონლო ნომენკლატურა</h2>
   </div>
 
-  <!-- პროდუქციის იერარქია -->
-  <h3 id="wh-hierarchy">პროდუქციის იერარქია</h3>
+  <p><strong>საწყობის ნომენკლატურის</strong> მოდული არის ცენტრალური პროდუქციის კატალოგი საავადმყოფოს მთელი მომარაგების ჯაჭვისთვის. წარმოიდგინეთ, როგორც საავადმყოფოს მთავარი საქონლის ბიბლიოთეკა -- ყველა მედიკამენტი, სახარჯი მასალა, აღჭურვილობა და საწყობის ნივთი, რომელიც გამოიყენება ყველა განყოფილებაში, აქ არის ორგანიზებული სტრუქტურირებულ, მოსაძიებელ იერარქიაში.</p>
 
-  <p>საწყობის მოდული ყველა პროდუქტს <strong>5-საფეხურიანი იერარქიით</strong> აწესრიგებს. ზედა დონეზე ფართო კატეგორიებია, ქვედა დონეზე კი კონკრეტული ნივთები. თითოეული დონე ავიწროებს კლასიფიკაციას, რაც ათასობით პროდუქტის მოძიებასა და მართვას აადვილებს.</p>
-
-  <!-- იერარქიის ვიზუალური დიაგრამა -->
-  <div style="max-width: 680px; margin: 2rem auto;">
-    <div style="display: flex; flex-direction: column; gap: 0; align-items: center;">
-      <!-- დონე 1 -->
-      <div style="width: 100%; padding: 14px 20px; background: linear-gradient(135deg, var(--emr-primary) 0%, var(--emr-secondary) 100%); border-radius: 10px; color: var(--emr-text-inverse); display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">1</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px;">კატეგორიები</div>
-          <div style="font-size: 12px; opacity: 0.85;">უმაღლესი დონის დაჯგუფება (მაგ., სახარჯი მასალა, მედიკამენტები, აღჭურვილობა)</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(255,255,255,0.2); border-radius: 6px; font-size: 12px; font-weight: 600;">დონე 1</div>
-      </div>
-      <!-- კონექტორი -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- დონე 2 -->
-      <div style="width: 92%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-secondary); border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(43,108,176,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-secondary);">2</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">პროდუქტების ჯგუფები</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">ჯგუფები კატეგორიების შიგნით (მაგ., ანტიბიოტიკები, ბინტები)</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(43,108,176,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--emr-secondary);">დონე 2</div>
-      </div>
-      <!-- კონექტორი -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- დონე 3 -->
-      <div style="width: 84%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-accent); border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(99,179,237,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-accent);">3</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">ქვეჯგუფები</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">არასავალდებულო დამატებითი კლასიფიკაცია ჯგუფების შიგნით</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(99,179,237,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--emr-accent);">დონე 3</div>
-      </div>
-      <!-- კონექტორი -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- დონე 4 -->
-      <div style="width: 76%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #38b2ac; border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(56,178,172,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #38b2ac;">4</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">ზოგადი დასახელებები</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">სტანდარტული პროდუქტის სახელები (მაგ., ამოქსიცილინი, პარაცეტამოლი)</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(56,178,172,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: #38b2ac;">დონე 4</div>
-      </div>
-      <!-- კონექტორი -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- დონე 5 -->
-      <div style="width: 68%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #dd6b20; border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(221,107,32,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #dd6b20;">5</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">პროდუქციის კატალოგი</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">კონკრეტული ნივთები დოზით, მწარმოებლით, ერთეულით</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(221,107,32,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: #dd6b20;">დონე 5</div>
-      </div>
-    </div>
-  </div>
-
-  <p>გვერდი თითოეულ დონეს <strong>დაკლიკვადი ბარათის ჩანართად</strong> აჩვენებს ზედა ნაწილში, ისრის ინდიკატორებით დაკავშირებულს, რათა იერარქიის თანმიმდევრობა ჩანდეს. თითოეულ ბარათზე ბეჯი აჩვენებს ამ დონეზე არსებული ელემენტების რაოდენობას.</p>
+  <p>ისევე, როგორც ბიბლიოთეკა იყენებს კლასიფიკაციის სისტემას (თაროები, სექციები, ქვესექციები და ცალკეული წიგნები), საწყობის ნომენკლატურა ორგანიზებს პროდუქტებს <strong>5-დონიან იერარქიაში</strong>. ეს ამარტივებს ნებისმიერი ნივთის მოძიებას ათიათასობით პროდუქტს შორის და უზრუნველყოფს თანმიმდევრულ სახელდებას და დაჯგუფებას განყოფილებებს შორის.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-hierarchy-ka.png" alt="5-საფეხურიანი იერარქიის საინფორმაციო პანელი ყველა დონის აღწერით და მაგალითებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-hierarchy">
+    <img src="images/wh-nomenclature-hierarchy-ka.png" alt="საწყობის ნომენკლატურის 5-დონიანი ჩანართების ნავიგაცია" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-hierarchy">
   </div>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">ℹ️</div>
-    <div class="doc-info-content">
-      <strong>იერარქიის საინფორმაციო პანელი:</strong> დააკლიკეთ "როგორ მუშაობს ეს იერარქია?" ზოლს გვერდის ზედა ნაწილში, რათა გაიხსნას ვიზუალური სახელმძღვანელო, რომელიც ახსნის თითოეულ დონეს მაგალითებით. ეს სასარგებლოა ახალი მომხმარებლებისთვის, რომლებიც პროდუქტების ორგანიზაციის სისტემას სწავლობენ.
+  <!-- სტატისტიკა -->
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">იერარქიის დონე</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">12</span>
+      <span class="doc-stat-inline-label">კატეგორია</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">310+</span>
+      <span class="doc-stat-inline-label">პროდუქციის ჯგუფი</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">36,500+</span>
+      <span class="doc-stat-inline-label">საწყობის პროდუქტი</span>
     </div>
   </div>
 
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>დონე</th>
-          <th>სახელი</th>
-          <th>აღწერა</th>
-          <th>მაგალითი</th>
-          <th>FHIR რესურსი</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>1</strong></td>
-          <td>კატეგორიები</td>
-          <td>საწყობის ნივთების ყველაზე ფართო კლასიფიკაცია</td>
-          <td>სახარჯი მასალა, მედიკამენტები, რეაქტივები</td>
-          <td>List (code: warehouse-categories)</td>
-        </tr>
-        <tr>
-          <td><strong>2</strong></td>
-          <td>პროდუქტების ჯგუფები</td>
-          <td>პროდუქტების ჯგუფები კატეგორიის ფარგლებში</td>
-          <td>ანტიბიოტიკები, ქირურგიული ხელთათმანები, IV ხსნარები</td>
-          <td>List (code: warehouse-item-groups)</td>
-        </tr>
-        <tr>
-          <td><strong>3</strong></td>
-          <td>ქვეჯგუფები</td>
-          <td>არასავალდებულო დამატებითი კლასიფიკაცია ჯგუფების შიგნით</td>
-          <td>პენიცილინები (ანტიბიოტიკების შიგნით)</td>
-          <td>List (code: warehouse-subcategories)</td>
-        </tr>
-        <tr>
-          <td><strong>4</strong></td>
-          <td>ზოგადი დასახელებები</td>
-          <td>სტანდარტული პროდუქტის სახელები ბრენდის გარეშე</td>
-          <td>ამოქსიცილინი, პარაცეტამოლი, ფიზიოლოგიური ხსნარი</td>
-          <td>List (code: warehouse-medical-items)</td>
-        </tr>
-        <tr>
-          <td><strong>5</strong></td>
-          <td>პროდუქციის კატალოგი</td>
-          <td>კონკრეტული საწყობის ნივთები მწარმოებლით, დოზით, ერთეულით</td>
-          <td>ამოქსიცილინი 500მგ ტაბლეტი, GlaxoSmithKline</td>
-          <td>SupplyDelivery / DeviceDefinition</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR R4 თავსებადი:</strong>
+    ნომენკლატურის ყველა მონაცემი ინახება FHIR R4 რესურსების გამოყენებით. კატეგორიები, ჯგუფები, ქვეკატეგორიები და ზოგადი დასახელებები იყენებენ <strong>List</strong> რესურსებს, ხოლო ცალკეული საწყობის პროდუქტები იყენებენ <strong>SupplyDelivery</strong> რესურსებს. ნივთის რედაქტირების მოდალი იყენებს <strong>DeviceDefinition</strong>-ს პროდუქტის გაფართოებული ატრიბუტებისთვის.
   </div>
 
-  <h4>ჯვარედინი ფილტრაცია</h4>
-  <p>ნომენკლატურის სისტემის მთავარი ფუნქციაა <strong>ჯვარედინი ფილტრაცია</strong>. ნებისმიერ დონეზე ელემენტზე დაკლიკებით ავტომატურად იფილტრება შემდეგი ქვედა დონე:</p>
+  <!-- 5-დონიანი იერარქიის დიაგრამა -->
+  <h3>5-დონიანი საქონლის იერარქია</h3>
+
+  <p>საავადმყოფოს ყველა პროდუქტი მიეკუთვნება 5-დონიან კლასიფიკაციის ხეს. ყოველი დონე ამატებს მეტ სპეციფიკურობას, ფართო კატეგორიებიდან ცალკეულ პროდუქტამდე, მისი ზუსტი ბრენდის, შეფუთვისა და მომწოდებლის დეტალებით.</p>
+
+  <div style="max-width: 680px; margin: 24px auto;">
+    <!-- დონე 1 -->
+    <div style="background: linear-gradient(135deg, var(--emr-primary) 0%, var(--emr-secondary) 100%); color: var(--emr-text-inverse); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 100%;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">1</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px;">კატეგორიები</div>
+        <div style="font-size: 12px; opacity: 0.85;">ფართო კლასიფიკაციის ჯგუფები (მაგ., მედიკამენტები, სახარჯი მასალა, აღჭურვილობა)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(255,255,255,0.2); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600;">12 ერთეული</div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- დონე 2 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-secondary); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 92%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(43,108,176,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-secondary);">2</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">პროდუქციის ჯგუფები</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">ფუნქციური დაჯგუფებები კატეგორიის შიგნით (მაგ., ანტიბიოტიკები, შპრიცები)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(43,108,176,0.1); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: var(--emr-secondary);">310+</div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- დონე 3 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #7c3aed; border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 84%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(124,58,237,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #7c3aed;">3</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">ქვეჯგუფები</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">დამატებითი დაზუსტება ჯგუფის შიგნით (მაგ., ცეფალოსპორინები, ინტრავენური შპრიცები)</div>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- დონე 4 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #0d9488; border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 76%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(13,148,136,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #0d9488;">4</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">ზოგადი დასახელებები</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">სტანდარტიზებული სამედიცინო სახელები (მაგ., ცეფტრიაქსონი, ამოქსიცილინი)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(13,148,136,0.1); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: #0d9488;">503+</div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- დონე 5 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #ea580c; border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 68%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(234,88,12,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #ea580c;">5</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">პროდუქციის კატალოგი</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">კონკრეტული პროდუქტები ბრენდით, დოზით, მომწოდებლით (მაგ., ცეფტრიაქსონი 1გ, Hikma)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(234,88,12,0.1); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: #ea580c;">36,500+</div>
+    </div>
+  </div>
+
+  <p>გვერდის ზედა ნაწილში <strong>ჩანართების ზოლი</strong> წარმოადგენს თითოეულ დონეს დაწკაპუნებადი ბარათით. ბარათებს შორის ისარი აჩვენებს მშობელ-შვილობილ კავშირს. თითოეულ ბარათზე გამოსახულია <strong>რაოდენობის სამკერდე ნიშანი</strong>, რომელიც აჩვენებს ამ დონეზე არსებული ერთეულების რაოდენობას. ბარათზე დაწკაპუნება გადართავს ხედს ამ დონის მართვის ცხრილზე.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>ჩაკეცვადი საინფორმაციო პანელი:</strong>
+    დააწკაპუნეთ გვერდის ზედა ნაწილში „როგორ მუშაობს ეს იერარქია?" ზოლზე, რათა გაიხსნას ჩაშენებული საცნობარო სახელმძღვანელო. იგი აჩვენებს თითოეული დონის დანიშნულებას, აღწერას და ნივთების მაგალითებს გვერდიდან გაუსვლელად.
+  </div>
+
+  <!-- FHIR რესურსების შესაბამისობა -->
+  <h3>FHIR რესურსების შესაბამისობა</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>იერარქიის დონე</th>
+        <th>FHIR რესურსი</th>
+        <th>List კოდი</th>
+        <th>სავარაუდო რაოდენობა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>დონე 1 - კატეგორიები</strong></td>
+        <td>List</td>
+        <td><code>warehouse-categories</code></td>
+        <td>12</td>
+      </tr>
+      <tr>
+        <td><strong>დონე 2 - პროდუქციის ჯგუფები</strong></td>
+        <td>List</td>
+        <td><code>warehouse-item-groups</code></td>
+        <td>310</td>
+      </tr>
+      <tr>
+        <td><strong>დონე 3 - ქვეჯგუფები</strong></td>
+        <td>List</td>
+        <td><code>warehouse-subcategories</code></td>
+        <td>ცვალებადი</td>
+      </tr>
+      <tr>
+        <td><strong>დონე 4 - ზოგადი დასახელებები</strong></td>
+        <td>List</td>
+        <td><code>warehouse-medical-items</code></td>
+        <td>503</td>
+      </tr>
+      <tr>
+        <td><strong>დონე 5 - პროდუქციის კატალოგი</strong></td>
+        <td>SupplyDelivery</td>
+        <td>status: <code>completed</code></td>
+        <td>36,500+</td>
+      </tr>
+      <tr>
+        <td><strong>ნივთის რედაქტირება (გაფართოებული)</strong></td>
+        <td>DeviceDefinition</td>
+        <td>--</td>
+        <td>თითო ნივთზე</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- სექცია 2: კატეგორიები -->
+<!-- ============================================================ -->
+<section class="doc-section" id="categories">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">2</div>
+    <h2>კატეგორიები (დონე 1)</h2>
+  </div>
+
+  <p><strong>კატეგორიები</strong> არის კლასიფიკაციის ყველაზე ფართო დონე -- უმაღლესი დონის „თაროები" თქვენს საქონლის ბიბლიოთეკაში. ისინი ყოფენ საავადმყოფოს მთელ მარაგს ძირითად ფუნქციურ ჯგუფებად, როგორიცაა მედიკამენტები, სახარჯი მასალა, აღჭურვილობა და კვება. სისტემა მოიცავს <strong>12 წინასწარ განსაზღვრულ კატეგორიას</strong> და ადმინისტრატორებს შეუძლიათ მორგებული კატეგორიების დამატება.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-categories-ka.png" alt="კატეგორიების ჩანართი სიის და დამატების ფორმის ჩვენებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-categories">
+  </div>
+
+  <h3>წინასწარ განსაზღვრული კატეგორიების ჯგუფები</h3>
+
+  <p>ეს 11 საწყობის ჯგუფი (მემკვიდრეობით მიღებული საავადმყოფოს ძველი სისტემიდან) წარმოადგენს ყველა სამომარაგებო ნივთის ყველაზე ფართო კლასიფიკაციას:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ჯგუფის სახელი (ქართულად)</th>
+        <th>ინგლისური თარგმანი</th>
+        <th>მაგალითები</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>სახარჯი მასალა</td>
+        <td>Consumable Materials</td>
+        <td>ბინტები, მარლა, ხელთათმანები, ერთჯერადი ნივთები</td>
+      </tr>
+      <tr>
+        <td>მედიკამენტები</td>
+        <td>Medications</td>
+        <td>აბები, ინექციები, სიროფები, მალამოები</td>
+      </tr>
+      <tr>
+        <td>სამეურნეო</td>
+        <td>Household Supplies</td>
+        <td>სასუფთავებელი საშუალებები, ქაღალდის პირსახოცები, საპონი</td>
+      </tr>
+      <tr>
+        <td>არა ინვენტარი</td>
+        <td>Non-Inventory</td>
+        <td>ერთჯერადი გამოყენების ნივთები, რომლებიც არ აღირიცხება ინვენტარში</td>
+      </tr>
+      <tr>
+        <td>ძირითადი საშუალებები</td>
+        <td>Fixed Assets</td>
+        <td>ავეჯი, მძიმე აღჭურვილობა, ტრანსპორტი</td>
+      </tr>
+      <tr>
+        <td>ინვენტარი</td>
+        <td>Inventory Items</td>
+        <td>აღრიცხვადი მრავალჯერადი აღჭურვილობა და ინსტრუმენტები</td>
+      </tr>
+      <tr>
+        <td>რეაქტივი</td>
+        <td>Reagents</td>
+        <td>ლაბორატორიული რეაქტივები და ქიმიკატები</td>
+      </tr>
+      <tr>
+        <td>ხსნარი</td>
+        <td>Solutions</td>
+        <td>ინტრავენური ხსნარები, ფიზიოლოგიური ხსნარი, დექსტროზის ხსნარები</td>
+      </tr>
+      <tr>
+        <td>სამედიცინო ინსტრუმენტი</td>
+        <td>Medical Instruments</td>
+        <td>ქირურგიული ინსტრუმენტები, სკალპელები, პინცეტები</td>
+      </tr>
+      <tr>
+        <td>ნარკოტიკები</td>
+        <td>Controlled Substances</td>
+        <td>ნარკოტიკული და კონტროლირებადი მედიკამენტები</td>
+      </tr>
+      <tr>
+        <td>კვება</td>
+        <td>Food / Nutrition</td>
+        <td>პაციენტის კვება, კვებითი დანამატები</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>კატეგორიების მართვა</h3>
+
+  <p>კატეგორიების ჩანართი უზრუნველყოფს მარტივ ინტერფეისს უმაღლესი დონის კატეგორიების ნახვისა და მართვისთვის:</p>
+
   <ul class="doc-list">
-    <li>დააკლიკეთ <strong>პროდუქტების ჯგუფზე</strong>, რათა ნახოთ მხოლოდ ამ ჯგუფს მიკუთვნებული ზოგადი დასახელებები</li>
-    <li>დააკლიკეთ <strong>ზოგად დასახელებაზე</strong>, რათა ნახოთ მხოლოდ ამ პროდუქტის კატალოგის ნივთები</li>
-    <li>აქტიური ფილტრები <strong>ბეჯებად</strong> ჩანს გვერდის ზედა ნაწილში და შეგიძლიათ წაშალოთ ცალ-ცალკე ან ყველა ერთად</li>
+    <li><strong>კატეგორიის დამატება</strong> -- შეიყვანეთ სახელი „დამატება" ველში და დააჭირეთ <strong>+</strong> ღილაკს (ან დააჭირეთ Enter). ახალი კატეგორია დაუყოვნებლივ გამოჩნდება სიაში.</li>
+    <li><strong>ძიება</strong> -- გამოიყენეთ საძიებო ველი კატეგორიების სახელით ფილტრაციისთვის რეალურ დროში.</li>
+    <li><strong>რედაქტირება</strong> -- დააწკაპუნეთ რედაქტირების (ფანქრის) ხატულაზე ნებისმიერ სტრიქონში. სახელი გარდაიქმნება რედაქტირებად ტექსტურ ველად. დააჭირეთ Enter ან დააწკაპუნეთ სხვაგან შესანახად.</li>
+    <li><strong>წაშლა</strong> -- დააწკაპუნეთ წაშლის (ნაგვის) ხატულაზე. კატეგორიის წაშლამდე გამოჩნდება დადასტურების დიალოგი.</li>
+    <li><strong>სტატუსი</strong> -- თითოეულ კატეგორიას აქვს აქტიური/არააქტიური სტატუსის სამკერდე ნიშანი ფერადი წერტილის ინდიკატორით.</li>
   </ul>
 
-  <!-- კატეგორიები და ჯგუფები -->
-  <h3 id="wh-categories">კატეგორიები და ჯგუფები</h3>
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>გაფრთხილება:</strong>
+    კატეგორიის წაშლა ავტომატურად არ გადაანაწილებს მასში მინიჭებულ პროდუქციის ჯგუფებს. წაშლამდე გადაანაწილეთ პროდუქციის ჯგუფები სხვა კატეგორიაში, რათა თავიდან აიცილოთ ობოლი ჩანაწერები.
+  </div>
+</section>
 
-  <p>იერარქიის პირველი სამი დონე უზრუნველყოფს საწყობის ყველა პროდუქტის ორგანიზაციულ ჩარჩოს.</p>
 
-  <h4>კატეგორიები (დონე 1)</h4>
-  <p>კატეგორიები ყველაზე ფართო კლასიფიკაციაა. სისტემა წინასწარ კონფიგურირებულია სტანდარტული საავადმყოფოს საწყობის კატეგორიებით, როგორიცაა სახარჯი მასალა, მედიკამენტები, სამეურნეო მარაგები, რეაქტივები და სამედიცინო ინსტრუმენტები.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-categories-ka.png" alt="კატეგორიების ჩანართი საწყობის კატეგორიების სიით, დამატების, რედაქტირებისა და წაშლის ფუნქციებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-categories">
+<!-- ============================================================ -->
+<!-- სექცია 3: პროდუქციის ჯგუფები -->
+<!-- ============================================================ -->
+<section class="doc-section" id="groups">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">3</div>
+    <h2>პროდუქციის ჯგუფები (დონე 2)</h2>
   </div>
 
-  <p>თითოეული კატეგორიის ჩანართი უზრუნველყოფს:</p>
-  <ul class="doc-list">
-    <li><strong>ახლის დამატება</strong> — ჩაწერეთ სახელი და დააჭირეთ Enter ან დამატების ღილაკს</li>
-    <li><strong>ძიება</strong> — გაფილტრეთ სია საძიებო ველში აკრეფით</li>
-    <li><strong>ადგილზე რედაქტირება</strong> — დააკლიკეთ რედაქტირების ღილაკს ნებისმიერ სტრიქონზე, სახელის პირდაპირ ცხრილში შესაცვლელად</li>
-    <li><strong>წაშლა</strong> — წაშალეთ ნივთები დადასტურების დიალოგით, შემთხვევითი წაშლის თავიდან ასაცილებლად</li>
-    <li><strong>სტატუსის ინდიკატორი</strong> — მწვანე წერტილი აქტიური ნივთებისთვის, ნაცრისფერი არააქტიურისთვის</li>
-    <li><strong>გვერდებად დაყოფა</strong> — 25 ნივთი თითო გვერდზე სწრაფი ჩატვირთვისთვის</li>
-  </ul>
+  <p><strong>პროდუქციის ჯგუფები</strong> არის იერარქიის მეორე დონე. თუ კატეგორიები არის „თაროები", მაშინ პროდუქციის ჯგუფები არის თითოეულ თაროზე მარკირებული სექციები. ისინი წარმოადგენენ ფუნქციურ დაჯგუფებებს კატეგორიის შიგნით -- მაგალითად, „მედიკამენტების" კატეგორიაში შეიძლება იყოს ჯგუფები, როგორიცაა „ანტიბიოტიკები", „ანალგეტიკები" და „კარდიოვასკულარული".</p>
 
-  <h4>პროდუქტების ჯგუფები (დონე 2)</h4>
-  <p>პროდუქტების ჯგუფები ნივთებს კატეგორიების შიგნით აწესრიგებენ. თითოეული ჯგუფი ეკუთვნის მშობელ კატეგორიას და აღრიცხავს, რამდენ ზოგად დასახელებას შეიცავს.</p>
+  <p>სისტემა მოიცავს <strong>310-ზე მეტ პროდუქციის ჯგუფს</strong> და თითოეული შეიძლება მიეკუთვნოს მშობელ კატეგორიას.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-groups-ka.png" alt="პროდუქტების ჯგუფების ჩანართი მშობელი კატეგორიით, ნივთების რაოდენობით და ჯვარედინი ფილტრაციის ნავიგაციით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-groups">
+    <img src="images/wh-nomenclature-groups-ka.png" alt="პროდუქციის ჯგუფების ჩანართი ჯგუფების სიით და მშობელი კატეგორიებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-groups">
   </div>
 
-  <p>ჯგუფების ჩანართს აქვს დამატებითი ფუნქციები სტანდარტული სიის მიღმა:</p>
+  <h3>ჯგუფის ცხრილის სვეტები</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>სვეტი</th>
+        <th>აღწერა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>სახელი</strong></td>
+        <td>ჯგუფის სახელი (რედაქტირებადი ინლაინ რედაქტირების ხატულაზე დაწკაპუნებით)</td>
+      </tr>
+      <tr>
+        <td><strong>მშობელი კატეგორია</strong></td>
+        <td>დონე 1 კატეგორია, რომელსაც ეს ჯგუფი მიეკუთვნება, ნაჩვენებია ტეგის ხატულით. ჩვენს „-" თუ არ არის მინიჭებული.</td>
+      </tr>
+      <tr>
+        <td><strong>ერთეულების რაოდენობა</strong></td>
+        <td>ლურჯი სამკერდე ნიშანი, რომელიც აჩვენებს ამ ჯგუფში არსებული ზოგადი დასახელებების (დონე 4 ერთეულების) რაოდენობას</td>
+      </tr>
+      <tr>
+        <td><strong>სტატუსი</strong></td>
+        <td>აქტიური ან არააქტიური სტატუსის სამკერდე ნიშანი</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>პროდუქციის ჯგუფის დამატება</h3>
+
+  <ol class="doc-list">
+    <li>შეიყვანეთ ჯგუფის სახელი ტექსტურ ველში.</li>
+    <li>სურვილისამებრ აირჩიეთ <strong>მშობელი კატეგორია</strong> მოსაძიებელი ჩამოსაშლელი სიიდან. ეს აკავშირებს ჯგუფს დონე 1 კატეგორიასთან.</li>
+    <li>დააწკაპუნეთ <strong>+</strong> ღილაკზე ან დააჭირეთ Enter.</li>
+  </ol>
+
+  <h3>ჯვარედინი ფილტრაცია</h3>
+
+  <p>ნომენკლატურის მოდულის ერთ-ერთი ყველაზე მძლავრი ფუნქციაა <strong>ჯვარედინი ფილტრაცია</strong>. პროდუქციის ჯგუფის სტრიქონზე დაწკაპუნებისას სისტემა ავტომატურად:</p>
+
+  <ol class="doc-list">
+    <li>გადადის <strong>ზოგადი დასახელებების</strong> ჩანართზე (დონე 4)</li>
+    <li>ფილტრავს სიას და აჩვენებს მხოლოდ ამ ჯგუფში შემავალ ზოგად დასახელებებს</li>
+    <li>ზედა ნაწილში აჩვენებს ლურჯ ფილტრის ზოლს, რომელიც მიუთითებს აქტიურ ჯგუფს</li>
+  </ol>
+
+  <p>ეს საშუალებას გაძლევთ სწრაფად ჩაწვდეთ ფართო ჯგუფიდან მის კონკრეტულ ერთეულებამდე ჩანართების ხელით გადართვისა და ძიების გარეშე. ფილტრის ზოლზე <strong>X</strong> ღილაკზე დაწკაპუნებით გაასუფთავებთ ფილტრს და კვლავ ნახავთ ყველა ერთეულს.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>კლავიატურის მალსახმობი:</strong>
+    ასევე შეგიძლიათ ჯგუფების სახელით ძიება ცხრილის ზედა ნაწილში არსებული საძიებო ველის მეშვეობით. ძიება რეალურ დროში გამოიყენება აკრეფისთანავე.
+  </div>
+
+  <h3 id="subgroups">ქვეჯგუფები (დონე 3)</h3>
+
+  <p><strong>ქვეჯგუფები</strong> უზრუნველყოფენ დაზუსტების მესამე დონეს თითოეული პროდუქციის ჯგუფის შიგნით. სანამ პროდუქციის ჯგუფები ყოფენ კატეგორიას ფუნქციურ სფეროებად (მაგ., „ანტიბიოტიკები"), ქვეჯგუფები კიდევ უფრო აწვრილებენ ამ სფეროებს (მაგ., „ცეფალოსპორინები", „პენიცილინები", „მაკროლიდები"). ეს დამატებითი გრანულარობა ეხმარება ფარმაცევტებსა და შესყიდვების თანამშრომლებს ნივთების უფრო სწრაფად მოძიებაში.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-subgroups-ka.png" alt="ქვეჯგუფების ჩანართი ქვეჯგუფების სიით და მშობელი ჯგუფებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-subgroups">
+  </div>
+
+  <p>ქვეჯგუფების ჩანართი იმავე განლაგების შაბლონს მიჰყვება, რაც კატეგორიები და პროდუქციის ჯგუფები:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>სვეტი</th>
+        <th>აღწერა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>სახელი</strong></td>
+        <td>ქვეჯგუფის სახელი (ინლაინ რედაქტირებადი)</td>
+      </tr>
+      <tr>
+        <td><strong>მშობელი ჯგუფი</strong></td>
+        <td>დონე 2 პროდუქციის ჯგუფი, რომელსაც ეს ქვეჯგუფი მიეკუთვნება</td>
+      </tr>
+      <tr>
+        <td><strong>ერთეულების რაოდენობა</strong></td>
+        <td>ამ ქვეჯგუფში მინიჭებული ზოგადი დასახელებების (დონე 4) რაოდენობა</td>
+      </tr>
+      <tr>
+        <td><strong>სტატუსი</strong></td>
+        <td>აქტიური ან არააქტიური სტატუსის სამკერდე ნიშანი</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>ახალი ქვეჯგუფის დასამატებლად შეიყვანეთ სახელი, აირჩიეთ მშობელი პროდუქციის ჯგუფი ჩამოსაშლელი სიიდან და დააწკაპუნეთ <strong>+</strong>. ქვეჯგუფის სტრიქონზე დაწკაპუნება იწვევს ჯვარედინ ფილტრაციას ზოგადი დასახელებების ჩანართზე, აჩვენებს მხოლოდ ამ ქვეჯგუფის ერთეულებს.</p>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- სექცია 4: ზოგადი დასახელებები და პროდუქციის კატალოგი -->
+<!-- ============================================================ -->
+<section class="doc-section" id="items">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">4</div>
+    <h2>ზოგადი დასახელებები &amp; პროდუქციის კატალოგი</h2>
+  </div>
+
+  <p>ბოლო ორი დონე მიგვიყვანს ცალკეული პროდუქტის დონეზე. <strong>ზოგადი დასახელებები</strong> (დონე 4) არის სტანდარტიზებული სამედიცინო ნივთების სახელები -- „რა არის ეს" ბრენდის მიუთითებლად. <strong>პროდუქციის კატალოგი</strong> (დონე 5) მოიცავს საწყობის ფაქტობრივ პროდუქტებს კონკრეტული ბრენდებით, დოზებით, მომწოდებლებითა და შეფუთვით.</p>
+
+  <h3 id="generic-names">ზოგადი დასახელებები (დონე 4)</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-generic-names-ka.png" alt="ზოგადი დასახელებების ჩანართი სტანდარტიზებული სამედიცინო ნივთების სახელებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-generic-names">
+  </div>
+
+  <p>ზოგადი დასახელებები წარმოადგენს <strong>500-ზე მეტ სტანდარტიზებულ სამედიცინო ნივთის სახელს</strong>. თითოეული ზოგადი დასახელება მიეკუთვნება ქვეჯგუფს (დონე 3) და აერთიანებს ერთ ან მეტ კონკრეტულ საწყობის პროდუქტს. მაგალითად, ზოგად დასახელება „ცეფტრიაქსონს" შეიძლება ჰქონდეს 15 საწყობის პროდუქტი სხვადასხვა მწარმოებლისგან და სხვადასხვა შეფუთვის ზომით.</p>
+
+  <p>ცხრილში ნაჩვენებია ოთხი სვეტი:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>სვეტი</th>
+        <th>აღწერა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>სახელი</strong></td>
+        <td>სტანდარტიზებული ზოგადი დასახელება. თითოეული სახელის გვერდით ნაჩვენებია ისრის ხატულა, რომელიც მიუთითებს, რომ მასზე დაწკაპუნებით ხელმისაწვდომია ჯვარედინი ფილტრაცია.</td>
+      </tr>
+      <tr>
+        <td><strong>ქვეჯგუფი</strong></td>
+        <td>დონე 3 ქვეჯგუფი, რომელსაც ეს ერთეული მიეკუთვნება, ნაჩვენებია ლურჯი სამკერდე ნიშნით</td>
+      </tr>
+      <tr>
+        <td><strong>საწყობის რაოდენობა</strong></td>
+        <td>მწვანე სამკერდე ნიშანი, რომელიც აჩვენებს, რამდენი კონკრეტული საწყობის პროდუქტი მიუთითებს ამ ზოგად დასახელებაზე</td>
+      </tr>
+      <tr>
+        <td><strong>სტატუსი</strong></td>
+        <td>აქტიური ან არააქტიური სტატუსის სამკერდე ნიშანი (მობილურ მოწყობილობებზე დამალულია)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>როდესაც ჯგუფის ფილტრი აქტიურია (დონე 2-ზე პროდუქციის ჯგუფის სტრიქონზე დაწკაპუნების შედეგად), ზედა ნაწილში ჩნდება <strong>ლურჯი გაფრთხილების ზოლი</strong>, რომელიც აჩვენებს არჩეულ ჯგუფს, ფილტრის გასუფთავების დახურვის ღილაკთან ერთად.</p>
+
+  <p>ზოგადი დასახელების სტრიქონზე დაწკაპუნება იწვევს მეორე ჯვარედინ ფილტრაციას: სისტემა გადადის პროდუქციის კატალოგის ჩანართზე და ფილტრავს მას მხოლოდ ამ ზოგადი დასახელების ქვეშ არსებული პროდუქტების საჩვენებლად. ეს ქმნის უწყვეტ <strong>ჩაღრმავების ნაკადს</strong>: ჯგუფი > ზოგადი დასახელება > კონკრეტული პროდუქტები.</p>
+
+  <h3 id="product-catalog">პროდუქციის კატალოგი (დონე 5)</h3>
+
+  <p><strong>პროდუქციის კატალოგი</strong> არის ყველაზე დიდი და დეტალური დონე, რომელიც მოიცავს <strong>36,500-ზე მეტ ინდივიდუალურ პროდუქტის ჩანაწერს</strong>. აქ არის განსაზღვრული საავადმყოფოს მარაგში არსებული ყველა კონკრეტული ნივთი -- ზუსტი სახელით, კოდით, მწარმოებლით, ზომის ერთეულით და კატეგორიით.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-items-ka.png" alt="პროდუქციის კატალოგის ცხრილი ძიებით, ფილტრებითა და პაგინაციით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-items">
+  </div>
+
+  <h4>ცხრილის სვეტები (13 სვეტი)</h4>
+
+  <p>პროდუქციის კატალოგის ცხრილს აქვს 13 სვეტი ჰორიზონტალური გადახვევის შესაძლებლობით ყველა მონაცემთა ველის მოსათავსებლად. ცხრილი მოითხოვს მინიმუმ 1,800 პიქსელ სიგანეს სრული ჩვენებისთვის.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>სვეტი</th>
+        <th>სიგანე</th>
+        <th>აღწერა</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ID</strong></td>
+        <td>70px</td>
+        <td>ორიგინალი მონაცემთა ბაზის ID ან FHIR რესურსის ID-ს პირველი 8 სიმბოლო</td>
+      </tr>
+      <tr>
+        <td><strong>კოდი</strong></td>
+        <td>70px</td>
+        <td>პროდუქტის შიდა კოდი</td>
+      </tr>
+      <tr>
+        <td><strong>სახელი</strong></td>
+        <td>250px</td>
+        <td>პროდუქტის სრული სახელი (შეკვეცილი 1 სტრიქონამდე)</td>
+      </tr>
+      <tr>
+        <td><strong>ზოგადი ჯგუფი</strong></td>
+        <td>150px</td>
+        <td>დონე 2 პროდუქციის ჯგუფი, რომელსაც ეს ნივთი მიეკუთვნება</td>
+      </tr>
+      <tr>
+        <td><strong>ზოგადი სახელი</strong></td>
+        <td>200px</td>
+        <td>დონე 4 ზოგადი დასახელება, რომელთანაც ეს ნივთია დაკავშირებული</td>
+      </tr>
+      <tr>
+        <td><strong>კატეგორია</strong></td>
+        <td>120px</td>
+        <td>უმაღლესი დონის საწყობის ჯგუფი (მაგ., სახარჯი მასალა, მედიკამენტები)</td>
+      </tr>
+      <tr>
+        <td><strong>ერთეული</strong></td>
+        <td>70px</td>
+        <td>ზომის ერთეული (ცალი, მლ, ფლაკონი, აბი და ა.შ.)</td>
+      </tr>
+      <tr>
+        <td><strong>მწარმოებელი</strong></td>
+        <td>140px</td>
+        <td>ქვეყანა ან მწარმოებლის სახელი</td>
+      </tr>
+      <tr>
+        <td><strong>რაოდენობა</strong></td>
+        <td>70px</td>
+        <td>რაოდენობა ერთეულზე (მარჯვნივ სწორებული)</td>
+      </tr>
+      <tr>
+        <td><strong>აღწერა</strong></td>
+        <td>180px</td>
+        <td>დამატებითი აღწერის ტექსტი</td>
+      </tr>
+      <tr>
+        <td><strong>წაშლილი</strong></td>
+        <td>70px</td>
+        <td>მიუთითებს, არის თუ არა ნივთი რბილად წაშლილი (ნაჩვენებია წითლად)</td>
+      </tr>
+      <tr>
+        <td><strong>მშობელი</strong></td>
+        <td>80px</td>
+        <td>მშობელი ნივთის მითითება (კომპოზიტური/შეფუთული პროდუქტებისთვის)</td>
+      </tr>
+      <tr>
+        <td><strong>ფასის გაანგარიშება</strong></td>
+        <td>200px</td>
+        <td>ფასის გაანგარიშების რეჟიმი ბილინგის ინტეგრაციისთვის</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>ძიება და ფილტრები</h4>
+
+  <p>პროდუქციის კატალოგი უზრუნველყოფს სამ ფილტრის კონტროლს ცხრილის ზემოთ ჰორიზონტალურ რიგში:</p>
+
   <ul class="doc-list">
-    <li><strong>მშობელი კატეგორიის</strong> სვეტი — გვიჩვენებს, რომელ კატეგორიას ეკუთვნის თითოეული ჯგუფი</li>
-    <li><strong>ნივთების რაოდენობის</strong> ბეჯი — აჩვენებს, რამდენი ზოგადი დასახელება არის თითოეულ ჯგუფში</li>
-    <li><strong>სტრიქონზე დაკლიკებით ნავიგაცია</strong> — დააკლიკეთ ჯგუფის ნებისმიერ სტრიქონზე მისი ზოგადი დასახელებების ჯვარედინი ფილტრაციისთვის</li>
-    <li><strong>კატეგორიის ამომრჩეველი</strong> — ახალი ჯგუფის დამატებისას შეგიძლიათ მშობელი კატეგორიის მინიჭება</li>
+    <li><strong>ძიება</strong> -- რეალურ დროში ტექსტური ძიება პროდუქტის სახელის, კოდისა და შტრიხკოდის მიხედვით. ძიება დაყოვნებულია (300მწმ შეფერხებით), რათა აკრეფისას სერვერი არ გადაიტვირთოს მოთხოვნებით.</li>
+    <li><strong>კატეგორიის ფილტრი</strong> -- ჩამოსაშლელი სია საწყობის ჯგუფით ფილტრაციისთვის (სახარჯი მასალა, მედიკამენტები და ა.შ.). აირჩიეთ „ყველა" ყველა კატეგორიის სანახავად.</li>
+    <li><strong>სტატუსის ფილტრი</strong> -- ჩამოსაშლელი სია მხოლოდ აქტიური ნივთების, მხოლოდ წაშლილი ნივთების ან ყველა ნივთის საჩვენებლად. ნაგულისხმევად არჩეულია „აქტიური".</li>
   </ul>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">ℹ️</div>
-    <div class="doc-info-content">
-      <strong>ქვეჯგუფები (დონე 3)</strong> უზრუნველყოფს არასავალდებულო დამატებით კლასიფიკაციას პროდუქტების ჯგუფების შიგნით. ისინი მუშაობს ისევე, როგორც კატეგორიები და ჯგუფები, მაგრამ ნაკლებად ხშირად გამოიყენება. ქვეჯგუფების ჩანართი იმავე დამატება/ძიება/რედაქტირება/წაშლის შაბლონს მიჰყვება.
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>სერვერული პაგინაცია:</strong>
+    ვინაიდან პროდუქციის კატალოგი 36,500-ზე მეტ ნივთს შეიცავს, ცხრილი იყენებს <strong>სერვერულ პაგინაციას</strong> გვერდზე 50 ნივთით. გვერდის ბოლოში მთვლელი აჩვენებს „X / სულ" (მაგ., „50 / 36,513"). მონაცემები იტვირთება მოთხოვნისამებრ გვერდებს შორის ნავიგაციისას, რათა თავიდან იქნას აცილებული მთლიანი 22მბ მონაცემთა ნაკრების ჩატვირთვა.
+  </div>
+
+  <h4>ჯვარედინი ფილტრის ინდიკატორი</h4>
+
+  <p>როდესაც პროდუქციის კატალოგში ჯვარედინი ფილტრაციით მოხვდებით (ჯგუფიდან ან ზოგადი დასახელებიდან გადასვლით), ზედა ნაწილში ჩნდება <strong>ლურჯი ფილტრის გაფრთხილება</strong>, რომელიც აჩვენებს არჩეულ მშობელ ერთეულებს. გაფრთხილება მოიცავს:</p>
+
+  <ul class="doc-list">
+    <li><strong>ლურჯი სამკერდე ნიშანი</strong> არჩეული პროდუქციის ჯგუფისთვის (დონე 2)</li>
+    <li>ისრის გამყოფი</li>
+    <li><strong>მწვანე სამკერდე ნიშანი</strong> არჩეული ზოგადი დასახელებისთვის (დონე 4)</li>
+    <li>დახურვის ღილაკები თითოეულ სამკერდე ნიშანზე ცალკეული ფილტრების გასასუფთავებლად</li>
+    <li>გლობალური გასუფთავების ღილაკი ყველა ფილტრის ერთდროულად მოსახსნელად</li>
+  </ul>
+
+  <h4>ახალი პროდუქტის დამატება</h4>
+
+  <p>დააწკაპუნეთ ცხრილის ზემოთ არსებულ <strong>„პროდუქტის დამატება"</strong> ღილაკზე პროდუქტის შექმნის მოდალის გასახსნელად. თუ ჯვარედინი ფილტრით მოხვედით, ჯგუფისა და ზოგადი დასახელების ველები ავტომატურად შეივსება.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-product-create-modal-ka.png" alt="პროდუქტის შექმნის მოდალი ფორმის ველებით" class="doc-screenshot-image" data-i18n-img="wh-product-create-modal">
+  </div>
+
+  <p>შექმნის მოდალი მოიცავს შემდეგ ველებს:</p>
+
+  <ul class="doc-list">
+    <li><strong>პროდუქტის სახელი</strong> -- პროდუქტის სრული სახელი (სავალდებულო).</li>
+    <li><strong>პროდუქტის კოდი</strong> -- შიდა კოდი იდენტიფიკაციისთვის.</li>
+    <li><strong>პროდუქციის ჯგუფი &amp; ზოგადი დასახელება</strong> -- წინასწარ შევსებული თუ ჯვარედინი ფილტრით მოხვედით; წინააღმდეგ შემთხვევაში აირჩიეთ მოსაძიებელი ჩამოსაშლელი სიიდან.</li>
+    <li><strong>კატეგორია, ერთეული, მწარმოებელი</strong> -- კლასიფიკაციის და შეფუთვის დეტალები.</li>
+  </ul>
+
+  <h4>სტრიქონის მოქმედებები</h4>
+
+  <p>თითოეულ პროდუქტის სტრიქონს აქვს ორი ხელმისაწვდომი მოქმედება მოქმედებების ღილაკების სვეტში:</p>
+
+  <ul class="doc-list">
+    <li><strong>რედაქტირება</strong> (ფანქრის ხატულა) -- ხსნის ნივთის რედაქტირების სრულ მოდალს (იხ. სექცია 5 ქვემოთ)</li>
+    <li><strong>წაშლა</strong> (ნაგვის ხატულა) -- რბილად წაშლის ნივთს დადასტურების შემდეგ. წაშლილი სტრიქონები ნაჩვენებია წითელი ფონით, თუ სტატუსის ფილტრი წაშლილ ნივთებსაც მოიცავს.</li>
+  </ul>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- სექცია 5: ნივთის რედაქტირების მოდალი -->
+<!-- ============================================================ -->
+<section class="doc-section" id="item-details">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">5</div>
+    <h2>ნივთის რედაქტირების მოდალი</h2>
+  </div>
+
+  <p>ნებისმიერი პროდუქტის სტრიქონზე <strong>რედაქტირების ხატულაზე</strong> დაწკაპუნება ხსნის სრული სიგანის მოდალს პროდუქტის დეტალური კონფიგურაციით. აქ საავადმყოფოს თანამშრომლებს შეუძლიათ პროდუქტის ყველა გაფართოებული ატრიბუტის მართვა -- ფარმაცევტული დეტალებიდან მარაგის მართვის პარამეტრებამდე.</p>
+
+  <p>მოდალი ორგანიზებულია <strong>ორ ჩანართად</strong>:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-item-edit-ka.png" alt="ნივთის რედაქტირების მოდალი მთავარი და ატრიბუტების ჩანართებით" class="doc-screenshot-image" data-i18n-img="wh-item-edit">
+  </div>
+
+  <h3>მთავარი ჩანართი</h3>
+
+  <p>მთავარი ჩანართი შეიცავს პროდუქტის ძირითად ატრიბუტებს, ორგანიზებულს ცალკეულ სექციებად. თითოეულ სექციას აქვს საკუთარი <strong>შენახვის</strong> ღილაკი, რაც საშუალებას გაძლევთ შეინახოთ ერთი სექციის ცვლილებები სხვებზე ზემოქმედების გარეშე. სექციების მიხედვით შენახვის ეს მიდგომა ხელს უშლის შემთხვევით გადაწერას, როდესაც რამდენიმე მომხმარებელი ერთდროულად არედაქტირებს ერთსა და იმავე ნივთს.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>გაძლიერებული ავთენტიფიკაცია:</strong>
+    რედაქტირების მოდალში ნებისმიერი სექციის შენახვა მოითხოვს <strong>ხელახლა ავთენტიფიკაციას</strong>. შენახვაზე დაწკაპუნებისას ჩნდება პაროლის დადასტურების დიალოგი. ეს იცავს კრიტიკულ საქონლის მონაცემებს არაავტორიზებული ცვლილებებისგან.
+  </div>
+
+  <h4>მთავარი ჩანართის სექციები</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>სექცია</th>
+        <th>ველები</th>
+        <th>დანიშნულება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>ძირითადი კონფიგურაცია</strong></td>
+        <td>VAT მონიშვნის უჯრა, მშობელი ID-ს ინფორმაცია</td>
+        <td>დააყენეთ, ვრცელდება თუ არა VAT ამ ნივთზე და ნახეთ მშობელი ნივთის მითითებები</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>განყოფილების მარაგი</strong></td>
+        <td>მარაგის ცხრილი (მხოლოდ წაკითხვის)</td>
+        <td>აჩვენებს მიმდინარე მარაგის დონეებს საავადმყოფოს განყოფილებებში. ჩნდება მხოლოდ იმ შემთხვევაში, თუ ნივთს აქვს მარაგის მონაცემები.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>სამედიცინო ნივთის სახელი</strong></td>
+        <td>სამედიცინო ნივთის ავტოშევსება ან ტექსტური ველი</td>
+        <td>დააკავშირეთ ეს პროდუქტი დონე 4 ზოგად დასახელებასთან. მოიცავს შენახვისა და გასუფთავების ღილაკებს.</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>სამედიცინო ნივთის ჯგუფი</strong></td>
+        <td>ჯგუფის სახელი (რედაქტირებადი ტექსტი)</td>
+        <td>აჩვენებს ან ცვლის დონე 2 პროდუქციის ჯგუფს. ავტომატურად ივსება სამედიცინო ნივთის არჩევისას.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>გენერიკი</strong></td>
+        <td>ზოგადი წამლის ავტოშევსება</td>
+        <td>კავშირი ზოგადი წამლის სახელთან ფარმაცევტული ნივთებისთვის (მაგ., პარაცეტამოლი, იბუპროფენი)</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>ნივთის დაშლა</strong></td>
+        <td>რაოდენობა, ერთეული</td>
+        <td>განსაზღვრეთ, როგორ იშლება ეს ნივთი უფრო მცირე ერთეულებად (მასალების სპეციფიკაცია)</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>სამედიცინო სათაური</strong></td>
+        <td>სათაურის ტექსტი, ქვეყანა (ISO 3166), მწარმოებელი</td>
+        <td>მეორადი სამედიცინო კლასიფიკაცია, წარმოშობის ქვეყანა და მწარმოებლის მითითება</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>ტეგები</strong></td>
+        <td>კატეგორიის ტეგის ამომრჩეველი, UNSPSC კოდი</td>
+        <td>მინიჭეთ კლასიფიკაციის ტეგები (ნარკოტიკი, ანტიბიოტიკი, იმუნოლოგიური და ა.შ.) და UNSPSC სასაქონლო კოდები</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>ფასის გაანგარიშება</strong></td>
+        <td>ფასის რეჟიმის ამომრჩეველი, კოპირების ღილაკი</td>
+        <td>აკონტროლებს, გამოჩნდება თუ არა ნივთი გადახდის შეჯამებებში და/ან კლინიკურ გაანგარიშებებში</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>ფარმაცევტული დეტალები</strong></td>
+        <td>დოზირების ფორმა, წამლის სიძლიერე, მიღების გზა, კონტროლირებადი ნივთიერების ნიშანი</td>
+        <td>მედიკამენტების სპეციფიკური ველები. <strong>ხილვადია მხოლოდ</strong> მაშინ, როდესაც ნივთის კატეგორია არის „მედიკამენტები" ან „ნარკოტიკები".</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>მარაგი &amp; თვალყურის დევნება</strong></td>
+        <td>მინ/მაქს მარაგის დონეები, მიწოდების ვადა, პარტიის თვალყურის დევნება, ვარგისიანობის თვალყურის დევნება, შენახვის ვადა</td>
+        <td>ინვენტარის მართვის პარამეტრების კონფიგურაცია ავტომატური შეკვეთის გაფრთხილებებისა და პარტიის/ვარგისიანობის თვალყურის დევნებისთვის</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><strong>ტრანზაქციის ისტორია</strong></td>
+        <td>ბოლო 50 ტრანზაქციის ცხრილი (მხოლოდ წაკითხვის)</td>
+        <td>ნახეთ ამ ნივთის უახლესი მარაგის მოძრაობები (მიღებები, გადაცემები, მოხმარება)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>ატრიბუტების ჩანართი</h3>
+
+  <p>ატრიბუტების ჩანართი შეიცავს <strong>შვილობილი ნივთების</strong> ცხრილს, რომელიც აჩვენებს ყველა პროდუქტს, რომელიც ამ ნივთს მშობლად მიუთითებს. ეს სასარგებლოა კომპოზიტური ან შეფუთული პროდუქტებისთვის, სადაც ერთი მთავარი ნივთი შედგება რამდენიმე ქვეკომპონენტისგან.</p>
+
+  <h3>კატეგორიის ტეგების ცნობარი</h3>
+
+  <p>ტეგების სექცია (სექცია 8) გთავაზობთ 12 წინასწარ განსაზღვრულ კლასიფიკაციის ტეგს ნივთების სპეციალიზებული თვალყურის დევნებისთვის:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ტეგი</th>
+        <th>დანიშნულება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ნარკოტიკი</strong></td>
+        <td>კონტროლირებადი ნივთიერებები, რომლებიც საჭიროებენ სპეციალურ აღრიცხვას და ანგარიშგებას</td>
+      </tr>
+      <tr>
+        <td><strong>ანტიბიოტიკი</strong></td>
+        <td>ანტიბიოტიკული მედიკამენტები ანტიმიკრობული მეთვალყურეობის პროგრამებისთვის</td>
+      </tr>
+      <tr>
+        <td><strong>ჰუმანიტარული საქონელი</strong></td>
+        <td>შემოწირული ან ჰუმანიტარული დახმარების მარაგი</td>
+      </tr>
+      <tr>
+        <td><strong>იმუნოლოგიური</strong></td>
+        <td>ვაქცინები და იმუნოლოგიური პრეპარატები</td>
+      </tr>
+      <tr>
+        <td><strong>კოაგულაცია</strong></td>
+        <td>ლაბორატორიული რეაქტივები კოაგულაციის ტესტირებისთვის</td>
+      </tr>
+      <tr>
+        <td><strong>ბიოქიმია</strong></td>
+        <td>ლაბორატორიული რეაქტივები ბიოქიმიური კვლევებისთვის</td>
+      </tr>
+      <tr>
+        <td><strong>კლინიკური</strong></td>
+        <td>ზოგადი კლინიკური ტესტირების მარაგი</td>
+      </tr>
+      <tr>
+        <td><strong>ერთჯერადი სახარჯი მასალა (ლაბორატორია)</strong></td>
+        <td>ერთჯერადი ლაბორატორიული სახარჯი მასალა</td>
+      </tr>
+      <tr>
+        <td><strong>კალიბრატორები &amp; კონტროლები</strong></td>
+        <td>ხარისხის კონტროლისა და კალიბრაციის მასალები</td>
+      </tr>
+      <tr>
+        <td><strong>დამხმარე ხსნარები</strong></td>
+        <td>დამხმარე ხსნარები ლაბორატორიული აღჭურვილობისთვის</td>
+      </tr>
+      <tr>
+        <td><strong>ზესტანდარტული სახარჯი მასალა (იმპლანტი)</strong></td>
+        <td>მაღალი ღირებულების იმპლანტირებადი სამედიცინო მოწყობილობები</td>
+      </tr>
+      <tr>
+        <td><strong>MRI</strong></td>
+        <td>MRI-სთან დაკავშირებული კონტრასტული საშუალებები და მარაგი</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>მარაგის მართვის ველები</h3>
+
+  <p>მარაგისა და თვალყურის დევნების სექცია (სექცია 11) უზრუნველყოფს ველებს ინვენტარის ავტომატური მართვის კონფიგურაციისთვის:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>ველი</th>
+        <th>აღწერა</th>
+        <th>FHIR გაფართოება</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>მარაგის მინ. დონე</strong></td>
+        <td>როდესაც მიმდინარე მარაგი ამ რიცხვზე ქვემოთ ეცემა, იგზავნება ხელახალი შეკვეთის გაფრთხილება. არ შეიძლება აღემატებოდეს მარაგის მაქს. დონეს.</td>
+        <td><code>min-stock-level</code></td>
+      </tr>
+      <tr>
+        <td><strong>მარაგის მაქს. დონე</strong></td>
+        <td>მარაგში შესანახი მაქსიმალური რაოდენობა. გამოიყენება შეკვეთის წერტილის კალკულატორის მიერ შეკვეთის რაოდენობის განსაზღვრისთვის.</td>
+        <td><code>max-stock-level</code></td>
+      </tr>
+      <tr>
+        <td><strong>მიწოდების ვადა (დღეები)</strong></td>
+        <td>ხელახალი შეკვეთიდან მიწოდების მიღებამდე დღეების რაოდენობა. გამოიყენება შეკვეთის დროის გაანგარიშებისთვის.</td>
+        <td><code>lead-time-days</code></td>
+      </tr>
+      <tr>
+        <td><strong>პარტიის თვალყურის დევნება სავალდებულო</strong></td>
+        <td>ჩართვისას, ამ ნივთის ყოველი მიღება და გადაადგილება უნდა მოიცავდეს პარტიის ნომერს.</td>
+        <td><code>lot-tracking-required</code></td>
+      </tr>
+      <tr>
+        <td><strong>ვარგისიანობის თვალყურის დევნება სავალდებულო</strong></td>
+        <td>ჩართვისას, ყოველი მიღება უნდა მოიცავდეს ვარგისიანობის ვადას. ააქტიურებს FEFO (ჯერ ვადაგასული, ჯერ გაცემული) კრეფის რეჟიმს.</td>
+        <td><code>expiration-tracking-required</code></td>
+      </tr>
+      <tr>
+        <td><strong>ნაგულისხმევი შენახვის ვადა (დღეები)</strong></td>
+        <td>ჩნდება მხოლოდ ვარგისიანობის თვალყურის დევნების ჩართვისას. ადგენს ნაგულისხმევ შენახვის ვადას იმ ნივთებისთვის, რომლებიც მიღებულია ვარგისიანობის ვადის გარეშე.</td>
+        <td><code>default-shelf-life</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>ფარმაცევტული დეტალები:</strong>
+    დოზირების ფორმა, წამლის სიძლიერე, მიღების გზა და კონტროლირებადი ნივთიერების ველები ჩნდება მხოლოდ მაშინ, როდესაც ნივთის კატეგორია დაყენებულია „მედიკამენტებზე" ან „ნარკოტიკებზე". არაფარმაცევტული ნივთებისთვის ეს სექცია ავტომატურად იმალება.
+  </div>
+
+  <h3>ზომის ერთეულები</h3>
+
+  <p>სისტემა მხარს უჭერს 17 ერთეულის ტიპს საქონლის გაზომვისთვის, რომლებიც მოიცავს საავადმყოფოს მომარაგების ყველა გავრცელებულ შეფუთვას:</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin: 16px 0;">
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ცალი</strong> -- ერთეული
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>მლ</strong> -- მილილიტრი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>კოლოფი</strong> -- ყუთი/შეკვრა
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ამპულა</strong> -- ამპულა
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>აბი</strong> -- ტაბლეტი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ფლაკონი</strong> -- ფლაკონი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>კომპლექტი</strong> -- ნაკრები
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ლიტრი</strong> -- ლიტრი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>პაკეტი</strong> -- პაკეტი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>დღე</strong> -- დღე
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>წყვილი</strong> -- წყვილი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>გრ</strong> -- გრამი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>დოზა</strong> -- დოზა
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>მეტრი / მ</strong> -- მეტრი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>მკგ</strong> -- მიკროგრამი
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>რეაქტივი</strong> -- რეაქტივი (ერთეული)
     </div>
   </div>
-
-  <!-- პროდუქციის კატალოგი -->
-  <h3 id="wh-product-catalog">პროდუქციის კატალოგი</h3>
-
-  <p>ქვედა ორი დონე შეიცავს ფაქტობრივ პროდუქტის მონაცემებს, რომლებიც ყოველდღიურ საწყობის ოპერაციებში გამოიყენება.</p>
-
-  <h4>ზოგადი დასახელებები (დონე 4)</h4>
-  <p>ზოგადი დასახელებები წარმოადგენს პროდუქტის სტანდარტულ სახელებს ბრენდის ან მწარმოებლის სპეციფიკის გარეშე. მაგალითად, "ამოქსიცილინი" არის ზოგადი დასახელება, ხოლო "ამოქსიცილინი 500მგ ტაბლეტი GlaxoSmithKline-ის წარმოების" არის კონკრეტული კატალოგის ნივთი.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-items-ka.png" alt="ზოგადი დასახელებების ჩანართი პროდუქტის სიით, ქვეჯგუფის ბეჯებით, საწყობის ნივთების რაოდენობით და ფილტრის ოფციებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-items">
-  </div>
-
-  <p>ზოგადი დასახელებების ჩანართი აჩვენებს:</p>
-  <ul class="doc-list">
-    <li><strong>ქვეჯგუფის ბეჯი</strong> — რომელ ქვეჯგუფს (ან პროდუქტების ჯგუფს) ეკუთვნის ეს ნივთი</li>
-    <li><strong>საწყობის რაოდენობა</strong> — ამ ზოგად დასახელებასთან დაკავშირებული კონკრეტული კატალოგის ნივთების რაოდენობა</li>
-    <li><strong>ჯგუფის ფილტრის შეტყობინება</strong> — პროდუქტების ჯგუფიდან ჯვარედინი ფილტრაციისას, ლურჯი შეტყობინება აჩვენებს აქტიურ ფილტრს გასუფთავების ღილაკით</li>
-    <li><strong>სტრიქონზე დაკლიკებით ნავიგაცია</strong> — დააკლიკეთ ნებისმიერ ზოგად დასახელებაზე მისი პროდუქციის კატალოგის ნივთების ჯვარედინი ფილტრაციისთვის</li>
-  </ul>
-
-  <h4>პროდუქციის კატალოგი (დონე 5)</h4>
-  <p>პროდუქციის კატალოგი ყველაზე დეტალური დონეა, რომელიც შეიცავს კონკრეტულ საწყობის ნივთებს სრული ატრიბუტებით. აქ მართავთ ფაქტობრივ პროდუქტებს, რომლებიც ინახება, ნაწილდება და თვალყურს ადევნებთ საავადმყოფოში.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-catalog-ka.png" alt="პროდუქციის კატალოგის ჩანართი დეტალური ნივთების სიით კოდის, სახელის, ჯგუფის, კატეგორიის, ერთეულის, მწარმოებლის და რაოდენობის სვეტებით" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-catalog">
-  </div>
-
-  <p>კატალოგის ცხრილს აქვს 13 სვეტი, რომელიც ნივთის სრულ ინფორმაციას აჩვენებს:</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>სვეტი</th>
-          <th>აღწერა</th>
-          <th>FHIR ბილიკი</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>ID</strong></td>
-          <td>ორიგინალური მონაცემთა ბაზის იდენტიფიკატორი</td>
-          <td>SupplyDelivery.identifier</td>
-        </tr>
-        <tr>
-          <td><strong>კოდი</strong></td>
-          <td>პროდუქტის კოდი (SKU)</td>
-          <td>SupplyDelivery.identifier (code system)</td>
-        </tr>
-        <tr>
-          <td><strong>სახელი</strong></td>
-          <td>პროდუქტის სრული სახელი დოზით და ფორმით</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept</td>
-        </tr>
-        <tr>
-          <td><strong>პროდუქტების ჯგუფი</strong></td>
-          <td>მშობელი ჯგუფი მე-2 დონიდან</td>
-          <td>Extension: item-group-ref (general-group deprecated)</td>
-        </tr>
-        <tr>
-          <td><strong>ზოგადი დასახელება</strong></td>
-          <td>ზოგადი სახელი მე-4 დონიდან</td>
-          <td>Extension: medical-item-ref (general-name deprecated)</td>
-        </tr>
-        <tr>
-          <td><strong>კატეგორია</strong></td>
-          <td>უმაღლესი დონის კატეგორია (სახარჯი მასალა, მედიკამენტები და სხვ.)</td>
-          <td>Extension: warehouse-category</td>
-        </tr>
-        <tr>
-          <td><strong>ერთეული</strong></td>
-          <td>ზომის ერთეული (ცალი, მლ, კოლოფი, ამპულა და სხვ.)</td>
-          <td>Extension: warehouse-unit</td>
-        </tr>
-        <tr>
-          <td><strong>მწარმოებელი</strong></td>
-          <td>პროდუქტის ქვეყანა/მწარმოებელი</td>
-          <td>Extension: manufacturer</td>
-        </tr>
-        <tr>
-          <td><strong>რაოდენობა</strong></td>
-          <td>მიმდინარე მარაგის რაოდენობა</td>
-          <td>Extension: warehouse-quantity</td>
-        </tr>
-        <tr>
-          <td><strong>აღწერა</strong></td>
-          <td>პროდუქტის დამატებითი აღწერა</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept.coding[0].display</td>
-        </tr>
-        <tr>
-          <td><strong>წაშლილი</strong></td>
-          <td>რბილი წაშლის სტატუსი (დიახ/არა)</td>
-          <td>Extension: is-deleted + SupplyDelivery.status</td>
-        </tr>
-        <tr>
-          <td><strong>მშობელი</strong></td>
-          <td>მშობელი ნივთის მითითება (შეკრული პროდუქტებისთვის)</td>
-          <td>Extension: parent-item</td>
-        </tr>
-        <tr>
-          <td><strong>ფასის დათვლა</strong></td>
-          <td>ფასწარმოქმნის ხილვადობის წესები ანგარიშსწორებისთვის</td>
-          <td>Extension: price-calculation</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p>კატალოგი მხარს უჭერს <strong>სერვერის მხარეს გვერდებად დაყოფას</strong> (50 ნივთი თითო გვერდზე) და უზრუნველყოფს სამ ფილტრის კონტროლს:</p>
-  <ul class="doc-list">
-    <li><strong>ტექსტური ძიება</strong> — გაფილტრეთ პროდუქტის სახელით (300 მილიწამი დაყოვნებით წარმადობისთვის)</li>
-    <li><strong>კატეგორიის ფილტრი</strong> — ჩამოსაშლელი მენიუ უმაღლესი დონის კატეგორიით ფილტრაციისთვის</li>
-    <li><strong>სტატუსის ფილტრი</strong> — აჩვენეთ აქტიური ნივთები, წაშლილი ნივთები ან ყველა</li>
-  </ul>
-
-  <h4>კატალოგის ნივთის რედაქტირება</h4>
-  <p>დააკლიკეთ რედაქტირების ღილაკს ნებისმიერ კატალოგის ნივთზე დეტალური რედაქტირების მოდალის გასახსნელად. მოდალს აქვს ორი ჩანართი:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-item-edit-ka.png" alt="საწყობის ნივთის რედაქტირების მოდალი მთავარი ჩანართით, რომელიც აჩვენებს დდშ-ს პარამეტრებს, სამედიცინო ნივთის ბმულს, ჯენერიკს, დაშლას და მწარმოებლის ველებს" class="doc-screenshot-image" data-i18n-img="wh-item-edit">
-  </div>
-
-  <p><strong>მთავარი ჩანართი</strong> შეიცავს რედაქტირებად სექციებს, თითოეულს საკუთარი შენახვის ღილაკით:</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>სექცია</th>
-          <th>ველები</th>
-          <th>აღწერა</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>ძირითადი კონფიგურაცია</strong></td>
-          <td>დდშ, მშობელი ID</td>
-          <td>საგადასახადო პარამეტრები და მშობელი ნივთის მითითება</td>
-        </tr>
-        <tr>
-          <td><strong>განყოფილების მარაგი</strong></td>
-          <td>განყოფილება, რაოდენობა</td>
-          <td>მხოლოდ წასაკითხი ცხრილი, რომელიც აჩვენებს მარაგის განაწილებას განყოფილებებს შორის</td>
-        </tr>
-        <tr>
-          <td><strong>სამედიცინო ნივთი</strong></td>
-          <td>სამედიცინო ნივთის სახელი (ავტოშევსება)</td>
-          <td>აკავშირებს ამ კატალოგის ნივთს მე-4 დონის ზოგად დასახელებასთან</td>
-        </tr>
-        <tr>
-          <td><strong>სამედიცინო ნივთის ჯგუფი</strong></td>
-          <td>ჯგუფის სახელი (ავტომატურად შევსებული)</td>
-          <td>ავტომატურად ივსება სამედიცინო ნივთის არჩევისას; ასევე რედაქტირებადია</td>
-        </tr>
-        <tr>
-          <td><strong>ჯენერიკი</strong></td>
-          <td>ჯენერიკული წამალი (ავტოშევსება)</td>
-          <td>ბმული ჯენერიკული წამლის მითითებაზე ფარმაკოლოგიური დაჯგუფებისთვის</td>
-        </tr>
-        <tr>
-          <td><strong>ნივთის დაშლა</strong></td>
-          <td>რაოდენობა, ერთეული</td>
-          <td>მასალების სია შედგენილი პროდუქტებისთვის</td>
-        </tr>
-        <tr>
-          <td><strong>სამედიცინო სათაური</strong></td>
-          <td>სათაური, ქვეყანა, მწარმოებელი</td>
-          <td>პროდუქტის წარმოშობისა და მწარმოებლის დეტალები</td>
-        </tr>
-        <tr>
-          <td><strong>ტეგები</strong></td>
-          <td>კატეგორიის ტეგი, UNSPSC კოდი</td>
-          <td>კლასიფიკაციის ტეგები (ნარკოტიკი, ანტიბიოტიკი, იმუნოლოგიური და სხვ.)</td>
-        </tr>
-        <tr>
-          <td><strong>ფასის დათვლა</strong></td>
-          <td>გამოთვლის რეჟიმი</td>
-          <td>ფასწარმოქმნის ხილვადობის წესები კოპირების ფუნქციით</td>
-        </tr>
-        <tr>
-          <td><strong>ფარმაცევტული დეტალები</strong></td>
-          <td>დოზის ფორმა, სიძლიერე, მიღების გზა, კონტროლირებადი ნივთიერება</td>
-          <td>ჩანს მხოლოდ მედიკამენტი/ნარკოტიკი კატეგორიებისთვის</td>
-        </tr>
-        <tr>
-          <td><strong>მარაგი და თვალყურის დევნა</strong></td>
-          <td>მინ/მაქს მარაგი, მიწოდების დრო, პარტიის თვალყურის დევნა, ვადის თვალყურის დევნა</td>
-          <td>ხელახალი შეკვეთის შეტყობინებები და მიკვლევადობის პარამეტრები</td>
-        </tr>
-        <tr>
-          <td><strong>ტრანზაქციების ისტორია</strong></td>
-          <td>ბოლო 50 ტრანზაქცია (მხოლოდ წასაკითხი)</td>
-          <td>აუდიტის კვალი მიღებების, გადაცემების და კორექტირებების</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p><strong>ატრიბუტების ჩანართი</strong> აჩვენებს ამ პროდუქტთან დაკავშირებულ შვილობილ ნივთებს (შეკრული ან შედგენილი ნივთებისთვის).</p>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">ℹ️</div>
-    <div class="doc-info-content">
-      <strong>გაძლიერებული ავტორიზაცია:</strong> კატალოგის ნივთებში ცვლილებების შენახვა მოითხოვს ხელახალ ავტორიზაციას. როცა შენახვის ღილაკს დააჭერთ, დადასტურების დიალოგი მოგთხოვთ პაროლის ხელახლა შეყვანას, სანამ ცვლილება გამოიყენება. ეს იცავს პროდუქტის მონაცემთა ბაზის არაავტორიზებული ცვლილებებისგან.
-    </div>
-  </div>
-
-  <details class="doc-collapsible">
-    <summary class="doc-collapsible-header">
-      <span class="doc-collapsible-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </span>
-      <strong>FHIR მონაცემთა მოდელის დეტალები</strong>
-    </summary>
-    <div class="doc-collapsible-content">
-      <p>ნომენკლატურის იერარქია იმპლემენტირებულია შემდეგი FHIR რესურსებით:</p>
-      <ul class="doc-list">
-        <li><strong>List</strong> (სხვადასხვა <code>code</code> მნიშვნელობებით) — ინახავს 1-4 დონეებს სიის ჩანაწერებად. თითოეული ჩანაწერი შეიცავს ნივთის სახელს და სტატუსს. მშობელ-შვილობილი ურთიერთობები ინარჩუნება ჩანაწერების მითითებებით.</li>
-        <li><strong>SupplyDelivery</strong> — ინახავს მე-5 დონის კატალოგის ნივთებს სრული ატრიბუტებით (კოდი, სახელი, კატეგორია, ერთეული, რაოდენობა). FHIR გაფართოებები ატარებს დამატებით მონაცემებს, როგორიცაა მწარმოებელი, ფასწარმოქმნის წესები და ჯგუფის ბმულები.</li>
-        <li><strong>DeviceDefinition</strong> — გამოიყენება რედაქტირების მოდალისთვის, უზრუნველყოფს დეტალურ ატრიბუტებს, როგორიცაა დდშ, ფარმაცევტული დეტალები, მარაგის დონეები, პარტიის თვალყურის დევნა და ტრანზაქციების ისტორია.</li>
-      </ul>
-
-      <div class="doc-table-container">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>FHIR რესურსი</th>
-              <th>სიის კოდი</th>
-              <th>ნომენკლატურის დონე</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-categories</code></td>
-              <td>დონე 1 — კატეგორიები</td>
-            </tr>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-item-groups</code></td>
-              <td>დონე 2 — პროდუქტების ჯგუფები</td>
-            </tr>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-subcategories</code></td>
-              <td>დონე 3 — ქვეჯგუფები</td>
-            </tr>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-medical-items</code></td>
-              <td>დონე 4 — ზოგადი დასახელებები</td>
-            </tr>
-            <tr>
-              <td>SupplyDelivery</td>
-              <td>N/A (ძიება სტატუსით)</td>
-              <td>დონე 5 — პროდუქციის კატალოგი</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </details>
-
 </section>

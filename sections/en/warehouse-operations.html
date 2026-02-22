@@ -2,9 +2,10 @@
   <div class="doc-section-header">
     <div class="doc-section-icon">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 21V8l9-5 9 5v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M9 21V12h6v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M1 10l11-6 11 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 3H1V16H16V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 8H20L23 11V16H16V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/>
+        <circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/>
       </svg>
     </div>
     <div>
@@ -13,944 +14,1039 @@
     </div>
   </div>
 
-  <p>The Warehouse module provides end-to-end supply chain management within MediMind. It covers six core operations: <strong>Receiving</strong> goods from suppliers, <strong>Transferring</strong> stock between departments, placing <strong>Orders</strong> for supplies, monitoring real-time <strong>Inventory</strong> balances, <strong>Writing off</strong> damaged or unusable stock, and submitting <strong>Procurement</strong> requests for new purchases. Each operation is accessible from the warehouse administration section and follows FHIR-compliant data storage.</p>
+  <p>The <strong>Warehouse Operations</strong> module handles the three core supply chain activities in the hospital: <strong>Receiving</strong> goods from external suppliers, <strong>Transferring</strong> items between departments, and <strong>Ordering</strong> supplies from other departments. Together these operations form the backbone of inventory movement — every item that enters, leaves, or moves within the hospital is tracked through one of these three workflows.</p>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x2139;&#xFE0F;</div>
-    <div class="doc-info-content">
-      <strong>FHIR Resources:</strong> Warehouse operations use three main FHIR resource types: <code>SupplyDelivery</code> (receipts and transfers), <code>SupplyRequest</code> (orders), and <code>Basic</code> (StockQuant inventory balances). All operations generate audit trail records for traceability.
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Core Operations</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">8</span>
+      <span class="doc-stat-inline-label">Tab Views</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">15</span>
+      <span class="doc-stat-inline-label">KPI Cards</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">FHIR Resources</span>
     </div>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- RECEIVING -->
-  <!-- ============================================================ -->
-  <h3 id="wh-receiving">3.1 Goods Receiving</h3>
-
-  <p>The Receiving page has been restructured with a modern tabbed interface for managing incoming goods. The page header features <strong>"Import from RS"</strong> and <strong>"+ Create Receipt"</strong> action buttons, with a tab switcher below for navigating between <strong>Receiving History</strong> and <strong>Analytics</strong> views.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-receiving-list-en.png" alt="Receiving page with tab switcher, search filters, and new table columns" class="doc-screenshot-image" data-i18n-img="wh-receiving-list">
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Supply Chain Flow:</strong>
+    Receiving brings items into the hospital from suppliers. Transfers move items between departments (e.g., from the main warehouse to the pharmacy). Orders let departments request items from each other before a transfer is created.
   </div>
 
-  <h4>Page Header</h4>
-  <p>The page header contains two primary action buttons:</p>
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Operation</th>
+        <th>Purpose</th>
+        <th>FHIR Resource</th>
+        <th>Tabs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Receiving</strong></td>
+        <td>Record goods arriving from external suppliers</td>
+        <td>SupplyDelivery (type: receipt)</td>
+        <td>History + Analytics</td>
+      </tr>
+      <tr>
+        <td><strong>Transfers</strong></td>
+        <td>Move items between hospital departments</td>
+        <td>SupplyDelivery (type: transfer)</td>
+        <td>All + Grouped + Approval</td>
+      </tr>
+      <tr>
+        <td><strong>Orders</strong></td>
+        <td>Request supplies from other departments</td>
+        <td>SupplyRequest</td>
+        <td>All + Grouped + Confirmation</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 3.1 — RECEIVING -->
+  <!-- ================================================================== -->
+
+  <h3 id="receiving">3.1 Receiving (Goods Receipt)</h3>
+
+  <p>The <strong>Receiving</strong> module records all goods arriving at the hospital from external suppliers. Think of it as the hospital's "front door" for inventory — every item that enters the supply chain starts here. Each receipt is tied to a supplier invoice and creates FHIR <code>SupplyDelivery</code> resources that automatically update stock balances.</p>
+
+  <h4>Page Layout</h4>
+
+  <p>The Receiving page uses a <strong>2-tab layout</strong> with shared header actions:</p>
+
   <ul class="doc-list">
-    <li><strong>Import from RS</strong> -- Import receipts directly from the Revenue Service (RS) system for officially documented deliveries</li>
-    <li><strong>+ Create Receipt</strong> -- Open the 3-step receipt creation wizard</li>
+    <li><strong>History tab</strong> — Grouped invoice table showing all received shipments with filters, sorting, and export</li>
+    <li><strong>Analytics tab</strong> — KPI summary cards and detailed analytics charts for receiving trends</li>
   </ul>
 
-  <h4>Tab Views</h4>
-  <p>Below the header, a tab switcher organizes the page into two views:</p>
+  <p>Two action buttons appear in the page header, available from either tab:</p>
   <ul class="doc-list">
-    <li><strong>Receiving History</strong> (with count badge) -- Grouped invoice records showing all receipts, organized by reception groups</li>
-    <li><strong>Analytics</strong> (with count badge) -- Summary statistics and charts for receiving operations</li>
+    <li><strong>Import from RS</strong> — Import invoice data from the RS (Revenue Service) electronic invoicing system</li>
+    <li><strong>New Receipt</strong> — Create a new receipt manually by entering supplier and item details</li>
   </ul>
 
-  <h4>Reception Group</h4>
-  <p>The <strong>Reception Group</strong> sub-section allows organizing receipts into logical groups for batch processing and tracking related deliveries together.</p>
+  <!-- Receiving History -->
+  <h4 id="receiving-history">History Tab</h4>
 
-  <h4>Search &amp; Filters</h4>
-  <p>A collapsible <strong>Search &amp; Filters</strong> panel provides nine filter fields for narrowing down receipt records:</p>
+  <p>The History tab displays all receiving records grouped by invoice number. Each row represents one invoice from a supplier, showing the total quantity and value of all items on that invoice. Clicking a row opens a detail modal with the individual line items.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-receiving-list-en.png" alt="Receiving history tab showing grouped invoice table with filters" class="doc-screenshot-image" data-i18n-img="wh-receiving-list">
+  </div>
+
+  <h5>Filters</h5>
+
+  <p>The filter panel at the top of the History tab lets you narrow down the receiving records. Use any combination of these fields to find specific shipments:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Filter Field</th>
+          <th>Filter</th>
           <th>Description</th>
+          <th>Example</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Date From</strong></td>
-          <td>Start date for filtering receipts</td>
-        </tr>
-        <tr>
-          <td><strong>Date To</strong></td>
-          <td>End date for filtering receipts</td>
+          <td><strong>Date Range</strong></td>
+          <td>Start and end date for the receiving period</td>
+          <td>2026-01-01 to 2026-01-31</td>
         </tr>
         <tr>
           <td><strong>Invoice Number</strong></td>
-          <td>Search by specific invoice number</td>
+          <td>Supplier's invoice or waybill number</td>
+          <td>INV-2026-0042</td>
         </tr>
         <tr>
           <td><strong>Contract Number</strong></td>
-          <td>Filter by contract number</td>
+          <td>Procurement contract reference number</td>
+          <td>CTR-2025-115</td>
         </tr>
         <tr>
           <td><strong>Supplier</strong></td>
           <td>Filter by supplier company name</td>
+          <td>GPC Pharma</td>
         </tr>
         <tr>
           <td><strong>Department</strong></td>
-          <td>Filter by receiving department</td>
+          <td>Receiving department (warehouse location)</td>
+          <td>Main Warehouse</td>
+        </tr>
+        <tr>
+          <td><strong>Group</strong></td>
+          <td>Product group category</td>
+          <td>Medications</td>
         </tr>
         <tr>
           <td><strong>Item Name</strong></td>
-          <td>Search by product name within receipts</td>
-        </tr>
-        <tr>
-          <td><strong>Price From</strong></td>
-          <td>Minimum price filter for receipts</td>
-        </tr>
-        <tr>
-          <td><strong>Price To</strong></td>
-          <td>Maximum price filter for receipts</td>
+          <td>Search within item names on the invoices</td>
+          <td>Amoxicillin</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <p>Results can be exported in two formats using the <strong>Excel</strong> and <strong>PDF</strong> export buttons.</p>
+  <h5>Invoice Table Columns</h5>
 
-  <h4>Table Columns</h4>
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
           <th>Column</th>
           <th>Description</th>
+          <th>FHIR Path</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>Date</strong></td>
-          <td>Receipt date</td>
+          <td>Date the goods were received</td>
+          <td>SupplyDelivery.occurrenceDateTime</td>
         </tr>
         <tr>
-          <td><strong>Invoice Number</strong></td>
-          <td>Supplier invoice identifier</td>
+          <td><strong>Invoice #</strong></td>
+          <td>Supplier invoice number (groups related items)</td>
+          <td>SupplyDelivery.identifier</td>
         </tr>
         <tr>
-          <td><strong>Contract Number</strong></td>
-          <td>Associated procurement contract</td>
+          <td><strong>Contract #</strong></td>
+          <td>Procurement contract reference</td>
+          <td>SupplyDelivery extension (contract-number)</td>
         </tr>
         <tr>
           <td><strong>Company</strong></td>
-          <td>Supplier company name</td>
+          <td>Supplier organization name</td>
+          <td>SupplyDelivery.supplier.display</td>
         </tr>
         <tr>
           <td><strong>Department</strong></td>
           <td>Receiving department/warehouse</td>
-        </tr>
-        <tr>
-          <td><strong>Goods</strong></td>
-          <td>Item/product name</td>
+          <td>SupplyDelivery.destination.display</td>
         </tr>
         <tr>
           <td><strong>Quantity</strong></td>
-          <td>Total quantity of items received</td>
-        </tr>
-        <tr>
-          <td><strong>Unit Price</strong></td>
-          <td>Price per single unit</td>
-        </tr>
-        <tr>
-          <td><strong>Package Quantity</strong></td>
-          <td>Number of units per package</td>
-        </tr>
-        <tr>
-          <td><strong>Package Price</strong></td>
-          <td>Price per package</td>
+          <td>Total quantity across all line items</td>
+          <td>SupplyDelivery.suppliedItem.quantity</td>
         </tr>
         <tr>
           <td><strong>Total</strong></td>
-          <td>Total monetary value of the receipt</td>
+          <td>Total monetary value of the receipt (GEL)</td>
+          <td>Computed: quantity x unit price</td>
+        </tr>
+        <tr>
+          <td><strong>Actions</strong></td>
+          <td>View details, Edit, Delete (with step-up auth)</td>
+          <td>—</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h4>Reviewing Imported Items</h4>
-  <p>When reviewing a receipt (especially one imported from RS), the <strong>"Review Items"</strong> modal provides a detailed view of the imported data with matching and tracking capabilities.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-receiving-review-en.png" alt="Review Items modal showing document info cards, matched items, and lot tracking fields" class="doc-screenshot-image" data-i18n-img="wh-receiving-review">
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Export Options:</strong>
+    Click the <strong>Excel</strong> or <strong>PDF</strong> button in the History tab header to export all filtered receiving records. The Excel export includes all columns plus package quantity and package price fields.
   </div>
 
-  <p>The Review Items modal includes:</p>
+  <h5>Invoice Detail Modal</h5>
+
+  <p>Clicking on any invoice row opens the <strong>Invoice Detail Modal</strong>, which shows every individual line item on that invoice. From this modal you can:</p>
+
   <ul class="doc-list">
-    <li><strong>Document info cards</strong> -- Four cards at the top showing Document #, Date, Company Name, and Amount</li>
-    <li><strong>Duplicate waybill warning</strong> -- Alert if the invoice number has already been imported</li>
-    <li><strong>Department selector</strong> -- Choose the receiving department, with a "Receive without contract" checkbox option</li>
-    <li><strong>Matched items table</strong> -- Each row shows Quantity, Price, Total, and an Unmatch button for correcting automatic matches</li>
-    <li><strong>Per-item tracking</strong> -- Lot Number and Expiry Date fields for each line item</li>
+    <li><strong>View</strong> all items received under that invoice number with item codes, names, quantities, and prices</li>
+    <li><strong>Edit</strong> individual line item details (requires step-up authentication)</li>
+    <li><strong>Delete</strong> individual line items (requires step-up authentication and appropriate permissions)</li>
   </ul>
 
-  <h4>Creating a Receipt</h4>
-  <p>Click <strong>"+ Create Receipt"</strong> to open the 3-step receipt creation wizard:</p>
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Step-Up Authentication:</strong>
+    Editing or deleting receiving records requires re-entering your password. This extra security step prevents accidental modifications to financial records. Only admin users (level 4+) or users assigned to the receiving department can delete records.
+  </div>
+
+  <!-- Receiving Analytics -->
+  <h4 id="receiving-analytics">Analytics Tab</h4>
+
+  <p>The Analytics tab provides a data-driven overview of your receiving activity. At the top, five KPI cards give you an instant snapshot of receiving performance. Below them, detailed analytics sections break down the data by supplier, department, time period, and product.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-receipt-create-en.png" alt="Create Receipt wizard Step 1 showing shipment details form" class="doc-screenshot-image" data-i18n-img="wh-receipt-create">
+    <img src="images/wh-receiving-analytics-en.png" alt="Receiving analytics tab with KPI cards and trend charts" class="doc-screenshot-image" data-i18n-img="wh-receiving-analytics">
   </div>
 
-  <ol class="doc-list">
-    <li><strong>Shipment Details</strong> -- Enter supplier, department, invoice number, and delivery date</li>
-    <li><strong>Process Items</strong> -- Add line items with product, quantity, pricing, lot number, and expiry date</li>
-    <li><strong>Confirmation</strong> -- Review all details and confirm the receipt</li>
-  </ol>
-
-  <h4>Analytics</h4>
-  <p>The <strong>Analytics</strong> tab provides summary statistics and visual charts for receiving operations, helping managers track trends in goods received over time.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-receiving-analytics-en.png" alt="Analytics tab showing receiving statistics and charts" class="doc-screenshot-image" data-i18n-img="wh-receiving-analytics">
-  </div>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x1F4E6;</div>
-    <div class="doc-info-content">
-      <strong>RS Import:</strong> The <strong>Import from RS</strong> button allows importing receipts directly from the Revenue Service (RS) system. Imported data is automatically matched against the warehouse catalog, and unmatched items are flagged for manual review.
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- TRANSFERS -->
-  <!-- ============================================================ -->
-  <h3 id="wh-transfers">3.2 Transfers</h3>
-
-  <p>The Transfers page manages movement of stock between departments (think of it like an internal shipping system). A transfer moves items from a <strong>source department</strong> to a <strong>destination department</strong> and requires approval before the stock is actually moved. This prevents unauthorized or accidental inventory changes.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-transfers-list-en.png" alt="Transfers page showing grouped view with transfer records and pending approval tab" class="doc-screenshot-image" data-i18n-img="wh-transfers-list">
-  </div>
-
-  <h4>View Modes</h4>
-  <p>Three tabs organize transfers by different perspectives:</p>
-  <ul class="doc-list">
-    <li><strong>All Transfers</strong> -- Every transfer line item in a flat list, filterable by date, department, and status</li>
-    <li><strong>Grouped View</strong> -- Transfers grouped by document number, showing the full picture of a multi-item transfer in one row</li>
-    <li><strong>Pending Approval</strong> -- Only transfers awaiting confirmation, with an orange badge showing the count</li>
-  </ul>
-
-  <h4>Transfer Lifecycle</h4>
-  <p>Transfers follow a controlled workflow to ensure accountability:</p>
+  <h5>KPI Summary Cards</h5>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Status</th>
-          <th>Description</th>
-          <th>Who Acts</th>
+          <th>KPI Card</th>
+          <th>What It Shows</th>
+          <th>Trend Indicator</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>In-Progress</strong></td>
-          <td>Transfer created, awaiting confirmation by the receiving department</td>
-          <td>Sender creates</td>
-        </tr>
-        <tr>
-          <td><strong>Completed</strong></td>
-          <td>Transfer confirmed -- stock is moved from source to destination</td>
-          <td>Receiver confirms</td>
-        </tr>
-        <tr>
-          <td><strong>Abandoned</strong></td>
-          <td>Transfer rejected or cancelled</td>
-          <td>Either party</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="doc-warning-box">
-    <strong>Step-Up Authentication:</strong> Creating and confirming transfers requires step-up authentication (re-entering your password). This extra security step prevents unauthorized stock movements and creates an audit trail of who approved each transfer.
-  </div>
-
-  <h4>Creating a Transfer</h4>
-  <p>Click <strong>New Transfer</strong> to open the Transfer Book modal. This dual-panel interface lets you select items from the source department's inventory and add them to the transfer:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-transfer-create-en.png" alt="Transfer creation modal with source/destination department selectors and dual-panel item picker" class="doc-screenshot-image" data-i18n-img="wh-transfer-create">
-  </div>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Field</th>
-          <th>Description</th>
-          <th>FHIR Mapping</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Date</strong></td>
-          <td>Transfer date (defaults to today)</td>
-          <td>SupplyDelivery.occurrenceDateTime</td>
-        </tr>
-        <tr>
-          <td><strong>Document Number</strong></td>
-          <td>Auto-generated transfer document identifier</td>
-          <td>SupplyDelivery.identifier</td>
-        </tr>
-        <tr>
-          <td><strong>From Department</strong></td>
-          <td>Source department (selecting this loads available inventory in the left panel)</td>
-          <td>Extension: source-department (Location reference)</td>
-        </tr>
-        <tr>
-          <td><strong>To Department</strong></td>
-          <td>Destination department</td>
-          <td>Extension: dest-department (Location reference)</td>
-        </tr>
-        <tr>
-          <td><strong>Direct Write-Off</strong></td>
-          <td>When enabled, skips the approval step and completes the transfer immediately</td>
-          <td>SupplyDelivery.status = 'completed' (via parameter)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p>The left panel shows all items available in the source department. Click an item to move it to the right panel (selected items). Adjust quantities as needed. The system validates that requested quantities do not exceed available stock.</p>
-
-  <h4>Transfer Approval</h4>
-  <p>The Pending Approval tab shows transfers that need confirmation from the receiving department. The approval interface allows reviewing transfer details, editing quantities if needed, and confirming or deleting the transfer.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-transfer-approval-en.png" alt="Transfer approval queue showing pending transfers with confirm and delete actions" class="doc-screenshot-image" data-i18n-img="wh-transfer-approval">
-  </div>
-
-  <ul class="doc-list">
-    <li><strong>Department-based access</strong> -- Users only see transfers relevant to their assigned departments (admins see all)</li>
-    <li><strong>Quantity editing</strong> -- The receiver can adjust quantities before confirming (e.g., if fewer items arrived than expected)</li>
-    <li><strong>Stock validation</strong> -- The system checks that the source department still has sufficient stock before completing the transfer</li>
-    <li><strong>Audit trail</strong> -- Confirmation creates a Provenance record linking the action to the authenticated user</li>
-  </ul>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x1F504;</div>
-    <div class="doc-info-content">
-      <strong>FHIR Data:</strong> Transfers are stored as <code>SupplyDelivery</code> resources with type code <code>transfer</code>. Each line item is a separate resource, grouped by document number. Confirmation moves stock via the StockQuant service, decrementing the source and incrementing the destination.
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- ORDERS -->
-  <!-- ============================================================ -->
-  <h3 id="wh-orders">3.3 Orders</h3>
-
-  <p>The Orders page handles supply requests between departments. When a department needs supplies from a warehouse, they create an order specifying what they need and from which supplier/warehouse. Orders go through a confirmation workflow before being fulfilled.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-orders-list-en.png" alt="Orders page showing all orders list with status badges and confirmation queue tab" class="doc-screenshot-image" data-i18n-img="wh-orders-list">
-  </div>
-
-  <h4>View Modes</h4>
-  <ul class="doc-list">
-    <li><strong>All Orders</strong> -- Complete list of all orders with status, date, requester, and receiver details</li>
-    <li><strong>Grouped View</strong> -- Orders grouped by document number for multi-item orders</li>
-    <li><strong>Confirmation Queue</strong> -- Orders in <code>draft</code> or <code>active</code> status awaiting processing (orange badge shows count)</li>
-  </ul>
-
-  <h4>Order Lifecycle</h4>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Description</th>
-          <th>FHIR Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Draft</strong></td>
-          <td>Order created but not yet submitted</td>
-          <td>SupplyRequest.status = draft</td>
-        </tr>
-        <tr>
-          <td><strong>Active</strong></td>
-          <td>Order submitted and awaiting fulfillment</td>
-          <td>SupplyRequest.status = active</td>
-        </tr>
-        <tr>
-          <td><strong>Confirmed</strong></td>
-          <td>Order confirmed by receiver, ready for fulfillment</td>
-          <td>Extension: confirmed</td>
-        </tr>
-        <tr>
-          <td><strong>Complete</strong></td>
-          <td>Order fulfilled -- stock has been delivered</td>
-          <td>Extension: complete</td>
-        </tr>
-        <tr>
-          <td><strong>Cancelled</strong></td>
-          <td>Order cancelled before fulfillment</td>
-          <td>SupplyRequest.status = cancelled</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Creating an Order</h4>
-  <p>Two options are available for creating orders:</p>
-  <ul class="doc-list">
-    <li><strong>Order Book</strong> -- A dual-panel interface similar to the Transfer Book. Select the requesting department and the supplier/receiver department, then pick items from the receiver's inventory</li>
-    <li><strong>Create Waybill</strong> -- Creates a delivery waybill from existing confirmed orders, linking orders to actual shipments</li>
-  </ul>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-order-create-en.png" alt="Order Book modal with requester and receiver department selectors and dual-panel item picker" class="doc-screenshot-image" data-i18n-img="wh-order-create">
-  </div>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Field</th>
-          <th>Description</th>
-          <th>FHIR Mapping</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Date</strong></td>
-          <td>Order date</td>
-          <td>SupplyRequest.occurrenceDateTime</td>
-        </tr>
-        <tr>
-          <td><strong>Document Number</strong></td>
-          <td>Auto-generated or manual order number</td>
-          <td>SupplyRequest.identifier</td>
-        </tr>
-        <tr>
-          <td><strong>Requester Department</strong></td>
-          <td>The department placing the order</td>
-          <td>Extension: requester-department (Location reference)</td>
-        </tr>
-        <tr>
-          <td><strong>Receiver Department</strong></td>
-          <td>The warehouse/supplier fulfilling the order (selecting this loads available inventory)</td>
-          <td>Extension: receiver-department (Location reference)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x1F4CB;</div>
-    <div class="doc-info-content">
-      <strong>Order Line Items:</strong> Each order can contain multiple line items. Line items are stored as a JSON extension on the <code>SupplyRequest</code> resource, including item code, name, unit, and quantity for each product.
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- INVENTORY -->
-  <!-- ============================================================ -->
-  <h3 id="wh-inventory">3.4 Inventory &amp; Stock</h3>
-
-  <p>The Inventory page provides a real-time view of stock levels across all departments. It uses a materialized balance system called <strong>StockQuant</strong> -- think of it as a live ledger that updates instantly when goods are received, transferred, or consumed, instead of recalculating from the full transaction history each time.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-inventory-balances-en.png" alt="Stock balances table with department filter, search fields, and expiry status badges" class="doc-screenshot-image" data-i18n-img="wh-inventory-balances">
-  </div>
-
-  <h4>Stock Levels Tab</h4>
-  <p>The main inventory view displays a filterable table of all stock items. Each row represents a unique combination of product, location, lot number, and quality status.</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Column</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Code</strong></td>
-          <td>Product catalog code</td>
-        </tr>
-        <tr>
-          <td><strong>Goods</strong></td>
-          <td>Product name</td>
-        </tr>
-        <tr>
-          <td><strong>Type</strong></td>
-          <td>Item category/type</td>
-        </tr>
-        <tr>
-          <td><strong>Quantity</strong></td>
-          <td>Current stock level; shows available/total breakdown when items are reserved; out-of-stock badge for zero quantity</td>
-        </tr>
-        <tr>
-          <td><strong>Price</strong></td>
-          <td>Unit price</td>
-        </tr>
-        <tr>
-          <td><strong>Total</strong></td>
-          <td>Total value (quantity x price)</td>
-        </tr>
-        <tr>
-          <td><strong>Unit</strong></td>
-          <td>Measurement unit</td>
-        </tr>
-        <tr>
-          <td><strong>Expiration</strong></td>
-          <td>Expiry date with color-coded badges: red (expired), orange (expiring soon), yellow (within warning period)</td>
-        </tr>
-        <tr>
-          <td><strong>Series/Lot</strong></td>
-          <td>Lot/batch number with quality status badge (quarantine in yellow, rejected in red)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Filters</h4>
-  <p>The filter panel provides multiple ways to narrow down inventory:</p>
-  <ul class="doc-list">
-    <li><strong>Department</strong> -- Select a specific warehouse or department to view its stock</li>
-    <li><strong>Item Group</strong> -- Filter by product category</li>
-    <li><strong>Quantity checkboxes</strong> -- Show/hide zero balances, non-zero balances, or negative balances</li>
-    <li><strong>Grouped view</strong> -- Aggregate quantities across lots for the same product</li>
-    <li><strong>Stock Status</strong> -- Quick filter for All, Low Stock, Out of Stock, Expiring, or Expired items</li>
-    <li><strong>Zone</strong> -- Filter by warehouse zone (Cold Chain, Controlled, Hazmat, General)</li>
-    <li><strong>Cross-Location Search</strong> -- Search for a product across all departments to find where it is in stock</li>
-  </ul>
-
-  <p>The table supports inline search by product code and name, price range filtering, and expiration date range filtering. Results are paginated (50 items per page) and can be exported to Excel.</p>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x1F4CA;</div>
-    <div class="doc-info-content">
-      <strong>Transaction History:</strong> Click any row in the balance table to open the transaction history modal, which shows all stock movements (receipts, transfers, adjustments) that contributed to the current balance for that specific item and location.
-    </div>
-  </div>
-
-  <h4>Picking Queue (FEFO)</h4>
-  <p>The Picking Queue tab shows approved transfers that need to be physically fulfilled. When a transfer is approved, it appears here as a pick request. The system uses <strong>FEFO</strong> (First Expired, First Out) logic to recommend which lot to pick from -- items closest to their expiration date are suggested first.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-inventory-picking-en.png" alt="FEFO picking queue with transfer request cards and pick list table showing lot-level suggestions" class="doc-screenshot-image" data-i18n-img="wh-inventory-picking">
-  </div>
-
-  <p>The picking workflow operates in two stages:</p>
-
-  <ol class="doc-list">
-    <li><strong>Select a transfer request</strong> -- Choose from the list of pending transfer cards. Each card shows the item name, source/destination departments, quantity needed, and status</li>
-    <li><strong>Pick from lots</strong> -- The system queries StockQuant records for the source department and displays available lots sorted by expiration date (earliest first). The first lot is marked as the FEFO recommendation</li>
-  </ol>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Pick List Column</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Product Code / Name</strong></td>
-          <td>The product being picked</td>
-        </tr>
-        <tr>
-          <td><strong>Bin Location</strong></td>
-          <td>Physical storage location within the warehouse</td>
-        </tr>
-        <tr>
-          <td><strong>Lot Number</strong></td>
-          <td>Batch/lot identifier for traceability</td>
-        </tr>
-        <tr>
-          <td><strong>Expiration Date</strong></td>
-          <td>Lot expiry date (FEFO sorting key)</td>
-        </tr>
-        <tr>
-          <td><strong>Quantity Requested</strong></td>
-          <td>How many units the transfer needs</td>
-        </tr>
-        <tr>
-          <td><strong>Suggested Pick</strong></td>
-          <td>FEFO-recommended quantity from this lot (capped at available stock)</td>
-        </tr>
-        <tr>
-          <td><strong>Confirmed Pick</strong></td>
-          <td>Actual quantity picked by the warehouse operator</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="doc-warning-box">
-    <strong>FEFO Override:</strong> If you need to pick from a different lot than the FEFO recommendation (for example, if a closer lot has packaging damage), you can override the suggestion. The system will ask you to provide a reason for the override, which is recorded for audit purposes.
-  </div>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x1F50D;</div>
-    <div class="doc-info-content">
-      <strong>StockQuant Data Model:</strong> Each StockQuant record is a FHIR <code>Basic</code> resource with a composite key of <code>itemCode | locationId | lotNumber | qualityStatus</code>. This provides O(1) balance lookups instead of recalculating from the full transaction history. Quality statuses include: <strong>accepted</strong> (available for use), <strong>quarantine</strong> (under inspection), and <strong>rejected</strong> (not usable).
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- WRITE-OFFS -->
-  <!-- ============================================================ -->
-  <h3 id="wh-writeoffs">3.5 Write-offs</h3>
-
-  <p>The Write-offs page handles removal of damaged, expired, or otherwise unusable stock from inventory. When items cannot be sold or used (for example, expired medications or broken equipment), a write-off document formally removes them from the system and updates stock balances accordingly.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-writeoffs-list-en.png" alt="Write-offs history tab showing list of write-off documents with status badges and summary footer" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-list">
-  </div>
-
-  <h4>View Modes</h4>
-  <p>The page organizes write-offs across three tabs:</p>
-  <ul class="doc-list">
-    <li><strong>History</strong> -- All write-off documents in a flat table sorted by date, with document number, department, reason, total value, and status</li>
-    <li><strong>Analytics</strong> -- Write-offs grouped by document number, providing a consolidated view of multi-item write-offs</li>
-    <li><strong>Pending Confirmation</strong> -- Write-offs awaiting approval before being finalized, with an orange badge showing the count</li>
-  </ul>
-
-  <h4>Table Columns</h4>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Column</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Document Number</strong></td>
-          <td>Unique identifier for the write-off document</td>
-        </tr>
-        <tr>
-          <td><strong>Date</strong></td>
-          <td>Date the write-off was created</td>
-        </tr>
-        <tr>
-          <td><strong>Department</strong></td>
-          <td>The warehouse or department from which stock is being removed</td>
-        </tr>
-        <tr>
-          <td><strong>Reason</strong></td>
-          <td>Reason for write-off (expiry, damage, quality failure, etc.)</td>
+          <td><strong>Total Invoices</strong></td>
+          <td>Number of receiving documents across all time</td>
+          <td>% change vs. last month with sparkline</td>
         </tr>
         <tr>
           <td><strong>Total Value</strong></td>
-          <td>Combined value of all written-off items</td>
+          <td>Total monetary value of all received goods (GEL)</td>
+          <td>% change vs. last month with sparkline</td>
         </tr>
         <tr>
-          <td><strong>Status</strong></td>
-          <td>Current status badge (in-progress, completed, or abandoned)</td>
+          <td><strong>Top Supplier</strong></td>
+          <td>The supplier with the most invoices</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Avg Items Per Doc</strong></td>
+          <td>Average number of line items per invoice</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Busiest Day</strong></td>
+          <td>Day of the week with the most receiving activity</td>
+          <td>Shows number of invoices on that day</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h4>Write-off Lifecycle</h4>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Description</th>
-          <th>Who Acts</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>In-Progress</strong></td>
-          <td>Write-off created, awaiting confirmation from an authorized user</td>
-          <td>Creator submits</td>
-        </tr>
-        <tr>
-          <td><strong>Completed</strong></td>
-          <td>Write-off approved -- stock is permanently removed from balances</td>
-          <td>Approver confirms</td>
-        </tr>
-        <tr>
-          <td><strong>Abandoned</strong></td>
-          <td>Write-off rejected or cancelled before completion</td>
-          <td>Either party</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <p>The detailed analytics section below the KPI cards includes top-received items by value, department activity breakdown, daily volume heatmaps, and period-over-period comparison charts.</p>
 
-  <h4>Creating a Write-off</h4>
-  <p>Click the <strong>Create Write-off</strong> button to open the write-off creation modal. The form uses a dual-panel layout: select items from the department's current inventory on the left, then adjust quantities and provide a reason on the right.</p>
+  <!-- New Receipt Creation -->
+  <h4 id="receipt-creation">Creating a New Receipt</h4>
+
+  <p>Click <strong>New Receipt</strong> in the page header to open the receipt creation modal. The form has two parts: a <strong>header section</strong> for invoice-level details and a <strong>line items section</strong> for individual products.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-writeoffs-create-en.png" alt="Write-off creation modal with dual-panel form showing item selection and reason fields" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-create">
+    <img src="images/wh-receiving-create-en.png" alt="New receipt creation form with supplier and item fields" class="doc-screenshot-image" data-i18n-img="wh-receiving-create">
   </div>
+
+  <h5>Header Fields</h5>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
           <th>Field</th>
-          <th>Description</th>
-          <th>FHIR Mapping</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Date</strong></td>
-          <td>Write-off date (defaults to today)</td>
-          <td>SupplyDelivery.occurrenceDateTime</td>
-        </tr>
-        <tr>
-          <td><strong>Document Number</strong></td>
-          <td>Auto-generated unique identifier</td>
-          <td>SupplyDelivery.identifier</td>
-        </tr>
-        <tr>
-          <td><strong>Department</strong></td>
-          <td>Source department from which items are being written off</td>
-          <td>Extension: source-department (Location reference)</td>
-        </tr>
-        <tr>
-          <td><strong>Reason</strong></td>
-          <td>Reason for the write-off (free text or predefined category)</td>
-          <td>Extension: writeoff-reason</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Analytics View</h4>
-  <p>The Analytics tab groups write-offs by document number, providing a summary view that shows the total items and value for each write-off document. This is useful for auditing and reporting on stock losses over time.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-writeoffs-analytics-en.png" alt="Write-offs analytics tab showing grouped view by document number with totals" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-analytics">
-  </div>
-
-  <h4>Pending Confirmation</h4>
-  <p>The Pending Confirmation tab shows write-offs that require approval from an authorized user before stock is actually removed. This approval step ensures that write-offs are reviewed before permanently affecting inventory balances.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-writeoffs-confirmation-en.png" alt="Pending confirmation tab showing write-offs awaiting approval with confirm and reject actions" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-confirmation">
-  </div>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x1F5D1;</div>
-    <div class="doc-info-content">
-      <strong>FHIR Data:</strong> Write-offs are stored as <code>SupplyDelivery</code> resources with type code <code>write-off</code>. Each line item is a separate resource, grouped by document number. Confirmation permanently decrements the StockQuant balance for the source department.
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- PROCUREMENT -->
-  <!-- ============================================================ -->
-  <h3 id="wh-procurement">3.6 Procurement</h3>
-
-  <p>The Procurement page manages purchase requests for new stock. When a warehouse needs to buy supplies from external vendors, a procurement request is submitted specifying the items, quantities, and priority level. Requests go through a multi-step approval workflow before being sent to suppliers.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-procurement-list-en.png" alt="Procurement request history showing table with priority badges, status columns, and totals" class="doc-screenshot-image" data-i18n-img="wh-procurement-list">
-  </div>
-
-  <h4>View Modes</h4>
-  <p>The page organizes procurement requests across three tabs:</p>
-  <ul class="doc-list">
-    <li><strong>Request History</strong> -- All procurement requests in a table with request number, date, requester, priority, status, and total value</li>
-    <li><strong>Analytics</strong> -- Requests grouped for summary reporting and spend analysis</li>
-    <li><strong>Pending Approval</strong> -- Requests awaiting review and authorization, with an orange badge showing the count</li>
-  </ul>
-
-  <h4>Table Columns</h4>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Column</th>
+          <th>Required</th>
           <th>Description</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Request Number</strong></td>
-          <td>Unique procurement request identifier</td>
+          <td><strong>Receipt Number</strong></td>
+          <td>Auto</td>
+          <td>Auto-generated sequential number; refreshed each time the modal opens</td>
         </tr>
         <tr>
           <td><strong>Date</strong></td>
-          <td>Date the request was submitted</td>
+          <td>Yes</td>
+          <td>Receiving date (defaults to today)</td>
         </tr>
         <tr>
-          <td><strong>Requester</strong></td>
-          <td>Department or user who initiated the request</td>
+          <td><strong>Invoice Number</strong></td>
+          <td>Yes</td>
+          <td>Supplier's invoice or waybill number</td>
         </tr>
         <tr>
-          <td><strong>Priority</strong></td>
-          <td>Request urgency level with color-coded badge (normal, urgent, critical)</td>
-        </tr>
-        <tr>
-          <td><strong>Status</strong></td>
-          <td>Current workflow status</td>
-        </tr>
-        <tr>
-          <td><strong>Total Value</strong></td>
-          <td>Estimated total cost of requested items</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Priority Levels</h4>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Priority</th>
-          <th>Description</th>
-          <th>FHIR Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Normal</strong></td>
-          <td>Standard procurement timeline</td>
-          <td>SupplyRequest.priority = routine</td>
-        </tr>
-        <tr>
-          <td><strong>Urgent</strong></td>
-          <td>Expedited processing required</td>
-          <td>SupplyRequest.priority = urgent</td>
-        </tr>
-        <tr>
-          <td><strong>Critical</strong></td>
-          <td>Immediate action needed -- stock-out risk</td>
-          <td>SupplyRequest.priority = stat</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Procurement Lifecycle</h4>
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Description</th>
-          <th>FHIR Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Draft</strong></td>
-          <td>Request created but not yet submitted</td>
-          <td>SupplyRequest.status = draft</td>
-        </tr>
-        <tr>
-          <td><strong>Submitted</strong></td>
-          <td>Request sent for approval</td>
-          <td>SupplyRequest.status = active</td>
-        </tr>
-        <tr>
-          <td><strong>Under Review</strong></td>
-          <td>Being evaluated by approving authority</td>
-          <td>Extension: underReview</td>
-        </tr>
-        <tr>
-          <td><strong>Approved</strong></td>
-          <td>Authorized for purchase</td>
-          <td>Extension: approved</td>
-        </tr>
-        <tr>
-          <td><strong>Ordered</strong></td>
-          <td>Purchase order sent to supplier</td>
-          <td>Extension: ordered</td>
-        </tr>
-        <tr>
-          <td><strong>Received</strong></td>
-          <td>Goods delivered and received into inventory</td>
-          <td>SupplyRequest.status = completed</td>
-        </tr>
-        <tr>
-          <td><strong>Partially Received</strong></td>
-          <td>Only part of the requested goods have been delivered</td>
-          <td>Extension: partially-received</td>
-        </tr>
-        <tr>
-          <td><strong>Rejected</strong></td>
-          <td>Request rejected by the approving authority</td>
-          <td>Extension: rejected</td>
-        </tr>
-        <tr>
-          <td><strong>Cancelled</strong></td>
-          <td>Request cancelled at any stage</td>
-          <td>SupplyRequest.status = cancelled</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Creating a Procurement Request</h4>
-  <p>Click the <strong>New Request</strong> button to open the procurement creation modal. The form includes header fields for request metadata and a line items section for specifying products and quantities.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-procurement-create-en.png" alt="Procurement request creation modal with multi-section form for items, quantities, and priority" class="doc-screenshot-image" data-i18n-img="wh-procurement-create">
-  </div>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Field</th>
-          <th>Description</th>
-          <th>FHIR Mapping</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Date</strong></td>
-          <td>Request date (defaults to today)</td>
-          <td>SupplyRequest.authoredOn</td>
-        </tr>
-        <tr>
-          <td><strong>Request Number</strong></td>
-          <td>Auto-generated unique identifier</td>
-          <td>SupplyRequest.identifier</td>
-        </tr>
-        <tr>
-          <td><strong>Requester</strong></td>
-          <td>Department submitting the procurement request</td>
-          <td>SupplyRequest.requester (Location reference)</td>
-        </tr>
-        <tr>
-          <td><strong>Priority</strong></td>
-          <td>Urgency level (normal, urgent, critical)</td>
-          <td>SupplyRequest.priority</td>
+          <td><strong>Contract Number</strong></td>
+          <td>No</td>
+          <td>Optional procurement contract reference</td>
         </tr>
         <tr>
           <td><strong>Supplier</strong></td>
-          <td>Target vendor for the purchase (optional at creation)</td>
-          <td>SupplyRequest.supplier (Organization reference)</td>
+          <td>Yes</td>
+          <td>Select from the supplier/client directory (autocomplete search)</td>
+        </tr>
+        <tr>
+          <td><strong>Department</strong></td>
+          <td>Yes</td>
+          <td>Destination warehouse/department receiving the goods</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h4>Pending Approval</h4>
-  <p>The Pending Approval tab shows procurement requests awaiting authorization. Approvers can review request details, adjust quantities if needed, and approve or reject the request.</p>
+  <h5>Line Items</h5>
 
-  <div class="doc-screenshot-full">
-    <img src="images/wh-procurement-approval-en.png" alt="Pending approval tab showing procurement requests awaiting review with approve and reject actions" class="doc-screenshot-image" data-i18n-img="wh-procurement-approval">
+  <p>Each line item represents one product being received. Use the item picker to search by name or barcode, then enter the quantity and price. You can add multiple line items to a single receipt.</p>
+
+  <ul class="doc-list">
+    <li><strong>Item search</strong> — Type a product name or scan a barcode to find items from the warehouse nomenclature</li>
+    <li><strong>Quantity</strong> — Number of units received</li>
+    <li><strong>Unit Price</strong> — Price per unit in GEL</li>
+    <li><strong>Package Quantity / Price</strong> — Optional package-level pricing for bulk items</li>
+    <li><strong>Total</strong> — Auto-calculated (quantity x unit price)</li>
+    <li><strong>Add / Remove</strong> — Click the + button to add a line item; click the trash icon to remove one</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>RS Import:</strong>
+    Instead of manual entry, you can use <strong>Import from RS</strong> to pull invoice data directly from Georgia's Revenue Service electronic invoicing system. This pre-fills the supplier, invoice number, and all line items automatically.
   </div>
 
-  <h4>Request Detail View</h4>
-  <p>Click any row in the request history to open a read-only detail modal. This shows the complete request information including all line items, approval history, and current status.</p>
+  <!-- ================================================================== -->
+  <!-- SECTION 3.2 — TRANSFERS -->
+  <!-- ================================================================== -->
+
+  <h3 id="transfers">3.2 Transfers (Inter-Department Movement)</h3>
+
+  <p><strong>Transfers</strong> track the movement of supplies between hospital departments. When the pharmacy needs to send medications to the ICU, or the main warehouse distributes consumables to the surgical ward, a transfer record is created. Each transfer generates a FHIR <code>SupplyDelivery</code> resource with type "transfer" and follows an approval workflow before items physically move.</p>
+
+  <h4>Page Layout</h4>
+
+  <p>The Transfers page uses a <strong>3-tab layout</strong> with a shared header action button:</p>
+
+  <ul class="doc-list">
+    <li><strong>All Transfers</strong> — Flat list of every individual transfer line item with edit/delete/correct actions</li>
+    <li><strong>Grouped</strong> — One row per document number with KPI analytics and export options</li>
+    <li><strong>Pending Approval</strong> — Transfers awaiting confirmation from the receiving department</li>
+  </ul>
+
+  <p>The header contains a single action button:</p>
+  <ul class="doc-list">
+    <li><strong>New Transfer</strong> — Opens the Transfer Book modal to create a new transfer with multiple line items</li>
+  </ul>
+
+  <!-- All Transfers Tab -->
+  <h4 id="transfers-all">All Transfers Tab</h4>
+
+  <p>The All Transfers tab shows every transfer line item as a separate row. If a transfer document has 5 items, each appears as its own row, grouped visually by document number. This view is useful for finding and editing individual items.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-procurement-detail-en.png" alt="Procurement request detail modal showing line items, approval history, and status timeline" class="doc-screenshot-image" data-i18n-img="wh-procurement-detail">
+    <img src="images/wh-transfer-list-en.png" alt="All Transfers tab showing individual transfer line items" class="doc-screenshot-image" data-i18n-img="wh-transfer-list">
   </div>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">&#x1F6D2;</div>
-    <div class="doc-info-content">
-      <strong>FHIR Data:</strong> Procurement requests are stored as <code>SupplyRequest</code> resources with a request-type extension set to <code>purchase-request</code>. Line items are stored as a JSON extension, and the approval workflow is tracked via status extensions and Provenance records.
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+          <th>FHIR Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>Transfer date</td>
+          <td>SupplyDelivery.occurrenceDateTime</td>
+        </tr>
+        <tr>
+          <td><strong>Doc #</strong></td>
+          <td>Document number (groups items in the same transfer)</td>
+          <td>SupplyDelivery.identifier</td>
+        </tr>
+        <tr>
+          <td><strong>From Dept</strong></td>
+          <td>Sending department name</td>
+          <td>SupplyDelivery.supplier.display</td>
+        </tr>
+        <tr>
+          <td><strong>To Dept</strong></td>
+          <td>Receiving department name</td>
+          <td>SupplyDelivery.destination.display</td>
+        </tr>
+        <tr>
+          <td><strong>Item Code</strong></td>
+          <td>Product code from the nomenclature</td>
+          <td>SupplyDelivery.suppliedItem.itemCodeableConcept</td>
+        </tr>
+        <tr>
+          <td><strong>Item Name</strong></td>
+          <td>Product name</td>
+          <td>SupplyDelivery.suppliedItem.itemCodeableConcept.text</td>
+        </tr>
+        <tr>
+          <td><strong>Unit</strong></td>
+          <td>Unit of measure (e.g., pcs, ml, box)</td>
+          <td>SupplyDelivery.suppliedItem.quantity.unit</td>
+        </tr>
+        <tr>
+          <td><strong>Qty</strong></td>
+          <td>Number of units transferred</td>
+          <td>SupplyDelivery.suppliedItem.quantity.value</td>
+        </tr>
+        <tr>
+          <td><strong>Price</strong></td>
+          <td>Unit price (GEL)</td>
+          <td>SupplyDelivery extension (unit-price)</td>
+        </tr>
+        <tr>
+          <td><strong>Total</strong></td>
+          <td>Line total (quantity x price)</td>
+          <td>Computed</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>Transfer status badge (requested, approved, completed, etc.)</td>
+          <td>SupplyDelivery.status</td>
+        </tr>
+        <tr>
+          <td><strong>Actions</strong></td>
+          <td>Edit, Delete, or Correct (step-up auth required)</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Row-level actions include:</p>
+  <ul class="doc-list">
+    <li><strong>Edit</strong> — Change the From/To departments, quantity, or price of a single line item</li>
+    <li><strong>Delete</strong> — Remove the transfer line item entirely (with confirmation dialog)</li>
+    <li><strong>Correct</strong> — Open the warehouse correction modal to create an adjustment entry that reverses or modifies this transfer</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Edit Restrictions:</strong>
+    Only transfers in an editable status (draft, requested) can be modified. Once a transfer is approved or completed, use the <strong>Correct</strong> action to create an adjustment instead of directly editing.
+  </div>
+
+  <!-- Grouped Tab -->
+  <h4 id="transfers-grouped">Grouped Tab</h4>
+
+  <p>The Grouped tab aggregates transfers by document number, showing one row per transfer document. This gives a higher-level view of transfer activity and includes analytics features not available in the All tab.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-transfer-grouped-en.png" alt="Transfers grouped view with analytics summary cards" class="doc-screenshot-image" data-i18n-img="wh-transfer-grouped">
+  </div>
+
+  <h5>Analytics Strip</h5>
+
+  <p>Five KPI cards at the top provide an overview of transfer activity:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>KPI Card</th>
+          <th>What It Shows</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Total Documents</strong></td>
+          <td>Number of transfer documents with month-over-month trend</td>
+        </tr>
+        <tr>
+          <td><strong>Total Value</strong></td>
+          <td>Total monetary value of all transfers (GEL) with trend</td>
+        </tr>
+        <tr>
+          <td><strong>Top Route</strong></td>
+          <td>Most common department-to-department transfer route</td>
+        </tr>
+        <tr>
+          <td><strong>Avg Items Per Doc</strong></td>
+          <td>Average number of line items per transfer document</td>
+        </tr>
+        <tr>
+          <td><strong>Busiest Day</strong></td>
+          <td>Day of the week with the highest transfer volume</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Below the KPI cards, the analytics section shows top transferred items by value, department activity breakdown, transfer heatmaps, and period comparisons. The document table at the bottom includes action menus with View, Print, Clone, and Export CSV options.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Clone Feature:</strong>
+    The <strong>Clone</strong> action on a grouped document opens the Transfer Book pre-filled with the same From/To departments, making it easy to repeat a common transfer route.
+  </div>
+
+  <!-- Approval Tab -->
+  <h4 id="transfers-approval">Pending Approval Tab</h4>
+
+  <p>The Pending Approval tab shows transfers that have been created but not yet confirmed by the receiving department. This is the core of the transfer approval workflow — it ensures that the receiving department verifies what was actually received before inventory balances are updated.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-transfer-approval-en.png" alt="Transfer approval workflow with lifecycle badges and confirmation actions" class="doc-screenshot-image" data-i18n-img="wh-transfer-approval">
+  </div>
+
+  <h5>Workflow Lifecycle</h5>
+
+  <p>A visual workflow indicator at the top of the tab shows the three stages of transfer approval:</p>
+
+  <div class="doc-zone-diagram" style="grid-template-columns: repeat(3, 1fr); max-width: 600px; margin: 0 auto 1.5rem;">
+    <div class="doc-zone" style="text-align: center;">
+      <div class="doc-zone-header" style="font-size: 0.85rem;">1. Created</div>
+      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">Transfer submitted</p></div>
     </div>
+    <div class="doc-zone" style="text-align: center; border-color: var(--emr-secondary);">
+      <div class="doc-zone-header" style="background: var(--emr-gradient-secondary); color: white; font-size: 0.85rem;">2. Pending Review</div>
+      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">Awaiting confirmation</p></div>
+    </div>
+    <div class="doc-zone" style="text-align: center;">
+      <div class="doc-zone-header" style="font-size: 0.85rem;">3. Confirmed</div>
+      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">Stock updated</p></div>
+    </div>
+  </div>
+
+  <h5>Approval Actions</h5>
+
+  <p>Each pending transfer document has three available actions:</p>
+
+  <ul class="doc-list">
+    <li><strong>Review & Edit</strong> — Opens the confirmation modal where you can review all items, adjust quantities if needed, and confirm the transfer</li>
+    <li><strong>Quick Confirm</strong> — Confirms the transfer with the original quantities without opening the review modal (useful when you trust the sent quantities match what was received)</li>
+    <li><strong>Delete</strong> — Rejects and removes the pending transfer entirely</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Step-Up Authentication Required:</strong>
+    All approval actions (confirm, quick confirm, delete) require step-up authentication. You will be prompted to re-enter your password before the action is executed. This requires the <code>confirm-warehouse-transfer</code> permission.
+  </div>
+
+  <h5>Confirmation Modal</h5>
+
+  <p>The <strong>Review & Edit</strong> button opens a confirmation modal that displays all items in the transfer. For each item, you can see the originally requested quantity and adjust the received quantity if different. This is particularly useful when:</p>
+
+  <ul class="doc-list">
+    <li>Some items were damaged during transport and only a partial quantity was accepted</li>
+    <li>The sending department sent a different quantity than what was recorded</li>
+    <li>Items need to be redirected to a different department</li>
+  </ul>
+
+  <p>After reviewing and optionally editing the quantities, click <strong>Confirm</strong> to finalize the transfer. The system will update stock balances in both the sending and receiving departments.</p>
+
+  <h5>Department Access</h5>
+
+  <p>The Approval tab filters transfers based on your department assignment. You only see transfers <strong>addressed to your department</strong>. Project administrators (system admins) can see and confirm all pending transfers regardless of department.</p>
+
+  <!-- Transfer Book Modal -->
+  <h4 id="transfer-book">Creating a New Transfer</h4>
+
+  <p>Click <strong>New Transfer</strong> in the page header to open the <strong>Transfer Book</strong> modal. This is a dual-panel form with header fields and a line items builder.</p>
+
+  <h5>Header Fields</h5>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Required</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>Yes</td>
+          <td>Transfer date (defaults to today)</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td>Auto</td>
+          <td>Auto-generated; can be overridden manually</td>
+        </tr>
+        <tr>
+          <td><strong>From Department</strong></td>
+          <td>Yes</td>
+          <td>Sending department (dropdown of all inventory departments)</td>
+        </tr>
+        <tr>
+          <td><strong>To Department</strong></td>
+          <td>Yes</td>
+          <td>Receiving department (dropdown of all inventory departments)</td>
+        </tr>
+        <tr>
+          <td><strong>Direct Write-Off</strong></td>
+          <td>No</td>
+          <td>Checkbox — if enabled, items are immediately deducted from the sending department without requiring approval from the receiving side</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h5>Line Items Builder</h5>
+
+  <p>The bottom section of the Transfer Book is the line items builder. Search for items by name or code, enter quantities and prices, and add them to the transfer.</p>
+
+  <ul class="doc-list">
+    <li><strong>Item search</strong> — Autocomplete search across the warehouse nomenclature</li>
+    <li><strong>Quantity</strong> — Number of units to transfer</li>
+    <li><strong>Price</strong> — Unit price in GEL (used for cost tracking, not billing)</li>
+    <li><strong>Total</strong> — Auto-calculated per line item</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Insufficient Stock Check:</strong>
+    When submitting a transfer, the system validates that the sending department has enough stock for each item. If a quantity exceeds available stock, the transfer is rejected with an error showing the item code, available quantity, and requested quantity.
+  </div>
+
+  <h5>Transfer Status Lifecycle</h5>
+
+  <p>Transfers follow a defined status workflow from creation to completion. Here are all the possible statuses and their meanings:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Description</th>
+          <th>Next Steps</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Draft</strong></td>
+          <td>Created but not yet submitted</td>
+          <td>Submit (requested) or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>Requested</strong></td>
+          <td>Submitted and awaiting approval</td>
+          <td>Approve, Reject, or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>Approved</strong></td>
+          <td>Manager approved the transfer</td>
+          <td>Begin movement (in-progress) or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>In Progress</strong></td>
+          <td>Items are being physically moved</td>
+          <td>Mark received, partial, completed, or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>Received</strong></td>
+          <td>Destination department confirmed receipt</td>
+          <td>Complete</td>
+        </tr>
+        <tr>
+          <td><strong>Partial</strong></td>
+          <td>Only some items were received</td>
+          <td>Complete or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>Completed</strong></td>
+          <td>Transfer fully processed (terminal state)</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Rejected</strong></td>
+          <td>Manager rejected the transfer (terminal state)</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Cancelled</strong></td>
+          <td>Transfer was cancelled (terminal state)</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- SECTION 3.3 — ORDERS -->
+  <!-- ================================================================== -->
+
+  <h3 id="orders">3.3 Orders (Supply Requests)</h3>
+
+  <p><strong>Orders</strong> allow departments to formally request supplies from other departments. Think of it as an internal purchase order — the requesting department says "we need 50 syringes from the main warehouse," and the supplying department can review, adjust, and fulfill the order. Orders create FHIR <code>SupplyRequest</code> resources and are quantity-only (no price tracking, unlike transfers).</p>
+
+  <h4>Page Layout</h4>
+
+  <p>The Orders page uses a <strong>3-tab layout</strong> with two header action buttons:</p>
+
+  <ul class="doc-list">
+    <li><strong>All Orders</strong> — Flat list of all order line items with edit/delete/correct actions</li>
+    <li><strong>Grouped</strong> — One row per order document with KPI analytics and detail views</li>
+    <li><strong>Confirmation</strong> — Orders awaiting confirmation from the supplying department</li>
+  </ul>
+
+  <p>Header action buttons:</p>
+  <ul class="doc-list">
+    <li><strong>Order Book</strong> — Opens the Order Book modal to create a new order with multiple items</li>
+    <li><strong>Create Waybill</strong> — Creates a waybill (delivery document) from existing confirmed orders</li>
+  </ul>
+
+  <!-- All Orders Tab -->
+  <h4 id="orders-all">All Orders Tab</h4>
+
+  <p>The All Orders tab shows every order line item individually, similar to the All Transfers tab. Each row is one item within an order document. Filters let you search by date range, document number, departments, and item name.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-orders-list-en.png" alt="All Orders tab showing order line items with status badges" class="doc-screenshot-image" data-i18n-img="wh-orders-list">
+  </div>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+          <th>FHIR Path</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>Order creation date</td>
+          <td>SupplyRequest.authoredOn</td>
+        </tr>
+        <tr>
+          <td><strong>Doc #</strong></td>
+          <td>Order document number</td>
+          <td>SupplyRequest.identifier</td>
+        </tr>
+        <tr>
+          <td><strong>Requester</strong></td>
+          <td>Department requesting the supplies</td>
+          <td>SupplyRequest.requester.display</td>
+        </tr>
+        <tr>
+          <td><strong>Receiver</strong></td>
+          <td>Department fulfilling the order</td>
+          <td>SupplyRequest.deliverTo.display</td>
+        </tr>
+        <tr>
+          <td><strong>Item Code</strong></td>
+          <td>Product code from the nomenclature</td>
+          <td>SupplyRequest.itemCodeableConcept</td>
+        </tr>
+        <tr>
+          <td><strong>Item Name</strong></td>
+          <td>Product name</td>
+          <td>SupplyRequest.itemCodeableConcept.text</td>
+        </tr>
+        <tr>
+          <td><strong>Unit</strong></td>
+          <td>Unit of measure</td>
+          <td>SupplyRequest.quantity.unit</td>
+        </tr>
+        <tr>
+          <td><strong>Qty</strong></td>
+          <td>Requested quantity</td>
+          <td>SupplyRequest.quantity.value</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>Order status badge (draft, active, confirmed, complete)</td>
+          <td>SupplyRequest.status</td>
+        </tr>
+        <tr>
+          <td><strong>Actions</strong></td>
+          <td>Edit, Delete, or Correct (step-up auth required)</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Orders vs. Transfers:</strong>
+    Orders are quantity-only requests (no price). Once an order is confirmed and fulfilled, the actual movement of goods is recorded as a <strong>Transfer</strong>, which includes pricing information. Think of orders as the "request" and transfers as the "delivery."
+  </div>
+
+  <!-- Grouped Tab -->
+  <h4 id="orders-grouped">Grouped Tab</h4>
+
+  <p>The Grouped tab aggregates orders by document number, showing one row per order with the total quantity and item count. Like the Transfers Grouped tab, it includes five KPI analytics cards and detailed analytics sections.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-orders-grouped-en.png" alt="Orders grouped view with analytics cards and document table" class="doc-screenshot-image" data-i18n-img="wh-orders-grouped">
+  </div>
+
+  <h5>Analytics Strip</h5>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>KPI Card</th>
+          <th>What It Shows</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Total Documents</strong></td>
+          <td>Number of order documents with month-over-month trend</td>
+        </tr>
+        <tr>
+          <td><strong>Total Value</strong></td>
+          <td>Aggregate total quantity across all orders with trend</td>
+        </tr>
+        <tr>
+          <td><strong>Top Route</strong></td>
+          <td>Most common requester-to-receiver department pair</td>
+        </tr>
+        <tr>
+          <td><strong>Avg Items Per Doc</strong></td>
+          <td>Average number of line items per order document</td>
+        </tr>
+        <tr>
+          <td><strong>Busiest Day</strong></td>
+          <td>Day of the week with the most order activity</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The detail modal for grouped orders shows all line items in the order, allowing you to review what was requested and confirm individual items.</p>
+
+  <!-- Confirmation Tab -->
+  <h4 id="orders-confirmation">Confirmation Tab</h4>
+
+  <p>The Confirmation tab shows orders awaiting confirmation from the supplying department. It follows the same approval workflow pattern as transfers, with a visual lifecycle indicator and step-up authentication for all actions.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-order-confirmation-en.png" alt="Order confirmation workflow with review and issued quantity editing" class="doc-screenshot-image" data-i18n-img="wh-order-confirmation">
+  </div>
+
+  <h5>Workflow Lifecycle</h5>
+
+  <div class="doc-zone-diagram" style="grid-template-columns: repeat(3, 1fr); max-width: 600px; margin: 0 auto 1.5rem;">
+    <div class="doc-zone" style="text-align: center;">
+      <div class="doc-zone-header" style="font-size: 0.85rem;">1. Created</div>
+      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">Order submitted</p></div>
+    </div>
+    <div class="doc-zone" style="text-align: center; border-color: var(--emr-secondary);">
+      <div class="doc-zone-header" style="background: var(--emr-gradient-secondary); color: white; font-size: 0.85rem;">2. Pending Review</div>
+      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">Awaiting fulfillment</p></div>
+    </div>
+    <div class="doc-zone" style="text-align: center;">
+      <div class="doc-zone-header" style="font-size: 0.85rem;">3. Confirmed</div>
+      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">Order fulfilled</p></div>
+    </div>
+  </div>
+
+  <h5>Confirmation Actions</h5>
+
+  <ul class="doc-list">
+    <li><strong>Review & Edit</strong> — Opens the confirmation modal where you can adjust the <strong>issued quantity</strong> for each item. This is the key difference from transfer approval: you can specify exactly how many units you are issuing, which may differ from the requested quantity.</li>
+    <li><strong>Quick Confirm</strong> — Confirms the order with the original requested quantities (no adjustments)</li>
+    <li><strong>Delete</strong> — Reject and delete the order with a confirmation dialog</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Issued vs. Requested Quantity:</strong>
+    When reviewing an order, each line item shows both the <strong>requested quantity</strong> (what the department asked for) and an editable <strong>issued quantity</strong> field (what you are actually sending). This allows partial fulfillment — for example, if 100 units were requested but only 80 are available, you can confirm with 80 and the requesting department will see the partial fulfillment.
+  </div>
+
+  <h5>Department Access</h5>
+
+  <p>The Confirmation tab shows orders based on your role. Regular users see orders <strong>where their department is the receiver (supplier)</strong>. Project administrators see all pending orders across all departments. The <code>view-warehouse-orders</code> permission is required to access this page.</p>
+
+  <!-- Order Book Modal -->
+  <h4 id="order-book">Creating a New Order</h4>
+
+  <p>Click <strong>Order Book</strong> in the page header to open the Order Book modal. Like the Transfer Book, this is a dual-panel form with a header section and a line items builder.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-order-create-en.png" alt="Order Book modal with requester/receiver department selection and item list" class="doc-screenshot-image" data-i18n-img="wh-order-create">
+  </div>
+
+  <h5>Header Fields</h5>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Required</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>Yes</td>
+          <td>Order date (defaults to today)</td>
+        </tr>
+        <tr>
+          <td><strong>Document Number</strong></td>
+          <td>Auto</td>
+          <td>Auto-generated order number</td>
+        </tr>
+        <tr>
+          <td><strong>Requester Department</strong></td>
+          <td>Yes</td>
+          <td>Department placing the order (dropdown of inventory departments)</td>
+        </tr>
+        <tr>
+          <td><strong>Receiver Department</strong></td>
+          <td>Yes</td>
+          <td>Department fulfilling the order (dropdown includes both inventory and supplier/receiver departments)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h5>Line Items</h5>
+
+  <ul class="doc-list">
+    <li><strong>Item search</strong> — Autocomplete search by product name or code from the warehouse nomenclature</li>
+    <li><strong>Quantity</strong> — Number of units requested</li>
+    <li><strong>Unit</strong> — Unit of measure (auto-filled from the selected item)</li>
+    <li><strong>Add / Remove</strong> — Add multiple items to a single order; remove with the trash icon</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>No Price on Orders:</strong>
+    Unlike transfers, orders do not include pricing fields. Orders are purely about <strong>quantity requests</strong>. Pricing is tracked when the order is fulfilled through a transfer or waybill.
+  </div>
+
+  <h5>Order Status Lifecycle</h5>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Description</th>
+          <th>Next Steps</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Draft</strong></td>
+          <td>Created but not yet submitted</td>
+          <td>Submit (active) or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>Active</strong></td>
+          <td>Submitted and awaiting confirmation</td>
+          <td>Confirm or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>Confirmed</strong></td>
+          <td>Supplying department confirmed the order</td>
+          <td>Complete or Cancel</td>
+        </tr>
+        <tr>
+          <td><strong>Complete</strong></td>
+          <td>Order fully fulfilled (terminal state)</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Cancelled</strong></td>
+          <td>Order was cancelled (terminal state)</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- FHIR DATA MODEL REFERENCE -->
+  <!-- ================================================================== -->
+
+  <h3 id="operations-fhir">3.4 FHIR Data Model Reference</h3>
+
+  <p>All warehouse operations map to standard FHIR R4 resources with Georgian healthcare extensions. The table below summarizes the resource types, their key fields, and extension URLs used by each operation.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>FHIR Resource</th>
+          <th>Key Fields</th>
+          <th>Extensions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Receiving</strong></td>
+          <td>SupplyDelivery</td>
+          <td>identifier, occurrenceDateTime, supplier, destination, suppliedItem</td>
+          <td>contract-number, package-quantity, package-price, unit-price</td>
+        </tr>
+        <tr>
+          <td><strong>Transfers</strong></td>
+          <td>SupplyDelivery</td>
+          <td>identifier, occurrenceDateTime, supplier (from), destination (to), suppliedItem, status</td>
+          <td>unit-price, document-number, direct-write-off, approval</td>
+        </tr>
+        <tr>
+          <td><strong>Orders</strong></td>
+          <td>SupplyRequest</td>
+          <td>identifier, authoredOn, requester, deliverTo, itemCodeableConcept, quantity, status</td>
+          <td>document-number, issued-quantity</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Base URL:</strong>
+    All resource URLs use the base <code>http://medimind.ge/fhir</code>. Extension URLs follow the pattern <code>http://medimind.ge/fhir/StructureDefinition/{extension-name}</code>. The currency used for all monetary values is <strong>GEL</strong> (Georgian Lari).
   </div>
 
 </section>

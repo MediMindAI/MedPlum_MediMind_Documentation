@@ -1,8 +1,9 @@
 <section class="doc-section" id="warehouse-overview">
   <div class="doc-section-header">
     <div class="doc-section-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
     <div>
@@ -11,215 +12,118 @@
     </div>
   </div>
 
-  <p>The <strong>Warehouse Dashboard</strong> is the central monitoring hub for all warehouse operations. It provides a real-time overview of stock health, pending tasks, and recent activity -- giving warehouse managers a single screen to assess operational status and take immediate action.</p>
+  <p>The <strong>Warehouse Dashboard</strong> is the operational command center for your hospital's supply chain. It brings together real-time stock metrics, critical alerts, pending approvals, and activity logs into a single view -- giving warehouse staff an immediate picture of what needs attention right now.</p>
+
+  <p>The dashboard <strong>auto-refreshes every 60 seconds</strong>, so the numbers you see always reflect the current state of your inventory without needing to reload the page.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-dashboard-overview-en.png" alt="Warehouse Dashboard showing KPI strip, quick actions, and analytics sections" class="doc-screenshot-image" data-i18n-img="wh-dashboard-overview">
+    <img src="images/wh-dashboard-overview-en.png" alt="Warehouse Dashboard showing KPI stat cards, quick action buttons, and activity feed" class="doc-screenshot-image" data-i18n-img="wh-dashboard-overview">
   </div>
 
-  <!-- Dashboard Layout -->
-  <h3 id="wh-dashboard">Dashboard Layout</h3>
+  <!-- Dashboard Stats -->
+  <h3 id="dashboard-stats">1.1 KPI Summary Cards</h3>
 
-  <p>The dashboard is organized into seven visual sections, stacked vertically. Four sections are always visible (KPI Metrics, Quick Actions, Recent Activity, and Notifications). Three sections appear conditionally -- the Critical Alerts Banner, Intelligence Grid, and Analytics Grid are hidden automatically when there is no relevant data to display.</p>
+  <p>At the top of the dashboard, a row of <strong>six stat cards</strong> displays the most important warehouse metrics at a glance. These cards are organized in a responsive grid -- six across on desktop, three on tablet, and two on mobile.</p>
 
   <div class="doc-stats-row">
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">7</span>
-      <span class="doc-stat-inline-label">Dashboard Sections</span>
+      <span class="doc-stat-inline-number">6</span>
+      <span class="doc-stat-inline-label">KPI Cards</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">6</span>
-      <span class="doc-stat-inline-label">KPI Metrics</span>
+      <span class="doc-stat-inline-number">60s</span>
+      <span class="doc-stat-inline-label">Auto-Refresh</span>
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">4</span>
       <span class="doc-stat-inline-label">Quick Actions</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">60s</span>
-      <span class="doc-stat-inline-label">Notification Refresh</span>
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">Activity Types</span>
     </div>
   </div>
 
-  <p>The seven sections, from top to bottom:</p>
-
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Section</th>
-          <th>Purpose</th>
-          <th>Visibility</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Critical Alerts Banner</strong></td>
-          <td>Single banner warning about stock-outs or expired items. Red border when stock-outs exist (priority); orange border when only expired items are present</td>
-          <td>Only when stock-outs or expired items exist</td>
-        </tr>
-        <tr>
-          <td><strong>KPI Summary Strip</strong></td>
-          <td>Six key metrics displayed as cards with icons and sparkline trends</td>
-          <td>Always visible</td>
-        </tr>
-        <tr>
-          <td><strong>Quick Actions</strong></td>
-          <td>Four navigation cards for common warehouse tasks</td>
-          <td>Always visible</td>
-        </tr>
-        <tr>
-          <td><strong>Intelligence Grid</strong></td>
-          <td>Pending transfer approvals table and expiry countdown timers</td>
-          <td>When pending transfers or expiring items exist</td>
-        </tr>
-        <tr>
-          <td><strong>Analytics Grid</strong></td>
-          <td>30-day volume sparklines and top moved items ranking</td>
-          <td>When receipt or transfer data exists</td>
-        </tr>
-        <tr>
-          <td><strong>Recent Activity</strong></td>
-          <td>Timeline of warehouse events from the last 7 days</td>
-          <td>Always visible (shows empty state message if no events)</td>
-        </tr>
-        <tr>
-          <td><strong>Notifications</strong></td>
-          <td>Real-time notification feed for transfers, procurement, and system events</td>
-          <td>Always visible</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="doc-callout doc-callout-info doc-callout-simple">
-    <strong>Data Refresh:</strong>
-    Only the Notification Feed auto-refreshes every 60 seconds. The main dashboard data (KPI metrics, analytics, activity) loads when the page opens and is cached for 60 seconds -- it does not auto-refresh on a timer. A "last updated" timestamp appears in the page subtitle (e.g., "Updated 2 min ago"). A retry button appears only if a data loading error occurs.
-  </div>
-
-  <!-- KPI Metrics -->
-  <h3 id="wh-kpi-metrics">KPI Metrics</h3>
-
-  <p>The KPI summary strip displays six operational metrics as color-coded cards. Each card shows an icon, a numeric value, and a label. The last two metrics (Receipts Today and Transfers Today) also include mini sparkline charts showing the 30-day trend.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-dashboard-alerts-en.png" alt="KPI summary strip with six metric cards and alert banner" class="doc-screenshot-image" data-i18n-img="wh-dashboard-alerts">
-  </div>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Metric</th>
-          <th>Color</th>
-          <th>Description</th>
-          <th>FHIR Source</th>
+          <th>KPI Card</th>
+          <th>What It Shows</th>
+          <th>Why It Matters</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>Pending Transfers</strong></td>
-          <td>Amber (warning)</td>
-          <td>Count of transfer requests with status "in-progress" awaiting confirmation</td>
-          <td>SupplyDelivery (status: in-progress)</td>
+          <td>Number of transfer requests awaiting confirmation</td>
+          <td>High numbers indicate a bottleneck -- departments are waiting for supplies</td>
         </tr>
         <tr>
           <td><strong>Stock-Outs</strong></td>
-          <td>Red (error)</td>
-          <td>Items with zero stock quantity -- requires immediate attention</td>
-          <td>Basic/StockQuant balance where quantity = 0</td>
+          <td>Items with zero quantity in the warehouse</td>
+          <td>These require immediate action to avoid disrupting patient care</td>
         </tr>
         <tr>
           <td><strong>Low Stock Items</strong></td>
-          <td>Amber (warning)</td>
-          <td>Items below 50% of their minimum reorder point (default threshold: 10 units)</td>
-          <td>Basic/StockQuant balance vs. minimum quantity</td>
+          <td>Items below their minimum reorder threshold</td>
+          <td>Ordering should be initiated before these items reach zero</td>
         </tr>
         <tr>
           <td><strong>Expiring in 30 Days</strong></td>
-          <td>Blue (info)</td>
-          <td>Items whose expiry date falls within the next 30 days</td>
-          <td>Basic/StockQuant item expiry date</td>
+          <td>Items with expiry dates within the next 30 days</td>
+          <td>These should be prioritized for use or transferred to departments that need them</td>
         </tr>
         <tr>
           <td><strong>Receipts Today</strong></td>
-          <td>Green (success)</td>
-          <td>Number of goods receipts processed today, with a 30-day sparkline trend</td>
-          <td>SupplyDelivery (type: receipt, date: today)</td>
+          <td>Number of incoming deliveries processed today</td>
+          <td>Tracks daily workload and incoming supply flow</td>
         </tr>
         <tr>
           <td><strong>Transfers Today</strong></td>
-          <td>Blue (primary)</td>
-          <td>Number of inter-department transfers processed today, with a 30-day sparkline</td>
-          <td>SupplyDelivery (type: transfer, date: today)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4>Alert Thresholds</h4>
-
-  <p>The system uses configurable thresholds to classify alerts by severity. These thresholds determine when an item triggers a warning versus a critical alert:</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Alert Type</th>
-          <th>Severity</th>
-          <th>Threshold</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Stock-Out</strong></td>
-          <td>Critical</td>
-          <td>Quantity = 0</td>
-        </tr>
-        <tr>
-          <td><strong>Expired</strong></td>
-          <td>Critical</td>
-          <td>Expiry date has passed</td>
-        </tr>
-        <tr>
-          <td><strong>Expiring Soon (critical)</strong></td>
-          <td>Critical</td>
-          <td>Within 7 days of expiry</td>
-        </tr>
-        <tr>
-          <td><strong>Expiring Soon (warning)</strong></td>
-          <td>Warning</td>
-          <td>Within 30 days of expiry</td>
-        </tr>
-        <tr>
-          <td><strong>Expiring Soon (info)</strong></td>
-          <td>Info</td>
-          <td>Within 60 days of expiry</td>
-        </tr>
-        <tr>
-          <td><strong>Low Stock</strong></td>
-          <td>Warning</td>
-          <td>Below 50% of minimum reorder point</td>
+          <td>Number of inter-department transfers processed today</td>
+          <td>Monitors distribution activity across the hospital</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
-    <strong>Critical Alerts Banner:</strong>
-    When stock-outs or expired items are detected, a single colored banner appears at the top of the dashboard. If stock-outs exist, the banner displays a red border (highest priority). If only expired items are present (no stock-outs), the banner displays an orange border instead. Only one banner is shown at a time -- stock-outs take priority. Clicking "View Details" navigates to the inventory page with a stock view filter.
+    <strong>FHIR Data Sources:</strong>
+    KPI cards pull data from multiple FHIR resources -- <strong>Basic</strong> (StockQuant) for stock levels, <strong>SupplyDelivery</strong> for receipts and transfers, and <strong>SupplyRequest</strong> for pending orders. All data is cached for 30 seconds to balance freshness with performance.
+  </div>
+
+  <h4>Critical Alerts Banner</h4>
+
+  <p>When stock-outs or expired items are detected, a colored alert banner appears directly below the KPI cards. This banner acts as an urgent visual warning that cannot be missed:</p>
+
+  <ul class="doc-list">
+    <li><strong>Red banner</strong> -- appears when any item has zero stock (stock-out). Shows the count of affected items</li>
+    <li><strong>Orange banner</strong> -- appears when items have passed their expiry date. Shows the count of expired items</li>
+    <li><strong>Combined banner</strong> -- if both stock-outs and expired items exist, both counts appear in the same banner</li>
+  </ul>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-dashboard-alerts-en.png" alt="Critical alerts banner showing stock-out and expiry warnings with View Details link" class="doc-screenshot-image" data-i18n-img="wh-dashboard-alerts">
+  </div>
+
+  <p>Click <strong>"View Details"</strong> on the banner to navigate directly to the inventory balances page, filtered to show the problem items.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Immediate Action Required:</strong>
+    Stock-out alerts (red banner) mean departments cannot receive supplies they may need for patient care. These should always be addressed first -- either by creating an emergency order or redirecting stock from another location.
   </div>
 
   <!-- Quick Actions -->
-  <h3 id="wh-quick-actions">Quick Actions</h3>
+  <h3 id="quick-actions">1.2 Quick Actions</h3>
 
-  <p>The <strong>Quick Actions</strong> section provides four command cards for the most common warehouse tasks. Each card is a clickable button that navigates directly to the relevant page, saving time on multi-step navigation.</p>
+  <p>Below the alerts, four <strong>quick action cards</strong> provide one-click access to the most common warehouse operations. Each card shows an icon, a label, and a brief description of what it does.</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Action</th>
+          <th>Action Card</th>
           <th>Description</th>
           <th>Navigates To</th>
         </tr>
@@ -227,103 +131,168 @@
       <tbody>
         <tr>
           <td><strong>New Receipt</strong></td>
-          <td>Record incoming goods from a supplier</td>
-          <td>Receptions page</td>
+          <td>Record incoming deliveries from suppliers</td>
+          <td>Receptions page (create new receipt)</td>
         </tr>
         <tr>
           <td><strong>New Transfer</strong></td>
-          <td>Create an inter-department stock transfer</td>
-          <td>Transfers page</td>
+          <td>Move supplies between departments or warehouses</td>
+          <td>Transfers page (create new transfer)</td>
         </tr>
         <tr>
           <td><strong>Confirm Orders</strong></td>
-          <td>Review and approve pending order requests (shows count badge when orders are pending)</td>
+          <td>Review and approve pending supply requests from departments. Shows a badge with the number of pending orders when orders are waiting</td>
           <td>Order Confirmation page</td>
         </tr>
         <tr>
           <td><strong>View Balances</strong></td>
-          <td>Check current stock levels across all warehouses and departments</td>
-          <td>Balances page</td>
+          <td>Check current stock levels across all departments</td>
+          <td>Inventory Balances page</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">i</div>
-    <div class="doc-info-content">
-      <strong>Pending Badge:</strong> The "Confirm Orders" card displays a red count badge when there are pending transfer requests awaiting approval. This provides a visual reminder without needing to open the confirmation page.
-    </div>
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Pending Order Badge:</strong>
+    The "Confirm Orders" card displays a small blue number badge when there are pending department requests. This makes it easy to see at a glance whether orders are waiting for your attention.
   </div>
 
-  <!-- Analytics -->
-  <h3 id="wh-analytics">Analytics and Activity</h3>
-
-  <p>The bottom half of the dashboard is divided into two analytical sections: the <strong>Intelligence Grid</strong> (pending approvals + expiry countdown) and the <strong>Analytics Grid</strong> (volume trends + top items). Below both grids sits the <strong>Recent Activity</strong> timeline.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-dashboard-analytics-en.png" alt="Analytics section showing daily volume sparklines and top moved items" class="doc-screenshot-image" data-i18n-img="wh-dashboard-analytics">
-  </div>
-
+  <!-- Intelligence Grid -->
   <h4>Pending Approvals</h4>
 
-  <p>A compact table showing the top 5 pending transfer requests awaiting confirmation. Each row displays:</p>
+  <p>The <strong>Pending Approvals</strong> panel appears in the Intelligence section and lists the most recent transfer requests awaiting confirmation. Each entry shows:</p>
 
   <ul class="doc-list">
-    <li><strong>Date</strong> -- when the transfer was requested</li>
-    <li><strong>Route</strong> -- source department to destination department (e.g., "Main Warehouse to Pharmacy")</li>
-    <li><strong>Item</strong> -- the item name being transferred</li>
-    <li><strong>Quantity</strong> -- the amount and unit of measure</li>
+    <li><strong>Item name</strong> and quantity with unit of measurement</li>
+    <li><strong>Transfer route</strong> -- which department is sending and which is receiving (e.g., "Central Warehouse -> Surgery")</li>
+    <li><strong>Date</strong> when the transfer was requested</li>
   </ul>
 
-  <p>If more than 5 transfers are pending, a "View all (N)" link appears at the bottom, navigating to the full transfer confirmation page.</p>
+  <p>If more pending transfers exist than can be shown, a <strong>"View All"</strong> link at the bottom navigates to the full transfer confirmation page.</p>
 
   <h4>Expiry Countdown</h4>
 
-  <p>Displays the 5 soonest-expiring items with color-coded countdown badges:</p>
-
-  <ul class="doc-list">
-    <li><strong>Red badge</strong> -- 7 days or fewer until expiry</li>
-    <li><strong>Orange badge</strong> -- 8 to 30 days until expiry</li>
-    <li><strong>Blue badge</strong> -- 31 to 60 days until expiry</li>
-  </ul>
-
-  <p>Each item shows the product name and lot number (if available) for quick identification.</p>
-
-  <h4>Daily Volume Chart</h4>
-
-  <p>Two SVG sparkline charts showing the 30-day trend for:</p>
-
-  <ul class="doc-list">
-    <li><strong>Receipts</strong> (green line) -- daily count of goods received, with the 30-day total displayed</li>
-    <li><strong>Transfers</strong> (blue line) -- daily count of inter-department transfers, with the 30-day total displayed</li>
-  </ul>
-
-  <p>The sparklines use area fills beneath the trend lines for clear visual impact. If neither receipts nor transfers have any data, this section is hidden.</p>
-
-  <h4>Top Moved Items</h4>
-
-  <p>A ranked list of the 5 most frequently moved items over the past 30 days, combining both receipt and transfer volumes. Each item shows:</p>
-
-  <ul class="doc-list">
-    <li>A <strong>rank badge</strong> (gold for 1st, silver for 2nd, default for 3rd-5th)</li>
-    <li>The <strong>item name</strong> and total <strong>quantity moved</strong></li>
-    <li>A <strong>gradient progress bar</strong> showing volume relative to the top item</li>
-  </ul>
-
-  <h4>Recent Activity Timeline</h4>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-dashboard-activity-en.png" alt="Recent activity timeline with color-coded events for receipts, transfers, and adjustments" class="doc-screenshot-image" data-i18n-img="wh-dashboard-activity">
-  </div>
-
-  <p>A vertical timeline displaying the last 20 warehouse events from the past 7 days. Each event includes an icon, title, description, timestamp, and type badge. Events are color-coded by type:</p>
+  <p>Next to the Pending Approvals, the <strong>Expiry Countdown</strong> panel lists the top 5 items closest to their expiry date. Each item is color-coded based on urgency:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Event Type</th>
+          <th>Color</th>
+          <th>Timeframe</th>
+          <th>Recommended Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color: var(--emr-error);">Red</strong></td>
+          <td>7 days or less</td>
+          <td>Use immediately or transfer to a department that needs it</td>
+        </tr>
+        <tr>
+          <td><strong style="color: #e67e22;">Orange</strong></td>
+          <td>8 to 30 days</td>
+          <td>Prioritize for upcoming use; consider inter-department transfer</td>
+        </tr>
+        <tr>
+          <td><strong style="color: var(--emr-secondary);">Blue</strong></td>
+          <td>More than 30 days</td>
+          <td>Monitor -- no immediate action needed</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Each entry includes the <strong>item name</strong>, <strong>lot number</strong>, and a badge showing the number of days remaining.</p>
+
+  <!-- Notifications -->
+  <h3 id="notifications">1.3 Notifications Feed</h3>
+
+  <p>The <strong>Notifications Feed</strong> provides a real-time stream of warehouse events. Unlike the Recent Activity timeline (which shows completed actions), the notification feed tracks system-generated alerts from FHIR Communication resources -- things like new receipts being created, transfers being completed, or procurement status changes.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-dashboard-activity-en.png" alt="Notification feed showing recent warehouse events with unread indicators and activity timeline" class="doc-screenshot-image" data-i18n-img="wh-dashboard-activity">
+  </div>
+
+  <h4>Notification Types</h4>
+
+  <p>Each notification is categorized by type and displayed with a matching icon and color accent:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Receipt</strong></td>
+          <td>New supply deliveries received</td>
+          <td>"Receipt created: Amoxicillin 500mg x 500"</td>
+        </tr>
+        <tr>
+          <td><strong>Transfer</strong></td>
+          <td>Inter-department supply movements</td>
+          <td>"Transfer initiated: Central Warehouse -> Surgery"</td>
+        </tr>
+        <tr>
+          <td><strong>Transfer Completed</strong></td>
+          <td>Transfers that have been fully received</td>
+          <td>"Transfer completed: 200 gloves delivered to Surgery"</td>
+        </tr>
+        <tr>
+          <td><strong>Procurement</strong></td>
+          <td>Purchase order creation and status changes</td>
+          <td>"Procurement request approved: Medical Supplies Q1"</td>
+        </tr>
+        <tr>
+          <td><strong>Write-Off</strong></td>
+          <td>Items removed from inventory (damaged, expired, etc.)</td>
+          <td>"Write-off confirmed: 25 expired Nitroglycerin tablets"</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Unread Indicators and Actions</h4>
+
+  <ul class="doc-list">
+    <li><strong>Unread dot</strong> -- a small blue indicator appears on notifications you have not yet viewed</li>
+    <li><strong>Unread count badge</strong> -- the header shows how many unread notifications are pending</li>
+    <li><strong>Mark All Read</strong> -- click this button to clear all unread indicators at once</li>
+    <li><strong>Click to navigate</strong> -- clicking any notification marks it as read and navigates to the related page (e.g., clicking a receipt notification opens that receipt)</li>
+    <li><strong>Priority badges</strong> -- urgent or high-priority notifications display a colored badge to draw extra attention</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Communication Resources:</strong>
+    Notifications are stored as FHIR Communication resources with warehouse-specific extensions. The system supports i18n-encoded text, so notification messages automatically appear in the user's selected language.
+  </div>
+
+  <!-- Recent Activity Timeline -->
+  <h4>Recent Activity Timeline</h4>
+
+  <p>The <strong>Recent Activity</strong> section displays a chronological feed of the latest warehouse operations. Unlike notifications (which are system-generated alerts), this timeline shows completed user actions -- receipts processed, transfers made, adjustments recorded, and more.</p>
+
+  <p>Each activity entry shows:</p>
+
+  <ul class="doc-list">
+    <li><strong>Event icon</strong> -- color-coded by type (green for receipts, blue for transfers, orange for adjustments, red for expiry events)</li>
+    <li><strong>Title</strong> -- a brief description of the action taken</li>
+    <li><strong>Details</strong> -- additional context such as supplier name, item quantities, or lot numbers</li>
+    <li><strong>Relative time</strong> -- how long ago the event occurred (e.g., "30 minutes ago", "3 hours ago")</li>
+    <li><strong>Performed by</strong> -- the staff member who carried out the action</li>
+  </ul>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Activity Type</th>
           <th>Color</th>
           <th>Description</th>
         </tr>
@@ -331,92 +300,191 @@
       <tbody>
         <tr>
           <td><strong>Receipt</strong></td>
-          <td>Green</td>
-          <td>Goods received from a supplier, showing supplier name, item, and quantity</td>
+          <td style="color: #27ae60;">Green</td>
+          <td>Items received from a supplier into the warehouse</td>
         </tr>
         <tr>
           <td><strong>Transfer</strong></td>
-          <td>Blue</td>
-          <td>Stock moved between departments, showing source and destination</td>
+          <td style="color: var(--emr-secondary);">Blue</td>
+          <td>Items moved between departments or warehouse locations</td>
+        </tr>
+        <tr>
+          <td><strong>Request</strong></td>
+          <td style="color: #17a2b8;">Cyan</td>
+          <td>A department submitted a supply request</td>
+        </tr>
+        <tr>
+          <td><strong>Adjustment</strong></td>
+          <td style="color: #e67e22;">Orange</td>
+          <td>Manual stock corrections (inventory count, damage, loss)</td>
+        </tr>
+        <tr>
+          <td><strong>Expiry</strong></td>
+          <td style="color: var(--emr-error);">Red</td>
+          <td>Items flagged as expired and removed from usable stock</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="doc-callout doc-callout-info doc-callout-simple">
-    <strong>Note:</strong>
-    Currently only Receipt and Transfer events are populated in the activity timeline. The type system supports three additional event types -- Request (cyan), Adjustment (orange), and Expiry (red) -- which will be enabled in a future update.
-  </div>
+  <p>The timeline displays up to <strong>20 recent entries</strong> and supports click-to-navigate -- clicking an activity item opens the related record (e.g., clicking a receipt entry opens that receipt's detail page).</p>
 
-  <p>Timestamps display as relative time (e.g., "3 min ago", "2 hours ago", "5 days ago") and fall back to a formatted date for events older than 7 days. Clicking on an activity item navigates to the relevant page (receipts or transfers).</p>
+  <!-- Analytics Overview -->
+  <h3 id="analytics-overview">1.4 Analytics Overview</h3>
 
-  <!-- Notifications -->
-  <h3 id="wh-notifications">Notifications</h3>
-
-  <p>The <strong>Notifications</strong> section provides a real-time feed of system events related to warehouse operations. Each notification appears as a card with an icon, title, description, and timestamp -- keeping warehouse staff informed without leaving the dashboard.</p>
+  <p>The bottom section of the dashboard provides a quick analytics snapshot with two side-by-side panels: a <strong>Daily Volume Chart</strong> and the <strong>Top Moved Items</strong> ranking.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-dashboard-notifications-en.png" alt="Notification feed showing transfer alerts, procurement updates, and system events with timestamps" class="doc-screenshot-image" data-i18n-img="wh-dashboard-notifications">
+    <img src="images/wh-dashboard-analytics-en.png" alt="Analytics section showing daily volume sparklines for receipts and transfers, and top 5 most moved items with progress bars" class="doc-screenshot-image" data-i18n-img="wh-dashboard-analytics">
   </div>
 
-  <p>Each notification card displays:</p>
+  <h4>Daily Volume Chart</h4>
+
+  <p>This chart shows <strong>30-day sparklines</strong> for two key metrics:</p>
 
   <ul class="doc-list">
-    <li><strong>Icon</strong> -- Color-coded icon indicating the notification type</li>
-    <li><strong>Title</strong> -- Brief summary of the event</li>
-    <li><strong>Description</strong> -- Additional details about the event</li>
-    <li><strong>Timestamp</strong> -- Relative time since the event occurred</li>
+    <li><strong>Receipts</strong> (green line) -- daily count of incoming deliveries over the past 30 days, with a running total</li>
+    <li><strong>Transfers</strong> (blue line) -- daily count of inter-department transfers over the past 30 days, with a running total</li>
   </ul>
 
-  <p>A <strong>"Mark all as read"</strong> button with an unread count badge appears at the top of the feed, allowing users to clear all unread notifications at once.</p>
+  <p>The sparklines use SVG area fills for visual impact, making it easy to spot trends, seasonal patterns, and unusual spikes. Weekends and holidays often show zero activity (flat portions of the chart).</p>
+
+  <h4>Top Moved Items</h4>
+
+  <p>This panel ranks the <strong>top 5 most-moved items</strong> by total quantity distributed. Each item shows:</p>
+
+  <ul class="doc-list">
+    <li><strong>Rank badge</strong> -- numbered 1 through 5, with the top two highlighted for visual emphasis</li>
+    <li><strong>Item name</strong> -- the product name from the warehouse nomenclature</li>
+    <li><strong>Quantity</strong> -- the total number of units moved</li>
+    <li><strong>Progress bar</strong> -- a gradient bar showing relative volume compared to the highest-moving item</li>
+  </ul>
+
+  <p>This ranking helps identify which supplies are in highest demand, useful for planning reorder quantities and negotiating supplier contracts.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Analytics vs. Full Reports:</strong>
+    The dashboard analytics are a quick visual summary. For detailed analysis -- including ABC/XYZ classification, dead stock detection, expiry risk assessment, and budget planning -- navigate to the <strong>Analytics</strong> module using the main navigation menu.
+  </div>
+
+  <!-- Dashboard Layout Summary -->
+  <h4>Dashboard Section Layout</h4>
+
+  <p>The dashboard organizes its content into logical sections, each with a labeled divider header. Here is the complete layout from top to bottom:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">
       <thead>
         <tr>
-          <th>Notification Type</th>
-          <th>Priority</th>
-          <th>Description</th>
+          <th>Section</th>
+          <th>Components</th>
+          <th>Visibility</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Receipt Created</strong></td>
-          <td>routine</td>
-          <td>A new goods receipt batch was recorded, showing invoice number and item count</td>
+          <td><strong>Hero Header</strong></td>
+          <td>Dashboard title, subtitle with last-updated timestamp, refresh button, 6 KPI stat cards</td>
+          <td>Always visible</td>
         </tr>
         <tr>
-          <td><strong>Transfer Initiated</strong></td>
-          <td>asap</td>
-          <td>A new inter-department transfer was created, notifying managers of source and destination departments</td>
+          <td><strong>Critical Alerts</strong></td>
+          <td>Red/orange alert banner with stock-out and expired item counts</td>
+          <td>Only when stock-outs or expired items exist</td>
         </tr>
         <tr>
-          <td><strong>Transfer Completed</strong></td>
-          <td>routine</td>
-          <td>A transfer has been confirmed and completed at the receiving department</td>
+          <td><strong>Quick Actions</strong></td>
+          <td>4 navigation cards: New Receipt, New Transfer, Confirm Orders, View Balances</td>
+          <td>Always visible</td>
         </tr>
         <tr>
-          <td><strong>Procurement Submitted</strong></td>
-          <td>routine</td>
-          <td>A new procurement request was submitted by a department</td>
+          <td><strong>Intelligence</strong></td>
+          <td>Pending Approvals list + Expiry Countdown (side by side on desktop)</td>
+          <td>Only when pending transfers or expiring items exist</td>
         </tr>
         <tr>
-          <td><strong>Procurement Status Changed</strong></td>
-          <td>routine</td>
-          <td>A procurement request status was updated (e.g., approved, ordered, received)</td>
+          <td><strong>Notifications</strong></td>
+          <td>Real-time notification feed from FHIR Communication resources</td>
+          <td>Always visible (shows empty state message when no notifications)</td>
         </tr>
         <tr>
-          <td><strong>Write-Off Recorded</strong></td>
-          <td>routine</td>
-          <td>A stock write-off was recorded, showing item count and reason</td>
+          <td><strong>Analytics</strong></td>
+          <td>Daily Volume Chart + Top Moved Items (side by side on desktop)</td>
+          <td>Only when receipt or transfer data exists</td>
+        </tr>
+        <tr>
+          <td><strong>Recent Activity</strong></td>
+          <td>Chronological timeline of recent warehouse operations (up to 20 entries)</td>
+          <td>Always visible (shows empty state when no activity)</td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
-    <strong>Data Sources:</strong>
-    The dashboard aggregates data from FHIR SupplyDelivery resources (for receipts and transfers), Basic/StockQuant resources (for stock balances and expiry tracking), and Communication resources (for notifications). Main dashboard data loads on page open with a 60-second cache. Only the Notification Feed auto-refreshes every 60 seconds via a separate polling interval.
+    <strong>Loading and Error States:</strong>
+    While data is loading, the dashboard displays animated skeleton placeholders in place of each section. If a data fetch fails, an error message appears with a <strong>Retry</strong> button to re-fetch the dashboard data.
   </div>
+
+  <!-- FHIR Integration -->
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <strong>FHIR Resource Mapping (Integration Reference)</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <p>The dashboard aggregates data from the following FHIR resources. This mapping is useful for IT teams integrating with the warehouse system:</p>
+
+      <div class="doc-table-container">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Dashboard Component</th>
+              <th>FHIR Resource</th>
+              <th>Key Fields</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Stock Levels (KPIs)</strong></td>
+              <td>Basic (code: stock-quant)</td>
+              <td>Extensions: sq-quantity, sq-item-code, sq-location-id, sq-expiry-date</td>
+            </tr>
+            <tr>
+              <td><strong>Receipts</strong></td>
+              <td>SupplyDelivery (type: receipt)</td>
+              <td>status, occurrenceDateTime, suppliedItem</td>
+            </tr>
+            <tr>
+              <td><strong>Transfers</strong></td>
+              <td>SupplyDelivery (type: transfer)</td>
+              <td>status, supplier (from), destination (to), suppliedItem</td>
+            </tr>
+            <tr>
+              <td><strong>Orders</strong></td>
+              <td>SupplyRequest</td>
+              <td>status, quantity, itemCodeableConcept, requester</td>
+            </tr>
+            <tr>
+              <td><strong>Notifications</strong></td>
+              <td>Communication</td>
+              <td>topic, payload, status (completed/in-progress), extension (warehouse-specific)</td>
+            </tr>
+            <tr>
+              <td><strong>Item Details</strong></td>
+              <td>DeviceDefinition</td>
+              <td>deviceName, identifier, property (unit, group, category)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
 
 </section>

@@ -1,0 +1,188 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-22T12:00:00Z",
+  "sourceSection": {
+    "id": "warehouse-inventory",
+    "file": "sections/en/warehouse-inventory.html",
+    "titleKey": "toc.warehouseInventory"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3005",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/warehouse/inventory"
+  },
+  "screenshots": [
+    {
+      "id": "wh-inventory-balances",
+      "number": 1,
+      "name": "wh-inventory-balances",
+      "description": "Stock levels table with department breakdown",
+      "desiredState": "Inventory page loaded with balances tab active and search executed to show stock data",
+      "differentiator": "Shows the stock balances table — NOT picking tab or write-offs",
+      "stateSetup": {
+        "description": "Click Search to load inventory data",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with stock balance rows", "Department columns"],
+        "mustNotShow": ["Login page", "Empty table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/inventory" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Search')" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-inventory-balances" }
+      ]
+    },
+    {
+      "id": "wh-inventory-picking",
+      "number": 2,
+      "name": "wh-inventory-picking",
+      "description": "Picking queue with FEFO highlighting and zone grouping",
+      "desiredState": "Picking tab active showing picking queue with items",
+      "differentiator": "Shows picking queue tab — NOT balances tab",
+      "stateSetup": {
+        "description": "Switch to Picking tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Picking')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[role='tabpanel']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Picking queue table or list"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/inventory" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Picking')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-inventory-picking" }
+      ]
+    },
+    {
+      "id": "wh-writeoffs-list",
+      "number": 3,
+      "name": "wh-writeoffs-list",
+      "description": "Write-offs history list with status badges",
+      "desiredState": "Write-offs page loaded, History tab active, Search clicked to load data",
+      "differentiator": "Shows write-off history list — NOT create form or confirmation tab",
+      "stateSetup": {
+        "description": "Navigate to write-offs and click Search",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with write-off rows", "Status badges"],
+        "mustNotShow": ["Login page", "Empty table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/write-offs" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Search')" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-writeoffs-list" }
+      ]
+    },
+    {
+      "id": "wh-writeoffs-create",
+      "number": 4,
+      "name": "wh-writeoffs-create",
+      "description": "New write-off creation form with dual-panel layout",
+      "desiredState": "Create write-off modal open showing form fields",
+      "differentiator": "Shows the create modal — NOT list or confirmation tab",
+      "stateSetup": {
+        "description": "Click New/Create button to open write-off creation modal",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "state-based",
+      "expectedDOMElements": ["[role='dialog']", "[class*='modal']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Modal with write-off form fields"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/write-offs" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-writeoffs-create" }
+      ]
+    },
+    {
+      "id": "wh-writeoffs-confirmation",
+      "number": 5,
+      "name": "wh-writeoffs-confirmation",
+      "description": "Write-off approval interface with confirm and reject buttons",
+      "desiredState": "Confirmation tab active showing pending write-offs for approval",
+      "differentiator": "Shows approval/confirmation tab — NOT history list or create form",
+      "stateSetup": {
+        "description": "Switch to Confirmation tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Confirm')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "state-based",
+      "expectedDOMElements": ["[role='tabpanel']"],
+      "knownLimitation": "May show empty state if no pending write-offs",
+      "verificationCriteria": {
+        "mustShow": ["Confirmation tab content"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/write-offs" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Confirm')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-writeoffs-confirmation" }
+      ]
+    }
+  ],
+  "languageSwitching": {
+    "selectors": { "en": "text=ENG", "ru": "text=РУС", "ka": "text=ქარ" },
+    "waitAfterSwitch": 2000
+  },
+  "captureOrder": [
+    "wh-inventory-balances", "wh-inventory-picking",
+    "wh-writeoffs-list", "wh-writeoffs-create", "wh-writeoffs-confirmation"
+  ],
+  "notes": "Spans 2 routes: /inventory (2 shots) and /write-offs (3 shots). Each route needs its own navigation."
+}

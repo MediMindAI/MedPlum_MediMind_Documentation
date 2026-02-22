@@ -1,0 +1,658 @@
+<!-- Warehouse Procurement Documentation -->
+
+<section class="doc-section" id="procurement-overview">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">1</div>
+    <h2>Procurement Overview</h2>
+  </div>
+
+  <p>The <strong>Procurement</strong> module lets departments submit purchase requests for items that are not currently available in the warehouse. It provides a complete workflow from request creation through approval or rejection, with built-in analytics and permission-based access control.</p>
+
+  <p>Think of it as a formal "shopping list" system: a department describes what it needs, a manager reviews and approves (or rejects) the request, and the warehouse team can then fulfill the order.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-procurement-list-en.png" alt="Procurement requests list" class="doc-screenshot-image" data-i18n-img="wh-procurement-list">
+  </div>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Tabs</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">9</span>
+      <span class="doc-stat-inline-label">Status Stages</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Priority Levels</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">7</span>
+      <span class="doc-stat-inline-label">Filter Options</span>
+    </div>
+  </div>
+
+  <!-- Page Layout -->
+  <h3 id="page-layout">Page Layout</h3>
+
+  <p>The procurement page follows the unified warehouse layout pattern with a <strong>page header</strong> and <strong>three switchable tabs</strong>:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Tab</th>
+        <th>Icon</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Request History</strong></td>
+        <td>List</td>
+        <td>Browse, filter, and search all purchase requests with sorting and pagination</td>
+      </tr>
+      <tr>
+        <td><strong>Analytics</strong></td>
+        <td>Chart</td>
+        <td>KPI summary strip, department activity, priority breakdown, and status distribution</td>
+      </tr>
+      <tr>
+        <td><strong>Pending Approval</strong></td>
+        <td>Clipboard</td>
+        <td>Queue of requests waiting for review, with approve and reject actions</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Each tab shows a <strong>badge count</strong> in its header. The History and Analytics tabs display the total number of requests, while the Pending Approval tab shows only the count of requests awaiting action. The page header also includes a <strong>New Purchase Request</strong> button that opens the creation form.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Tab Persistence:</strong>
+    Your last active tab is remembered in the browser, so when you return to the procurement page it opens to the same tab you were on before.
+  </div>
+
+  <!-- Status Lifecycle -->
+  <h3 id="status-lifecycle">Status Lifecycle</h3>
+
+  <p>Every purchase request moves through a series of statuses. The status badges are color-coded so you can quickly scan a list and see what needs attention:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Badge Color</th>
+        <th>Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Draft</strong></td>
+        <td>Gray</td>
+        <td>Request created but not yet submitted</td>
+      </tr>
+      <tr>
+        <td><strong>Submitted</strong></td>
+        <td>Blue</td>
+        <td>Request sent for approval; appears in the Pending Approval queue</td>
+      </tr>
+      <tr>
+        <td><strong>Under Review</strong></td>
+        <td>Violet</td>
+        <td>An approver has opened the request and is evaluating it</td>
+      </tr>
+      <tr>
+        <td><strong>Approved</strong></td>
+        <td>Teal</td>
+        <td>Request approved and ready for the warehouse to act on</td>
+      </tr>
+      <tr>
+        <td><strong>Rejected</strong></td>
+        <td>Red</td>
+        <td>Request denied; a reason is attached by the reviewer</td>
+      </tr>
+      <tr>
+        <td><strong>Ordered</strong></td>
+        <td>Indigo</td>
+        <td>Items have been ordered from a supplier</td>
+      </tr>
+      <tr>
+        <td><strong>Partially Received</strong></td>
+        <td>Orange</td>
+        <td>Some items have arrived, but the order is not yet complete</td>
+      </tr>
+      <tr>
+        <td><strong>Received</strong></td>
+        <td>Green</td>
+        <td>All requested items have been received into the warehouse</td>
+      </tr>
+      <tr>
+        <td><strong>Cancelled</strong></td>
+        <td>Gray</td>
+        <td>Request was cancelled before completion</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Deletion Restriction:</strong>
+    Only requests in <strong>Submitted</strong> status can be deleted. Once a request has been approved, ordered, or rejected, it becomes part of the permanent audit trail and cannot be removed.
+  </div>
+</section>
+
+
+<!-- =========================================================== -->
+<!-- Section 2: Procurement Requests -->
+<!-- =========================================================== -->
+
+<section class="doc-section" id="procurement-requests">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">2</div>
+    <h2>Creating a Purchase Request</h2>
+  </div>
+
+  <p>To request new supplies, click the <strong>New Purchase Request</strong> button in the page header. A modal form opens with four organized sections.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-procurement-create-en.png" alt="New procurement request form" class="doc-screenshot-image" data-i18n-img="wh-procurement-create">
+  </div>
+
+  <!-- Request Details Section -->
+  <h3 id="request-details">Section 1: Request Details</h3>
+
+  <p>The top section captures the essential information about the request:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Required</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>Yes</td>
+        <td>Request date. Defaults to today and uses a date picker</td>
+      </tr>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>Auto</td>
+        <td>Auto-generated in the format <code>PR-YYYY-NNN</code> (e.g., PR-2026-015). Read-only</td>
+      </tr>
+      <tr>
+        <td><strong>Requesting Department</strong></td>
+        <td>Yes</td>
+        <td>The department that needs the items. Searchable dropdown listing all inventory departments</td>
+      </tr>
+      <tr>
+        <td><strong>Target Department</strong></td>
+        <td>Yes</td>
+        <td>The warehouse or department that will handle the purchase. Searchable dropdown</td>
+      </tr>
+      <tr>
+        <td><strong>Priority</strong></td>
+        <td>Yes</td>
+        <td>A three-level segmented control: <strong>Normal</strong> (blue), <strong>Urgent</strong> (orange), or <strong>Critical</strong> (red). Defaults to Normal</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Justification Section -->
+  <h3 id="justification">Section 2: Justification</h3>
+
+  <p>An optional text area where you explain <strong>why</strong> these items are needed. While not required by the system, providing a clear justification helps approvers make faster decisions. The field auto-sizes between 3 and 5 lines as you type.</p>
+
+  <!-- Line Items Section -->
+  <h3 id="line-items">Section 3: Line Items</h3>
+
+  <p>This is where you list the actual items you need. The form starts with one empty row and you can add more with the <strong>Add Item</strong> button.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>#</strong></td>
+        <td>Row number (automatic)</td>
+      </tr>
+      <tr>
+        <td><strong>Item Description</strong></td>
+        <td>Free-text description of what you need. The item does not need to exist in the warehouse catalog</td>
+      </tr>
+      <tr>
+        <td><strong>Quantity</strong></td>
+        <td>Number of units needed (minimum 1)</td>
+      </tr>
+      <tr>
+        <td><strong>Unit</strong></td>
+        <td>Unit of measure selected from a dropdown: piece, box, ampoule, tablet, vial, set, liter, package, pair, meter, gram, dose, or ml</td>
+      </tr>
+      <tr>
+        <td><strong>Delete</strong></td>
+        <td>Remove this line (disabled when only one row remains)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Free-Text Items:</strong>
+    Unlike warehouse transfers and orders which pick from the existing product catalog, procurement items are described in free text. This is because purchase requests are typically for items that do not yet exist in the system.
+  </div>
+
+  <!-- Attachments Section -->
+  <h3 id="attachments">Section 4: Attachments</h3>
+
+  <p>Optionally attach supporting documents such as supplier quotes, specification sheets, or approval letters. Supported file types include PDF, Word, Excel, and images (PNG/JPG). Multiple files can be attached to a single request.</p>
+
+  <!-- Unsaved Changes Warning -->
+  <h3 id="unsaved-warning">Unsaved Changes Protection</h3>
+
+  <p>If you start filling in items and then try to close the modal, the system will ask for confirmation before discarding your work. This prevents accidental loss of partially completed requests.</p>
+
+  <!-- Request History Tab -->
+  <h3 id="request-history">Request History Tab</h3>
+
+  <p>The <strong>Request History</strong> tab shows all procurement requests in a sortable, paginated table.</p>
+
+  <h4>Filter Panel</h4>
+
+  <p>A collapsible filter section at the top lets you narrow down the list:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Filter</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Date From / To</strong></td>
+        <td>Date picker</td>
+        <td>Filter requests by date range</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>Searchable dropdown</td>
+        <td>Show requests from a specific department</td>
+      </tr>
+      <tr>
+        <td><strong>Warehouse Group</strong></td>
+        <td>Searchable dropdown</td>
+        <td>Filter by product category</td>
+      </tr>
+      <tr>
+        <td><strong>Status</strong></td>
+        <td>Dropdown</td>
+        <td>Show only requests with a specific status (Draft, Submitted, Approved, etc.)</td>
+      </tr>
+      <tr>
+        <td><strong>Priority</strong></td>
+        <td>Dropdown</td>
+        <td>Filter by Normal, Urgent, or Critical priority</td>
+      </tr>
+      <tr>
+        <td><strong>General Search</strong></td>
+        <td>Text input</td>
+        <td>Search across document numbers, department names, justification text, and item descriptions</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The filter panel shows an <strong>active filter count</strong> badge so you know how many filters are currently applied. Use the <strong>Clear</strong> button to reset all filters at once.</p>
+
+  <h4>Table Columns</h4>
+
+  <p>The request table displays the following columns on desktop:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Sortable</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>Yes</td>
+        <td>Request creation date</td>
+      </tr>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>No</td>
+        <td>Unique identifier in PR-YYYY-NNN format</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>Yes</td>
+        <td>Requesting department name</td>
+      </tr>
+      <tr>
+        <td><strong>Priority</strong></td>
+        <td>No</td>
+        <td>Color-coded badge (blue/orange/red)</td>
+      </tr>
+      <tr>
+        <td><strong>Items</strong></td>
+        <td>No</td>
+        <td>Number of line items in the request</td>
+      </tr>
+      <tr>
+        <td><strong>Estimated Total</strong></td>
+        <td>Yes</td>
+        <td>Estimated cost in GEL</td>
+      </tr>
+      <tr>
+        <td><strong>Status</strong></td>
+        <td>No</td>
+        <td>Current status badge</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Click any row to open a <strong>detail modal</strong> showing the full request information, including all line items, justification text, review notes, and attachments. A <strong>delete</strong> action is available on each row for requests still in Submitted status.</p>
+
+  <p>The table supports <strong>pagination</strong> with configurable page sizes (10, 20, 50, or 100 rows). A summary footer shows the total request count and combined estimated value.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Mobile View:</strong>
+    On screens narrower than 768px, the table is replaced with compact cards showing the document number, date, status badge, department, priority, item count, and estimated total. All the same data, just reorganized for smaller screens.
+  </div>
+
+  <!-- Analytics Tab -->
+  <h3 id="analytics">Analytics Tab</h3>
+
+  <p>The <strong>Analytics</strong> tab provides a bird's-eye view of procurement activity. It starts with a KPI summary strip followed by three collapsible analysis sections.</p>
+
+  <h4>KPI Summary Strip</h4>
+
+  <p>Three key metrics displayed as prominent cards at the top:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">Total</span>
+      <span class="doc-stat-inline-label">All Requests</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">Pending</span>
+      <span class="doc-stat-inline-label">Awaiting Review</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">Avg</span>
+      <span class="doc-stat-inline-label">Items per Request</span>
+    </div>
+  </div>
+
+  <h4>Department Activity</h4>
+
+  <p>Horizontal bar chart showing which departments submit the most purchase requests, along with the total estimated value per department. Bars are sized proportionally so the most active department fills the full width.</p>
+
+  <h4>Priority Distribution</h4>
+
+  <p>Horizontal bar chart breaking down requests by priority level. Each bar is color-coded to match its priority (blue for Normal, orange for Urgent, red for Critical), giving you a quick sense of how many urgent requests exist.</p>
+
+  <h4>Status Distribution</h4>
+
+  <p>A summary table listing each status with its color-coded badge and the number of requests currently in that status. Useful for identifying bottlenecks (e.g., many requests stuck in "Under Review").</p>
+</section>
+
+
+<!-- =========================================================== -->
+<!-- Section 3: Approval Workflow -->
+<!-- =========================================================== -->
+
+<section class="doc-section" id="procurement-approval">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">3</div>
+    <h2>Approval Workflow</h2>
+  </div>
+
+  <p>The <strong>Pending Approval</strong> tab is where authorized staff review purchase requests and decide whether to approve or reject them. Each pending request appears as an expandable card with all the details needed to make a decision.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-procurement-approval-en.png" alt="Procurement approval workflow" class="doc-screenshot-image" data-i18n-img="wh-procurement-approval">
+  </div>
+
+  <!-- Approval Card -->
+  <h3 id="approval-card">Approval Card</h3>
+
+  <p>Each card in the approval queue has the following layout:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Content</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Header Bar</strong></td>
+        <td>Gradient-colored bar showing the document number, date, priority badge, and status badge</td>
+      </tr>
+      <tr>
+        <td><strong>Info Row</strong></td>
+        <td>Requesting department, target department (with arrow indicator), requester name, and item count</td>
+      </tr>
+      <tr>
+        <td><strong>Justification</strong></td>
+        <td>The requester's explanation for why these items are needed (if provided)</td>
+      </tr>
+      <tr>
+        <td><strong>Items Table</strong></td>
+        <td>Expandable/collapsible list of all line items with description, quantity, and unit columns</td>
+      </tr>
+      <tr>
+        <td><strong>Action Buttons</strong></td>
+        <td>Approve (green) and Reject (red) buttons at the bottom of the card</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Approve Flow -->
+  <h3 id="approve-flow">Approving a Request</h3>
+
+  <p>To approve a request:</p>
+
+  <ol>
+    <li>Review the request details, justification, and line items on the approval card</li>
+    <li>Click the green <strong>Approve</strong> button</li>
+    <li>A <strong>step-up authentication</strong> dialog appears asking you to re-enter your password</li>
+    <li>After successful authentication, the request status changes to <strong>Approved</strong></li>
+    <li>The requesting department is automatically notified of the approval</li>
+  </ol>
+
+  <!-- Reject Flow -->
+  <h3 id="reject-flow">Rejecting a Request</h3>
+
+  <p>To reject a request:</p>
+
+  <ol>
+    <li>Click the red <strong>Reject</strong> button on the approval card</li>
+    <li>A <strong>rejection reason</strong> text area expands below the action buttons</li>
+    <li>Enter a clear reason for the rejection (required, cannot be empty)</li>
+    <li>Click <strong>Reject</strong> again to confirm, or <strong>Cancel</strong> to go back</li>
+    <li>A <strong>step-up authentication</strong> dialog appears asking you to re-enter your password</li>
+    <li>After successful authentication, the request status changes to <strong>Rejected</strong> and the reason is saved</li>
+    <li>The requesting department receives a notification with the rejection reason</li>
+  </ol>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Step-Up Authentication:</strong>
+    Both approve and reject actions require you to re-enter your password. This is a security measure that prevents unauthorized approvals, even if someone gains access to an already-logged-in session.
+  </div>
+
+  <!-- Permissions -->
+  <h3 id="permissions">Permission Requirements</h3>
+
+  <p>Not everyone can approve or reject procurement requests. The system checks two conditions:</p>
+
+  <ul class="doc-list">
+    <li><strong>Permission Code:</strong> The user must have the <code>approve-procurement</code> permission assigned to their role, OR be a system administrator</li>
+    <li><strong>Department Access:</strong> The user must belong to the target department (the warehouse that will handle the purchase). This prevents staff from one warehouse approving requests meant for another</li>
+  </ul>
+
+  <p>If a user does not have the required permissions, the Approve and Reject buttons are hidden from the approval cards. They can still view the pending requests, but cannot act on them.</p>
+
+  <!-- Empty State -->
+  <h3 id="empty-state">Empty Approval Queue</h3>
+
+  <p>When no requests are waiting for approval, the tab displays a friendly empty state message instead of an empty list. This confirms that all pending requests have been processed.</p>
+
+  <!-- Notifications -->
+  <h3 id="notifications">Automatic Notifications</h3>
+
+  <p>The procurement system sends notifications at key points in the workflow:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Who Gets Notified</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Request Submitted</strong></td>
+        <td>Department managers of the target department</td>
+      </tr>
+      <tr>
+        <td><strong>Request Approved</strong></td>
+        <td>The requester and the requesting department</td>
+      </tr>
+      <tr>
+        <td><strong>Request Rejected</strong></td>
+        <td>The requester and the requesting department (includes rejection reason)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- FHIR Data Model -->
+  <h3 id="fhir-model">FHIR Data Model</h3>
+
+  <p>For integration teams, procurement requests are stored as <strong>SupplyRequest</strong> FHIR R4 resources, distinguished from regular stock orders by a <code>request-type</code> extension set to <code>purchase-request</code>.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Data Field</th>
+        <th>FHIR Path / Extension</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td><code>SupplyRequest.identifier</code> (system: procurement-document-number)</td>
+      </tr>
+      <tr>
+        <td><strong>Request Date</strong></td>
+        <td><code>SupplyRequest.authoredOn</code></td>
+      </tr>
+      <tr>
+        <td><strong>FHIR Status</strong></td>
+        <td><code>SupplyRequest.status</code> (draft | active | completed | cancelled)</td>
+      </tr>
+      <tr>
+        <td><strong>Extended Status</strong></td>
+        <td>Extension: <code>purchase-approval-status</code> (9 values listed above)</td>
+      </tr>
+      <tr>
+        <td><strong>Priority</strong></td>
+        <td><code>SupplyRequest.priority</code> (routine | urgent | stat) + Extension: <code>purchase-priority</code></td>
+      </tr>
+      <tr>
+        <td><strong>Requesting Department</strong></td>
+        <td>Extensions: <code>requester-department</code> (ID), <code>requester-department-name</code></td>
+      </tr>
+      <tr>
+        <td><strong>Target Department</strong></td>
+        <td>Extensions: <code>receiver-department</code> (ID), <code>receiver-department-name</code></td>
+      </tr>
+      <tr>
+        <td><strong>Justification</strong></td>
+        <td>Extension: <code>purchase-justification</code></td>
+      </tr>
+      <tr>
+        <td><strong>Line Items</strong></td>
+        <td>Extension: <code>purchase-line-items</code> (JSON array of description, quantity, unit)</td>
+      </tr>
+      <tr>
+        <td><strong>Estimated Cost</strong></td>
+        <td>Extension: <code>purchase-estimated-cost</code> (decimal, GEL)</td>
+      </tr>
+      <tr>
+        <td><strong>Requester Name</strong></td>
+        <td>Extension: <code>purchase-requester-name</code></td>
+      </tr>
+      <tr>
+        <td><strong>Review Notes</strong></td>
+        <td>Extension: <code>purchase-review-notes</code></td>
+      </tr>
+      <tr>
+        <td><strong>Total Quantity</strong></td>
+        <td><code>SupplyRequest.quantity.value</code> (sum of all line item quantities)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Extended vs. FHIR Status:</strong>
+    FHIR SupplyRequest only supports a limited set of statuses (draft, active, completed, cancelled). The procurement module uses a custom <code>purchase-approval-status</code> extension to track the full 9-stage lifecycle, while mapping to the closest standard FHIR status for interoperability.
+  </div>
+
+  <details class="doc-collapsible">
+    <summary class="doc-collapsible-header">
+      <span class="doc-collapsible-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </span>
+      <strong>FHIR Status Mapping Reference</strong>
+    </summary>
+    <div class="doc-collapsible-content">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Extended Status</th>
+            <th>FHIR SupplyRequest.status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Draft</td><td>draft</td></tr>
+          <tr><td>Submitted</td><td>active</td></tr>
+          <tr><td>Under Review</td><td>active</td></tr>
+          <tr><td>Approved</td><td>active</td></tr>
+          <tr><td>Ordered</td><td>active</td></tr>
+          <tr><td>Partially Received</td><td>active</td></tr>
+          <tr><td>Received</td><td>completed</td></tr>
+          <tr><td>Rejected</td><td>cancelled</td></tr>
+          <tr><td>Cancelled</td><td>cancelled</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+</section>

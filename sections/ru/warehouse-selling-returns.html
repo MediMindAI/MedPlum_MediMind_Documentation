@@ -1,0 +1,1041 @@
+<!-- ============================================================
+     Документация: Продажа и Возвраты на складе
+     Section ID: warehouse-selling-returns
+     Anchors: selling, returns
+     ============================================================ -->
+
+<!-- ============================================================
+     РАЗДЕЛ 1: ПРОДАЖА
+     ============================================================ -->
+<section class="doc-section" id="selling">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">1</div>
+    <h2>Продажа</h2>
+  </div>
+
+  <p>Модуль <strong>Продажа</strong> управляет реализацией складских позиций внешним компаниям-покупателям. При продаже товары списываются со склада отделения и формируется накладная на продажу. Каждая операция продажи проходит <strong>двухэтапный процесс утверждения</strong> -- оператор создает накладную, а уполномоченный пользователь подтверждает или отклоняет её.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR-ресурс:</strong> Каждая позиция продажи хранится как ресурс <strong>SupplyDelivery</strong> с кодом типа <code>selling</code>. Жизненный цикл статусов: <code>in-progress</code> (ожидание) &rarr; <code>completed</code> (подтверждено) или <code>abandoned</code> (отклонено).
+  </div>
+
+  <!-- 1.1 Макет страницы и вкладки -->
+  <h3 id="selling-layout">1.1 Макет страницы</h3>
+
+  <p>Страница продажи использует стандартную компоновку с тремя вкладками, общую для всех модулей складских операций:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Вкладки</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">10</span>
+      <span class="doc-stat-inline-label">Столбцов таблицы</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">KPI-карточек</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">7</span>
+      <span class="doc-stat-inline-label">Полей фильтра</span>
+    </div>
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Вкладка</th>
+        <th>Назначение</th>
+        <th>Индикатор</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>История</strong></td>
+        <td>Полный список отдельных позиций продажи с фильтрами, сортировкой, пагинацией и действиями корректировки</td>
+        <td>Синий -- общее количество записей</td>
+      </tr>
+      <tr>
+        <td><strong>Аналитика</strong></td>
+        <td>Панель KPI, Топ-5 проданных товаров, диаграмма активности покупателей, тепловая карта Отделение-Покупатель, сводка за период и сгруппированная таблица документов</td>
+        <td>Бирюзовый -- количество сгруппированных документов</td>
+      </tr>
+      <tr>
+        <td><strong>Ожидает подтверждения</strong></td>
+        <td>Группы продаж со статусом «в процессе», ожидающие утверждения; кнопки «Подтвердить» (зеленая) или «Отклонить» (красная) с повторной аутентификацией</td>
+        <td>Оранжевый -- количество ожидающих групп</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>В заголовке страницы расположена кнопка <strong>«Создать накладную»</strong>, открывающая модальное окно создания продажи.</p>
+
+  <!-- 1.2 Вкладка «История» -->
+  <h3 id="selling-history">1.2 Вкладка «История»</h3>
+
+  <p>Вкладка «История» отображает каждую отдельную позицию продажи в пагинированной сортируемой таблице. На мобильных устройствах таблица заменяется карточным макетом, показывающим ключевую информацию в компактном виде.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-history-ru.png" alt="Таблица истории продаж" class="doc-screenshot-image" data-i18n-img="wh-selling-history">
+  </div>
+
+  <h4>Столбцы таблицы</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Столбец</th>
+        <th>Описание</th>
+        <th>Сортировка</th>
+        <th>Мобильный</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Дата</strong></td>
+        <td>Дата и время операции продажи</td>
+        <td>Да</td>
+        <td>Видим</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Статус</strong></td>
+        <td>Цветной индикатор: <code>in-progress</code>, <code>completed</code> или <code>abandoned</code></td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>№ документа</strong></td>
+        <td>Автоматически сгенерированный номер документа (формат: <code>SELL-{timestamp}</code>)</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Отделение</strong></td>
+        <td>Исходное отделение, где произошла продажа</td>
+        <td>Да</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Покупатель</strong></td>
+        <td>Наименование внешней компании-покупателя</td>
+        <td>Да</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Наименование</strong></td>
+        <td>Название товара с кодом позиции ниже</td>
+        <td>Да</td>
+        <td>Видим</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Ед. изм.</strong></td>
+        <td>Единица измерения</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Кол-во</strong></td>
+        <td>Проданное количество</td>
+        <td>Нет</td>
+        <td>Видим</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>Цена продажи</strong></td>
+        <td>Цена за единицу продажи в GEL</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Итого</strong></td>
+        <td>Сумма по строке (Кол-во x Цена продажи) в GEL</td>
+        <td>Да</td>
+        <td>Видим</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Фильтры</h4>
+
+  <p>Панель фильтров поддерживает 7 критериев поиска со сворачиваемым макетом:</p>
+
+  <ul class="doc-list">
+    <li><strong>Дата с / Дата по</strong> -- фильтрация по диапазону дат</li>
+    <li><strong>Отделение</strong> -- выпадающий список складских отделений</li>
+    <li><strong>Складская группа</strong> -- фильтрация по категории товаров</li>
+    <li><strong>Покупатель</strong> -- выпадающий список всех компаний-покупателей</li>
+    <li><strong>Поиск товара</strong> -- текстовый поиск по наименованию товара</li>
+    <li><strong>Номер документа</strong> -- поиск по номеру документа</li>
+  </ul>
+
+  <p><strong>Итоговая строка</strong> внизу отображает общее количество записей и сумму всех отфильтрованных продаж в GEL.</p>
+
+  <h4>Корректировка</h4>
+
+  <p>Для завершенных записей продаж в столбце действий отображается кнопка <strong>«Корректировка»</strong>. Она открывает модальное окно складской корректировки, позволяющее уполномоченным пользователям корректировать количество или отменять операции после их проведения.</p>
+
+  <!-- 1.3 Вкладка «Аналитика» -->
+  <h3 id="selling-analytics">1.3 Вкладка «Аналитика»</h3>
+
+  <p>Вкладка «Аналитика» предоставляет полный обзор деятельности по продажам через KPI-карточки, наглядные диаграммы и сравнение периодов.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-analytics-ru.png" alt="Панель аналитики продаж" class="doc-screenshot-image" data-i18n-img="wh-selling-analytics">
+  </div>
+
+  <h4>Панель KPI</h4>
+
+  <p>Пять KPI-карточек отображаются в верхней части вкладки «Аналитика», каждая с миниатюрными трендами и сравнением с предыдущим месяцем:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>KPI</th>
+        <th>Описание</th>
+        <th>Тренд</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Всего документов</strong></td>
+        <td>Количество созданных накладных на продажу</td>
+        <td>Спарклайн за 30 дней + % изменения по сравнению с прошлым месяцем</td>
+      </tr>
+      <tr>
+        <td><strong>Общая сумма</strong></td>
+        <td>Сумма всех продаж в GEL</td>
+        <td>Спарклайн за 30 дней + % изменения по сравнению с прошлым месяцем</td>
+      </tr>
+      <tr>
+        <td><strong>Топ покупатель</strong></td>
+        <td>Компания-покупатель с наибольшим количеством операций</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>Среднее позиций/док.</strong></td>
+        <td>Среднее количество строк в одной накладной</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>Самый загруженный день</strong></td>
+        <td>День недели с наибольшим объемом продаж</td>
+        <td>Количество операций</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Разделы аналитики</h4>
+
+  <p>Под панелью KPI расположены четыре сворачиваемых аналитических раздела с более детальными данными:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Раздел</th>
+        <th>Визуализация</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Топ-5 проданных товаров</strong></td>
+        <td>Рейтинговый список с индикаторами</td>
+        <td>Наиболее часто продаваемые товары по количеству с указанием общей суммы по каждому</td>
+      </tr>
+      <tr>
+        <td><strong>Активность покупателей</strong></td>
+        <td>Горизонтальная столбчатая диаграмма</td>
+        <td>Количество операций по каждой компании-покупателю, отсортированных по частоте</td>
+      </tr>
+      <tr>
+        <td><strong>Тепловая карта Отделение &rarr; Покупатель</strong></td>
+        <td>Сетка с цветовой интенсивностью</td>
+        <td>Показывает, какие отделения продают каким покупателям чаще всего; более темные ячейки указывают на больший объем</td>
+      </tr>
+      <tr>
+        <td><strong>Сводка за период</strong></td>
+        <td>Таблица с переключателем</td>
+        <td>Еженедельный (4 недели) или ежемесячный (6 месяцев) обзор с количеством документов и общей суммой за период</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Переключатель периода:</strong> Раздел «Сводка за период» включает переключатель <strong>Еженедельно / Ежемесячно</strong>, переключающий между разбивкой за 4 недели и разбивкой за 6 месяцев по операциям продажи.
+  </div>
+
+  <!-- 1.4 Модальное окно создания накладной -->
+  <h3 id="selling-create">1.4 Создание накладной на продажу</h3>
+
+  <p>Нажмите кнопку <strong>«Создать накладную»</strong> в заголовке страницы, чтобы открыть двухпанельное модальное окно. Модальное окно использует общий макет BookModal (тот же двухпанельный интерфейс, что используется для трансферов и заказов).</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-create-ru.png" alt="Модальное окно создания накладной на продажу" class="doc-screenshot-image" data-i18n-img="wh-selling-create">
+  </div>
+
+  <h4>Поля заголовка модального окна</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Поле</th>
+        <th>Обязательное</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Дата</strong></td>
+        <td>Да</td>
+        <td>Дата операции (по умолчанию -- сегодня)</td>
+      </tr>
+      <tr>
+        <td><strong>Номер документа</strong></td>
+        <td>Авто</td>
+        <td>Автоматически сгенерированный в формате <code>SELL-{timestamp}</code>; поле доступно только для чтения</td>
+      </tr>
+      <tr>
+        <td><strong>Отделение</strong></td>
+        <td>Да</td>
+        <td>Выпадающий список складских отделений с поиском; при изменении перезагружается доступный остаток в левой панели</td>
+      </tr>
+      <tr>
+        <td><strong>Покупатель</strong></td>
+        <td>Да</td>
+        <td>Выпадающий список компаний-покупателей с поиском, загруженный из файла данных поставщиков-клиентов; дедупликация по коду компании</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Двухпанельный выбор товаров</h4>
+
+  <p>Тело модального окна содержит две панели:</p>
+
+  <ul class="doc-list">
+    <li><strong>Левая панель (Доступные остатки)</strong> -- отображает все товары, имеющиеся на складе выбранного отделения. Нажмите на товар, чтобы переместить его в правую панель. Строка фильтра сужает результаты по наименованию или коду.</li>
+    <li><strong>Правая панель (Выбранные товары)</strong> -- товары, выбранные для данной накладной. Для каждого товара отображаются редактируемые поля <strong>количества</strong> и <strong>цены продажи</strong>. Цена продажи по умолчанию соответствует себестоимости, но может быть изменена. Товары, превышающие доступный остаток, отмечаются индикатором ошибки.</li>
+  </ul>
+
+  <p><strong>Итоговая панель</strong> внизу показывает общее количество товаров и общую сумму продажи.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Повторная аутентификация:</strong> Перед отправкой накладной система запрашивает <strong>повторный ввод пароля</strong> (повторная аутентификация). Это предотвращает несанкционированные продажи даже в случае оставленной открытой сессии.
+  </div>
+
+  <h4>Предупреждение о несохраненных изменениях</h4>
+
+  <p>Если вы закроете модальное окно, пока в правой панели есть товары, появится диалоговое окно подтверждения браузера с вопросом, хотите ли вы отменить несохраненные изменения.</p>
+
+  <!-- 1.5 Ожидание подтверждения -->
+  <h3 id="selling-confirmation">1.5 Ожидание подтверждения</h3>
+
+  <p>Вновь созданные накладные на продажу начинаются со статусом <code>in-progress</code> и отображаются на вкладке <strong>«Ожидает подтверждения»</strong>. Уполномоченные пользователи могут просмотреть каждую группу документов и либо <strong>подтвердить</strong>, либо <strong>отклонить</strong> её.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Действие</th>
+        <th>Кнопка</th>
+        <th>Результат</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Подтвердить</strong></td>
+        <td>Зеленая кнопка</td>
+        <td>Переводит все позиции группы в статус <code>completed</code>. Товары списываются со склада отделения.</td>
+      </tr>
+      <tr>
+        <td><strong>Отклонить</strong></td>
+        <td>Красная кнопка</td>
+        <td>Открывает модальное окно с причиной отклонения. Переводит все позиции в статус <code>abandoned</code>. Товары остаются на складе.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Оба действия требуют <strong>повторной аутентификации</strong> (повторный ввод пароля) и разрешения <code>confirm-selling</code>. Пользователи-администраторы обходят проверку разрешений.</p>
+
+  <p>Таблица подтверждения группирует позиции по номеру документа, показывая разворачиваемый/сворачиваемый детальный вид со всеми позициями, их количеством, ценами и итогами.</p>
+
+  <!-- 1.6 Модель данных FHIR -->
+  <h3 id="selling-fhir">1.6 Модель данных FHIR</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Поле</th>
+        <th>FHIR-путь / Расширение</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Номер документа</td>
+        <td><code>SupplyDelivery.identifier</code> (system: selling-document-number)</td>
+      </tr>
+      <tr>
+        <td>Статус</td>
+        <td><code>SupplyDelivery.status</code></td>
+      </tr>
+      <tr>
+        <td>Дата</td>
+        <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+      </tr>
+      <tr>
+        <td>Количество</td>
+        <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
+      </tr>
+      <tr>
+        <td>ID отделения</td>
+        <td>Extension: <code>source-department</code></td>
+      </tr>
+      <tr>
+        <td>Название отделения</td>
+        <td>Extension: <code>source-department-name</code></td>
+      </tr>
+      <tr>
+        <td>ID покупателя</td>
+        <td>Extension: <code>selling-buyer-id</code></td>
+      </tr>
+      <tr>
+        <td>Название покупателя</td>
+        <td>Extension: <code>selling-buyer-name</code></td>
+      </tr>
+      <tr>
+        <td>Код товара</td>
+        <td>Extension: <code>item-code</code></td>
+      </tr>
+      <tr>
+        <td>Наименование товара</td>
+        <td>Extension: <code>item-name</code></td>
+      </tr>
+      <tr>
+        <td>Ед. изм.</td>
+        <td>Extension: <code>unit-of-measure</code></td>
+      </tr>
+      <tr>
+        <td>Цена за единицу</td>
+        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Цена продажи</td>
+        <td>Extension: <code>selling-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Сумма по строке</td>
+        <td>Extension: <code>line-total</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Номер партии</td>
+        <td>Extension: <code>lot-number</code></td>
+      </tr>
+      <tr>
+        <td>Срок годности</td>
+        <td>Extension: <code>expiry-date</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+
+<!-- ============================================================
+     РАЗДЕЛ 2: ВОЗВРАТЫ
+     ============================================================ -->
+<section class="doc-section" id="returns">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">2</div>
+    <h2>Возврат поставщику</h2>
+  </div>
+
+  <p>Модуль <strong>Возвраты</strong> обрабатывает отправку товаров обратно их первоначальному поставщику. Обычно это используется для бракованных товаров, товаров с истекшим сроком годности или товаров, полученных по ошибке. Возвраты используют тот же макет с тремя вкладками и двухэтапный процесс утверждения, что и модуль продажи, но с ключевым отличием: Возвраты ссылаются на <strong>оригинальную приемную накладную</strong>, чтобы поставщик знал, из какой поставки были товары.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR-ресурс:</strong> Каждая позиция возврата хранится как ресурс <strong>SupplyDelivery</strong> с кодом типа <code>return</code>. Жизненный цикл статусов: <code>in-progress</code> (ожидание) &rarr; <code>completed</code> (подтверждено) или <code>abandoned</code> (отклонено).
+  </div>
+
+  <!-- 2.1 Макет страницы -->
+  <h3 id="returns-layout">2.1 Макет страницы</h3>
+
+  <p>Страница возвратов полностью повторяет макет страницы продаж: три вкладки и кнопка «Создать возврат» в заголовке:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Вкладки</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">11</span>
+      <span class="doc-stat-inline-label">Столбцов таблицы</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">KPI-карточек</span>
+    </div>
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Вкладка</th>
+        <th>Назначение</th>
+        <th>Индикатор</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>История</strong></td>
+        <td>Полный список отдельных позиций возврата с 11-столбцовой таблицей, включая столбцы «Поставщик» и «Приемная накладная»</td>
+        <td>Синий -- общее количество записей</td>
+      </tr>
+      <tr>
+        <td><strong>Аналитика</strong></td>
+        <td>Панель KPI, Топ-5 возвращенных товаров, диаграмма активности поставщиков, тепловая карта Поставщик-Отделение, Сводка за период</td>
+        <td>Бирюзовый -- количество сгруппированных документов</td>
+      </tr>
+      <tr>
+        <td><strong>Ожидает подтверждения</strong></td>
+        <td>Группы возвратов со статусом «в процессе», ожидающие утверждения; идентичный процесс подтверждения/отклонения как в модуле продажи</td>
+        <td>Оранжевый -- количество ожидающих групп</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.2 Вкладка «История» -->
+  <h3 id="returns-history">2.2 Вкладка «История»</h3>
+
+  <p>Таблица истории возвратов содержит <strong>11 столбцов</strong> -- на два больше, чем таблица продаж. Дополнительные столбцы отслеживают поставщика и оригинальную приемную накладную, которые необходимы для отслеживания возврата до исходной поставки.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-history-ru.png" alt="Таблица истории возвратов" class="doc-screenshot-image" data-i18n-img="wh-returns-history">
+  </div>
+
+  <h4>Столбцы таблицы</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Столбец</th>
+        <th>Описание</th>
+        <th>Сортировка</th>
+        <th>Мобильный</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Дата</strong></td>
+        <td>Дата и время возврата</td>
+        <td>Да</td>
+        <td>Видим</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Статус</strong></td>
+        <td>Цветной индикатор статуса</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>№ документа</strong></td>
+        <td>Автоматически сгенерированный номер документа (формат: <code>RET-{YYYY}-{NNN}</code>)</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Отделение</strong></td>
+        <td>Отделение, возвращающее товары</td>
+        <td>Да</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Поставщик</strong></td>
+        <td>Компания-поставщик, получающая возвращенные товары. Длинные названия обрезаются с показом полного названия при наведении.</td>
+        <td>Да</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Приемная накладная</strong></td>
+        <td>Ссылка на номер оригинальной приемной накладной, связывающая возврат с конкретной входящей поставкой</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Наименование</strong></td>
+        <td>Название товара с кодом позиции ниже</td>
+        <td>Да</td>
+        <td>Видим</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Ед. изм.</strong></td>
+        <td>Единица измерения</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>Кол-во</strong></td>
+        <td>Возвращаемое количество</td>
+        <td>Нет</td>
+        <td>Видим</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Цена</strong></td>
+        <td>Цена за единицу в GEL</td>
+        <td>Нет</td>
+        <td>Скрыт</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>Итого</strong></td>
+        <td>Сумма по строке (Кол-во x Цена) в GEL</td>
+        <td>Да</td>
+        <td>Видим</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Как и в таблице продаж, для завершенных позиций возврата доступна кнопка <strong>«Корректировка»</strong> для внесения постфактум изменений.</p>
+
+  <!-- 2.3 Вкладка «Аналитика» -->
+  <h3 id="returns-analytics">2.3 Вкладка «Аналитика»</h3>
+
+  <p>Вкладка аналитики возвратов имеет ту же структуру, что и аналитика продаж, но фокусируется на активности <strong>поставщиков</strong>, а не покупателей.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-analytics-ru.png" alt="Панель аналитики возвратов" class="doc-screenshot-image" data-i18n-img="wh-returns-analytics">
+  </div>
+
+  <h4>Панель KPI</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>KPI</th>
+        <th>Описание</th>
+        <th>Отличие от продажи</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Всего документов</strong></td>
+        <td>Количество созданных накладных на возврат</td>
+        <td>Идентично</td>
+      </tr>
+      <tr>
+        <td><strong>Общая сумма</strong></td>
+        <td>Сумма всех возвратов в GEL</td>
+        <td>Идентично</td>
+      </tr>
+      <tr>
+        <td><strong>Топ поставщик</strong></td>
+        <td>Поставщик с наибольшим количеством операций возврата</td>
+        <td>В продажах -- «Топ покупатель»</td>
+      </tr>
+      <tr>
+        <td><strong>Среднее позиций/док.</strong></td>
+        <td>Среднее количество позиций в одном документе возврата</td>
+        <td>Идентично</td>
+      </tr>
+      <tr>
+        <td><strong>Самый загруженный день</strong></td>
+        <td>День недели с наибольшим объемом возвратов</td>
+        <td>Идентично</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Разделы аналитики</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Раздел</th>
+        <th>Визуализация</th>
+        <th>Отличие от продажи</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Топ-5 возвращенных товаров</strong></td>
+        <td>Рейтинговый список с индикаторами</td>
+        <td>Та же структура, отслеживает возвращенные товары вместо проданных</td>
+      </tr>
+      <tr>
+        <td><strong>Активность поставщиков</strong></td>
+        <td>Горизонтальная столбчатая диаграмма</td>
+        <td>Показывает количество возвратов по поставщикам (в продажах -- по покупателям)</td>
+      </tr>
+      <tr>
+        <td><strong>Тепловая карта Поставщик &rarr; Отделение</strong></td>
+        <td>Сетка с цветовой интенсивностью</td>
+        <td>Строки = Поставщики, Столбцы = Отделения (в продажах: Отделение &rarr; Покупатель)</td>
+      </tr>
+      <tr>
+        <td><strong>Сводка за период</strong></td>
+        <td>Таблица с переключателем Еженедельно/Ежемесячно</td>
+        <td>Идентичная структура</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.4 Модальное окно создания возврата -->
+  <h3 id="returns-create">2.4 Создание возврата</h3>
+
+  <p>Нажмите кнопку <strong>«Создать возврат»</strong> в заголовке страницы. Модальное окно создания возврата использует тот же двухпанельный макет, что и окно продажи, но добавляет два уникальных поля: <strong>Поставщик</strong> и <strong>Приемная накладная</strong>.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-create-ru.png" alt="Модальное окно создания возврата" class="doc-screenshot-image" data-i18n-img="wh-returns-create">
+  </div>
+
+  <h4>Поля заголовка модального окна</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Поле</th>
+        <th>Обязательное</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Дата</strong></td>
+        <td>Да</td>
+        <td>Дата операции (по умолчанию -- сегодня)</td>
+      </tr>
+      <tr>
+        <td><strong>Номер документа</strong></td>
+        <td>Авто</td>
+        <td>Автоматически сгенерированный в формате <code>RET-{YYYY}-{NNN}</code>; поле доступно только для чтения</td>
+      </tr>
+      <tr>
+        <td><strong>Отделение</strong></td>
+        <td>Да</td>
+        <td>Выпадающий список складских отделений с поиском</td>
+      </tr>
+      <tr>
+        <td><strong>Поставщик</strong></td>
+        <td>Да</td>
+        <td>Выпадающий список с поиском, отфильтрованный для показа только поставщиков (тип = «supplier»). Это ключевое отличие от модуля продажи.</td>
+      </tr>
+      <tr>
+        <td><strong>Приемная накладная</strong></td>
+        <td>Нет</td>
+        <td>При выборе поставщика этот выпадающий список <strong>автоматически заполняется</strong> номерами накладных предыдущих приемок от данного поставщика. Формат: <code>НОМЕР_НАКЛАДНОЙ (ДАТА, X позиций)</code>. Недоступен до выбора поставщика.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Поиск приемной накладной:</strong> При выборе поставщика система автоматически запрашивает все ранее полученные накладные от этого поставщика. Это позволяет связать возврат с конкретной входящей поставкой, что необходимо для сверки с поставщиком и бухгалтерского учета.
+  </div>
+
+  <h4>Двухпанельный выбор товаров</h4>
+
+  <p>Выбор товаров работает идентично модальному окну продажи:</p>
+
+  <ul class="doc-list">
+    <li><strong>Левая панель</strong> -- доступные остатки в выбранном отделении, с возможностью фильтрации по наименованию/коду</li>
+    <li><strong>Правая панель</strong> -- выбранные товары с редактируемым количеством. В отличие от продажи, возвраты <strong>не</strong> имеют редактируемого поля цены продажи (товары возвращаются по первоначальной себестоимости)</li>
+  </ul>
+
+  <p>Для отправки возврата требуется <strong>повторная аутентификация</strong> (повторный ввод пароля). Товары, превышающие доступный остаток, блокируются от отправки.</p>
+
+  <!-- 2.5 Ожидание подтверждения -->
+  <h3 id="returns-confirmation">2.5 Ожидание подтверждения</h3>
+
+  <p>Процесс подтверждения возвратов идентичен процессу продаж:</p>
+
+  <ul class="doc-list">
+    <li>Новые возвраты появляются со статусом <code>in-progress</code></li>
+    <li><strong>Подтвердить</strong> (зеленая) переводит позиции в статус <code>completed</code> и списывает товары со склада</li>
+    <li><strong>Отклонить</strong> (красная) открывает модальное окно с причиной отклонения и переводит позиции в статус <code>abandoned</code></li>
+    <li>Оба действия требуют повторной аутентификации и разрешения <code>confirm-return</code></li>
+  </ul>
+
+  <!-- 2.6 Модель данных FHIR -->
+  <h3 id="returns-fhir">2.6 Модель данных FHIR</h3>
+
+  <p>Возвраты используют ту же FHIR-структуру SupplyDelivery, что и продажи, с дополнительными полями, специфичными для возвратов поставщику:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Поле</th>
+        <th>FHIR-путь / Расширение</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Номер документа</td>
+        <td><code>SupplyDelivery.identifier</code> (system: return-document-number)</td>
+      </tr>
+      <tr>
+        <td>Статус</td>
+        <td><code>SupplyDelivery.status</code></td>
+      </tr>
+      <tr>
+        <td>Дата</td>
+        <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+      </tr>
+      <tr>
+        <td>Количество</td>
+        <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
+      </tr>
+      <tr>
+        <td>ID отделения</td>
+        <td>Extension: <code>source-department</code></td>
+      </tr>
+      <tr>
+        <td>Название отделения</td>
+        <td>Extension: <code>source-department-name</code></td>
+      </tr>
+      <tr>
+        <td>ID поставщика</td>
+        <td>Extension: <code>return-supplier-id</code></td>
+      </tr>
+      <tr>
+        <td>Название поставщика</td>
+        <td>Extension: <code>return-supplier-name</code></td>
+      </tr>
+      <tr>
+        <td>Ссылка на приемную накладную</td>
+        <td>Extension: <code>receiving-waybill-ref</code></td>
+      </tr>
+      <tr>
+        <td>Код товара</td>
+        <td>Extension: <code>item-code</code></td>
+      </tr>
+      <tr>
+        <td>Наименование товара</td>
+        <td>Extension: <code>item-name</code></td>
+      </tr>
+      <tr>
+        <td>Ед. изм.</td>
+        <td>Extension: <code>unit-of-measure</code></td>
+      </tr>
+      <tr>
+        <td>Цена за единицу</td>
+        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Сумма по строке</td>
+        <td>Extension: <code>line-total</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Номер партии</td>
+        <td>Extension: <code>lot-number</code></td>
+      </tr>
+      <tr>
+        <td>Срок годности</td>
+        <td>Extension: <code>expiry-date</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+
+<!-- ============================================================
+     РАЗДЕЛ 3: ОБЩИЕ ПАТТЕРНЫ
+     ============================================================ -->
+<section class="doc-section" id="selling-returns-shared">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">3</div>
+    <h2>Продажа vs Возвраты: сравнение</h2>
+  </div>
+
+  <p>Оба модуля имеют одинаковую базовую архитектуру и шаблоны пользовательского интерфейса. В таблице ниже приведены основные различия:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Аспект</th>
+        <th>Продажа</th>
+        <th>Возвраты</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Направление</strong></td>
+        <td>Товары покидают больницу и направляются внешнему покупателю</td>
+        <td>Товары покидают больницу и возвращаются первоначальному поставщику</td>
+      </tr>
+      <tr>
+        <td><strong>Код типа FHIR</strong></td>
+        <td><code>selling</code></td>
+        <td><code>return</code></td>
+      </tr>
+      <tr>
+        <td><strong>Формат № документа</strong></td>
+        <td><code>SELL-{timestamp}</code></td>
+        <td><code>RET-{YYYY}-{NNN}</code></td>
+      </tr>
+      <tr>
+        <td><strong>Поле контрагента</strong></td>
+        <td>Покупатель (все компании)</td>
+        <td>Поставщик (отфильтрован по типу «supplier»)</td>
+      </tr>
+      <tr>
+        <td><strong>Приемная накладная</strong></td>
+        <td>Неприменимо</td>
+        <td>Необязательный выпадающий список, ссылающийся на предыдущую приемку</td>
+      </tr>
+      <tr>
+        <td><strong>Столбец цены</strong></td>
+        <td>Редактируемая «Цена продажи» (может отличаться от себестоимости)</td>
+        <td>Только для чтения «Цена» (возврат по первоначальной себестоимости)</td>
+      </tr>
+      <tr>
+        <td><strong>Столбцы истории</strong></td>
+        <td>10 столбцов</td>
+        <td>11 столбцов (+Поставщик, +Приемная накладная)</td>
+      </tr>
+      <tr>
+        <td><strong>Ключевая метрика аналитики</strong></td>
+        <td>Топ покупатель, Активность покупателей</td>
+        <td>Топ поставщик, Активность поставщиков</td>
+      </tr>
+      <tr>
+        <td><strong>Оси тепловой карты</strong></td>
+        <td>Отделение &rarr; Покупатель</td>
+        <td>Поставщик &rarr; Отделение</td>
+      </tr>
+      <tr>
+        <td><strong>Разрешение на утверждение</strong></td>
+        <td><code>confirm-selling</code></td>
+        <td><code>confirm-return</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="shared-workflow">3.1 Общий рабочий процесс</h3>
+
+  <p>Оба модуля следуют одинаковому сквозному процессу:</p>
+
+  <div style="padding: 24px 0;">
+    <!-- Шаги процесса -->
+    <div style="display: flex; flex-direction: column; gap: 0; max-width: 680px; margin: 0 auto;">
+
+      <!-- Шаг 1 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--emr-gradient-primary, linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">1</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">Создание накладной / возврата</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Оператор выбирает отделение, контрагента и товары с помощью двухпанельного модального окна. Требуется повторная аутентификация.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- Шаг 2 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">2</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">Ожидание подтверждения</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Позиции создаются со статусом <code>in-progress</code>. Они появляются на вкладке «Ожидает подтверждения» для проверки.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- Шаг 3 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #059669 0%, #10b981 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">3</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">Подтверждение или отклонение</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Уполномоченный пользователь проверяет и подтверждает (списание со склада) или отклоняет (возврат на склад). Требуется повторная аутентификация.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- Шаг 4 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--emr-gradient-secondary, linear-gradient(135deg, #2b6cb0 0%, #3182ce 50%, #63b3ed 100%)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">4</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">История и аналитика</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Подтвержденные и отклоненные позиции появляются на вкладке «История». Аналитика обновляется в реальном времени с KPI и диаграммами.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <h3 id="shared-permissions">3.2 Справочник разрешений</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Разрешение</th>
+        <th>Модуль</th>
+        <th>Предоставляет доступ к</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>confirm-selling</code></td>
+        <td>Продажа</td>
+        <td>Подтверждение или отклонение ожидающих накладных на продажу на вкладке «Ожидает подтверждения»</td>
+      </tr>
+      <tr>
+        <td><code>confirm-return</code></td>
+        <td>Возвраты</td>
+        <td>Подтверждение или отклонение ожидающих накладных на возврат на вкладке «Ожидает подтверждения»</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Привилегии администратора:</strong> Пользователи с правами администратора автоматически имеют доступ к действиям подтверждения и отклонения, независимо от индивидуальных настроек разрешений.
+  </div>
+
+  <h3 id="shared-mobile">3.3 Мобильная версия</h3>
+
+  <p>Таблицы продаж и возвратов переключаются на <strong>карточный макет</strong> на экранах уже 768px. Каждая карточка содержит:</p>
+
+  <ul class="doc-list">
+    <li>Иконка товара и наименование вверху</li>
+    <li>Дата и индикатор статуса</li>
+    <li>Информация об отделении и контрагенте (покупатель или поставщик)</li>
+    <li>Количество, цена за единицу и общая сумма</li>
+  </ul>
+
+  <p>Карточный макет сохраняет всю ключевую информацию, естественно вписываясь в малые экраны. Столбцы, скрытые на мобильных устройствах (такие как Ед. изм., № документа и контрагент), включены в тело карточки как вторичный текст.</p>
+
+</section>

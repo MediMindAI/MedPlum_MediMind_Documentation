@@ -1,0 +1,811 @@
+<!-- ============================================================
+     Warehouse Inventory & Write-Offs Documentation
+     Section: warehouse-inventory
+     Anchors: stock-levels, picking, write-offs
+     ============================================================ -->
+
+<!-- ============================================================
+     SECTION 1: Stock Levels
+     ============================================================ -->
+<section class="doc-section" id="stock-levels">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">1</div>
+    <h2>Stock Levels</h2>
+  </div>
+
+  <p>The <strong>Stock Levels</strong> tab provides a real-time view of current inventory balances across all hospital departments. Think of it as a live spreadsheet that always reflects the latest stock position -- every receipt, transfer, and write-off updates the numbers automatically.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-inventory-balances-en.png" alt="Stock levels table with department breakdown" class="doc-screenshot-image" data-i18n-img="wh-inventory-balances">
+  </div>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">9</span>
+      <span class="doc-stat-inline-label">Table Columns</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">50</span>
+      <span class="doc-stat-inline-label">Items Per Page</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4</span>
+      <span class="doc-stat-inline-label">Warehouse Zones</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">30s</span>
+      <span class="doc-stat-inline-label">Cache Duration</span>
+    </div>
+  </div>
+
+  <!-- 1.1 Filter Panel -->
+  <h3 id="stock-filter-panel">Filter Panel</h3>
+
+  <p>The filter panel at the top lets you narrow down the balance view to exactly the items you need. Filters are arranged in two rows:</p>
+
+  <p><strong>Row 1 -- Primary Filters:</strong></p>
+  <ul class="doc-list">
+    <li><strong>Date</strong> -- View balances as of a specific date (defaults to today)</li>
+    <li><strong>Department</strong> -- Select a specific department (searchable dropdown). When empty, shows all departments</li>
+    <li><strong>Group</strong> -- Filter by item type/group (e.g., Medications, Consumables)</li>
+    <li><strong>Warehouse Group</strong> -- Filter by top-level warehouse category</li>
+  </ul>
+
+  <p><strong>Row 2 -- Stock Filters:</strong> A visual strip of checkboxes for quick stock status filtering:</p>
+  <ul class="doc-list">
+    <li><strong>Show Zeros</strong> -- Include items with zero quantity (out of stock)</li>
+    <li><strong>Show Non-Zeros</strong> -- Include items with positive stock (enabled by default)</li>
+    <li><strong>Show Negative</strong> -- Include items with negative balance anomalies (data discrepancies)</li>
+    <li><strong>Grouped</strong> -- Collapse multiple batches of the same item into expandable group rows</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Zone Filtering:</strong> An optional zone segmented control lets you filter by storage zone: Cold Chain, Controlled, Hazmat, or General. This is useful for warehouse staff managing temperature-sensitive or restricted items.
+  </div>
+
+  <!-- 1.2 Balance Table -->
+  <h3 id="stock-table-columns">Table Columns</h3>
+
+  <p>The balance table shows one row per stock line (item + lot combination). When <strong>Grouped</strong> mode is enabled, items with multiple batches are collapsed under an expandable header showing the aggregate totals.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Description</th>
+        <th>FHIR Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Code</strong></td>
+        <td>Item product code. In grouped mode, clicking the code expands/collapses child batches</td>
+        <td>Basic.extension (sq-item-code)</td>
+      </tr>
+      <tr>
+        <td><strong>Item Name</strong></td>
+        <td>Product name, truncated with ellipsis for long names</td>
+        <td>Basic.extension (sq-item-name)</td>
+      </tr>
+      <tr>
+        <td><strong>Type</strong></td>
+        <td>Item category (e.g., Medication, Consumable)</td>
+        <td>List.code (warehouse group)</td>
+      </tr>
+      <tr>
+        <td><strong>Quantity</strong></td>
+        <td>Current stock level with color-coded badges. Shows available/total breakdown when items are reserved</td>
+        <td>Basic.extension (sq-quantity)</td>
+      </tr>
+      <tr>
+        <td><strong>Price</strong></td>
+        <td>Weighted average unit cost in GEL</td>
+        <td>Basic.extension (sq-unit-cost)</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td>Total inventory value (quantity x price). Negative values shown in red</td>
+        <td>Computed</td>
+      </tr>
+      <tr>
+        <td><strong>Unit</strong></td>
+        <td>Unit of measure (e.g., ampoule, tablet, bottle)</td>
+        <td>Basic.extension (sq-unit)</td>
+      </tr>
+      <tr>
+        <td><strong>Expiration</strong></td>
+        <td>Expiry date with color-coded badges: red "Expired" badge, orange/yellow countdown badges for items expiring soon</td>
+        <td>Basic.extension (sq-expiry-date)</td>
+      </tr>
+      <tr>
+        <td><strong>Series</strong></td>
+        <td>Lot/batch number. Shows quality status badge (quarantine, rejected) when applicable</td>
+        <td>Basic.extension (sq-lot-number)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.3 Quantity Badges -->
+  <h3 id="stock-quantity-indicators">Quantity Indicators</h3>
+
+  <p>The Quantity column uses visual indicators to highlight stock status at a glance:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Indicator</th>
+        <th>Condition</th>
+        <th>Appearance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Out of Stock</strong></td>
+        <td>Quantity = 0</td>
+        <td>Red filled badge</td>
+      </tr>
+      <tr>
+        <td><strong>Low Stock</strong></td>
+        <td>Quantity &gt; 0 and &lt; 10</td>
+        <td>Orange/warning text color</td>
+      </tr>
+      <tr>
+        <td><strong>Negative Anomaly</strong></td>
+        <td>Quantity &lt; 0</td>
+        <td>Red badge with warning icon -- indicates a data discrepancy, not a normal state</td>
+      </tr>
+      <tr>
+        <td><strong>Reserved Stock</strong></td>
+        <td>Some quantity reserved for pending transfers</td>
+        <td>Shows "Available / Total" with reserved count below</td>
+      </tr>
+      <tr>
+        <td><strong>Normal</strong></td>
+        <td>Quantity &ge; 10</td>
+        <td>Standard text display</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.4 In-Table Search -->
+  <h3 id="stock-inline-search">Inline Search &amp; Export</h3>
+
+  <p>Above the table rows, a compact filter bar provides quick search across loaded data:</p>
+
+  <ul class="doc-list">
+    <li><strong>Code Search</strong> -- Filter by item code</li>
+    <li><strong>Name Search</strong> -- Filter by item name (partial match)</li>
+    <li><strong>Price Range</strong> -- Filter by minimum and maximum unit price</li>
+    <li><strong>Expiration Range</strong> -- Filter by expiry date window using date pickers</li>
+    <li><strong>Excel Export</strong> -- One-click export of all visible data to a spreadsheet file</li>
+    <li><strong>Refresh</strong> -- Manually reload data from the server (bypasses the 30-second cache)</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Keyboard Shortcut:</strong> Press <strong>Enter</strong> in any search field to immediately apply all filters.
+  </div>
+
+  <!-- 1.5 FHIR Data Model -->
+  <h3 id="stock-fhir-model">FHIR Data Model</h3>
+
+  <p>Stock balances are stored as <strong>Basic</strong> resources with the code <code>stock-quant</code>. Each StockQuant record represents a unique combination of item, location, lot number, and quality status.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Concept</th>
+        <th>FHIR Resource</th>
+        <th>Key Extension</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Stock Balance</strong></td>
+        <td>Basic (code: stock-quant)</td>
+        <td>sq-quantity, sq-unit-cost, sq-expiry-date</td>
+      </tr>
+      <tr>
+        <td><strong>Location</strong></td>
+        <td>Location / Organization</td>
+        <td>sq-location-id, sq-location-name</td>
+      </tr>
+      <tr>
+        <td><strong>Item Master</strong></td>
+        <td>DeviceDefinition</td>
+        <td>sq-item-code, sq-item-name</td>
+      </tr>
+      <tr>
+        <td><strong>Lot Tracking</strong></td>
+        <td>Basic (stock-quant)</td>
+        <td>sq-lot-number, sq-quality-status</td>
+      </tr>
+      <tr>
+        <td><strong>Reserved Qty</strong></td>
+        <td>Basic (stock-quant)</td>
+        <td>sq-reserved-quantity</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Composite Key:</strong> Each StockQuant is uniquely identified by the combination of <code>itemCode | locationId | lotNumber | qualityStatus</code>. Items without lot tracking use "NONE" as the lot number.
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SECTION 2: Picking Queue
+     ============================================================ -->
+<section class="doc-section" id="picking">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">2</div>
+    <h2>Picking Queue</h2>
+  </div>
+
+  <p>The <strong>Picking Queue</strong> is where warehouse staff fulfill approved transfer requests. When a department-to-department transfer is approved, it appears here as a "pending request" card. The picker selects a request, views the pick list, and confirms the quantities they actually pick from the shelves.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-inventory-picking-en.png" alt="Picking queue with FEFO highlighting and zone grouping" class="doc-screenshot-image" data-i18n-img="wh-inventory-picking">
+  </div>
+
+  <!-- 2.1 Workflow Overview -->
+  <h3 id="picking-workflow">Picking Workflow</h3>
+
+  <p>The picking process follows three steps:</p>
+
+  <div class="doc-zone-diagram" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="doc-zone">
+      <div class="doc-zone-header">1. Select Request</div>
+      <div class="doc-zone-content">
+        <p>Choose a pending transfer from the request list</p>
+        <p>Shows item name, source/destination departments, quantity, and status</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">2. Pick Items</div>
+      <div class="doc-zone-content">
+        <p>View the pick list with FEFO-recommended lots</p>
+        <p>Enter confirmed quantities and scan barcodes</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">3. Confirm</div>
+      <div class="doc-zone-content">
+        <p>Submit confirmed picks</p>
+        <p>Stock is deducted from source and added to destination</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 Request Cards -->
+  <h3 id="picking-request-cards">Pending Request Cards</h3>
+
+  <p>Each approved transfer request appears as a clickable card showing:</p>
+
+  <ul class="doc-list">
+    <li><strong>Item Name</strong> -- The product being requested</li>
+    <li><strong>Route</strong> -- Source department arrow destination department</li>
+    <li><strong>Quantity</strong> -- Amount requested with unit of measure (shown in a blue badge)</li>
+    <li><strong>Status Badge</strong> -- "In Progress" for active requests</li>
+  </ul>
+
+  <p>Click a card to load its pick list. The selected card gets a blue left border and shadow to indicate it is active.</p>
+
+  <!-- 2.3 Pick List Table -->
+  <h3 id="picking-table-columns">Pick List Table</h3>
+
+  <p>When a request is selected, the system queries real stock data (StockQuant records) for the source department and builds a pick list sorted by the <strong>FEFO</strong> (First-Expiry-First-Out) principle -- lots expiring soonest appear first.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Report #</strong></td>
+        <td>Transfer document number for reference</td>
+      </tr>
+      <tr>
+        <td><strong>Product Code</strong></td>
+        <td>Item code in monospace font for easy reading</td>
+      </tr>
+      <tr>
+        <td><strong>Product Name</strong></td>
+        <td>Item name. Shows a green "FEFO Recommended" badge on the lot the system recommends picking first</td>
+      </tr>
+      <tr>
+        <td><strong>Bin Location</strong></td>
+        <td>Physical storage location in the warehouse</td>
+      </tr>
+      <tr>
+        <td><strong>Lot Number</strong></td>
+        <td>Batch/lot identifier for traceability</td>
+      </tr>
+      <tr>
+        <td><strong>Expiration Date</strong></td>
+        <td>Lot expiry date. Items expiring within 30 days show in red with a warning icon</td>
+      </tr>
+      <tr>
+        <td><strong>Qty Requested</strong></td>
+        <td>Total amount requested by the destination department</td>
+      </tr>
+      <tr>
+        <td><strong>Suggested Pick</strong></td>
+        <td>System-calculated suggestion based on available stock (min of requested and available)</td>
+      </tr>
+      <tr>
+        <td><strong>Confirmed Pick</strong></td>
+        <td>Editable number input where the picker enters the actual quantity picked. Green checkmark button to confirm</td>
+      </tr>
+      <tr>
+        <td><strong>Comments</strong></td>
+        <td>Free-text field for picker notes (e.g., "damaged box, only 8 usable")</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.4 FEFO System -->
+  <h3 id="picking-fefo">FEFO -- First-Expiry-First-Out</h3>
+
+  <p>The FEFO system ensures that items closest to their expiration date are picked first, reducing waste. Here is how it works:</p>
+
+  <ul class="doc-list">
+    <li>The system automatically sorts available lots by expiry date (earliest first)</li>
+    <li>The first lot in the sorted list gets the green <strong>"FEFO Recommended"</strong> badge</li>
+    <li>Expired and quarantined lots are excluded from the pick list</li>
+    <li>Lots without an expiry date sort to the bottom (picked last)</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>FEFO Override:</strong> If a picker selects a lot that is NOT the FEFO-recommended one, the system opens an override modal requiring a reason. Common reasons include: customer request, packaging condition, partial pallet, or quality inspection. The override reason and optional notes are logged for audit purposes.
+  </div>
+
+  <!-- 2.5 Zone Grouping -->
+  <h3 id="picking-zones">Zone Grouping</h3>
+
+  <p>Pick list items are grouped by warehouse storage zone, so the picker can work through one zone at a time instead of walking back and forth across the warehouse. Each zone has a collapsible header:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Zone</th>
+        <th>Icon</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Cold Chain</strong></td>
+        <td>Snowflake (blue)</td>
+        <td>Temperature-controlled items (vaccines, biologics)</td>
+      </tr>
+      <tr>
+        <td><strong>Controlled</strong></td>
+        <td>Lock (red)</td>
+        <td>Restricted access items (narcotics, controlled substances)</td>
+      </tr>
+      <tr>
+        <td><strong>Hazmat</strong></td>
+        <td>Biohazard (orange)</td>
+        <td>Hazardous materials requiring special handling</td>
+      </tr>
+      <tr>
+        <td><strong>General</strong></td>
+        <td>Package (gray)</td>
+        <td>Standard storage items (most consumables and medications)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.6 Barcode Scanning -->
+  <h3 id="picking-barcode">Barcode Scanning</h3>
+
+  <p>The pick list includes a barcode scanner input field at the top. When a barcode is scanned (or typed and Enter is pressed):</p>
+
+  <ul class="doc-list">
+    <li>The system searches for a matching item by barcode or product code</li>
+    <li>If found, the matching row is highlighted with a visual pulse and the quantity input receives focus</li>
+    <li>An audio beep confirms the scan: <strong>high tone</strong> for success, <strong>low tone</strong> for no match</li>
+    <li>The highlight clears automatically after 3 seconds</li>
+  </ul>
+
+  <!-- 2.7 Progress Tracking -->
+  <h3 id="picking-progress">Progress Tracking</h3>
+
+  <p>A progress bar in the header shows the overall pick completion. Fully picked items count as 100%, partially picked as 50%. The progress percentage updates in real time as the picker confirms quantities.</p>
+</section>
+
+
+<!-- ============================================================
+     SECTION 3: Write-Offs
+     ============================================================ -->
+<section class="doc-section" id="write-offs">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">3</div>
+    <h2>Write-Offs</h2>
+  </div>
+
+  <p><strong>Write-offs</strong> remove items from inventory when they can no longer be used -- expired medications, damaged supplies, missing stock discovered during audits, or items recalled by the manufacturer. The write-off module provides a complete audit trail from creation through approval.</p>
+
+  <p>The page has a <strong>"New Write-Off"</strong> button in the header and three tabs:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Tabs</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">KPI Cards</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">4</span>
+      <span class="doc-stat-inline-label">Analytics Sections</span>
+    </div>
+  </div>
+
+  <!-- 3.1 History Tab -->
+  <h3 id="writeoffs-history">History Tab</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-writeoffs-list-en.png" alt="Write-offs history list with status badges" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-list">
+  </div>
+
+  <p>The <strong>History</strong> tab shows a sortable, paginated list of all write-off line items. Each row represents a single item that was written off.</p>
+
+  <h4>Table Columns</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Description</th>
+        <th>Sortable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>When the write-off was created (formatted with time)</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>Auto-generated document identifier (e.g., WO-1708012345678)</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>The department where stock was removed</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td><strong>Item Name</strong></td>
+        <td>Product name with item code displayed below</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td><strong>Quantity</strong></td>
+        <td>Amount written off with unit of measure</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td><strong>Price</strong></td>
+        <td>Unit price in GEL</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td>Total value lost (quantity x price) in GEL</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td><strong>Reason</strong></td>
+        <td>Write-off reason text (truncated to 30 chars with tooltip for full text)</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td><strong>Status</strong></td>
+        <td>Color-coded badge: In Progress (pending approval), Completed, or Abandoned</td>
+        <td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Filters</h4>
+
+  <p>Filter controls above the table let you narrow down the history:</p>
+  <ul class="doc-list">
+    <li><strong>Date Range</strong> -- Filter by start and end date</li>
+    <li><strong>Department</strong> -- Filter by department (searchable dropdown)</li>
+    <li><strong>Document Number</strong> -- Search by specific document number</li>
+    <li><strong>Warehouse Group</strong> -- Filter by product category</li>
+    <li><strong>Item Search</strong> -- Search by item name or code</li>
+  </ul>
+
+  <p>A <strong>summary footer</strong> below the table shows the total record count and the total monetary value of all visible write-offs in red.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Correction:</strong> Completed write-offs can be corrected by clicking the adjustment icon on the row. This opens a correction modal that creates a reverse stock movement to undo the write-off.
+  </div>
+
+  <!-- 3.2 Analytics Tab -->
+  <h3 id="writeoffs-analytics">Analytics Tab</h3>
+
+  <p>The <strong>Analytics</strong> tab provides a rich overview of write-off activity with KPI cards, visual charts, and a grouped document table.</p>
+
+  <h4>KPI Summary Cards</h4>
+
+  <p>Five cards at the top show key metrics with sparkline mini-charts and month-over-month trend arrows:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Card</th>
+        <th>Shows</th>
+        <th>Extras</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Total Documents</strong></td>
+        <td>Number of write-off documents created</td>
+        <td>Daily volume sparkline + trend vs. last month</td>
+      </tr>
+      <tr>
+        <td><strong>Total Value</strong></td>
+        <td>Sum of all written-off inventory value in GEL</td>
+        <td>Daily value sparkline + trend vs. last month</td>
+      </tr>
+      <tr>
+        <td><strong>Top Reason</strong></td>
+        <td>Most common write-off reason</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>Avg Items Per Document</strong></td>
+        <td>Average number of line items per write-off document</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>Busiest Day</strong></td>
+        <td>Day of the week with the most write-offs</td>
+        <td>Shows count of write-offs on that day</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Analytics Sections</h4>
+
+  <p>Below the KPI cards, four collapsible sections provide deeper insights:</p>
+
+  <ul class="doc-list">
+    <li><strong>Top 5 Items</strong> -- Ranked list of the most frequently written-off items with quantity and total value</li>
+    <li><strong>Department Activity</strong> -- Horizontal bar chart showing write-off counts per department, making it easy to spot departments with unusually high write-off volumes</li>
+    <li><strong>Reason Distribution</strong> -- Horizontal bar chart showing the count and value for each write-off reason category</li>
+    <li><strong>Period Summary</strong> -- Table with weekly or monthly toggles showing document counts and total values over time</li>
+  </ul>
+
+  <p>Below the analytics, a filter bar and grouped document table let you browse individual write-off documents with their aggregated totals.</p>
+
+  <!-- 3.3 Create Write-Off -->
+  <h3 id="writeoffs-create">Creating a Write-Off</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-writeoffs-create-en.png" alt="New write-off creation form with dual-panel layout" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-create">
+  </div>
+
+  <p>Click the <strong>"New Write-Off"</strong> button in the page header to open the creation modal. The modal uses a dual-panel layout (the same pattern used for transfers and orders):</p>
+
+  <h4>Header Fields</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Required</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>Yes</td>
+        <td>Write-off date (defaults to today)</td>
+      </tr>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>No</td>
+        <td>Auto-generated (WO-timestamp format). Cannot be edited manually</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>Yes</td>
+        <td>The department from which stock will be removed. Selecting a department loads its available inventory in the left panel</td>
+      </tr>
+      <tr>
+        <td><strong>Reason</strong></td>
+        <td>Yes</td>
+        <td>Free-text explanation for the write-off (e.g., "Expired medication batch 2024-03"). Must be filled before submission</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Dual-Panel Item Selection</h4>
+
+  <div class="doc-zone-diagram" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="doc-zone">
+      <div class="doc-zone-header">Left Panel -- Available Stock</div>
+      <div class="doc-zone-content">
+        <p>Shows items currently in stock at the selected department</p>
+        <p>Searchable/filterable list</p>
+        <p>Click an item to move it to the right panel</p>
+      </div>
+    </div>
+    <div class="doc-zone">
+      <div class="doc-zone-header">Right Panel -- Selected Items</div>
+      <div class="doc-zone-content">
+        <p>Items selected for write-off</p>
+        <p>Editable quantity for each item (cannot exceed stock)</p>
+        <p>Running total shown at the bottom</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Step-Up Authentication:</strong> Submitting a write-off requires password re-entry (step-up auth) to prevent accidental or unauthorized stock removal. This is the same security pattern used across all warehouse operations that modify stock levels.
+  </div>
+
+  <h4>Validation Rules</h4>
+
+  <ul class="doc-list">
+    <li>At least one item must be selected</li>
+    <li>Each item quantity must be greater than zero and not exceed current stock</li>
+    <li>Reason field must not be empty</li>
+    <li>Department must be selected before items can be added</li>
+    <li>Closing the modal with unsaved items triggers a confirmation dialog</li>
+  </ul>
+
+  <!-- 3.4 Approval Tab -->
+  <h3 id="writeoffs-approval">Approval Workflow</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-writeoffs-confirmation-en.png" alt="Write-off approval interface with confirm and reject buttons" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-confirmation">
+  </div>
+
+  <p>The <strong>Pending Confirmation</strong> tab shows write-offs that are awaiting approval. Documents are grouped by document number, and each group can be expanded to see individual line items.</p>
+
+  <h4>Approval Table Columns</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Expand</strong></td>
+        <td>Chevron to expand/collapse individual line items within the document</td>
+      </tr>
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>Document creation date with time</td>
+      </tr>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>Write-off document identifier</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>Department where stock will be removed</td>
+      </tr>
+      <tr>
+        <td><strong>Item Count</strong></td>
+        <td>Number of line items in the document (blue badge)</td>
+      </tr>
+      <tr>
+        <td><strong>Total Quantity</strong></td>
+        <td>Sum of all item quantities</td>
+      </tr>
+      <tr>
+        <td><strong>Total Value</strong></td>
+        <td>Sum of all item totals in GEL</td>
+      </tr>
+      <tr>
+        <td><strong>Actions</strong></td>
+        <td>Confirm (green) and Reject (red) buttons</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Confirm and Reject</h4>
+
+  <ul class="doc-list">
+    <li><strong>Confirm</strong> -- Approves the write-off. Stock is permanently removed. Requires step-up authentication (password re-entry)</li>
+    <li><strong>Reject</strong> -- Opens a modal where the reviewer can enter an optional rejection reason. The write-off is cancelled and stock remains unchanged. Also requires step-up authentication</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Permission Required:</strong> The Confirm and Reject buttons are only active for users with the <code>confirm-write-off</code> permission or administrators. Users without this permission see disabled buttons.
+  </div>
+
+  <h4>Expanded Detail View</h4>
+
+  <p>When a document row is expanded, a sub-table shows each line item with columns for Item Name, Unit, Quantity, Price, Total, and Reason. This allows the reviewer to examine every item before making an approval decision.</p>
+
+  <!-- 3.5 FHIR Data Model -->
+  <h3 id="writeoffs-fhir">FHIR Data Model</h3>
+
+  <p>Write-offs are stored as <strong>SupplyDelivery</strong> resources with a type code of <code>write-off</code>. Each line item is a separate SupplyDelivery resource, grouped by a shared document number extension.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>FHIR Path</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>SupplyDelivery.extension (document-number)</td>
+        <td>Groups multiple line items into one document</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>SupplyDelivery.destination</td>
+        <td>Reference to Location resource</td>
+      </tr>
+      <tr>
+        <td><strong>Item</strong></td>
+        <td>SupplyDelivery.suppliedItem.itemReference</td>
+        <td>Reference to DeviceDefinition (item master)</td>
+      </tr>
+      <tr>
+        <td><strong>Quantity</strong></td>
+        <td>SupplyDelivery.suppliedItem.quantity</td>
+        <td>Amount being written off</td>
+      </tr>
+      <tr>
+        <td><strong>Price</strong></td>
+        <td>SupplyDelivery.extension (unit-price)</td>
+        <td>Unit cost at time of write-off</td>
+      </tr>
+      <tr>
+        <td><strong>Reason</strong></td>
+        <td>SupplyDelivery.extension (reason)</td>
+        <td>Free-text write-off justification</td>
+      </tr>
+      <tr>
+        <td><strong>Status</strong></td>
+        <td>SupplyDelivery.status</td>
+        <td>in-progress (pending), completed (approved), abandoned (rejected)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Stock Impact:</strong> When a write-off is confirmed, the system decrements the corresponding StockQuant record and invalidates the balance cache. The stock change propagates immediately to the Stock Levels tab and any other view that reads inventory data.
+  </div>
+</section>

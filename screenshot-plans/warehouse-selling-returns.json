@@ -1,0 +1,220 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-22T12:00:00Z",
+  "sourceSection": {
+    "id": "warehouse-selling-returns",
+    "file": "sections/en/warehouse-selling-returns.html",
+    "titleKey": "toc.warehouseSellingReturns"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3005",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/warehouse/selling"
+  },
+  "screenshots": [
+    {
+      "id": "wh-selling-history",
+      "number": 1,
+      "name": "wh-selling-history",
+      "description": "Selling history table showing completed sales with filters",
+      "desiredState": "Selling page loaded, History tab active, Search clicked to load data",
+      "differentiator": "Shows selling history list — NOT analytics or create modal",
+      "stateSetup": {
+        "description": "Click Search to load selling history data",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with selling rows"],
+        "mustNotShow": ["Login page", "Empty table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/selling" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Search')" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-selling-history" }
+      ]
+    },
+    {
+      "id": "wh-selling-analytics",
+      "number": 2,
+      "name": "wh-selling-analytics",
+      "description": "Selling analytics dashboard with KPI cards and charts",
+      "desiredState": "Analytics tab active showing selling KPIs and trend data",
+      "differentiator": "Shows analytics tab — NOT history list or create modal",
+      "stateSetup": {
+        "description": "Switch to Analytics tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Analytics')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[role='tabpanel']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["KPI cards or chart area"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/selling" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Analytics')" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-selling-analytics" }
+      ]
+    },
+    {
+      "id": "wh-selling-create",
+      "number": 3,
+      "name": "wh-selling-create",
+      "description": "Create selling waybill modal",
+      "desiredState": "Create selling modal open showing form fields",
+      "differentiator": "Shows the create modal — NOT list or analytics tab",
+      "stateSetup": {
+        "description": "Click New/Create button to open selling creation modal",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "state-based",
+      "expectedDOMElements": ["[role='dialog']", "[class*='modal']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Modal with selling form fields"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/selling" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-selling-create" }
+      ]
+    },
+    {
+      "id": "wh-returns-history",
+      "number": 4,
+      "name": "wh-returns-history",
+      "description": "Returns history table showing return documents with status",
+      "desiredState": "Returns page loaded, History tab active, Search clicked to load data",
+      "differentiator": "Shows returns history list — NOT analytics or create modal",
+      "stateSetup": {
+        "description": "Navigate to returns, click Search",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with return rows"],
+        "mustNotShow": ["Login page", "Empty table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/returns" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('Search')" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-returns-history" }
+      ]
+    },
+    {
+      "id": "wh-returns-analytics",
+      "number": 5,
+      "name": "wh-returns-analytics",
+      "description": "Returns analytics dashboard with KPI cards and charts",
+      "desiredState": "Analytics tab active showing return analytics data",
+      "differentiator": "Shows analytics tab — NOT history list or create modal",
+      "stateSetup": {
+        "description": "Switch to Analytics tab",
+        "steps": [
+          { "action": "click", "selector": "[role='tab']:has-text('Analytics')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[role='tabpanel']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["KPI cards or chart area"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/returns" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[role='tab']:has-text('Analytics')" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-returns-analytics" }
+      ]
+    },
+    {
+      "id": "wh-returns-create",
+      "number": 6,
+      "name": "wh-returns-create",
+      "description": "Create return modal",
+      "desiredState": "Create return modal open showing form fields",
+      "differentiator": "Shows the create modal — NOT list or analytics tab",
+      "stateSetup": {
+        "description": "Click New/Create button to open return creation modal",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "state-based",
+      "expectedDOMElements": ["[role='dialog']", "[class*='modal']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Modal with return form fields"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/returns" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('New'), button:has-text('Create')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-returns-create" }
+      ]
+    }
+  ],
+  "languageSwitching": {
+    "selectors": { "en": "text=ENG", "ru": "text=РУС", "ka": "text=ქარ" },
+    "waitAfterSwitch": 2000
+  },
+  "captureOrder": [
+    "wh-selling-history", "wh-selling-analytics", "wh-selling-create",
+    "wh-returns-history", "wh-returns-analytics", "wh-returns-create"
+  ],
+  "notes": "Spans 2 routes: /selling (3 shots) and /returns (3 shots). Each route needs its own navigation. Search click needed on each history tab."
+}

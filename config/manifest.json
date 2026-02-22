@@ -93,11 +93,10 @@
           "file": "warehouse-overview",
           "priority": "high",
           "children": [
-            { "id": "wh-dashboard", "titleKey": "toc.whDashboard", "anchor": "wh-dashboard" },
-            { "id": "wh-kpi-metrics", "titleKey": "toc.whKpiMetrics", "anchor": "wh-kpi-metrics" },
-            { "id": "wh-quick-actions", "titleKey": "toc.whQuickActions", "anchor": "wh-quick-actions" },
-            { "id": "wh-analytics", "titleKey": "toc.whAnalytics", "anchor": "wh-analytics" },
-            { "id": "wh-notifications", "titleKey": "toc.whNotifications", "anchor": "wh-notifications" }
+            { "id": "wh-dashboard-stats", "titleKey": "toc.whDashboardStats", "anchor": "dashboard-stats" },
+            { "id": "wh-quick-actions", "titleKey": "toc.whQuickActions", "anchor": "quick-actions" },
+            { "id": "wh-notifications", "titleKey": "toc.whNotifications", "anchor": "notifications" },
+            { "id": "wh-analytics-overview", "titleKey": "toc.whAnalyticsOverview", "anchor": "analytics-overview" }
           ]
         },
         {
@@ -106,9 +105,11 @@
           "file": "warehouse-nomenclature",
           "priority": "high",
           "children": [
-            { "id": "wh-hierarchy", "titleKey": "toc.whHierarchy", "anchor": "wh-hierarchy" },
-            { "id": "wh-categories", "titleKey": "toc.whCategories", "anchor": "wh-categories" },
-            { "id": "wh-product-catalog", "titleKey": "toc.whProductCatalog", "anchor": "wh-product-catalog" }
+            { "id": "wh-categories", "titleKey": "toc.whCategories", "anchor": "categories" },
+            { "id": "wh-groups", "titleKey": "toc.whGroups", "anchor": "groups" },
+            { "id": "wh-subgroups", "titleKey": "toc.whSubGroups", "anchor": "subgroups" },
+            { "id": "wh-items", "titleKey": "toc.whItems", "anchor": "items" },
+            { "id": "wh-item-details", "titleKey": "toc.whItemDetails", "anchor": "item-details" }
           ]
         },
         {
@@ -117,12 +118,68 @@
           "file": "warehouse-operations",
           "priority": "high",
           "children": [
-            { "id": "wh-receiving", "titleKey": "toc.whReceiving", "anchor": "wh-receiving" },
-            { "id": "wh-transfers", "titleKey": "toc.whTransfers", "anchor": "wh-transfers" },
-            { "id": "wh-orders", "titleKey": "toc.whOrders", "anchor": "wh-orders" },
-            { "id": "wh-inventory", "titleKey": "toc.whInventory", "anchor": "wh-inventory" },
-            { "id": "wh-writeoffs", "titleKey": "toc.whWriteoffs", "anchor": "wh-writeoffs" },
-            { "id": "wh-procurement", "titleKey": "toc.whProcurement", "anchor": "wh-procurement" }
+            { "id": "wh-receiving", "titleKey": "toc.whReceiving", "anchor": "receiving" },
+            { "id": "wh-transfers", "titleKey": "toc.whTransfers", "anchor": "transfers" },
+            { "id": "wh-orders", "titleKey": "toc.whOrders", "anchor": "orders" }
+          ]
+        },
+        {
+          "id": "warehouse-inventory",
+          "titleKey": "toc.warehouseInventory",
+          "file": "warehouse-inventory",
+          "priority": "high",
+          "children": [
+            { "id": "wh-stock-levels", "titleKey": "toc.whStockLevels", "anchor": "stock-levels" },
+            { "id": "wh-picking", "titleKey": "toc.whPicking", "anchor": "picking" },
+            { "id": "wh-write-offs", "titleKey": "toc.whWriteOffs", "anchor": "write-offs" }
+          ]
+        },
+        {
+          "id": "warehouse-selling-returns",
+          "titleKey": "toc.warehouseSellingReturns",
+          "file": "warehouse-selling-returns",
+          "priority": "high",
+          "children": [
+            { "id": "wh-selling", "titleKey": "toc.whSelling", "anchor": "selling" },
+            { "id": "wh-returns", "titleKey": "toc.whReturns", "anchor": "returns" }
+          ]
+        },
+        {
+          "id": "warehouse-procurement",
+          "titleKey": "toc.warehouseProcurement",
+          "file": "warehouse-procurement",
+          "priority": "medium",
+          "children": [
+            { "id": "wh-procurement-requests", "titleKey": "toc.whProcurementRequests", "anchor": "procurement-requests" },
+            { "id": "wh-procurement-approval", "titleKey": "toc.whProcurementApproval", "anchor": "procurement-approval" }
+          ]
+        },
+        {
+          "id": "warehouse-analytics",
+          "titleKey": "toc.warehouseAnalytics",
+          "file": "warehouse-analytics",
+          "priority": "high",
+          "children": [
+            { "id": "wh-balance-movement", "titleKey": "toc.whBalanceMovement", "anchor": "balance-movement" },
+            { "id": "wh-insights", "titleKey": "toc.whInsights", "anchor": "insights" },
+            { "id": "wh-dead-low-stock", "titleKey": "toc.whDeadLowStock", "anchor": "dead-low-stock" },
+            { "id": "wh-abc-xyz", "titleKey": "toc.whAbcXyz", "anchor": "abc-xyz" },
+            { "id": "wh-expiration-risk", "titleKey": "toc.whExpirationRisk", "anchor": "expiration-risk" },
+            { "id": "wh-suppliers", "titleKey": "toc.whSuppliers", "anchor": "suppliers" },
+            { "id": "wh-clinical-analytics", "titleKey": "toc.whClinicalAnalytics", "anchor": "clinical-analytics" },
+            { "id": "wh-planning", "titleKey": "toc.whPlanning", "anchor": "planning" }
+          ]
+        },
+        {
+          "id": "warehouse-patient-consumption",
+          "titleKey": "toc.warehousePatientConsumption",
+          "file": "warehouse-patient-consumption",
+          "priority": "high",
+          "children": [
+            { "id": "wh-ward-overview", "titleKey": "toc.whWardOverview", "anchor": "ward-overview" },
+            { "id": "wh-expenditure-tracking", "titleKey": "toc.whExpenditureTracking", "anchor": "expenditure-tracking" },
+            { "id": "wh-procedures", "titleKey": "toc.whProcedures", "anchor": "procedures" },
+            { "id": "wh-calculations", "titleKey": "toc.whCalculations", "anchor": "calculations" }
           ]
         },
         {
@@ -131,9 +188,9 @@
           "file": "warehouse-data-model",
           "priority": "medium",
           "children": [
-            { "id": "wh-fhir-resources", "titleKey": "toc.whFhirResources", "anchor": "wh-fhir-resources" },
-            { "id": "wh-stock-quant", "titleKey": "toc.whStockQuant", "anchor": "wh-stock-quant" },
-            { "id": "wh-workflows", "titleKey": "toc.whWorkflows", "anchor": "wh-workflows" }
+            { "id": "wh-fhir-resources", "titleKey": "toc.whFhirResources", "anchor": "fhir-resources" },
+            { "id": "wh-permissions", "titleKey": "toc.whPermissions", "anchor": "permissions" },
+            { "id": "wh-business-rules", "titleKey": "toc.whBusinessRules", "anchor": "business-rules" }
           ]
         }
       ]

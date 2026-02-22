@@ -1,13 +1,13 @@
 {
-  "planVersion": "1.1",
-  "generatedAt": "2026-02-16T20:00:00Z",
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-22T12:00:00Z",
   "sourceSection": {
     "id": "warehouse-overview",
     "file": "sections/en/warehouse-overview.html",
     "titleKey": "toc.warehouseOverview"
   },
   "emrConfig": {
-    "baseUrl": "http://localhost:3000",
+    "baseUrl": "http://localhost:3005",
     "loginCredentials": {
       "email": "admin@medimind.ge",
       "password": "MediMind2024"
@@ -16,213 +16,113 @@
   },
   "screenshots": [
     {
-      "number": 1,
       "id": "wh-dashboard-overview",
+      "number": 1,
       "name": "wh-dashboard-overview",
-      "description": "Full warehouse dashboard showing alert banner, KPI strip with non-zero values, quick actions with badge, and analytics sections",
-      "desiredState": "Full dashboard loaded with DEMO_MODE data: alert banner visible at top, KPI cards showing non-zero values (12/3/7/14/18/9), quick action cards with pending badge, analytics sections below.",
-      "differentiator": "Shows the complete dashboard overview from the top — alert banner, KPI strip and quick actions are the focal point, with analytics partially visible below",
+      "description": "Warehouse Dashboard top section showing KPI stat cards, quick action buttons, and pending approvals grid",
+      "desiredState": "Dashboard fully loaded with KPI stat cards visible at top, quick action command cards below",
+      "differentiator": "Shows the top portion of the dashboard — KPI cards and quick actions, NOT the analytics/charts section",
       "stateSetup": null,
       "type": "static",
-      "anchorId": "warehouse-overview",
-      "docReference": "Section intro - Warehouse Dashboard",
-      "sectionHeaderText": null,
-      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
+      "expectedDOMElements": ["[class*='statCard']", "[class*='quickAction']"],
       "knownLimitation": null,
       "verificationCriteria": {
-        "mustShow": ["KPI metric cards with non-zero values", "Quick action cards", "Alert banner", "Page header with warehouse icon"],
-        "mustNotShow": ["Loading skeletons", "Error message", "All-zero KPI values"]
+        "mustShow": ["KPI stat cards with numbers", "Quick action buttons"],
+        "mustNotShow": ["Login page", "Loading spinner covering entire page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
-        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/overview" },
         { "action": "wait", "ms": 3000 },
-        { "action": "screenshot", "name": "wh-dashboard-overview" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    },
-    {
-      "number": 2,
-      "id": "wh-dashboard-alerts",
-      "name": "wh-dashboard-alerts",
-      "description": "Alert banner and KPI summary strip with six non-zero metric cards and sparkline curves",
-      "desiredState": "Alert banner visible at top with stock-out/expiry warning. KPI summary strip showing all 6 metric cards with non-zero values and sparkline trend curves on the last two cards.",
-      "differentiator": "Zoomed/scrolled to focus on the alert banner and KPI strip area — shows metric card details with non-zero values, icons, and sparkline curves",
-      "stateSetup": null,
-      "type": "static",
-      "anchorId": "wh-kpi-metrics",
-      "docReference": "Section 1.2 - KPI Metrics",
-      "sectionHeaderText": null,
-      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
-      "knownLimitation": null,
-      "verificationCriteria": {
-        "mustShow": ["6 metric cards with non-zero numeric values", "Card labels", "Alert banner", "Sparkline curves on last 2 cards"],
-        "mustNotShow": ["Loading skeletons", "All-zero values"]
-      },
-      "languages": ["en", "ka", "ru"],
-      "captureSteps": [
-        { "action": "evaluate", "script": "window.scrollTo(0, 0)" },
-        { "action": "wait", "ms": 3000 },
-        { "action": "screenshot", "name": "wh-dashboard-alerts" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    },
-    {
-      "number": 3,
-      "id": "wh-dashboard-analytics",
-      "name": "wh-dashboard-analytics",
-      "description": "Intelligence Grid (pending transfers + expiry countdown) and Analytics Grid (sparklines + top 5 moved items)",
-      "desiredState": "Intelligence Grid visible showing 4 pending transfer rows and expiry countdown badges. Analytics Grid below with real sparkline curves and 5 top moved items with gradient progress bars.",
-      "differentiator": "Shows the analytics grid area — intelligence grid, sparkline charts with real curves, and top moved items list with 5 entries",
-      "stateSetup": {
-        "description": "Scroll down past KPI strip and quick actions to reveal the intelligence and analytics grids",
-        "interactionSequence": [
-          { "action": "evaluate", "script": "(() => { var headings = document.querySelectorAll('h2, h3, [class*=Title]'); for (var i = 0; i < headings.length; i++) { var t = headings[i].textContent.toLowerCase(); if (t.indexOf('intelligence') !== -1 || t.indexOf('pending') !== -1 || t.indexOf('analytics') !== -1) { headings[i].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to: ' + headings[i].textContent; } } var grids = document.querySelectorAll('.mantine-SimpleGrid-root'); if (grids.length >= 2) { grids[1].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to grid'; } window.scrollTo(0, 600); return 'fallback scroll'; })()" },
-          { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
-      },
-      "type": "static",
-      "anchorId": "wh-analytics",
-      "docReference": "Section 1.4 - Analytics and Activity",
-      "sectionHeaderText": "Analytics",
-      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
-      "knownLimitation": null,
-      "verificationCriteria": {
-        "mustShow": ["Pending transfers table with 4+ rows", "Expiry countdown badges", "Sparkline curves (not flat lines)", "Top 5 moved items with progress bars"],
-        "mustNotShow": ["Loading skeletons", "Empty state messages"]
-      },
-      "languages": ["en", "ka", "ru"],
-      "captureSteps": [
+        { "action": "viewport", "width": 1440, "height": 900 },
         { "action": "wait", "ms": 1000 },
-        { "action": "screenshot", "name": "wh-dashboard-analytics" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+        { "action": "screenshot", "name": "wh-dashboard-overview" }
+      ]
     },
     {
-      "number": 4,
-      "id": "wh-dashboard-activity",
-      "name": "wh-dashboard-activity",
-      "description": "Recent activity timeline with 7 diverse color-coded events: receipts (green), transfers (blue), adjustment (orange), expiry (red), request (cyan)",
-      "desiredState": "Recent activity timeline visible showing 7 diverse warehouse events. Multiple event types visible: receipts (green), transfers (blue), adjustment (orange), expiry (red), request (cyan). Each event has icon, title, description, timestamp, and type badge.",
-      "differentiator": "Shows the activity timeline section at the bottom — vertical list of diverse, color-coded time-stamped events, not the analytics charts above",
-      "stateSetup": {
-        "description": "Scroll to bottom of dashboard to reveal the recent activity timeline",
-        "interactionSequence": [
-          { "action": "evaluate", "script": "(() => { var headings = document.querySelectorAll('h2, h3, [class*=Title]'); for (var i = 0; i < headings.length; i++) { var t = headings[i].textContent.toLowerCase(); if (t.indexOf('activity') !== -1 || t.indexOf('recent') !== -1) { headings[i].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to: ' + headings[i].textContent; } } var timeline = document.querySelector('.mantine-Timeline-root'); if (timeline) { timeline.scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to timeline'; } window.scrollTo(0, document.body.scrollHeight); return 'scrolled to bottom'; })()" },
-          { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
-      },
-      "type": "static",
-      "anchorId": "wh-analytics",
-      "docReference": "Section 1.4 - Recent Activity Timeline",
-      "sectionHeaderText": "Recent Activity",
-      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
-      "knownLimitation": null,
+      "id": "wh-dashboard-alerts",
+      "number": 2,
+      "name": "wh-dashboard-alerts",
+      "description": "Critical alerts banner showing stock-out and expiry warnings with View Details link",
+      "desiredState": "Dashboard scrolled to show the critical alerts banner section",
+      "differentiator": "Focuses on the alerts/warnings banner — NOT KPI cards or analytics charts",
+      "stateSetup": null,
+      "type": "scroll",
+      "expectedDOMElements": ["[class*='alert']"],
+      "knownLimitation": "Alerts section may be empty if no active warnings in mock data",
       "verificationCriteria": {
-        "mustShow": ["7 timeline entries", "Multiple event type colors (green, blue, orange, red, cyan)", "Event timestamps", "Type badges"],
-        "mustNotShow": ["Loading skeletons", "Empty state message", "Only blue Transfer entries"]
+        "mustShow": ["Alert or warning banner area"],
+        "mustNotShow": ["Login page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/overview" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "evaluate", "script": "var el = document.querySelector('[class*=alert], [class*=Alert], [class*=expiry]'); if(el) el.scrollIntoView({behavior:'instant', block:'start'})" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "screenshot", "name": "wh-dashboard-alerts" }
+      ]
+    },
+    {
+      "id": "wh-dashboard-activity",
+      "number": 3,
+      "name": "wh-dashboard-activity",
+      "description": "Notification feed showing recent warehouse events with unread indicators and activity timeline",
+      "desiredState": "Dashboard scrolled to show notifications/activity timeline section",
+      "differentiator": "Shows the activity feed and notifications — NOT KPI cards or analytics charts",
+      "stateSetup": null,
+      "type": "scroll",
+      "expectedDOMElements": ["[class*='activity']", "[class*='timeline']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Activity or notification items"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/overview" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "evaluate", "script": "var el = document.querySelector('[class*=activity], [class*=timeline], [class*=recentActivity]'); if(el) el.scrollIntoView({behavior:'instant', block:'start'})" },
         { "action": "wait", "ms": 1000 },
         { "action": "screenshot", "name": "wh-dashboard-activity" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
-    }
-    ,{
-      "number": 5,
-      "id": "wh-dashboard-notifications",
-      "name": "wh-dashboard-notifications",
-      "description": "Notification feed section showing notification cards with icons, titles, descriptions, timestamps, and mark-all-as-read button with unread count badge",
-      "desiredState": "Dashboard scrolled to notifications section. Notification cards visible with different types (transfer, procurement, stock alert, expiry, system). Mark all as read button visible with unread count badge.",
-      "differentiator": "Shows the notifications feed section — not the activity timeline, not the analytics grid",
-      "stateSetup": {
-        "description": "Scroll to the notifications section at the bottom of the dashboard",
-        "interactionSequence": [
-          { "action": "evaluate", "script": "(() => { var headings = document.querySelectorAll('h2, h3, [class*=Title]'); for (var i = 0; i < headings.length; i++) { var t = headings[i].textContent.toLowerCase(); if (t.indexOf('notification') !== -1) { headings[i].scrollIntoView({behavior:'instant',block:'start'}); return 'scrolled to: ' + headings[i].textContent; } } window.scrollTo(0, document.body.scrollHeight); return 'scrolled to bottom'; })()" },
-          { "action": "wait", "ms": 1500 }
-        ],
-        "sampleData": null
-      },
-      "type": "static",
-      "anchorId": "wh-notifications",
-      "docReference": "Section 1.5 - Notifications",
-      "sectionHeaderText": "Notifications",
-      "expectedDOMElements": ["[data-testid='warehouse-dashboard']"],
+      ]
+    },
+    {
+      "id": "wh-dashboard-analytics",
+      "number": 4,
+      "name": "wh-dashboard-analytics",
+      "description": "Analytics section showing daily volume sparklines for receipts and transfers, and top 5 most moved items",
+      "desiredState": "Dashboard scrolled to bottom showing analytics charts and top moved items table",
+      "differentiator": "Shows analytics charts and top items — the BOTTOM of the dashboard",
+      "stateSetup": null,
+      "type": "scroll",
+      "expectedDOMElements": ["[class*='chart']", "[class*='topItem']"],
       "knownLimitation": null,
       "verificationCriteria": {
-        "mustShow": ["Notification cards", "Mark all as read button", "Unread count badge", "Timestamps"],
-        "mustNotShow": ["Loading skeletons", "Error message"]
+        "mustShow": ["Chart or sparkline area", "Top items table or progress bars"],
+        "mustNotShow": ["Login page"]
       },
       "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
       "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/overview" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "evaluate", "script": "window.scrollTo(0, document.body.scrollHeight)" },
         { "action": "wait", "ms": 1000 },
-        { "action": "screenshot", "name": "wh-dashboard-notifications" }
-      ],
-      "status": {
-        "en": "pending",
-        "ka": "pending",
-        "ru": "pending"
-      },
-      "completedAt": {
-        "en": null,
-        "ka": null,
-        "ru": null
-      }
+        { "action": "screenshot", "name": "wh-dashboard-analytics" }
+      ]
     }
   ],
   "languageSwitching": {
-    "selectors": {
-      "en": "text=ENG",
-      "ru": "text=РУС",
-      "ka": "text=ქარ"
-    },
-    "waitAfterSwitch": 2000,
-    "extraWaitRu": 2000
+    "selectors": { "en": "text=ENG", "ru": "text=РУС", "ka": "text=ქარ" },
+    "waitAfterSwitch": 2000
   },
-  "summary": {
-    "totalScreenshots": 5,
-    "totalFiles": 15,
-    "staticScreenshots": 5,
-    "multiStepFlows": 0,
-    "stateBased": 0
-  }
+  "captureOrder": ["wh-dashboard-overview", "wh-dashboard-alerts", "wh-dashboard-activity", "wh-dashboard-analytics"],
+  "notes": "Dashboard loads data automatically — no search button needed. Scroll to different sections for each screenshot."
 }

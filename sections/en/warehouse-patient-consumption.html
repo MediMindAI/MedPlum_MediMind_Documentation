@@ -1,0 +1,709 @@
+<section class="doc-section" id="warehouse-patient-consumption">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 21V5C19 3.9 18.1 3 17 3H7C5.9 3 5 3.9 5 5V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 7H10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 11H10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 11H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="doc-section-number">1</div>
+      <h2>Ward Supply Management</h2>
+    </div>
+  </div>
+
+  <p>The <strong>Ward Supply Management</strong> module (also known as Patient Consumption or Stationary) is the nurse's primary workstation for tracking every supply and procedure used on inpatient ward patients. Think of it as a detailed logbook where every bandage, syringe, medication, and medical procedure is recorded against a specific patient -- so the hospital knows exactly what was used, when, and for whom.</p>
+
+  <p>The interface is designed for <strong>speed and accuracy</strong>. Ward nurses typically operate under time pressure, so the layout puts the most frequently used controls -- patient selection, stock search, and expenditure entry -- within easy reach, without requiring page navigation or modal dialogs for routine tasks.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-consumption-overview-en.png" alt="Ward Supply Management full page showing title bar, three-column top zone, and two-column bottom zone" class="doc-screenshot-image" data-i18n-img="wh-consumption-overview">
+  </div>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">Screen Regions</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">2</span>
+      <span class="doc-stat-inline-label">Entry Modes</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">6</span>
+      <span class="doc-stat-inline-label">Quick-Action Buttons</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">Report Modals</span>
+    </div>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Resources Used:</strong>
+    Patient consumption data is stored using <strong>ChargeItem</strong> (each supply or procedure usage), <strong>Basic/StockQuant</strong> (department stock levels), <strong>Encounter</strong> (the patient's visit/admission), <strong>Location</strong> (ward assignments), and <strong>ActivityDefinition</strong> (procedure templates with pre-defined supply lists).
+  </div>
+
+  <!-- Ward Overview -->
+  <h3 id="ward-overview">1.1 Page Layout and Navigation</h3>
+
+  <p>The page is divided into five distinct regions, each serving a specific role in the consumption workflow. The layout mirrors a traditional hospital ward workstation -- filters on the left, patients in the center, stock on the right, and the entry/history area at the bottom.</p>
+
+  <div class="doc-zone-diagram" style="grid-template-columns: 1fr;">
+
+    <div class="doc-zone" style="border-left: 4px solid var(--emr-primary);">
+      <div class="doc-zone-header">Title Bar</div>
+      <div class="doc-zone-content">
+        <p>Hospital icon + page title + selected patient's registration number and name</p>
+      </div>
+    </div>
+
+    <div class="doc-zone-diagram" style="grid-template-columns: 1fr 1.2fr 1.5fr; gap: 8px;">
+      <div class="doc-zone" style="border-left: 4px solid var(--emr-accent);">
+        <div class="doc-zone-header">Left: Filters</div>
+        <div class="doc-zone-content">
+          <p>Department, Date, Time sliders</p>
+        </div>
+      </div>
+      <div class="doc-zone" style="border-left: 4px solid var(--emr-secondary);">
+        <div class="doc-zone-header">Center: Patient List</div>
+        <div class="doc-zone-content">
+          <p>Patients + Transfer history</p>
+        </div>
+      </div>
+      <div class="doc-zone" style="border-left: 4px solid var(--emr-primary);">
+        <div class="doc-zone-header">Right: Stock Panel</div>
+        <div class="doc-zone-content">
+          <p>Actions, Search, Inventory</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-zone-diagram" style="grid-template-columns: 1fr 1fr; gap: 8px;">
+      <div class="doc-zone" style="border-left: 4px solid var(--emr-secondary);">
+        <div class="doc-zone-header">Bottom Left: Expenditure Entry</div>
+        <div class="doc-zone-content">
+          <p>Mode selector, search, history list</p>
+        </div>
+      </div>
+      <div class="doc-zone" style="border-left: 4px solid var(--emr-primary);">
+        <div class="doc-zone-header">Bottom Right: Event Details</div>
+        <div class="doc-zone-content">
+          <p>Procedure sub-items, pricing, totals</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-zone" style="border-left: 4px solid #48bb78;">
+      <div class="doc-zone-header">Status Bar</div>
+      <div class="doc-zone-content">
+        <p>Pulsing green dot + "Online (N patients)" live indicator</p>
+      </div>
+    </div>
+  </div>
+
+  <h4>Title Bar</h4>
+  <p>The title bar spans the full width of the page with a gradient background. It shows a hospital icon and the page title. When a patient is selected from the center list, their <strong>registration number</strong> and <strong>full name</strong> appear in the title bar, giving the nurse a constant reminder of who they are currently working with.</p>
+
+  <h4>Status Bar</h4>
+  <p>At the very bottom of the page, a thin status bar shows a pulsing green dot and the text <strong>"Online (N)"</strong> where N is the number of patients currently loaded in the patient list. This confirms the connection is live and data is up to date.</p>
+
+  <h4>Typical Workflow</h4>
+  <ol class="doc-list">
+    <li>Select a <strong>department</strong> from the left sidebar filter (defaults to Emergency)</li>
+    <li>Click a <strong>patient</strong> in the center list to select them</li>
+    <li>In the bottom-left, <strong>search for a supply item</strong> or procedure</li>
+    <li>Set the <strong>quantity</strong> and click the Add button (or press Enter)</li>
+    <li>The item appears in the expenditure history; stock decreases automatically</li>
+  </ol>
+
+
+  <!-- Filters Sidebar -->
+  <h3 id="ward-filters">1.2 Filters Sidebar (Left Column)</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-consumption-daily-balance-en.png" alt="Daily balance view showing consumed items and quantities for the selected date and department" class="doc-screenshot-image" data-i18n-img="wh-consumption-daily-balance">
+  </div>
+
+  <p>The left sidebar (260px fixed width) provides three filter controls that determine which patients and stock you see. It has a distinctive accent-blue left border for quick visual identification.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Control</th>
+          <th>What It Does</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Department Dropdown</strong></td>
+          <td>Filters which ward's patients appear in the center list</td>
+          <td>Searchable, clearable. Auto-selects the "Emergency" department on first load (matches by keyword in Georgian, English, or Russian)</td>
+        </tr>
+        <tr>
+          <td><strong>Date Picker</strong></td>
+          <td>Sets the "as-of" date for viewing patient admissions</td>
+          <td>Inline calendar widget. Defaults to today's date. Changing the date reloads the patient list to show who was admitted on or before that date</td>
+        </tr>
+        <tr>
+          <td><strong>Time Display + Sliders</strong></td>
+          <td>Fine-tunes the exact time for the "as-of" timestamp</td>
+          <td>Shows the current selected time as HH:MM. The <strong>Hour slider</strong> ranges from 0 to 23; the <strong>Minute slider</strong> ranges from 0 to 59. Defaults to 23:59 (end of day)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Time Slider Debounce:</strong>
+    Dragging a time slider does not fire an API call on every pixel of movement. The system waits 500 milliseconds after you stop dragging before fetching the updated patient list -- this prevents unnecessary server load while still feeling responsive.
+  </div>
+
+  <h4>Department Syncing</h4>
+  <p>When you change the department filter, two things happen simultaneously:</p>
+  <ul class="doc-list">
+    <li>The <strong>patient list</strong> updates to show patients admitted to the selected ward</li>
+    <li>The <strong>stock panel</strong> (right column) automatically switches to show the same department's inventory</li>
+  </ul>
+  <p>This sync works because wards (FHIR Location resources) and stock departments (FHIR Organization resources) are mapped by name. Selecting "Emergency" in the patient filter automatically selects "Emergency" in the stock department dropdown.</p>
+
+
+  <!-- Patient List -->
+  <h3 id="ward-patients">1.3 Patient List (Center Column)</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-consumption-patient-list-en.png" alt="Center column showing patient list table with numbered rows, names, and personal IDs, plus transfer history below" class="doc-screenshot-image" data-i18n-img="wh-consumption-patient-list">
+  </div>
+
+  <p>The center column shows all patients currently admitted to the selected department. It consists of two parts: the main <strong>patient table</strong> and, when a patient is selected, a <strong>transfer history</strong> mini-table below it.</p>
+
+  <h4>Patient Table</h4>
+  <p>The table has three columns:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Content</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong># (Badge)</strong></td>
+          <td>Sequential row number</td>
+          <td>Displayed as a circular numbered badge. The selected patient's badge changes to a highlighted style</td>
+        </tr>
+        <tr>
+          <td><strong>Patient Name</strong></td>
+          <td>Full name of the patient</td>
+          <td>Takes up 55% of the table width</td>
+        </tr>
+        <tr>
+          <td><strong>Personal ID</strong></td>
+          <td>11-digit Georgian Personal ID</td>
+          <td>Takes up 30% of the table width</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Click a patient row to <strong>select</strong> them. The row highlights with a selection color, and the patient's name appears in the title bar above. Click the same row again to <strong>deselect</strong>. Only one patient can be selected at a time.</p>
+
+  <p>The panel header shows a patient count badge (e.g., "12") reflecting how many patients are in the current filtered list. If no patients match the filter, an empty state with an icon and message appears instead of the table.</p>
+
+  <h4>Transfer History</h4>
+  <p>When a patient is selected, a secondary table appears below the patient list showing their <strong>department transfer history</strong> -- every ward they have been assigned to during their current admission. This is useful for tracking a patient who has moved between departments (e.g., from Emergency to Surgery to Recovery).</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Content</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>#</strong></td>
+          <td>Transfer sequence number</td>
+        </tr>
+        <tr>
+          <td><strong>Department</strong></td>
+          <td>Name of the ward or department</td>
+        </tr>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>Date of the transfer</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Mapping:</strong>
+    Patient list data comes from <strong>Encounter</strong> resources with status "in-progress" or "finished", filtered by the ward's <strong>Location</strong> ID. Transfer history is derived from the Encounter's location history entries.
+  </div>
+
+
+  <!-- Stock Panel -->
+  <h3 id="ward-stock">1.4 Stock Panel (Right Column)</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-consumption-stock-en.png" alt="Right column with department dropdown, action button row, search input, and scrollable stock items table" class="doc-screenshot-image" data-i18n-img="wh-consumption-stock">
+  </div>
+
+  <p>The right column is the department's inventory view. It shows what supplies are currently available in the selected department and provides quick-access buttons for reports and calculations. It has a primary navy left border.</p>
+
+  <h4>Department Dropdown</h4>
+  <p>At the top, a dropdown lets you choose which department's stock to view. This is separate from the patient filter on the left -- you can view one department's patients while checking another department's stock, though typically they stay synced.</p>
+
+  <h4>Action Buttons Row</h4>
+  <p>Below the department dropdown, a row of action buttons provides quick access to modals and reports:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Button</th>
+          <th>Label</th>
+          <th>What It Opens</th>
+          <th>Requires Patient?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Calculator icon</strong></td>
+          <td>Calculation</td>
+          <td>Full cost calculation modal (3 tabs) for the selected patient</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>"H" button</strong></td>
+          <td>Department History</td>
+          <td>Modal showing all patients grouped by department with admission dates</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>"O" button</strong></td>
+          <td>Nurse Supply</td>
+          <td>Modal showing supply delivery history for the current ward</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Daily Balance</strong></td>
+          <td>Daily Balance</td>
+          <td>Modal with daily consumption balance table and print buttons</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Measure</strong></td>
+          <td>Treatment/Research</td>
+          <td>Modal with two tabs (Supplies, Research) showing the patient's expenditure summary</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><strong>Refresh icon</strong></td>
+          <td>Refresh Stock</td>
+          <td>Reloads the stock list from the server</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Stock Search and Item List</h4>
+  <p>Below the action buttons, a <strong>search bar</strong> with a refresh button lets you filter stock items by name or item code. The search filters the list in real-time as you type.</p>
+
+  <p>The stock table shows three columns:</p>
+  <ul class="doc-list">
+    <li><strong>Item Name</strong> -- the display name, which includes the barcode, product name, supplier, batch number, and expiry date (formatted as: *barcode* name *supplier* batch (expiry))</li>
+    <li><strong>Quantity</strong> -- shown as a badge. When quantity drops to <strong>5 or below</strong>, the badge turns red to alert the nurse that the item is running low</li>
+    <li><strong>Unit</strong> -- the unit of measure (e.g., "each", "pack", "mL")</li>
+  </ul>
+
+  <p>Click a stock item to <strong>select it</strong> for adding to a patient's expenditure. The item row highlights, and its name auto-fills into the search field in the bottom-left expenditure entry area.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Low Stock Warning:</strong>
+    When a stock item's quantity badge turns red (5 or fewer remaining), consider notifying the warehouse to arrange a transfer or restock. Running out of a supply mid-shift can impact patient care.
+  </div>
+
+
+  <!-- Expenditure Tracking -->
+  <h3 id="expenditure-tracking">1.5 Expenditure Entry and History (Bottom Zone)</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-consumption-expenditure-en.png" alt="Bottom zone showing expenditure mode selector, search autocomplete, history list on the left, and event details table on the right" class="doc-screenshot-image" data-i18n-img="wh-consumption-expenditure">
+  </div>
+
+  <p>The bottom zone is split into two columns and is where the actual supply tracking happens. The left side is for <strong>adding and viewing expenditures</strong>, while the right side shows <strong>details for a selected procedure</strong>.</p>
+
+  <h4>Bottom Left: Expenditure Entry</h4>
+
+  <p>The header bar shows three elements: a mode selector dropdown, an icon, and the current date. Below it, a search row with three controls handles item entry:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Control</th>
+          <th>Purpose</th>
+          <th>Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Search Input</strong></td>
+          <td>Find items or procedures to add</td>
+          <td>Shows autocomplete dropdown with matching results. In Expenditure mode, shows stock items with quantity and unit. In Procedure mode, shows procedures with service code, name, and price in GEL</td>
+        </tr>
+        <tr>
+          <td><strong>Quantity Input</strong></td>
+          <td>Set how many units to record</td>
+          <td>Number input with minimum of 1. Defaults to 1 after each entry</td>
+        </tr>
+        <tr>
+          <td><strong>Add Button (+)</strong></td>
+          <td>Submit the expenditure</td>
+          <td>Disabled until both a patient and an item/procedure are selected. Shows a loading spinner during submission. You can also press <strong>Enter</strong> in the search or quantity field to submit</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Two Entry Modes</h4>
+
+  <p>The mode selector dropdown switches between two types of expenditure entry:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th>What It Records</th>
+          <th>Stock Impact</th>
+          <th>Autocomplete Shows</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Expenditure</strong></td>
+          <td>Physical supplies used on the patient (bandages, syringes, medications)</td>
+          <td>Decreases the department's stock by the entered quantity</td>
+          <td>Stock items with: display name, available quantity, and unit (e.g., "Gauze Pad 10x10 (50 each)")</td>
+        </tr>
+        <tr>
+          <td><strong>Procedure</strong></td>
+          <td>Medical procedures performed on the patient (lab tests, imaging, consultations)</td>
+          <td>No stock decrement -- procedures are service charges, not physical items</td>
+          <td>Procedure catalog items with: service code, name, and price in GEL (e.g., "24001 - Blood Test (15.00 GEL)")</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Switching between modes <strong>clears the search field</strong> and any selected item, so you always start fresh. The history list below also filters to show only the relevant type -- expenditures show only supplies, procedures show only procedures.</p>
+
+  <h4>Expenditure History List</h4>
+  <p>Below the search row, a scrollable list shows all recorded expenditures for the selected patient (filtered by the current mode). Each row shows:</p>
+
+  <ul class="doc-list">
+    <li><strong>Item Name</strong> -- the supply or procedure name. Procedure rows appear in bold blue text and are clickable</li>
+    <li><strong>Quantity + Unit</strong> -- how much was used (e.g., "2 each")</li>
+    <li><strong>Delete button</strong> -- a trash icon that, when clicked, shows a confirmation dialog before removing the entry and restoring the stock</li>
+  </ul>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Optimistic Updates:</strong>
+    When you add or delete an expenditure, the change appears instantly in the list without waiting for the server response. If the server request fails, the system automatically reverts the change and shows an error notification.
+  </div>
+
+  <h4>Bottom Right: Event Details</h4>
+  <p>When you click a <strong>procedure row</strong> in the expenditure history (bold blue text), the right panel loads that procedure's sub-items -- the specific supplies that were consumed as part of that procedure.</p>
+
+  <p>The header shows the procedure name. Below it, a search row appears (identical to the left side) that lets you add additional supply items to the selected procedure. The detail table shows:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Content</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Item</strong></td>
+          <td>Name of the supply used in the procedure</td>
+        </tr>
+        <tr>
+          <td><strong>Qty</strong></td>
+          <td>Quantity consumed</td>
+        </tr>
+        <tr>
+          <td><strong>Unit Price</strong></td>
+          <td>Cost per unit in GEL</td>
+        </tr>
+        <tr>
+          <td><strong>Total Price</strong></td>
+          <td>Quantity multiplied by unit price</td>
+        </tr>
+        <tr>
+          <td><strong>Delete</strong></td>
+          <td>Remove this sub-item (with confirmation)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>At the bottom of the event details panel, a <strong>total sum row</strong> with a gradient background shows the combined cost of all sub-items in GEL.</p>
+
+  <h4>Stock Validation</h4>
+  <p>The system performs client-side stock validation before submitting an expenditure. If you try to record more units than are currently available, a warning notification appears showing the requested quantity and the available quantity. The expenditure is <strong>not submitted</strong> until the quantity is reduced to an available level.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Mapping:</strong>
+    Each expenditure creates a <strong>ChargeItem</strong> resource linked to the patient's Encounter. Procedure sub-items are also ChargeItem resources, connected to their parent procedure via a <strong>parentChargeItemId</strong> extension. Stock decrements update the corresponding <strong>Basic</strong> (StockQuant) resource.
+  </div>
+
+
+  <!-- Procedures -->
+  <h3 id="procedures">1.6 Procedure Templates</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-consumption-procedure-en.png" alt="Procedure section showing medical procedures and associated item consumption" class="doc-screenshot-image" data-i18n-img="wh-consumption-procedure">
+  </div>
+
+  <p>Some procedures come with a pre-defined list of supplies that are typically consumed during that procedure -- called an <strong>expenditure template</strong>. For example, a "Wound Suturing" procedure might have a template listing: suture thread, sterile gloves, gauze pads, and antiseptic solution.</p>
+
+  <p>When you add a procedure that has a template, the system automatically:</p>
+  <ol class="doc-list">
+    <li>Looks up the procedure's template (stored in the <strong>ActivityDefinition</strong> FHIR resource)</li>
+    <li>Matches each template item against the department's current stock by name</li>
+    <li>Opens a <strong>Template Confirmation Modal</strong> showing the results</li>
+  </ol>
+
+  <h4>Template Confirmation Modal</h4>
+  <p>The modal presents a table where each row represents one item from the procedure's template:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Content</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Checkbox</strong></td>
+          <td>Select/deselect item</td>
+          <td>Checked by default for available items. Disabled (unchecked) for items not found in stock</td>
+        </tr>
+        <tr>
+          <td><strong>Item Name</strong></td>
+          <td>Template item name + matched stock item</td>
+          <td>Shows the generic template name (e.g., "Gauze Pad 10x10") and below it the matched stock item's full display name (with barcode, supplier, batch)</td>
+        </tr>
+        <tr>
+          <td><strong>Template Qty</strong></td>
+          <td>Default quantity from the template</td>
+          <td>Read-only -- the suggested amount</td>
+        </tr>
+        <tr>
+          <td><strong>Available</strong></td>
+          <td>Current stock quantity</td>
+          <td>Shows the actual amount in stock, or a dash if the item was not found</td>
+        </tr>
+        <tr>
+          <td><strong>Final Qty</strong></td>
+          <td>Editable quantity to actually consume</td>
+          <td>Number input. The nurse can adjust up or down. Cannot exceed the available quantity</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>Availability badge</td>
+          <td>Green "Available", orange "Insufficient" (stock is less than template qty), or gray "Not Found" (item not in department stock)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Items with a <strong>"Not Found"</strong> status appear at 50% opacity with a disabled checkbox -- they cannot be added because the department does not have that supply in stock. The nurse should arrange a transfer from the warehouse for those items.</p>
+
+  <p>Click <strong>Confirm</strong> to add all checked items as sub-items of the procedure. Each confirmed item decrements the department stock and creates a linked ChargeItem resource.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Template Is a Suggestion:</strong>
+    The template provides a starting point, not a fixed requirement. Nurses can uncheck items they did not use, adjust quantities, or skip the modal entirely by closing it. The procedure itself is already recorded regardless of what happens with the template.
+  </div>
+
+
+  <!-- Calculations -->
+  <h3 id="calculations">1.7 Calculations and Reports</h3>
+
+  <p>The Ward Supply module includes several report modals accessible from the action buttons in the stock panel. These modals provide financial summaries, department overviews, and printable reports.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-consumption-event-details-en.png" alt="Event details section showing detailed consumption event records with item breakdown" class="doc-screenshot-image" data-i18n-img="wh-consumption-event-details">
+  </div>
+
+  <h4>Calculation Modal (Calculator Button)</h4>
+  <p>The calculation modal provides a complete financial breakdown of all supplies and procedures consumed by the selected patient during their admission. It has <strong>three tabs</strong>:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Tab</th>
+          <th>Content</th>
+          <th>Use Case</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Internal Calculation</strong></td>
+          <td>Two sections: "Research & Consultations" (procedures) and "Supplies & Medications" (expenditures). Each section groups items by department with subtotals</td>
+          <td>Detailed cost breakdown for billing or internal audit</td>
+        </tr>
+        <tr>
+          <td><strong>By Departments</strong></td>
+          <td>All items (both research and supplies) merged and grouped by department name. Each department shows its items with a department subtotal</td>
+          <td>Department-level cost comparison -- which ward used the most resources</td>
+        </tr>
+        <tr>
+          <td><strong>Intraoperative</strong></td>
+          <td>Items specifically tagged as intraoperative consumption (used during surgical procedures)</td>
+          <td>Surgical cost accounting, theater supply tracking</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Each tab displays a table with six columns: <strong>#</strong> (row number), <strong>Name</strong>, <strong>Unit</strong>, <strong>Quantity</strong>, <strong>Unit Price</strong>, and <strong>Total</strong>. Section headers appear in a distinct background color, and subtotals appear at the end of each section. A <strong>grand total box</strong> at the bottom shows the combined cost in GEL.</p>
+
+  <p>A <strong>Print button</strong> opens the calculation in a new browser window formatted for printing, including the patient name, admission date, and discharge date (if applicable).</p>
+
+  <h4>Department History Modal ("H" Button)</h4>
+  <p>Shows all current inpatients grouped by their department. Each group lists patients with their admission date, Personal ID, first name, and last name. This is useful for getting a hospital-wide overview of where patients are distributed.</p>
+
+  <h4>Nurse Supply Modal ("O" Button)</h4>
+  <p>Shows the supply delivery history for the currently filtered department. Each row displays: <strong>Date</strong>, <strong>Description</strong> (what was delivered), <strong>Supplier</strong>, and <strong>Quantity</strong>. This helps nurses see when and what supplies were last delivered to their ward.</p>
+
+  <h4>Treatment/Research Modal (Measure Button)</h4>
+  <p>A summary modal for the selected patient's expenditure data, split into two tabs:</p>
+  <ul class="doc-list">
+    <li><strong>Supplies tab</strong> -- lists all physical supply expenditures (non-procedure items) with date, name, and quantity</li>
+    <li><strong>Research tab</strong> -- lists all procedure entries with date, name, and quantity</li>
+  </ul>
+  <p>This provides a quick patient-level view without the full financial detail of the Calculation modal.</p>
+
+  <h4>Daily Balance Modal (Daily Balance Button)</h4>
+  <p>Shows the day's consumption balance for the selected stock department. The table displays: <strong>Name</strong>, <strong>Quantity</strong>, and <strong>Amount</strong> (cost in GEL). At the bottom, three print buttons offer different report scopes:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Print Button</th>
+          <th>What It Prints</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Print Today</strong></td>
+          <td>Only today's consumption data</td>
+        </tr>
+        <tr>
+          <td><strong>Print Total</strong></td>
+          <td>Cumulative consumption for the entire admission period</td>
+        </tr>
+        <tr>
+          <td><strong>Print Combined</strong></td>
+          <td>Both today's and total data combined in one printout</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- FHIR Data Model -->
+  <h3 id="ward-data-model">1.8 Data Model Reference</h3>
+
+  <p>For the technical integration team, the following table maps the Ward Supply module's key data fields to their underlying FHIR resources and paths.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>FHIR Resource</th>
+          <th>Path / Extension</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Patient admission</td>
+          <td>Encounter</td>
+          <td><code>Encounter.status</code> (in-progress/finished), <code>Encounter.location</code></td>
+        </tr>
+        <tr>
+          <td>Ward assignment</td>
+          <td>Location</td>
+          <td><code>Location.physicalType</code> = "wa" (ward), <code>Location.managingOrganization</code></td>
+        </tr>
+        <tr>
+          <td>Stock department</td>
+          <td>Organization</td>
+          <td><code>Organization.id</code>, <code>Organization.name</code></td>
+        </tr>
+        <tr>
+          <td>Stock quantity</td>
+          <td>Basic (StockQuant)</td>
+          <td>Tag: <code>department</code> CodeSystem with Organization ID. Extensions prefixed <code>sq-</code></td>
+        </tr>
+        <tr>
+          <td>Supply expenditure</td>
+          <td>ChargeItem</td>
+          <td><code>ChargeItem.code</code> (item code), <code>ChargeItem.quantity</code>, <code>ChargeItem.occurrenceDateTime</code></td>
+        </tr>
+        <tr>
+          <td>Procedure entry</td>
+          <td>ChargeItem</td>
+          <td>Same as supply, but with a procedure-type code in <code>ChargeItem.code.coding</code></td>
+        </tr>
+        <tr>
+          <td>Procedure sub-item</td>
+          <td>ChargeItem</td>
+          <td>Extension: <code>parentChargeItemId</code> linking to the parent procedure's ChargeItem ID</td>
+        </tr>
+        <tr>
+          <td>Procedure template</td>
+          <td>ActivityDefinition</td>
+          <td>Template items stored in the ActivityDefinition's extensions</td>
+        </tr>
+        <tr>
+          <td>Stock lot tracking</td>
+          <td>ChargeItem extension</td>
+          <td>Extension: <code>ward-stock-lot-number</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Base URL:</strong>
+    All FHIR extension URLs use the base <code>http://medimind.ge/fhir</code> (HTTP, not HTTPS). Currency values use GEL (Georgian Lari).
+  </div>
+
+</section>

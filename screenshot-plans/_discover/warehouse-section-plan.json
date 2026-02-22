@@ -1,0 +1,199 @@
+{
+  "featureId": "warehouse",
+  "status": "approved",
+  "category": "warehouse",
+  "sections": [
+    {
+      "id": "warehouse-overview",
+      "file": "warehouse-overview",
+      "titleKey": "toc.warehouseOverview",
+      "priority": "high",
+      "children": [
+        { "id": "wh-dashboard-stats", "anchor": "dashboard-stats", "titleKey": "toc.whDashboardStats" },
+        { "id": "wh-quick-actions", "anchor": "quick-actions", "titleKey": "toc.whQuickActions" },
+        { "id": "wh-notifications", "anchor": "notifications", "titleKey": "toc.whNotifications" },
+        { "id": "wh-analytics-overview", "anchor": "analytics-overview", "titleKey": "toc.whAnalyticsOverview" }
+      ]
+    },
+    {
+      "id": "warehouse-nomenclature",
+      "file": "warehouse-nomenclature",
+      "titleKey": "toc.warehouseNomenclature",
+      "priority": "high",
+      "children": [
+        { "id": "wh-categories", "anchor": "categories", "titleKey": "toc.whCategories" },
+        { "id": "wh-groups", "anchor": "groups", "titleKey": "toc.whGroups" },
+        { "id": "wh-items", "anchor": "items", "titleKey": "toc.whItems" },
+        { "id": "wh-item-details", "anchor": "item-details", "titleKey": "toc.whItemDetails" }
+      ]
+    },
+    {
+      "id": "warehouse-operations",
+      "file": "warehouse-operations",
+      "titleKey": "toc.warehouseOperations",
+      "priority": "high",
+      "children": [
+        { "id": "wh-receiving", "anchor": "receiving", "titleKey": "toc.whReceiving" },
+        { "id": "wh-transfers", "anchor": "transfers", "titleKey": "toc.whTransfers" },
+        { "id": "wh-orders", "anchor": "orders", "titleKey": "toc.whOrders" }
+      ]
+    },
+    {
+      "id": "warehouse-inventory",
+      "file": "warehouse-inventory",
+      "titleKey": "toc.warehouseInventory",
+      "priority": "high",
+      "children": [
+        { "id": "wh-stock-levels", "anchor": "stock-levels", "titleKey": "toc.whStockLevels" },
+        { "id": "wh-picking", "anchor": "picking", "titleKey": "toc.whPicking" },
+        { "id": "wh-write-offs", "anchor": "write-offs", "titleKey": "toc.whWriteOffs" }
+      ]
+    },
+    {
+      "id": "warehouse-procurement",
+      "file": "warehouse-procurement",
+      "titleKey": "toc.warehouseProcurement",
+      "priority": "medium",
+      "children": [
+        { "id": "wh-procurement-requests", "anchor": "procurement-requests", "titleKey": "toc.whProcurementRequests" },
+        { "id": "wh-selling", "anchor": "selling", "titleKey": "toc.whSelling" },
+        { "id": "wh-returns", "anchor": "returns", "titleKey": "toc.whReturns" }
+      ]
+    },
+    {
+      "id": "warehouse-data-model",
+      "file": "warehouse-data-model",
+      "titleKey": "toc.warehouseDataModel",
+      "priority": "medium",
+      "children": [
+        { "id": "wh-fhir-resources", "anchor": "fhir-resources", "titleKey": "toc.whFhirResources" },
+        { "id": "wh-permissions", "anchor": "permissions", "titleKey": "toc.whPermissions" },
+        { "id": "wh-business-rules", "anchor": "business-rules", "titleKey": "toc.whBusinessRules" }
+      ]
+    }
+  ],
+  "screenshots": [
+    { "basename": "wh-dashboard-overview", "description": "Full dashboard page with KPI stat cards and quick actions", "type": "static" },
+    { "basename": "wh-dashboard-alerts", "description": "Critical alerts banner and notifications feed", "type": "static" },
+    { "basename": "wh-dashboard-activity", "description": "Recent activity timeline and pending approvals", "type": "static" },
+    { "basename": "wh-dashboard-analytics", "description": "Analytics overview with daily volume chart and top items", "type": "static" },
+    { "basename": "wh-nomenclature-categories", "description": "Categories tab with category list and add form", "type": "static" },
+    { "basename": "wh-nomenclature-groups", "description": "Product groups tab showing group hierarchy", "type": "static" },
+    { "basename": "wh-nomenclature-items", "description": "Warehouse items table with search and filters", "type": "static" },
+    { "basename": "wh-nomenclature-hierarchy", "description": "5-tier tab navigation showing category-to-product flow", "type": "static" },
+    { "basename": "wh-item-edit", "description": "Item edit modal with Main and Attributes tabs", "type": "state-based" },
+    { "basename": "wh-receiving-list", "description": "Receiving history with grouped invoice table", "type": "static" },
+    { "basename": "wh-transfer-list", "description": "Transfers page showing all/grouped/approval tabs", "type": "static" },
+    { "basename": "wh-transfer-approval", "description": "Transfer approval confirmation workflow", "type": "state-based" },
+    { "basename": "wh-orders-list", "description": "Orders page with order table and status badges", "type": "static" },
+    { "basename": "wh-order-create", "description": "New order creation modal form", "type": "state-based" },
+    { "basename": "wh-inventory-balances", "description": "Stock balance table with department breakdown", "type": "static" },
+    { "basename": "wh-inventory-picking", "description": "Picking queue with FEFO highlighting and zone grouping", "type": "static" },
+    { "basename": "wh-writeoffs-list", "description": "Write-offs history with approval status badges", "type": "static" },
+    { "basename": "wh-writeoffs-create", "description": "New write-off creation form", "type": "state-based" },
+    { "basename": "wh-procurement-list", "description": "Procurement requests list with status badges", "type": "static" },
+    { "basename": "wh-procurement-create", "description": "New procurement request form", "type": "state-based" },
+    { "basename": "wh-procurement-approval", "description": "Procurement approval workflow with approve/reject", "type": "state-based" }
+  ],
+  "fhirResources": ["SupplyDelivery", "DeviceDefinition", "List", "Communication", "SupplyRequest"],
+  "contentTopics": [
+    "Dashboard KPIs and alerts",
+    "Product catalog and nomenclature hierarchy",
+    "Receiving/reception management",
+    "Internal transfers with approval",
+    "Supply order management",
+    "Stock balances and inventory tracking",
+    "FEFO picking queue",
+    "Write-off processing",
+    "Procurement requests",
+    "Selling and returns",
+    "Warehouse analytics",
+    "Permission-based access control"
+  ],
+  "i18nKeys": {
+    "en": {
+      "toc.warehouseOverview": "Warehouse Overview",
+      "toc.warehouseNomenclature": "Nomenclature",
+      "toc.warehouseOperations": "Operations",
+      "toc.warehouseInventory": "Inventory",
+      "toc.warehouseProcurement": "Procurement",
+      "toc.warehouseDataModel": "Data Model",
+      "toc.whDashboardStats": "Dashboard & KPIs",
+      "toc.whQuickActions": "Quick Actions",
+      "toc.whNotifications": "Notifications",
+      "toc.whAnalyticsOverview": "Analytics Overview",
+      "toc.whCategories": "Categories",
+      "toc.whGroups": "Product Groups",
+      "toc.whItems": "Warehouse Items",
+      "toc.whItemDetails": "Item Details",
+      "toc.whReceiving": "Receiving",
+      "toc.whTransfers": "Transfers",
+      "toc.whOrders": "Orders",
+      "toc.whStockLevels": "Stock Levels",
+      "toc.whPicking": "Picking Queue",
+      "toc.whWriteOffs": "Write-Offs",
+      "toc.whProcurementRequests": "Procurement Requests",
+      "toc.whSelling": "Selling",
+      "toc.whReturns": "Returns",
+      "toc.whFhirResources": "FHIR Resources",
+      "toc.whPermissions": "Permissions",
+      "toc.whBusinessRules": "Business Rules"
+    },
+    "ka": {
+      "toc.warehouseOverview": "საწყობის მიმოხილვა",
+      "toc.warehouseNomenclature": "ნომენკლატურა",
+      "toc.warehouseOperations": "ოპერაციები",
+      "toc.warehouseInventory": "მარაგები",
+      "toc.warehouseProcurement": "შესყიდვები",
+      "toc.warehouseDataModel": "მონაცემთა მოდელი",
+      "toc.whDashboardStats": "დეშბორდი და KPI",
+      "toc.whQuickActions": "სწრაფი მოქმედებები",
+      "toc.whNotifications": "შეტყობინებები",
+      "toc.whAnalyticsOverview": "ანალიტიკის მიმოხილვა",
+      "toc.whCategories": "კატეგორიები",
+      "toc.whGroups": "პროდუქციის ჯგუფები",
+      "toc.whItems": "საწყობის ნომენკლატურა",
+      "toc.whItemDetails": "ნომენკლატურის დეტალები",
+      "toc.whReceiving": "მიღება",
+      "toc.whTransfers": "გადაწერები",
+      "toc.whOrders": "შეკვეთები",
+      "toc.whStockLevels": "მარაგის ბალანსი",
+      "toc.whPicking": "კომპლექტაცია",
+      "toc.whWriteOffs": "ჩამოწერები",
+      "toc.whProcurementRequests": "შესყიდვის მოთხოვნები",
+      "toc.whSelling": "გაყიდვები",
+      "toc.whReturns": "დაბრუნებები",
+      "toc.whFhirResources": "FHIR რესურსები",
+      "toc.whPermissions": "უფლებები",
+      "toc.whBusinessRules": "ბიზნეს წესები"
+    },
+    "ru": {
+      "toc.warehouseOverview": "Обзор склада",
+      "toc.warehouseNomenclature": "Номенклатура",
+      "toc.warehouseOperations": "Операции",
+      "toc.warehouseInventory": "Запасы",
+      "toc.warehouseProcurement": "Закупки",
+      "toc.warehouseDataModel": "Модель данных",
+      "toc.whDashboardStats": "Панель и KPI",
+      "toc.whQuickActions": "Быстрые действия",
+      "toc.whNotifications": "Уведомления",
+      "toc.whAnalyticsOverview": "Обзор аналитики",
+      "toc.whCategories": "Категории",
+      "toc.whGroups": "Группы товаров",
+      "toc.whItems": "Складские товары",
+      "toc.whItemDetails": "Детали товара",
+      "toc.whReceiving": "Приемка",
+      "toc.whTransfers": "Переводы",
+      "toc.whOrders": "Заказы",
+      "toc.whStockLevels": "Остатки",
+      "toc.whPicking": "Комплектация",
+      "toc.whWriteOffs": "Списания",
+      "toc.whProcurementRequests": "Заявки на закупку",
+      "toc.whSelling": "Продажи",
+      "toc.whReturns": "Возвраты",
+      "toc.whFhirResources": "Ресурсы FHIR",
+      "toc.whPermissions": "Разрешения",
+      "toc.whBusinessRules": "Бизнес-правила"
+    }
+  }
+}

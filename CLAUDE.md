@@ -213,6 +213,10 @@ Examples:
 - insurance-section-ru.png
 ```
 
+### MANDATORY: Screenshot Image Class
+
+Every `<img>` tag inside a `doc-screenshot-full` container **MUST** include `class="doc-screenshot-image"` — without it, retina (2x) images render at native pixel size and appear zoomed/cropped on the docs site.
+
 ### Verification Checklist
 
 After capturing screenshots and adding to documentation:

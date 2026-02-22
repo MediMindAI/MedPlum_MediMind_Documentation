@@ -1,0 +1,1041 @@
+<!-- ============================================================
+     Warehouse Selling & Returns Documentation
+     Section ID: warehouse-selling-returns
+     Anchors: selling, returns
+     ============================================================ -->
+
+<!-- ============================================================
+     SECTION 1: SELLING
+     ============================================================ -->
+<section class="doc-section" id="selling">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">1</div>
+    <h2>Selling</h2>
+  </div>
+
+  <p>The <strong>Selling</strong> module manages the sale of inventory items to external buyer companies. When goods are sold, they are removed from a department's stock and a selling waybill document is generated. Each selling transaction flows through a <strong>two-step approval process</strong> -- the operator creates the waybill, and an authorized user confirms or rejects it.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Resource:</strong> Each selling line item is stored as a <strong>SupplyDelivery</strong> resource with type code <code>selling</code>. Status lifecycle: <code>in-progress</code> (pending) &rarr; <code>completed</code> (confirmed) or <code>abandoned</code> (rejected).
+  </div>
+
+  <!-- 1.1 Page Layout & Tabs -->
+  <h3 id="selling-layout">1.1 Page Layout</h3>
+
+  <p>The selling page uses the standard three-tab layout shared across all warehouse operation modules:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Tabs</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">10</span>
+      <span class="doc-stat-inline-label">Table Columns</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">KPI Cards</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">7</span>
+      <span class="doc-stat-inline-label">Filter Fields</span>
+    </div>
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Tab</th>
+        <th>Purpose</th>
+        <th>Badge</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>History</strong></td>
+        <td>Full list of individual selling line items with filters, sorting, pagination, and correction actions</td>
+        <td>Blue -- total record count</td>
+      </tr>
+      <tr>
+        <td><strong>Analytics</strong></td>
+        <td>KPI summary strip, Top 5 Sold Items, Buyer Activity bars, Department-Buyer heatmap, Period Summary, and grouped document table</td>
+        <td>Teal -- grouped document count</td>
+      </tr>
+      <tr>
+        <td><strong>Pending Confirmation</strong></td>
+        <td>In-progress selling groups awaiting approval; Confirm (green) or Reject (red) buttons with step-up authentication</td>
+        <td>Orange -- pending group count</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The page header includes a <strong>"Create Waybill"</strong> button that opens the selling creation modal.</p>
+
+  <!-- 1.2 History Tab -->
+  <h3 id="selling-history">1.2 History Tab</h3>
+
+  <p>The History tab shows every individual selling line item in a paginated, sortable table. On mobile devices, the table is replaced by a card-based layout showing key information at a glance.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-history-en.png" alt="Selling History Table" class="doc-screenshot-image" data-i18n-img="wh-selling-history">
+  </div>
+
+  <h4>Table Columns</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Column</th>
+        <th>Description</th>
+        <th>Sortable</th>
+        <th>Mobile</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Date</strong></td>
+        <td>Date and time of the selling transaction</td>
+        <td>Yes</td>
+        <td>Visible</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Status</strong></td>
+        <td>Color-coded badge: <code>in-progress</code>, <code>completed</code>, or <code>abandoned</code></td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Doc #</strong></td>
+        <td>Auto-generated document number (format: <code>SELL-{timestamp}</code>)</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Department</strong></td>
+        <td>Source department where the sale occurred</td>
+        <td>Yes</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Buyer</strong></td>
+        <td>External buyer company name</td>
+        <td>Yes</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Item Name</strong></td>
+        <td>Product name with item code shown below</td>
+        <td>Yes</td>
+        <td>Visible</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Unit</strong></td>
+        <td>Unit of measure</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Qty</strong></td>
+        <td>Quantity sold</td>
+        <td>No</td>
+        <td>Visible</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>Selling Price</strong></td>
+        <td>Per-unit selling price in GEL</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Total</strong></td>
+        <td>Line total (Qty x Selling Price) in GEL</td>
+        <td>Yes</td>
+        <td>Visible</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Filters</h4>
+
+  <p>The filter panel supports 7 search criteria with a collapsible layout:</p>
+
+  <ul class="doc-list">
+    <li><strong>Date From / Date To</strong> -- filter by date range</li>
+    <li><strong>Department</strong> -- dropdown of inventory departments</li>
+    <li><strong>Warehouse Group</strong> -- filter by product category</li>
+    <li><strong>Buyer</strong> -- dropdown of all buyer companies</li>
+    <li><strong>Item Search</strong> -- text search by product name</li>
+    <li><strong>Document Number</strong> -- search by document number</li>
+  </ul>
+
+  <p>A <strong>summary footer</strong> at the bottom displays the total record count and the sum of all filtered selling values in GEL.</p>
+
+  <h4>Correction Action</h4>
+
+  <p>For completed selling records, a <strong>Correction</strong> button appears in the actions column. This opens the Warehouse Correction Modal, allowing authorized users to adjust quantities or reverse transactions after the fact.</p>
+
+  <!-- 1.3 Analytics Tab -->
+  <h3 id="selling-analytics">1.3 Analytics Tab</h3>
+
+  <p>The Analytics tab provides a comprehensive overview of selling activity through KPI cards, visual charts, and period comparisons.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-analytics-en.png" alt="Selling Analytics Dashboard" class="doc-screenshot-image" data-i18n-img="wh-selling-analytics">
+  </div>
+
+  <h4>KPI Summary Strip</h4>
+
+  <p>Five KPI cards appear at the top of the Analytics tab, each with sparkline trends and month-over-month comparison:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>KPI</th>
+        <th>Description</th>
+        <th>Trend</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Total Documents</strong></td>
+        <td>Number of selling waybills created</td>
+        <td>30-day sparkline + % change vs last month</td>
+      </tr>
+      <tr>
+        <td><strong>Total Value</strong></td>
+        <td>Sum of all selling amounts in GEL</td>
+        <td>30-day sparkline + % change vs last month</td>
+      </tr>
+      <tr>
+        <td><strong>Top Buyer</strong></td>
+        <td>Buyer company with the most transactions</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>Avg Items/Doc</strong></td>
+        <td>Average number of line items per waybill</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td><strong>Busiest Day</strong></td>
+        <td>Day of the week with the highest selling volume</td>
+        <td>Shows transaction count</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Analytics Sections</h4>
+
+  <p>Below the KPI strip, four collapsible analytics sections provide deeper insights:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Visualization</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Top 5 Sold Items</strong></td>
+        <td>Ranked list with badges</td>
+        <td>Most frequently sold items by quantity, showing total value for each</td>
+      </tr>
+      <tr>
+        <td><strong>Buyer Activity</strong></td>
+        <td>Horizontal bar chart</td>
+        <td>Transaction count per buyer company, sorted by frequency</td>
+      </tr>
+      <tr>
+        <td><strong>Dept &rarr; Buyer Heatmap</strong></td>
+        <td>Color-intensity grid</td>
+        <td>Shows which departments sell to which buyers most often; darker cells indicate higher volume</td>
+      </tr>
+      <tr>
+        <td><strong>Period Summary</strong></td>
+        <td>Table with toggle</td>
+        <td>Weekly (4 weeks) or Monthly (6 months) view showing document count and total value per period</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Period Toggle:</strong> The Period Summary section includes a <strong>Weekly / Monthly</strong> toggle that switches between a 4-week breakdown and a 6-month breakdown of selling activity.
+  </div>
+
+  <!-- 1.4 Create Waybill Modal -->
+  <h3 id="selling-create">1.4 Creating a Selling Waybill</h3>
+
+  <p>Click the <strong>"Create Waybill"</strong> button in the page header to open the dual-panel creation modal. The modal uses the shared BookModal layout (the same dual-panel interface used for transfers and orders).</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-selling-create-en.png" alt="Create Selling Waybill Modal" class="doc-screenshot-image" data-i18n-img="wh-selling-create">
+  </div>
+
+  <h4>Modal Header Fields</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Required</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>Yes</td>
+        <td>Transaction date (defaults to today)</td>
+      </tr>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>Auto</td>
+        <td>Auto-generated in format <code>SELL-{timestamp}</code>; field is read-only</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>Yes</td>
+        <td>Searchable dropdown of inventory departments; changing this reloads the available stock in the left panel</td>
+      </tr>
+      <tr>
+        <td><strong>Buyer</strong></td>
+        <td>Yes</td>
+        <td>Searchable dropdown of buyer companies loaded from the suppliers-clients data file; deduplicated by company code</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Dual-Panel Item Selection</h4>
+
+  <p>The modal body contains two panels:</p>
+
+  <ul class="doc-list">
+    <li><strong>Left Panel (Available Stock)</strong> -- shows all items currently in stock at the selected department. Click an item to move it to the right panel. A filter bar narrows results by name or code.</li>
+    <li><strong>Right Panel (Selected Items)</strong> -- items chosen for this waybill. Each item displays editable <strong>quantity</strong> and <strong>selling price</strong> fields. The selling price defaults to the cost price but can be adjusted. Items exceeding available stock show an error indicator.</li>
+  </ul>
+
+  <p>A <strong>totals bar</strong> at the bottom summarizes the total number of items and the total selling value.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Step-Up Authentication:</strong> Before submitting the waybill, the system prompts for <strong>password re-entry</strong> (step-up authentication). This prevents unauthorized selling transactions even if a session is left open.
+  </div>
+
+  <h4>Unsaved Changes Warning</h4>
+
+  <p>If you close the modal while items are still in the right panel, a browser confirmation dialog appears asking whether you want to discard your unsaved changes.</p>
+
+  <!-- 1.5 Pending Confirmation -->
+  <h3 id="selling-confirmation">1.5 Pending Confirmation</h3>
+
+  <p>Newly created selling waybills start with <code>in-progress</code> status and appear in the <strong>Pending Confirmation</strong> tab. Authorized users can review each document group and either <strong>confirm</strong> or <strong>reject</strong> it.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Button</th>
+        <th>Effect</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Confirm</strong></td>
+        <td>Green button</td>
+        <td>Sets all items in the group to <code>completed</code> status. Inventory is deducted from the department's stock.</td>
+      </tr>
+      <tr>
+        <td><strong>Reject</strong></td>
+        <td>Red button</td>
+        <td>Opens a rejection reason modal. Sets all items to <code>abandoned</code> status. Items remain in stock.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Both actions require <strong>step-up authentication</strong> (password re-entry) and the <code>confirm-selling</code> permission. Administrator users bypass the permission check.</p>
+
+  <p>The confirmation table groups items by document number, showing an expandable/collapsible detail view with all line items, their quantities, prices, and totals.</p>
+
+  <!-- 1.6 FHIR Data Model -->
+  <h3 id="selling-fhir">1.6 FHIR Data Model</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>FHIR Path / Extension</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Document Number</td>
+        <td><code>SupplyDelivery.identifier</code> (system: selling-document-number)</td>
+      </tr>
+      <tr>
+        <td>Status</td>
+        <td><code>SupplyDelivery.status</code></td>
+      </tr>
+      <tr>
+        <td>Date</td>
+        <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+      </tr>
+      <tr>
+        <td>Quantity</td>
+        <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
+      </tr>
+      <tr>
+        <td>Department ID</td>
+        <td>Extension: <code>source-department</code></td>
+      </tr>
+      <tr>
+        <td>Department Name</td>
+        <td>Extension: <code>source-department-name</code></td>
+      </tr>
+      <tr>
+        <td>Buyer ID</td>
+        <td>Extension: <code>selling-buyer-id</code></td>
+      </tr>
+      <tr>
+        <td>Buyer Name</td>
+        <td>Extension: <code>selling-buyer-name</code></td>
+      </tr>
+      <tr>
+        <td>Item Code</td>
+        <td>Extension: <code>item-code</code></td>
+      </tr>
+      <tr>
+        <td>Item Name</td>
+        <td>Extension: <code>item-name</code></td>
+      </tr>
+      <tr>
+        <td>Unit</td>
+        <td>Extension: <code>unit-of-measure</code></td>
+      </tr>
+      <tr>
+        <td>Unit Price</td>
+        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Selling Price</td>
+        <td>Extension: <code>selling-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Line Total</td>
+        <td>Extension: <code>line-total</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Lot Number</td>
+        <td>Extension: <code>lot-number</code></td>
+      </tr>
+      <tr>
+        <td>Expiry Date</td>
+        <td>Extension: <code>expiry-date</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+
+<!-- ============================================================
+     SECTION 2: RETURNS
+     ============================================================ -->
+<section class="doc-section" id="returns">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">2</div>
+    <h2>Returns to Supplier</h2>
+  </div>
+
+  <p>The <strong>Returns</strong> module handles sending items back to their original supplier. This is typically used for defective goods, expired products, or items received in error. Returns follow the same three-tab layout and dual-step approval process as Selling, but with a key difference: Returns link back to the <strong>original receiving waybill</strong> so the supplier knows which shipment the items came from.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Resource:</strong> Each return line item is stored as a <strong>SupplyDelivery</strong> resource with type code <code>return</code>. Status lifecycle: <code>in-progress</code> (pending) &rarr; <code>completed</code> (confirmed) or <code>abandoned</code> (rejected).
+  </div>
+
+  <!-- 2.1 Page Layout -->
+  <h3 id="returns-layout">2.1 Page Layout</h3>
+
+  <p>The returns page mirrors the selling layout exactly, with three tabs and a "Create Return" button in the header:</p>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">3</span>
+      <span class="doc-stat-inline-label">Tabs</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">11</span>
+      <span class="doc-stat-inline-label">Table Columns</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">KPI Cards</span>
+    </div>
+  </div>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Tab</th>
+        <th>Purpose</th>
+        <th>Badge</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>History</strong></td>
+        <td>Full list of individual return line items with 11-column table including Supplier and Receiving Waybill columns</td>
+        <td>Blue -- total record count</td>
+      </tr>
+      <tr>
+        <td><strong>Analytics</strong></td>
+        <td>KPI summary strip, Top 5 Returned Items, Supplier Activity bars, Supplier-Department heatmap, Period Summary</td>
+        <td>Teal -- grouped document count</td>
+      </tr>
+      <tr>
+        <td><strong>Pending Confirmation</strong></td>
+        <td>In-progress return groups awaiting approval; identical confirm/reject flow to selling</td>
+        <td>Orange -- pending group count</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.2 History Tab -->
+  <h3 id="returns-history">2.2 History Tab</h3>
+
+  <p>The Returns history table has <strong>11 columns</strong> -- two more than the Selling table. The extra columns track the supplier and the original receiving waybill, which are essential for tracing the return back to the original shipment.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-history-en.png" alt="Returns History Table" class="doc-screenshot-image" data-i18n-img="wh-returns-history">
+  </div>
+
+  <h4>Table Columns</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Column</th>
+        <th>Description</th>
+        <th>Sortable</th>
+        <th>Mobile</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Date</strong></td>
+        <td>Date and time of the return</td>
+        <td>Yes</td>
+        <td>Visible</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Status</strong></td>
+        <td>Color-coded status badge</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Doc #</strong></td>
+        <td>Auto-generated document number (format: <code>RET-{YYYY}-{NNN}</code>)</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Department</strong></td>
+        <td>Department returning the items</td>
+        <td>Yes</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Supplier</strong></td>
+        <td>Supplier company receiving the returned goods. Long names are truncated with a tooltip showing the full name.</td>
+        <td>Yes</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Receiving Waybill</strong></td>
+        <td>Reference to the original receiving waybill number, linking this return to a specific incoming shipment</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Item Name</strong></td>
+        <td>Product name with item code shown below</td>
+        <td>Yes</td>
+        <td>Visible</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Unit</strong></td>
+        <td>Unit of measure</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>Qty</strong></td>
+        <td>Quantity being returned</td>
+        <td>No</td>
+        <td>Visible</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Price</strong></td>
+        <td>Unit price in GEL</td>
+        <td>No</td>
+        <td>Hidden</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>Total</strong></td>
+        <td>Line total (Qty x Price) in GEL</td>
+        <td>Yes</td>
+        <td>Visible</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Like the selling table, completed return items have a <strong>Correction</strong> button for post-facto adjustments.</p>
+
+  <!-- 2.3 Analytics Tab -->
+  <h3 id="returns-analytics">2.3 Analytics Tab</h3>
+
+  <p>The Returns analytics tab follows the same structure as Selling analytics, but focuses on <strong>supplier</strong> activity rather than buyer activity.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-analytics-en.png" alt="Returns Analytics Dashboard" class="doc-screenshot-image" data-i18n-img="wh-returns-analytics">
+  </div>
+
+  <h4>KPI Summary Strip</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>KPI</th>
+        <th>Description</th>
+        <th>Difference from Selling</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Total Documents</strong></td>
+        <td>Number of return waybills created</td>
+        <td>Same</td>
+      </tr>
+      <tr>
+        <td><strong>Total Value</strong></td>
+        <td>Sum of all return amounts in GEL</td>
+        <td>Same</td>
+      </tr>
+      <tr>
+        <td><strong>Top Supplier</strong></td>
+        <td>Supplier with the most return transactions</td>
+        <td>Selling shows "Top Buyer"</td>
+      </tr>
+      <tr>
+        <td><strong>Avg Items/Doc</strong></td>
+        <td>Average number of line items per return document</td>
+        <td>Same</td>
+      </tr>
+      <tr>
+        <td><strong>Busiest Day</strong></td>
+        <td>Day of the week with the highest return volume</td>
+        <td>Same</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Analytics Sections</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Visualization</th>
+        <th>Difference from Selling</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Top 5 Returned Items</strong></td>
+        <td>Ranked list with badges</td>
+        <td>Same structure, tracks returned items instead of sold items</td>
+      </tr>
+      <tr>
+        <td><strong>Supplier Activity</strong></td>
+        <td>Horizontal bar chart</td>
+        <td>Shows return count per supplier (Selling shows per buyer)</td>
+      </tr>
+      <tr>
+        <td><strong>Supplier &rarr; Dept Heatmap</strong></td>
+        <td>Color-intensity grid</td>
+        <td>Rows = Suppliers, Columns = Departments (Selling: Dept &rarr; Buyer)</td>
+      </tr>
+      <tr>
+        <td><strong>Period Summary</strong></td>
+        <td>Table with Weekly/Monthly toggle</td>
+        <td>Same structure</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.4 Create Return Modal -->
+  <h3 id="returns-create">2.4 Creating a Return</h3>
+
+  <p>Click the <strong>"Create Return"</strong> button in the page header. The return creation modal uses the same dual-panel layout as selling, but adds two unique fields: <strong>Supplier</strong> and <strong>Receiving Waybill</strong>.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-returns-create-en.png" alt="Create Return Modal" class="doc-screenshot-image" data-i18n-img="wh-returns-create">
+  </div>
+
+  <h4>Modal Header Fields</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Required</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>Yes</td>
+        <td>Transaction date (defaults to today)</td>
+      </tr>
+      <tr>
+        <td><strong>Document Number</strong></td>
+        <td>Auto</td>
+        <td>Auto-generated in format <code>RET-{YYYY}-{NNN}</code>; field is read-only</td>
+      </tr>
+      <tr>
+        <td><strong>Department</strong></td>
+        <td>Yes</td>
+        <td>Searchable dropdown of inventory departments</td>
+      </tr>
+      <tr>
+        <td><strong>Supplier</strong></td>
+        <td>Yes</td>
+        <td>Searchable dropdown filtered to only show suppliers (type = "supplier"). This is the key difference from selling.</td>
+      </tr>
+      <tr>
+        <td><strong>Receiving Waybill</strong></td>
+        <td>No</td>
+        <td>When a supplier is selected, this dropdown <strong>auto-populates</strong> with waybill numbers from previous receiving shipments from that supplier. Format: <code>WAYBILL_NUMBER (DATE, X items)</code>. Disabled until a supplier is chosen.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Receiving Waybill Lookup:</strong> When you select a supplier, the system automatically queries for all previously received waybills from that supplier. This lets you link the return to a specific incoming shipment, which is essential for supplier reconciliation and accounting.
+  </div>
+
+  <h4>Dual-Panel Item Selection</h4>
+
+  <p>The item selection works identically to the selling modal:</p>
+
+  <ul class="doc-list">
+    <li><strong>Left Panel</strong> -- available stock at the selected department, filterable by name/code</li>
+    <li><strong>Right Panel</strong> -- selected items with editable quantities. Unlike selling, returns do <strong>not</strong> have an editable selling price field (items are returned at their original cost price)</li>
+  </ul>
+
+  <p>Submitting the return requires <strong>step-up authentication</strong> (password re-entry). Items that exceed available stock are blocked from submission.</p>
+
+  <!-- 2.5 Pending Confirmation -->
+  <h3 id="returns-confirmation">2.5 Pending Confirmation</h3>
+
+  <p>The confirmation workflow for returns is identical to selling:</p>
+
+  <ul class="doc-list">
+    <li>New returns appear with <code>in-progress</code> status</li>
+    <li><strong>Confirm</strong> (green) sets items to <code>completed</code> and deducts stock</li>
+    <li><strong>Reject</strong> (red) opens a rejection reason modal and sets items to <code>abandoned</code></li>
+    <li>Both actions require step-up authentication and the <code>confirm-return</code> permission</li>
+  </ul>
+
+  <!-- 2.6 FHIR Data Model -->
+  <h3 id="returns-fhir">2.6 FHIR Data Model</h3>
+
+  <p>Returns use the same FHIR SupplyDelivery structure as selling, with these additional fields specific to supplier returns:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>FHIR Path / Extension</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Document Number</td>
+        <td><code>SupplyDelivery.identifier</code> (system: return-document-number)</td>
+      </tr>
+      <tr>
+        <td>Status</td>
+        <td><code>SupplyDelivery.status</code></td>
+      </tr>
+      <tr>
+        <td>Date</td>
+        <td><code>SupplyDelivery.occurrenceDateTime</code></td>
+      </tr>
+      <tr>
+        <td>Quantity</td>
+        <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
+      </tr>
+      <tr>
+        <td>Department ID</td>
+        <td>Extension: <code>source-department</code></td>
+      </tr>
+      <tr>
+        <td>Department Name</td>
+        <td>Extension: <code>source-department-name</code></td>
+      </tr>
+      <tr>
+        <td>Supplier ID</td>
+        <td>Extension: <code>return-supplier-id</code></td>
+      </tr>
+      <tr>
+        <td>Supplier Name</td>
+        <td>Extension: <code>return-supplier-name</code></td>
+      </tr>
+      <tr>
+        <td>Receiving Waybill Ref</td>
+        <td>Extension: <code>receiving-waybill-ref</code></td>
+      </tr>
+      <tr>
+        <td>Item Code</td>
+        <td>Extension: <code>item-code</code></td>
+      </tr>
+      <tr>
+        <td>Item Name</td>
+        <td>Extension: <code>item-name</code></td>
+      </tr>
+      <tr>
+        <td>Unit</td>
+        <td>Extension: <code>unit-of-measure</code></td>
+      </tr>
+      <tr>
+        <td>Unit Price</td>
+        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Line Total</td>
+        <td>Extension: <code>line-total</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>Lot Number</td>
+        <td>Extension: <code>lot-number</code></td>
+      </tr>
+      <tr>
+        <td>Expiry Date</td>
+        <td>Extension: <code>expiry-date</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+
+<!-- ============================================================
+     SECTION 3: SHARED PATTERNS
+     ============================================================ -->
+<section class="doc-section" id="selling-returns-shared">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">3</div>
+    <h2>Selling vs Returns: Side-by-Side Comparison</h2>
+  </div>
+
+  <p>Both modules share the same underlying architecture and UI patterns. The table below summarizes where they differ:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Selling</th>
+        <th>Returns</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Direction</strong></td>
+        <td>Items leave the hospital to an external buyer</td>
+        <td>Items leave the hospital back to the original supplier</td>
+      </tr>
+      <tr>
+        <td><strong>FHIR Type Code</strong></td>
+        <td><code>selling</code></td>
+        <td><code>return</code></td>
+      </tr>
+      <tr>
+        <td><strong>Doc # Format</strong></td>
+        <td><code>SELL-{timestamp}</code></td>
+        <td><code>RET-{YYYY}-{NNN}</code></td>
+      </tr>
+      <tr>
+        <td><strong>Counterparty Field</strong></td>
+        <td>Buyer (all companies)</td>
+        <td>Supplier (filtered to type "supplier" only)</td>
+      </tr>
+      <tr>
+        <td><strong>Receiving Waybill</strong></td>
+        <td>Not applicable</td>
+        <td>Optional dropdown linking to a prior receiving shipment</td>
+      </tr>
+      <tr>
+        <td><strong>Price Column</strong></td>
+        <td>Editable "Selling Price" (can differ from cost)</td>
+        <td>Read-only "Price" (returns at original cost)</td>
+      </tr>
+      <tr>
+        <td><strong>History Columns</strong></td>
+        <td>10 columns</td>
+        <td>11 columns (+Supplier, +Receiving Waybill)</td>
+      </tr>
+      <tr>
+        <td><strong>Analytics Key Metric</strong></td>
+        <td>Top Buyer, Buyer Activity</td>
+        <td>Top Supplier, Supplier Activity</td>
+      </tr>
+      <tr>
+        <td><strong>Heatmap Axes</strong></td>
+        <td>Department &rarr; Buyer</td>
+        <td>Supplier &rarr; Department</td>
+      </tr>
+      <tr>
+        <td><strong>Approval Permission</strong></td>
+        <td><code>confirm-selling</code></td>
+        <td><code>confirm-return</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="shared-workflow">3.1 Shared Workflow</h3>
+
+  <p>Both modules follow the same end-to-end process:</p>
+
+  <div style="padding: 24px 0;">
+    <!-- Workflow Steps -->
+    <div style="display: flex; flex-direction: column; gap: 0; max-width: 680px; margin: 0 auto;">
+
+      <!-- Step 1 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--emr-gradient-primary, linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">1</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">Create Waybill / Return</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Operator selects department, counterparty, and items using the dual-panel modal. Step-up auth required.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- Step 2 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">2</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">Pending Confirmation</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Items are created with <code>in-progress</code> status. They appear in the Pending Confirmation tab for review.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- Step 3 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #059669 0%, #10b981 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">3</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">Confirm or Reject</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Authorized user reviews and confirms (deducts stock) or rejects (returns to stock). Step-up auth required.</p>
+        </div>
+      </div>
+
+      <div style="width: 2px; height: 24px; background: var(--emr-gray-200, #e5e7eb); margin-left: 19px;"></div>
+
+      <!-- Step 4 -->
+      <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--emr-gradient-secondary, linear-gradient(135deg, #2b6cb0 0%, #3182ce 50%, #63b3ed 100%)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0;">4</div>
+        <div style="padding-top: 8px;">
+          <strong style="color: var(--emr-text-primary, #1f2937);">History & Analytics</strong>
+          <p style="margin: 4px 0 0; color: var(--emr-text-secondary, #6b7280); font-size: 14px;">Completed and rejected items appear in the History tab. Analytics update in real time with KPIs and charts.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <h3 id="shared-permissions">3.2 Permission Reference</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Permission</th>
+        <th>Module</th>
+        <th>Grants Access To</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>confirm-selling</code></td>
+        <td>Selling</td>
+        <td>Confirm or reject pending selling waybills in the Pending Confirmation tab</td>
+      </tr>
+      <tr>
+        <td><code>confirm-return</code></td>
+        <td>Returns</td>
+        <td>Confirm or reject pending return waybills in the Pending Confirmation tab</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Administrator Override:</strong> Users with administrator privileges automatically have access to both confirm and reject actions, regardless of individual permission settings.
+  </div>
+
+  <h3 id="shared-mobile">3.3 Mobile Experience</h3>
+
+  <p>Both selling and returns tables switch to a <strong>mobile card layout</strong> on screens narrower than 768px. Each card shows:</p>
+
+  <ul class="doc-list">
+    <li>Product icon and item name at the top</li>
+    <li>Date and status badge</li>
+    <li>Department and counterparty (buyer or supplier) information</li>
+    <li>Quantity, unit price, and total amount</li>
+  </ul>
+
+  <p>The card layout preserves all essential information while fitting naturally on smaller screens. Columns that are hidden on mobile (such as Unit, Doc #, and counterparty) are incorporated into the card body as secondary text.</p>
+
+</section>

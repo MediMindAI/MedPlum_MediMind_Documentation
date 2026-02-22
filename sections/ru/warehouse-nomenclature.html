@@ -1,459 +1,889 @@
+<!-- Документация по номенклатуре склада - Русский -->
+
+<!-- ============================================================ -->
+<!-- РАЗДЕЛ 1: Обзор -->
+<!-- ============================================================ -->
 <section class="doc-section" id="warehouse-nomenclature">
   <div class="doc-section-header">
     <div class="doc-section-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 3h7v7H3V3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M14 3h7v7h-7V3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3 14h7v7H3v-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M17.5 14v7M14 17.5h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
       </svg>
     </div>
-    <div>
-      <h2>Номенклатура продукции</h2>
-    </div>
+    <div class="doc-section-number">1</div>
+    <h2>Обзор номенклатуры продукции</h2>
   </div>
 
-  <!-- Иерархия продукции -->
-  <h3 id="wh-hierarchy">Иерархия продукции</h3>
+  <p>Модуль <strong>Номенклатура склада</strong> представляет собой центральный каталог продукции для всей цепочки поставок больницы. Его можно сравнить с главной библиотекой продукции больницы -- каждый медикамент, расходный материал, оборудование и предмет снабжения, используемый во всех отделениях, организован здесь в структурированной, легко находимой иерархии.</p>
 
-  <p>Складской модуль организует все товары с помощью <strong>5-уровневой иерархии</strong>. Представьте это как папки на компьютере: широкие категории наверху и конкретные товары внизу. Каждый уровень сужает классификацию, упрощая поиск и управление тысячами товаров.</p>
-
-  <!-- Визуальная диаграмма иерархии -->
-  <div style="max-width: 680px; margin: 2rem auto;">
-    <div style="display: flex; flex-direction: column; gap: 0; align-items: center;">
-      <!-- Уровень 1 -->
-      <div style="width: 100%; padding: 14px 20px; background: linear-gradient(135deg, var(--emr-primary) 0%, var(--emr-secondary) 100%); border-radius: 10px; color: var(--emr-text-inverse); display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">1</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px;">Категории</div>
-          <div style="font-size: 12px; opacity: 0.85;">Группировка верхнего уровня (напр., Расходные материалы, Медикаменты, Оборудование)</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(255,255,255,0.2); border-radius: 6px; font-size: 12px; font-weight: 600;">Уровень 1</div>
-      </div>
-      <!-- Коннектор -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- Уровень 2 -->
-      <div style="width: 92%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-secondary); border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(43,108,176,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-secondary);">2</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Группы продукции</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">Группы внутри категорий (напр., Антибиотики, Бинты)</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(43,108,176,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--emr-secondary);">Уровень 2</div>
-      </div>
-      <!-- Коннектор -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- Уровень 3 -->
-      <div style="width: 84%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-accent); border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(99,179,237,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-accent);">3</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Подгруппы</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">Необязательная дополнительная классификация внутри групп</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(99,179,237,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--emr-accent);">Уровень 3</div>
-      </div>
-      <!-- Коннектор -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- Уровень 4 -->
-      <div style="width: 76%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #38b2ac; border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(56,178,172,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #38b2ac;">4</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Общие наименования</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">Стандартные названия продуктов (напр., Амоксициллин, Парацетамол)</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(56,178,172,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: #38b2ac;">Уровень 4</div>
-      </div>
-      <!-- Коннектор -->
-      <div style="width: 2px; height: 16px; border-left: 2px dashed var(--emr-gray-300);"></div>
-      <!-- Уровень 5 -->
-      <div style="width: 68%; padding: 12px 18px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #dd6b20; border-radius: 10px; display: flex; align-items: center; gap: 14px;">
-        <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 8px; background: rgba(221,107,32,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #dd6b20;">5</div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 15px; color: var(--emr-text-primary);">Каталог продукции</div>
-          <div style="font-size: 12px; color: var(--emr-text-secondary);">Конкретные товары с дозировкой, производителем, единицей измерения</div>
-        </div>
-        <div style="padding: 3px 10px; background: rgba(221,107,32,0.1); border-radius: 6px; font-size: 12px; font-weight: 600; color: #dd6b20;">Уровень 5</div>
-      </div>
-    </div>
-  </div>
-
-  <p>Страница отображает каждый уровень в виде <strong>кликабельной карточки-вкладки</strong> в верхней части, соединённой стрелками для отображения потока иерархии. Значок на каждой карточке показывает количество элементов на этом уровне.</p>
+  <p>Подобно тому, как библиотека использует систему классификации (полки, разделы, подразделы и отдельные книги), номенклатура склада организует продукцию в <strong>5 иерархических уровней</strong>. Это позволяет легко найти любой товар среди десятков тысяч наименований и обеспечивает единообразие наименований и группировки во всех отделениях.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-hierarchy-ru.png" alt="Информационная панель 5-уровневой иерархии с описаниями и примерами всех уровней" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-hierarchy">
+    <img src="images/wh-nomenclature-hierarchy-ru.png" alt="5-уровневая навигация по вкладкам номенклатуры склада" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-hierarchy">
   </div>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">ℹ️</div>
-    <div class="doc-info-content">
-      <strong>Информационная панель иерархии:</strong> Нажмите на полосу "Как работает эта иерархия?" в верхней части страницы, чтобы развернуть визуальное руководство, объясняющее каждый уровень с примерами. Это полезно для новых пользователей, изучающих систему организации продуктов.
+  <!-- Статистика -->
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">5</span>
+      <span class="doc-stat-inline-label">Уровней иерархии</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">12</span>
+      <span class="doc-stat-inline-label">Категорий</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">310+</span>
+      <span class="doc-stat-inline-label">Товарных групп</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">36 500+</span>
+      <span class="doc-stat-inline-label">Складских товаров</span>
     </div>
   </div>
 
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Уровень</th>
-          <th>Название</th>
-          <th>Описание</th>
-          <th>Пример</th>
-          <th>FHIR ресурс</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>1</strong></td>
-          <td>Категории</td>
-          <td>Самая широкая классификация складских товаров</td>
-          <td>Расходные материалы, Медикаменты, Реагенты</td>
-          <td>List (code: warehouse-categories)</td>
-        </tr>
-        <tr>
-          <td><strong>2</strong></td>
-          <td>Группы продукции</td>
-          <td>Группы товаров внутри категории</td>
-          <td>Антибиотики, Хирургические перчатки, Растворы для в/в</td>
-          <td>List (code: warehouse-item-groups)</td>
-        </tr>
-        <tr>
-          <td><strong>3</strong></td>
-          <td>Подгруппы</td>
-          <td>Необязательная детальная классификация внутри групп</td>
-          <td>Пенициллины (внутри Антибиотиков)</td>
-          <td>List (code: warehouse-subcategories)</td>
-        </tr>
-        <tr>
-          <td><strong>4</strong></td>
-          <td>Общие наименования</td>
-          <td>Стандартные названия продуктов без бренда</td>
-          <td>Амоксициллин, Парацетамол, Физиологический раствор</td>
-          <td>List (code: warehouse-medical-items)</td>
-        </tr>
-        <tr>
-          <td><strong>5</strong></td>
-          <td>Каталог продукции</td>
-          <td>Конкретные складские товары с производителем, дозировкой, единицей</td>
-          <td>Амоксициллин 500мг Таблетка, GlaxoSmithKline</td>
-          <td>SupplyDelivery / DeviceDefinition</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Соответствие FHIR R4:</strong>
+    Все данные номенклатуры хранятся с использованием ресурсов FHIR R4. Категории, группы, подкатегории и международные непатентованные наименования используют ресурсы <strong>List</strong>, а отдельные складские товары -- ресурсы <strong>SupplyDelivery</strong>. Модальное окно редактирования товара использует <strong>DeviceDefinition</strong> для расширенных атрибутов продукции.
   </div>
 
-  <h4>Перекрёстная фильтрация</h4>
-  <p>Ключевая функция номенклатурной системы - <strong>перекрёстная фильтрация</strong>. Нажатие на элемент на любом уровне автоматически фильтрует следующий нижний уровень:</p>
+  <!-- Диаграмма 5-уровневой иерархии -->
+  <h3>5-уровневая иерархия продукции</h3>
+
+  <p>Каждый товар в больнице принадлежит к 5-уровневому классификационному дереву. Каждый уровень добавляет более детальную специфику -- от широких категорий до конкретного товара с точным указанием бренда, упаковки и данных поставщика.</p>
+
+  <div style="max-width: 680px; margin: 24px auto;">
+    <!-- Уровень 1 -->
+    <div style="background: linear-gradient(135deg, var(--emr-primary) 0%, var(--emr-secondary) 100%); color: var(--emr-text-inverse); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 100%;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">1</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px;">Категории</div>
+        <div style="font-size: 12px; opacity: 0.85;">Широкие классификационные группы (напр., Медикаменты, Расходные материалы, Оборудование)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(255,255,255,0.2); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600;">12 позиций</div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- Уровень 2 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid var(--emr-secondary); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 92%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(43,108,176,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: var(--emr-secondary);">2</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">Товарные группы</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">Функциональные группировки внутри категории (напр., Антибиотики, Шприцы)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(43,108,176,0.1); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: var(--emr-secondary);">310+</div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- Уровень 3 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #7c3aed; border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 84%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(124,58,237,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #7c3aed;">3</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">Подгруппы</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">Дальнейшее уточнение внутри группы (напр., Цефалоспорины, Шприцы для в/в инъекций)</div>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- Уровень 4 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #0d9488; border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 76%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(13,148,136,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #0d9488;">4</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">Международные непатентованные наименования</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">Стандартизированные медицинские наименования (напр., Цефтриаксон, Амоксициллин)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(13,148,136,0.1); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: #0d9488;">503+</div>
+    </div>
+    <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
+
+    <!-- Уровень 5 -->
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-left: 3px solid #ea580c; border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; width: 68%; margin-left: auto;">
+      <div style="width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: rgba(234,88,12,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #ea580c;">5</div>
+      <div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--emr-text-primary);">Каталог продукции</div>
+        <div style="font-size: 12px; color: var(--emr-text-secondary);">Конкретные товары с указанием бренда, дозировки, поставщика (напр., Цефтриаксон 1г, Hikma)</div>
+      </div>
+      <div style="margin-left: auto; background: rgba(234,88,12,0.1); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: #ea580c;">36 500+</div>
+    </div>
+  </div>
+
+  <p><strong>Панель вкладок</strong> в верхней части страницы отображает каждый уровень в виде кликабельной карточки. Стрелка между карточками показывает связь «родитель-потомок». На каждой карточке отображается <strong>счетчик</strong> с количеством элементов на данном уровне. Нажатие на карточку переключает вид на таблицу управления соответствующего уровня.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Сворачиваемая информационная панель:</strong>
+    Нажмите на панель «Как работает эта иерархия?» в верхней части страницы, чтобы развернуть встроенное справочное руководство. В нем показаны назначение, описание и примеры элементов каждого уровня без необходимости покидать страницу.
+  </div>
+
+  <!-- Маппинг ресурсов FHIR -->
+  <h3>Маппинг ресурсов FHIR</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Уровень иерархии</th>
+        <th>Ресурс FHIR</th>
+        <th>Код списка</th>
+        <th>Примерн. кол-во</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Уровень 1 -- Категории</strong></td>
+        <td>List</td>
+        <td><code>warehouse-categories</code></td>
+        <td>12</td>
+      </tr>
+      <tr>
+        <td><strong>Уровень 2 -- Товарные группы</strong></td>
+        <td>List</td>
+        <td><code>warehouse-item-groups</code></td>
+        <td>310</td>
+      </tr>
+      <tr>
+        <td><strong>Уровень 3 -- Подгруппы</strong></td>
+        <td>List</td>
+        <td><code>warehouse-subcategories</code></td>
+        <td>Варьируется</td>
+      </tr>
+      <tr>
+        <td><strong>Уровень 4 -- МНН</strong></td>
+        <td>List</td>
+        <td><code>warehouse-medical-items</code></td>
+        <td>503</td>
+      </tr>
+      <tr>
+        <td><strong>Уровень 5 -- Каталог продукции</strong></td>
+        <td>SupplyDelivery</td>
+        <td>status: <code>completed</code></td>
+        <td>36 500+</td>
+      </tr>
+      <tr>
+        <td><strong>Редактирование товара (расширенное)</strong></td>
+        <td>DeviceDefinition</td>
+        <td>--</td>
+        <td>По товару</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- РАЗДЕЛ 2: Категории -->
+<!-- ============================================================ -->
+<section class="doc-section" id="categories">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">2</div>
+    <h2>Категории (Уровень 1)</h2>
+  </div>
+
+  <p><strong>Категории</strong> -- это самый широкий уровень классификации, верхние «полки» в вашей библиотеке продукции. Они делят весь инвентарь больницы на основные функциональные группы: Медикаменты, Расходные материалы, Оборудование и Питание. Система поставляется с <strong>12 предустановленными категориями</strong>, и администраторы могут добавлять собственные.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-categories-ru.png" alt="Вкладка категорий со списком и формой добавления" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-categories">
+  </div>
+
+  <h3>Предустановленные группы категорий</h3>
+
+  <p>Эти 11 складских групп (унаследованные из устаревшей системы больницы) представляют самую широкую классификацию всех товаров снабжения:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Название группы (грузинский)</th>
+        <th>Перевод на русский</th>
+        <th>Примеры</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>სახარჯი მასალა</td>
+        <td>Расходные материалы</td>
+        <td>Бинты, марля, перчатки, одноразовые изделия</td>
+      </tr>
+      <tr>
+        <td>მედიკამენტები</td>
+        <td>Медикаменты</td>
+        <td>Таблетки, инъекции, сиропы, мази</td>
+      </tr>
+      <tr>
+        <td>სამეურნეო</td>
+        <td>Хозяйственные товары</td>
+        <td>Моющие средства, бумажные полотенца, мыло</td>
+      </tr>
+      <tr>
+        <td>არა ინვენტარი</td>
+        <td>Неинвентарные товары</td>
+        <td>Товары одноразового использования, не учитываемые в инвентаре</td>
+      </tr>
+      <tr>
+        <td>ძირითადი საშუალებები</td>
+        <td>Основные средства</td>
+        <td>Мебель, тяжелое оборудование, транспортные средства</td>
+      </tr>
+      <tr>
+        <td>ინვენტარი</td>
+        <td>Инвентарь</td>
+        <td>Учитываемое многоразовое оборудование и инструменты</td>
+      </tr>
+      <tr>
+        <td>რეაქტივი</td>
+        <td>Реактивы</td>
+        <td>Лабораторные реактивы и химические вещества</td>
+      </tr>
+      <tr>
+        <td>ხსნარი</td>
+        <td>Растворы</td>
+        <td>Инфузионные растворы, физиологический раствор, раствор декстрозы</td>
+      </tr>
+      <tr>
+        <td>სამედიცინო ინსტრუმენტი</td>
+        <td>Медицинские инструменты</td>
+        <td>Хирургические инструменты, скальпели, зажимы</td>
+      </tr>
+      <tr>
+        <td>ნარკოტიკები</td>
+        <td>Контролируемые вещества</td>
+        <td>Наркотические и регулируемые лекарственные средства</td>
+      </tr>
+      <tr>
+        <td>კვება</td>
+        <td>Питание</td>
+        <td>Питание пациентов, пищевые добавки</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Управление категориями</h3>
+
+  <p>Вкладка «Категории» предоставляет простой интерфейс для просмотра и управления категориями верхнего уровня:</p>
+
   <ul class="doc-list">
-    <li>Нажмите на <strong>Группу продукции</strong>, чтобы увидеть только Общие наименования, принадлежащие этой группе</li>
-    <li>Нажмите на <strong>Общее наименование</strong>, чтобы увидеть только товары Каталога продукции для этого продукта</li>
-    <li>Активные фильтры отображаются в виде <strong>значков</strong> в верхней части страницы и могут быть очищены по отдельности или все сразу</li>
+    <li><strong>Добавить категорию</strong> -- Введите название в форме «Добавить» и нажмите кнопку <strong>+</strong> (или клавишу Enter). Новая категория сразу появится в списке.</li>
+    <li><strong>Поиск</strong> -- Используйте строку поиска для фильтрации категорий по названию в реальном времени.</li>
+    <li><strong>Редактирование</strong> -- Нажмите значок редактирования (карандаш) в любой строке. Название станет редактируемым текстовым полем. Нажмите Enter или щелкните в другом месте для сохранения.</li>
+    <li><strong>Удаление</strong> -- Нажмите значок удаления (корзина). Перед удалением категории появится диалоговое окно подтверждения.</li>
+    <li><strong>Статус</strong> -- Каждая категория отображает значок статуса «активна/неактивна» с цветным индикатором.</li>
   </ul>
 
-  <!-- Категории и группы -->
-  <h3 id="wh-categories">Категории и группы</h3>
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Внимание:</strong>
+    Удаление категории не приводит к автоматической переклассификации назначенных ей товарных групп. Перед удалением переназначьте товарные группы в другую категорию, чтобы избежать «осиротевших» записей.
+  </div>
+</section>
 
-  <p>Первые три уровня иерархии обеспечивают организационную структуру для всех складских товаров.</p>
 
-  <h4>Категории (Уровень 1)</h4>
-  <p>Категории - это самая широкая классификация. Система поставляется с предварительно настроенными стандартными категориями больничного склада: Расходные материалы, Медикаменты, Хозяйственные товары, Реагенты и Медицинские инструменты.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-categories-ru.png" alt="Вкладка Категории со списком складских категорий с функциями добавления, редактирования и удаления" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-categories">
+<!-- ============================================================ -->
+<!-- РАЗДЕЛ 3: Товарные группы -->
+<!-- ============================================================ -->
+<section class="doc-section" id="groups">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">3</div>
+    <h2>Товарные группы (Уровень 2)</h2>
   </div>
 
-  <p>Каждая вкладка категории предоставляет:</p>
-  <ul class="doc-list">
-    <li><strong>Добавление нового</strong> — Введите название и нажмите Enter или кнопку добавления</li>
-    <li><strong>Поиск</strong> — Фильтрация списка путём ввода в строку поиска</li>
-    <li><strong>Редактирование на месте</strong> — Нажмите кнопку редактирования в любой строке для переименования прямо в таблице</li>
-    <li><strong>Удаление</strong> — Удаление элементов с диалогом подтверждения для предотвращения случайного удаления</li>
-    <li><strong>Индикатор статуса</strong> — Зелёная точка для активных элементов, серая для неактивных</li>
-    <li><strong>Постраничная навигация</strong> — 25 элементов на страницу для быстрой загрузки</li>
-  </ul>
+  <p><strong>Товарные группы</strong> -- это второй уровень иерархии. Если категории -- это «полки», то товарные группы -- это подписанные секции на каждой полке. Они представляют собой функциональные группировки внутри категории. Например, в категории «Медикаменты» могут быть группы «Антибиотики», «Анальгетики» и «Сердечно-сосудистые».</p>
 
-  <h4>Группы продукции (Уровень 2)</h4>
-  <p>Группы продукции организуют товары внутри категорий. Каждая группа принадлежит родительской категории и отслеживает количество содержащихся Общих наименований.</p>
+  <p>Система содержит более <strong>310 товарных групп</strong>, и каждая из них может опционально принадлежать родительской категории.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-groups-ru.png" alt="Вкладка Группы продукции со списком групп, родительской категорией, количеством элементов и навигацией перекрёстной фильтрации" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-groups">
+    <img src="images/wh-nomenclature-groups-ru.png" alt="Вкладка товарных групп со списком групп и родительскими категориями" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-groups">
   </div>
 
-  <p>Вкладка Группы добавляет эти функции помимо стандартного списка:</p>
+  <h3>Столбцы таблицы групп</h3>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Столбец</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Название</strong></td>
+        <td>Название группы (редактируется inline при нажатии значка редактирования)</td>
+      </tr>
+      <tr>
+        <td><strong>Родительская категория</strong></td>
+        <td>К какой категории Уровня 1 принадлежит группа, отображается со значком метки. Показывает «-», если не назначена.</td>
+      </tr>
+      <tr>
+        <td><strong>Количество элементов</strong></td>
+        <td>Синий значок с числом МНН (элементов Уровня 4) в данной группе</td>
+      </tr>
+      <tr>
+        <td><strong>Статус</strong></td>
+        <td>Значок статуса «активна» или «неактивна»</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Добавление товарной группы</h3>
+
+  <ol class="doc-list">
+    <li>Введите название группы в текстовое поле.</li>
+    <li>При необходимости выберите <strong>Родительскую категорию</strong> из выпадающего списка с поиском. Это связывает группу с категорией Уровня 1.</li>
+    <li>Нажмите кнопку <strong>+</strong> или клавишу Enter.</li>
+  </ol>
+
+  <h3>Перекрестная фильтрация</h3>
+
+  <p>Одна из самых мощных функций модуля номенклатуры -- <strong>перекрестная фильтрация</strong>. При нажатии на строку товарной группы система автоматически:</p>
+
+  <ol class="doc-list">
+    <li>Переключается на вкладку <strong>МНН</strong> (Уровень 4)</li>
+    <li>Фильтрует список, показывая только МНН, принадлежащие данной группе</li>
+    <li>Отображает синюю панель фильтра вверху, указывая, какая группа выбрана</li>
+  </ol>
+
+  <p>Это позволяет быстро углубиться от широкой группы до конкретных позиций без ручного переключения вкладок и поиска. Нажмите кнопку <strong>X</strong> на панели фильтра, чтобы сбросить фильтр и снова увидеть все элементы.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Быстрый поиск:</strong>
+    Вы также можете искать группы по названию с помощью строки поиска в верхней части таблицы. Поиск применяется в реальном времени по мере ввода текста.
+  </div>
+
+  <h3 id="subgroups">Подгруппы (Уровень 3)</h3>
+
+  <p><strong>Подгруппы</strong> обеспечивают третий уровень детализации внутри каждой товарной группы. Если товарные группы делят категорию на функциональные области (напр., «Антибиотики»), то подгруппы разбивают эти области ещё подробнее (напр., «Цефалоспорины», «Пенициллины», «Макролиды»). Такая дополнительная детализация помогает фармацевтам и сотрудникам отдела закупок быстрее находить нужные позиции.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-subgroups-ru.png" alt="Вкладка подгрупп со списком подгрупп и родительскими группами" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-subgroups">
+  </div>
+
+  <p>Вкладка «Подгруппы» следует той же структуре, что и «Категории» и «Товарные группы»:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Столбец</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Название</strong></td>
+        <td>Название подгруппы (редактируется inline)</td>
+      </tr>
+      <tr>
+        <td><strong>Родительская группа</strong></td>
+        <td>Товарная группа Уровня 2, к которой принадлежит данная подгруппа</td>
+      </tr>
+      <tr>
+        <td><strong>Количество элементов</strong></td>
+        <td>Количество МНН (Уровень 4), назначенных данной подгруппе</td>
+      </tr>
+      <tr>
+        <td><strong>Статус</strong></td>
+        <td>Значок статуса «активна» или «неактивна»</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Для добавления новой подгруппы введите название, выберите родительскую товарную группу из выпадающего списка и нажмите <strong>+</strong>. Нажатие на строку подгруппы запускает перекрестную фильтрацию на вкладку «МНН», показывая только элементы данной подгруппы.</p>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- РАЗДЕЛ 4: МНН и каталог продукции -->
+<!-- ============================================================ -->
+<section class="doc-section" id="items">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">4</div>
+    <h2>МНН и каталог продукции</h2>
+  </div>
+
+  <p>Последние два уровня приводят нас к уровню отдельного товара. <strong>Международные непатентованные наименования (МНН)</strong> (Уровень 4) -- это стандартизированные медицинские наименования, то есть «что это такое» без указания бренда. <strong>Каталог продукции</strong> (Уровень 5) содержит фактические складские товары с конкретными брендами, дозировками, поставщиками и упаковкой.</p>
+
+  <h3 id="generic-names">МНН (Уровень 4)</h3>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-generic-names-ru.png" alt="Вкладка МНН со стандартизированными медицинскими наименованиями" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-generic-names">
+  </div>
+
+  <p>МНН представляют <strong>более 500 стандартизированных медицинских наименований</strong>. Каждое МНН принадлежит подгруппе (Уровень 3) и объединяет один или несколько конкретных складских товаров. Например, МНН «Цефтриаксон» может включать 15 складских товаров от разных производителей и в разных размерах упаковки.</p>
+
+  <p>Таблица содержит четыре столбца:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Столбец</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Название</strong></td>
+        <td>Стандартизированное МНН. Рядом с каждым названием отображается значок стрелки, указывающий, что по нему можно кликнуть для перекрестной фильтрации.</td>
+      </tr>
+      <tr>
+        <td><strong>Подгруппа</strong></td>
+        <td>Подгруппа Уровня 3, к которой принадлежит данный элемент, отображается синим значком</td>
+      </tr>
+      <tr>
+        <td><strong>Кол-во на складе</strong></td>
+        <td>Бирюзовый значок, показывающий сколько конкретных складских товаров ссылаются на данное МНН</td>
+      </tr>
+      <tr>
+        <td><strong>Статус</strong></td>
+        <td>Значок статуса «активен» или «неактивен» (скрыт на мобильных устройствах)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Когда активен фильтр группы (после нажатия на строку товарной группы на Уровне 2), в верхней части появляется <strong>синяя панель уведомления</strong>, показывающая выбранную группу, с кнопкой закрытия для сброса фильтра.</p>
+
+  <p>Нажатие на строку МНН запускает вторую перекрестную фильтрацию: система переключается на вкладку «Каталог продукции» и фильтрует её, показывая только товары с данным МНН. Это создает плавный <strong>поток детализации</strong>: Группа > МНН > Конкретные товары.</p>
+
+  <h3 id="product-catalog">Каталог продукции (Уровень 5)</h3>
+
+  <p><strong>Каталог продукции</strong> -- это самый большой и подробный уровень, содержащий более <strong>36 500 индивидуальных товарных записей</strong>. Именно здесь определяется каждый конкретный товар в инвентаре больницы -- с точным наименованием, кодом, производителем, единицей измерения и категорией.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-nomenclature-items-ru.png" alt="Таблица каталога продукции с поиском, фильтрами и пагинацией" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-items">
+  </div>
+
+  <h4>Столбцы таблицы (13 столбцов)</h4>
+
+  <p>Таблица каталога продукции содержит 13 столбцов с горизонтальной прокруткой для отображения всех полей данных. Для полного отображения таблицы требуется минимальная ширина 1800 пикселей.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Столбец</th>
+        <th>Ширина</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ID</strong></td>
+        <td>70px</td>
+        <td>Оригинальный ID базы данных или первые 8 символов ID ресурса FHIR</td>
+      </tr>
+      <tr>
+        <td><strong>Код</strong></td>
+        <td>70px</td>
+        <td>Внутренний код товара</td>
+      </tr>
+      <tr>
+        <td><strong>Наименование</strong></td>
+        <td>250px</td>
+        <td>Полное наименование товара (обрезается до 1 строки)</td>
+      </tr>
+      <tr>
+        <td><strong>Товарная группа</strong></td>
+        <td>150px</td>
+        <td>Товарная группа Уровня 2, к которой принадлежит данный товар</td>
+      </tr>
+      <tr>
+        <td><strong>МНН</strong></td>
+        <td>200px</td>
+        <td>МНН Уровня 4, к которому привязан данный товар</td>
+      </tr>
+      <tr>
+        <td><strong>Категория</strong></td>
+        <td>120px</td>
+        <td>Складская группа верхнего уровня (напр., Расходные материалы, Медикаменты)</td>
+      </tr>
+      <tr>
+        <td><strong>Ед. изм.</strong></td>
+        <td>70px</td>
+        <td>Единица измерения (штука, мл, флакон, таблетка и т.д.)</td>
+      </tr>
+      <tr>
+        <td><strong>Производитель</strong></td>
+        <td>140px</td>
+        <td>Страна или название производителя</td>
+      </tr>
+      <tr>
+        <td><strong>Количество</strong></td>
+        <td>70px</td>
+        <td>Количество в единице (выравнивание по правому краю)</td>
+      </tr>
+      <tr>
+        <td><strong>Описание</strong></td>
+        <td>180px</td>
+        <td>Дополнительный текст описания</td>
+      </tr>
+      <tr>
+        <td><strong>Удален</strong></td>
+        <td>70px</td>
+        <td>Указывает, был ли товар мягко удален (выделяется красным)</td>
+      </tr>
+      <tr>
+        <td><strong>Родитель</strong></td>
+        <td>80px</td>
+        <td>Ссылка на родительский товар (для составных/комплектных товаров)</td>
+      </tr>
+      <tr>
+        <td><strong>Расчет цены</strong></td>
+        <td>200px</td>
+        <td>Режим расчета цены для интеграции с биллингом</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Поиск и фильтры</h4>
+
+  <p>Каталог продукции предоставляет три элемента управления фильтрацией в горизонтальном ряду над таблицей:</p>
+
   <ul class="doc-list">
-    <li>Столбец <strong>Родительская категория</strong> — Показывает, к какой категории принадлежит каждая группа</li>
-    <li>Значок <strong>Количество элементов</strong> — Отображает количество Общих наименований в каждой группе</li>
-    <li><strong>Навигация по клику на строку</strong> — Нажмите на любую строку группы для перекрёстной фильтрации к её Общим наименованиям</li>
-    <li><strong>Выбор категории</strong> — При добавлении новой группы можно назначить родительскую категорию</li>
+    <li><strong>Поиск</strong> -- Поиск в реальном времени по наименованию товара, коду и штрихкоду. Поиск имеет задержку (300 мс), чтобы не перегружать сервер запросами при вводе текста.</li>
+    <li><strong>Фильтр по категории</strong> -- Выпадающий список для фильтрации по складской группе (Расходные материалы, Медикаменты и т.д.). Выберите «Все», чтобы увидеть все категории.</li>
+    <li><strong>Фильтр по статусу</strong> -- Выпадающий список для отображения только активных товаров, только удаленных или всех товаров. По умолчанию установлено «Активные».</li>
   </ul>
 
-  <div class="doc-info-box">
-    <div class="doc-info-icon">ℹ️</div>
-    <div class="doc-info-content">
-      <strong>Подгруппы (Уровень 3)</strong> обеспечивают необязательную более детальную классификацию внутри Групп продукции. Они работают так же, как Категории и Группы, но используются реже. Вкладка Подгруппы следует тому же шаблону добавления/поиска/редактирования/удаления.
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Серверная пагинация:</strong>
+    Поскольку каталог продукции содержит более 36 500 позиций, таблица использует <strong>серверную пагинацию</strong> по 50 элементов на странице. Счетчик страниц внизу показывает «X / Всего» (напр., «50 / 36 513»). Данные загружаются по запросу при переходе между страницами, чтобы избежать загрузки всего набора данных объемом 22 МБ.
+  </div>
+
+  <h4>Индикатор перекрестного фильтра</h4>
+
+  <p>Когда вы попадаете в каталог продукции через перекрестную фильтрацию (переход от группы или МНН), в верхней части появляется <strong>синее уведомление фильтра</strong>, показывающее выбранные родительские элементы. Уведомление содержит:</p>
+
+  <ul class="doc-list">
+    <li><strong>Синий значок</strong> выбранной товарной группы (Уровень 2)</li>
+    <li>Стрелку-разделитель</li>
+    <li><strong>Бирюзовый значок</strong> выбранного МНН (Уровень 4)</li>
+    <li>Кнопки закрытия на каждом значке для сброса отдельных фильтров</li>
+    <li>Общую кнопку сброса для удаления всех фильтров одновременно</li>
+  </ul>
+
+  <h4>Добавление нового товара</h4>
+
+  <p>Нажмите кнопку <strong>«Добавить товар»</strong> над таблицей, чтобы открыть модальное окно создания товара. Если вы перешли через перекрестный фильтр, поля группы и МНН заполняются автоматически.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-product-create-modal-ru.png" alt="Модальное окно создания товара с полями формы" class="doc-screenshot-image" data-i18n-img="wh-product-create-modal">
+  </div>
+
+  <p>Модальное окно создания включает следующие поля:</p>
+
+  <ul class="doc-list">
+    <li><strong>Наименование товара</strong> -- Полное наименование товара (обязательное поле).</li>
+    <li><strong>Код товара</strong> -- Внутренний код для идентификации.</li>
+    <li><strong>Товарная группа и МНН</strong> -- Предзаполнены при переходе через перекрестный фильтр; в противном случае выберите из выпадающих списков с поиском.</li>
+    <li><strong>Категория, Единица измерения, Производитель</strong> -- Данные классификации и упаковки.</li>
+  </ul>
+
+  <h4>Действия со строками</h4>
+
+  <p>Для каждой строки товара доступны два действия через столбец кнопок действий:</p>
+
+  <ul class="doc-list">
+    <li><strong>Редактировать</strong> (значок карандаша) -- Открывает полное модальное окно редактирования товара (см. Раздел 5 ниже)</li>
+    <li><strong>Удалить</strong> (значок корзины) -- Выполняет мягкое удаление товара после подтверждения. Удаленные строки выделяются красным, если фильтр статуса включает удаленные товары.</li>
+  </ul>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- РАЗДЕЛ 5: Модальное окно редактирования товара -->
+<!-- ============================================================ -->
+<section class="doc-section" id="item-details">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+      </svg>
+    </div>
+    <div class="doc-section-number">5</div>
+    <h2>Модальное окно редактирования товара</h2>
+  </div>
+
+  <p>Нажатие <strong>значка редактирования</strong> в любой строке товара открывает полноширинное модальное окно с детальной конфигурацией продукта. Здесь сотрудники больницы могут управлять всеми расширенными атрибутами товара -- от фармацевтических данных до параметров управления запасами.</p>
+
+  <p>Модальное окно организовано в <strong>две вкладки</strong>:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-item-edit-ru.png" alt="Модальное окно редактирования товара с вкладками Основное и Атрибуты" class="doc-screenshot-image" data-i18n-img="wh-item-edit">
+  </div>
+
+  <h3>Вкладка «Основное»</h3>
+
+  <p>Вкладка «Основное» содержит основные атрибуты товара, организованные в отдельные секции. Каждая секция имеет собственную кнопку <strong>«Сохранить»</strong>, позволяющую сохранить изменения в одной секции без влияния на другие. Такой подход посекционного сохранения предотвращает случайную перезапись данных, когда несколько пользователей редактируют один и тот же товар.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Повторная аутентификация:</strong>
+    Сохранение любой секции в модальном окне редактирования требует <strong>повторной аутентификации</strong>. При нажатии кнопки «Сохранить» появляется диалоговое окно подтверждения пароля. Это защищает критически важные данные о товарах от несанкционированных изменений.
+  </div>
+
+  <h4>Секции вкладки «Основное»</h4>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Секция</th>
+        <th>Поля</th>
+        <th>Назначение</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Базовая конфигурация</strong></td>
+        <td>Флажок VAT, информация о родительском ID</td>
+        <td>Установить, применяется ли VAT к данному товару, и просмотреть ссылки на родительский товар</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Запасы по отделениям</strong></td>
+        <td>Таблица запасов (только для чтения)</td>
+        <td>Показывает текущие уровни запасов по отделениям больницы. Отображается только при наличии данных о запасах.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Медицинское наименование</strong></td>
+        <td>Автозаполнение медицинского наименования или текстовый ввод</td>
+        <td>Привязать данный товар к МНН Уровня 4. Включает кнопки «Сохранить» и «Очистить».</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Товарная группа</strong></td>
+        <td>Название группы (редактируемый текст)</td>
+        <td>Показывает или переопределяет товарную группу Уровня 2. Заполняется автоматически при выборе медицинского наименования.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Дженерик</strong></td>
+        <td>Автозаполнение наименования дженерика</td>
+        <td>Привязка к наименованию дженерика для фармацевтических товаров (напр., Парацетамол, Ибупрофен)</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Разбивка товара</strong></td>
+        <td>Количество, единица измерения</td>
+        <td>Определить, как данный товар разбивается на более мелкие единицы (спецификация состава)</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Медицинская рубрика</strong></td>
+        <td>Текст рубрики, страна (ISO 3166), производитель</td>
+        <td>Вторичная медицинская классификация, страна происхождения и ссылка на производителя</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Метки</strong></td>
+        <td>Селектор меток категории, код UNSPSC</td>
+        <td>Назначение классификационных меток (Наркотик, Антибиотик, Иммунологический и т.д.) и кодов товарной номенклатуры UNSPSC</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>Расчет цены</strong></td>
+        <td>Селектор режима цены, кнопка копирования</td>
+        <td>Управляет отображением товара в платежных сводках и/или клинических расчетах</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Фармацевтические данные</strong></td>
+        <td>Лекарственная форма, дозировка, путь введения, признак контролируемого вещества</td>
+        <td>Поля, специфичные для лекарственных средств. <strong>Видны только</strong> когда категория товара -- «Медикаменты» или «Контролируемые вещества».</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>Запасы и отслеживание</strong></td>
+        <td>Мин./макс. уровни запасов, время выполнения заказа, отслеживание партий, отслеживание сроков годности, срок хранения</td>
+        <td>Настройка параметров управления запасами для автоматических оповещений о дозаказе и отслеживания партий/сроков годности</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><strong>История транзакций</strong></td>
+        <td>Таблица последних 50 транзакций (только для чтения)</td>
+        <td>Просмотр последних движений запасов по данному товару (поступления, перемещения, расход)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Вкладка «Атрибуты»</h3>
+
+  <p>Вкладка «Атрибуты» содержит таблицу <strong>Дочерние товары</strong>, показывающую все товары, которые ссылаются на данный товар как на родительский. Это полезно для составных или комплектных товаров, где один основной товар состоит из нескольких подкомпонентов.</p>
+
+  <h3>Справочник меток категорий</h3>
+
+  <p>Секция «Метки» (Секция 8) предлагает 12 предустановленных классификационных меток для специализированного отслеживания товаров:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Метка</th>
+        <th>Назначение</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Наркотик</strong></td>
+        <td>Контролируемые вещества, требующие специального отслеживания и отчетности</td>
+      </tr>
+      <tr>
+        <td><strong>Антибиотик</strong></td>
+        <td>Антибактериальные препараты для программ антимикробного контроля</td>
+      </tr>
+      <tr>
+        <td><strong>Гуманитарные товары</strong></td>
+        <td>Пожертвованные товары или товары гуманитарной помощи</td>
+      </tr>
+      <tr>
+        <td><strong>Иммунологический</strong></td>
+        <td>Вакцины и иммунологические препараты</td>
+      </tr>
+      <tr>
+        <td><strong>Коагуляция</strong></td>
+        <td>Лабораторные реактивы для тестов на свертываемость крови</td>
+      </tr>
+      <tr>
+        <td><strong>Биохимия</strong></td>
+        <td>Лабораторные реактивы для биохимических панелей</td>
+      </tr>
+      <tr>
+        <td><strong>Клинический</strong></td>
+        <td>Общие расходные материалы для клинических исследований</td>
+      </tr>
+      <tr>
+        <td><strong>Одноразовые лабораторные материалы</strong></td>
+        <td>Одноразовые лабораторные расходные материалы</td>
+      </tr>
+      <tr>
+        <td><strong>Калибраторы и контроли</strong></td>
+        <td>Материалы для контроля качества и калибровки</td>
+      </tr>
+      <tr>
+        <td><strong>Вспомогательные растворы</strong></td>
+        <td>Вспомогательные растворы для лабораторного оборудования</td>
+      </tr>
+      <tr>
+        <td><strong>Сверхстандартный материал (Имплант)</strong></td>
+        <td>Высокостоимостные имплантируемые медицинские изделия</td>
+      </tr>
+      <tr>
+        <td><strong>MRI</strong></td>
+        <td>Контрастные вещества и расходные материалы для MRI</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Поля управления запасами</h3>
+
+  <p>Секция «Запасы и отслеживание» (Секция 11) предоставляет поля для настройки автоматизированного управления запасами:</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Поле</th>
+        <th>Описание</th>
+        <th>Расширение FHIR</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Мин. уровень запасов</strong></td>
+        <td>Когда текущий запас падает ниже этого значения, срабатывает оповещение о дозаказе. Не может превышать максимальный уровень запасов.</td>
+        <td><code>min-stock-level</code></td>
+      </tr>
+      <tr>
+        <td><strong>Макс. уровень запасов</strong></td>
+        <td>Максимальное количество товара на складе. Используется калькулятором точки дозаказа для определения объемов заказа.</td>
+        <td><code>max-stock-level</code></td>
+      </tr>
+      <tr>
+        <td><strong>Время выполнения (дни)</strong></td>
+        <td>Количество дней между размещением дозаказа и получением поставки. Используется для расчета момента дозаказа.</td>
+        <td><code>lead-time-days</code></td>
+      </tr>
+      <tr>
+        <td><strong>Обязательное отслеживание партий</strong></td>
+        <td>При включении каждое поступление и перемещение данного товара должно содержать номер партии.</td>
+        <td><code>lot-tracking-required</code></td>
+      </tr>
+      <tr>
+        <td><strong>Обязательное отслеживание сроков годности</strong></td>
+        <td>При включении каждое поступление должно содержать дату окончания срока годности. Активирует комплектацию по методу FEFO (первым истекает -- первым отгружается).</td>
+        <td><code>expiration-tracking-required</code></td>
+      </tr>
+      <tr>
+        <td><strong>Срок хранения по умолчанию (дни)</strong></td>
+        <td>Появляется только при включенном отслеживании сроков годности. Устанавливает срок хранения по умолчанию для товаров, поступивших без указания даты окончания срока годности.</td>
+        <td><code>default-shelf-life</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Фармацевтические данные:</strong>
+    Поля лекарственной формы, дозировки, пути введения и контролируемого вещества отображаются только когда категория товара установлена как «Медикаменты» или «Контролируемые вещества». Для нефармацевтических товаров эта секция скрывается автоматически.
+  </div>
+
+  <h3>Единицы измерения</h3>
+
+  <p>Система поддерживает 17 типов единиц измерения продукции, охватывающих все распространенные виды упаковки больничных расходных материалов:</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin: 16px 0;">
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ცალი</strong> -- Штука
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>მლ</strong> -- Миллилитр
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>კოლოფი</strong> -- Коробка/Упаковка
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ამპულა</strong> -- Ампула
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>აბი</strong> -- Таблетка
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ფლაკონი</strong> -- Флакон
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>კომპლექტი</strong> -- Комплект/Набор
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>ლიტრი</strong> -- Литр
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>პაკეტი</strong> -- Пакет
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>დღე</strong> -- День
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>წყვილი</strong> -- Пара
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>გრ</strong> -- Грамм
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>დოზა</strong> -- Доза
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>მეტრი / მ</strong> -- Метр
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>მკგ</strong> -- Микрограмм
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>რეაქტივი</strong> -- Реактив (ед.)
     </div>
   </div>
-
-  <!-- Каталог продукции -->
-  <h3 id="wh-product-catalog">Каталог продукции</h3>
-
-  <p>Два нижних уровня содержат фактические данные о продуктах, используемые в повседневных складских операциях.</p>
-
-  <h4>Общие наименования (Уровень 4)</h4>
-  <p>Общие наименования представляют стандартные названия продуктов без указания бренда или производителя. Например, "Амоксициллин" - это общее наименование, а "Амоксициллин 500мг Таблетка производства GlaxoSmithKline" - конкретный товар каталога.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-items-ru.png" alt="Вкладка Общие наименования со списком продуктов, значками подгрупп, количеством складских товаров и фильтрами" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-items">
-  </div>
-
-  <p>Вкладка Общие наименования показывает:</p>
-  <ul class="doc-list">
-    <li><strong>Значок подгруппы</strong> — К какой подгруппе (или группе продукции) принадлежит этот элемент</li>
-    <li><strong>Количество на складе</strong> — Число конкретных товаров каталога, связанных с этим общим наименованием</li>
-    <li><strong>Уведомление о фильтре группы</strong> — При перекрёстной фильтрации из Группы продукции синее уведомление показывает активный фильтр с кнопкой очистки</li>
-    <li><strong>Навигация по клику на строку</strong> — Нажмите на любое общее наименование для перекрёстной фильтрации к его товарам Каталога продукции</li>
-  </ul>
-
-  <h4>Каталог продукции (Уровень 5)</h4>
-  <p>Каталог продукции - самый детальный уровень, содержащий конкретные складские товары с полными атрибутами. Здесь вы управляете фактическими продуктами, которые хранятся, распределяются и отслеживаются в больнице.</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-nomenclature-catalog-ru.png" alt="Вкладка Каталог продукции с подробным списком товаров со столбцами код, название, группа, категория, единица, производитель и количество" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-catalog">
-  </div>
-
-  <p>Таблица каталога содержит 13 столбцов с исчерпывающей информацией о товаре:</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Столбец</th>
-          <th>Описание</th>
-          <th>FHIR путь</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>ID</strong></td>
-          <td>Оригинальный идентификатор базы данных</td>
-          <td>SupplyDelivery.identifier</td>
-        </tr>
-        <tr>
-          <td><strong>Код</strong></td>
-          <td>Код продукта (SKU)</td>
-          <td>SupplyDelivery.identifier (code system)</td>
-        </tr>
-        <tr>
-          <td><strong>Название</strong></td>
-          <td>Полное название продукта с дозировкой и формой</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept</td>
-        </tr>
-        <tr>
-          <td><strong>Группа продукции</strong></td>
-          <td>Родительская группа с Уровня 2</td>
-          <td>Extension: item-group-ref (general-group deprecated)</td>
-        </tr>
-        <tr>
-          <td><strong>Общее наименование</strong></td>
-          <td>Общее название с Уровня 4</td>
-          <td>Extension: medical-item-ref (general-name deprecated)</td>
-        </tr>
-        <tr>
-          <td><strong>Категория</strong></td>
-          <td>Категория верхнего уровня (Расходные материалы, Медикаменты и т.д.)</td>
-          <td>Extension: warehouse-category</td>
-        </tr>
-        <tr>
-          <td><strong>Единица</strong></td>
-          <td>Единица измерения (штука, мл, коробка, ампула и т.д.)</td>
-          <td>Extension: warehouse-unit</td>
-        </tr>
-        <tr>
-          <td><strong>Производитель</strong></td>
-          <td>Страна/производитель продукта</td>
-          <td>Extension: manufacturer</td>
-        </tr>
-        <tr>
-          <td><strong>Количество</strong></td>
-          <td>Текущее количество на складе</td>
-          <td>Extension: warehouse-quantity</td>
-        </tr>
-        <tr>
-          <td><strong>Описание</strong></td>
-          <td>Дополнительное описание продукта</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept.coding[0].display</td>
-        </tr>
-        <tr>
-          <td><strong>Удалён</strong></td>
-          <td>Статус мягкого удаления (Да/Нет)</td>
-          <td>Extension: is-deleted + SupplyDelivery.status</td>
-        </tr>
-        <tr>
-          <td><strong>Родитель</strong></td>
-          <td>Ссылка на родительский товар (для составных продуктов)</td>
-          <td>Extension: parent-item</td>
-        </tr>
-        <tr>
-          <td><strong>Расчёт цены</strong></td>
-          <td>Правила видимости ценообразования для выставления счетов</td>
-          <td>Extension: price-calculation</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p>Каталог поддерживает <strong>серверную постраничную навигацию</strong> (50 элементов на страницу) и предоставляет три элемента управления фильтрами:</p>
-  <ul class="doc-list">
-    <li><strong>Текстовый поиск</strong> — Фильтрация по названию продукта с задержкой ввода (300 мс для производительности)</li>
-    <li><strong>Фильтр категории</strong> — Выпадающий список для фильтрации по категории верхнего уровня</li>
-    <li><strong>Фильтр статуса</strong> — Показать активные товары, удалённые товары или все</li>
-  </ul>
-
-  <h4>Редактирование товара каталога</h4>
-  <p>Нажмите кнопку редактирования на любом товаре каталога, чтобы открыть подробное модальное окно редактирования. Модальное окно имеет две вкладки:</p>
-
-  <div class="doc-screenshot-full">
-    <img src="images/wh-item-edit-ru.png" alt="Модальное окно редактирования складского товара с вкладкой Основное, показывающей настройки НДС, связь с медицинским товаром, дженерик, разбивку и поля производителя" class="doc-screenshot-image" data-i18n-img="wh-item-edit">
-  </div>
-
-  <p><strong>Вкладка Основное</strong> содержит редактируемые разделы, каждый со своей кнопкой Сохранить:</p>
-
-  <div class="doc-table-container">
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Раздел</th>
-          <th>Поля</th>
-          <th>Описание</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Базовая конфигурация</strong></td>
-          <td>Флажок НДС, ID родителя</td>
-          <td>Налоговые настройки и ссылка на родительский товар</td>
-        </tr>
-        <tr>
-          <td><strong>Запас по отделениям</strong></td>
-          <td>Отделение, Количество</td>
-          <td>Таблица только для чтения с распределением запасов по отделениям</td>
-        </tr>
-        <tr>
-          <td><strong>Медицинский товар</strong></td>
-          <td>Название медицинского товара (автозаполнение)</td>
-          <td>Связывает этот товар каталога с Общим наименованием Уровня 4</td>
-        </tr>
-        <tr>
-          <td><strong>Группа медицинского товара</strong></td>
-          <td>Название группы (автозаполнение)</td>
-          <td>Автоматически заполняется при выборе медицинского товара; также редактируемо</td>
-        </tr>
-        <tr>
-          <td><strong>Дженерик</strong></td>
-          <td>Дженерик препарат (автозаполнение)</td>
-          <td>Связь с справочником дженериков для фармакологической группировки</td>
-        </tr>
-        <tr>
-          <td><strong>Разбивка товара</strong></td>
-          <td>Количество, Единица</td>
-          <td>Спецификация материалов для составных продуктов</td>
-        </tr>
-        <tr>
-          <td><strong>Медицинский заголовок</strong></td>
-          <td>Заголовок, Страна, Производитель</td>
-          <td>Данные о происхождении продукта и производителе</td>
-        </tr>
-        <tr>
-          <td><strong>Теги</strong></td>
-          <td>Тег категории, код UNSPSC</td>
-          <td>Теги классификации (Наркотик, Антибиотик, Иммунологический и т.д.)</td>
-        </tr>
-        <tr>
-          <td><strong>Расчёт цены</strong></td>
-          <td>Режим расчёта</td>
-          <td>Правила видимости ценообразования с копированием в буфер обмена</td>
-        </tr>
-        <tr>
-          <td><strong>Фармацевтические детали</strong></td>
-          <td>Лекарственная форма, Дозировка, Путь введения, Контролируемое вещество</td>
-          <td>Отображается только для категорий Медикаменты/Наркотики</td>
-        </tr>
-        <tr>
-          <td><strong>Запас и отслеживание</strong></td>
-          <td>Мин/Макс запас, Срок поставки, Отслеживание партий, Отслеживание сроков</td>
-          <td>Уведомления о перезаказе и настройки прослеживаемости</td>
-        </tr>
-        <tr>
-          <td><strong>История транзакций</strong></td>
-          <td>Последние 50 транзакций (только чтение)</td>
-          <td>Журнал аудита приходов, перемещений и корректировок</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p><strong>Вкладка Атрибуты</strong> показывает дочерние товары, связанные с этим продуктом (для составных или комплектных товаров).</p>
-
-  <div class="doc-info-box">
-    <div class="doc-info-icon">ℹ️</div>
-    <div class="doc-info-content">
-      <strong>Повышенная аутентификация:</strong> Сохранение изменений в товарах каталога требует повторной аутентификации. При нажатии кнопки Сохранить появляется диалог подтверждения с запросом проверки учётных данных перед применением изменения. Это защищает от несанкционированных модификаций базы данных продуктов.
-    </div>
-  </div>
-
-  <details class="doc-collapsible">
-    <summary class="doc-collapsible-header">
-      <span class="doc-collapsible-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </span>
-      <strong>Детали модели данных FHIR</strong>
-    </summary>
-    <div class="doc-collapsible-content">
-      <p>Иерархия номенклатуры реализована с использованием следующих ресурсов FHIR:</p>
-      <ul class="doc-list">
-        <li><strong>List</strong> (с различными значениями <code>code</code>) — Хранит уровни 1-4 как записи списка. Каждая запись содержит имя элемента и статус. Отношения родитель-потомок поддерживаются через ссылки записей.</li>
-        <li><strong>SupplyDelivery</strong> — Хранит товары каталога Уровня 5 с полными атрибутами (код, название, категория, единица, количество). Расширения FHIR несут дополнительные данные: производитель, правила ценообразования и связи с группами.</li>
-        <li><strong>DeviceDefinition</strong> — Используется для модального окна редактирования, предоставляя детальные атрибуты: НДС, фармацевтические детали, уровни запасов, отслеживание партий и история транзакций.</li>
-      </ul>
-
-      <div class="doc-table-container">
-        <table class="doc-table">
-          <thead>
-            <tr>
-              <th>FHIR ресурс</th>
-              <th>Код списка</th>
-              <th>Уровень номенклатуры</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-categories</code></td>
-              <td>Уровень 1 — Категории</td>
-            </tr>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-item-groups</code></td>
-              <td>Уровень 2 — Группы продукции</td>
-            </tr>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-subcategories</code></td>
-              <td>Уровень 3 — Подгруппы</td>
-            </tr>
-            <tr>
-              <td>List</td>
-              <td><code>warehouse-medical-items</code></td>
-              <td>Уровень 4 — Общие наименования</td>
-            </tr>
-            <tr>
-              <td>SupplyDelivery</td>
-              <td>N/A (поиск по статусу)</td>
-              <td>Уровень 5 — Каталог продукции</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </details>
-
 </section>

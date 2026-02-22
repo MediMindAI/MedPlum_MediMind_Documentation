@@ -1,0 +1,406 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-22T12:00:00Z",
+  "sourceSection": {
+    "id": "warehouse-analytics",
+    "file": "sections/en/warehouse-analytics.html",
+    "titleKey": "toc.warehouseAnalytics"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3005",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/warehouse/analytics"
+  },
+  "globalStateSetup": {
+    "description": "CRITICAL: Before capturing ANY analytics screenshots, must select 'This Year' preset and click Search to load mock data. Data persists across all tab switches.",
+    "steps": [
+      { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/analytics" },
+      { "action": "wait", "ms": 3000 },
+      { "action": "viewport", "width": 1440, "height": 900 },
+      { "action": "click", "selector": "button:has-text('This Year'), button:has-text('thisYear')" },
+      { "action": "wait", "ms": 1000 },
+      { "action": "click", "selector": "button:has-text('Search')" },
+      { "action": "wait", "ms": 3000 }
+    ]
+  },
+  "screenshots": [
+    {
+      "id": "wh-analytics-filters",
+      "number": 1,
+      "name": "wh-analytics-filters",
+      "description": "Warehouse Analytics page showing the global filter bar with date range, department and group selectors, and quick preset buttons",
+      "desiredState": "Analytics page loaded with This Year preset selected and Search executed — filter bar visible at top",
+      "differentiator": "Shows the filter bar area — date range, preset pills, department/group selectors — BEFORE switching any tabs",
+      "stateSetup": {
+        "description": "Select This Year preset and click Search to load data",
+        "steps": [
+          { "action": "click", "selector": "button:has-text('This Year'), button:has-text('thisYear')" },
+          { "action": "wait", "ms": 1000 },
+          { "action": "click", "selector": "button:has-text('Search')" },
+          { "action": "wait", "ms": 3000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-filters']", "[class*='EMRSearchFilterSection']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Date range pickers", "Preset buttons (Today, This Week, etc.)", "Search button"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/analytics" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "button:has-text('This Year'), button:has-text('thisYear')" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "click", "selector": "button:has-text('Search')" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "screenshot", "name": "wh-analytics-filters" }
+      ]
+    },
+    {
+      "id": "wh-analytics-balance",
+      "number": 2,
+      "name": "wh-analytics-balance",
+      "description": "Balance Movement table with color-coded column groups showing opening balance, inflows, outflows, and closing balance",
+      "desiredState": "Balance tab active (value='balance') showing movement table with data loaded",
+      "differentiator": "Shows the balance movement table — the default/first analytics tab",
+      "stateSetup": {
+        "description": "Data should already be loaded from globalStateSetup. Click balance tab if not already active.",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='balance']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']", "table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with balance columns", "Opening and closing balance data"],
+        "mustNotShow": ["Login page", "Empty table"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='balance']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-balance" }
+      ]
+    },
+    {
+      "id": "wh-analytics-insights",
+      "number": 3,
+      "name": "wh-analytics-insights",
+      "description": "Insights tab showing top items by value, movement summary, period comparison, and department activity",
+      "desiredState": "Insights tab active (value='insights') showing analytical insights panels",
+      "differentiator": "Shows insights dashboard panels — NOT balance table or other specific analysis tabs",
+      "stateSetup": {
+        "description": "Switch to Insights tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='insights']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Insight panels or cards with data"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='insights']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-insights" }
+      ]
+    },
+    {
+      "id": "wh-analytics-dead-stock",
+      "number": 4,
+      "name": "wh-analytics-dead-stock",
+      "description": "Dead Stock table showing items with zero movement and 'Never Moved' badges",
+      "desiredState": "Dead Stock tab active (value='deadstock') showing zero-movement items",
+      "differentiator": "Shows dead stock analysis — items with NO movement, NOT low stock",
+      "stateSetup": {
+        "description": "Switch to Dead Stock tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='deadstock']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with dead stock items", "Never Moved or zero movement badges"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='deadstock']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-dead-stock" }
+      ]
+    },
+    {
+      "id": "wh-analytics-low-stock",
+      "number": 5,
+      "name": "wh-analytics-low-stock",
+      "description": "Low Stock table with color-coded Days of Supply column showing red, yellow, and green indicators",
+      "desiredState": "Low Stock tab active (value='lowstock') showing items with low supply levels",
+      "differentiator": "Shows LOW stock (still has some) — NOT dead stock (zero movement)",
+      "stateSetup": {
+        "description": "Switch to Low Stock tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='lowstock']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Table with low stock items", "Color-coded supply indicators"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='lowstock']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-low-stock" }
+      ]
+    },
+    {
+      "id": "wh-analytics-abc-xyz",
+      "number": 6,
+      "name": "wh-analytics-abc-xyz",
+      "description": "ABC/XYZ interactive 3x3 classification matrix with color-coded cells showing item count and total spend",
+      "desiredState": "ABC/XYZ tab active (value='abcxyz') showing the classification matrix grid",
+      "differentiator": "Shows the 3x3 ABC/XYZ matrix — a unique grid visualization, NOT a standard table",
+      "stateSetup": {
+        "description": "Switch to ABC/XYZ tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='abcxyz']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["3x3 grid matrix", "Color-coded cells with counts"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='abcxyz']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-abc-xyz" }
+      ]
+    },
+    {
+      "id": "wh-analytics-expiration",
+      "number": 7,
+      "name": "wh-analytics-expiration",
+      "description": "Expiration Risk view with five color-coded time bucket cards and a drill-down table showing items approaching expiry",
+      "desiredState": "Expiration tab active (value='expiration') showing time bucket cards and expiry table",
+      "differentiator": "Shows expiration risk analysis with time bucket cards — NOT low stock or dead stock",
+      "stateSetup": {
+        "description": "Switch to Expiration tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='expiration']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Time bucket cards (30d, 60d, 90d, etc.)", "Expiry risk table"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='expiration']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-expiration" }
+      ]
+    },
+    {
+      "id": "wh-analytics-suppliers",
+      "number": 8,
+      "name": "wh-analytics-suppliers",
+      "description": "Suppliers tab showing supplier scorecard table with ranked suppliers, delivery counts, total spend",
+      "desiredState": "Suppliers tab active (value='suppliers') showing supplier scorecard and related sections",
+      "differentiator": "Shows supplier analysis — scorecard table, stockout log, department cost, write-off analysis — may need scrolling",
+      "stateSetup": {
+        "description": "Switch to Suppliers tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='suppliers']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": "Tab has 4 sub-sections — may need scrolling to show all content",
+      "verificationCriteria": {
+        "mustShow": ["Supplier scorecard table"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='suppliers']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-suppliers" }
+      ]
+    },
+    {
+      "id": "wh-analytics-clinical-diagnosis",
+      "number": 9,
+      "name": "wh-analytics-clinical-diagnosis",
+      "description": "Clinical Analytics showing Diagnosis Cost Analysis with expandable ICD-10 rows and outlier detection badges",
+      "desiredState": "Clinical tab active (value='clinical'), Diagnosis sub-tab showing cost analysis table",
+      "differentiator": "Shows the Diagnosis Cost Analysis sub-tab — NOT the Lot Recall sub-tab",
+      "stateSetup": {
+        "description": "Switch to Clinical tab, ensure Diagnosis sub-tab is active",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='clinical']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Diagnosis cost analysis table", "ICD-10 codes"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='clinical']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-clinical-diagnosis" }
+      ]
+    },
+    {
+      "id": "wh-analytics-clinical-recall",
+      "number": 10,
+      "name": "wh-analytics-clinical-recall",
+      "description": "Clinical Analytics Lot Recall search with results card showing department breakdown and affected patients table",
+      "desiredState": "Clinical tab active, Lot Recall sub-tab showing recall search and results",
+      "differentiator": "Shows the Lot Recall sub-tab — NOT the Diagnosis Cost Analysis sub-tab",
+      "stateSetup": {
+        "description": "Switch to Clinical tab, then click Lot Recall sub-tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='clinical']" },
+          { "action": "wait", "ms": 1000 },
+          { "action": "click", "selector": "[role='tab']:has-text('Recall'), [role='tab']:has-text('Lot')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "state-based",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": "May need to find correct sub-tab selector at capture time",
+      "verificationCriteria": {
+        "mustShow": ["Lot recall search area", "Department breakdown or affected patients"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='clinical']" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "click", "selector": "[role='tab']:has-text('Recall'), [role='tab']:has-text('Lot')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-clinical-recall" }
+      ]
+    },
+    {
+      "id": "wh-analytics-budget",
+      "number": 11,
+      "name": "wh-analytics-budget",
+      "description": "Planning tab Budget vs Actual view with variance table showing over/under budget departments",
+      "desiredState": "Planning tab active (value='planning'), Budget sub-tab showing variance table",
+      "differentiator": "Shows Budget vs Actual sub-tab — NOT the Demand Forecast sub-tab",
+      "stateSetup": {
+        "description": "Switch to Planning tab, ensure Budget sub-tab is active",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='planning']" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Budget vs Actual table", "Variance data"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='planning']" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-budget" }
+      ]
+    },
+    {
+      "id": "wh-analytics-forecast",
+      "number": 12,
+      "name": "wh-analytics-forecast",
+      "description": "Planning tab Demand Forecast with sparkline histograms showing consumption history and predicted quantities",
+      "desiredState": "Planning tab active, Forecast sub-tab showing demand prediction data",
+      "differentiator": "Shows Demand Forecast sub-tab — NOT the Budget vs Actual sub-tab",
+      "stateSetup": {
+        "description": "Switch to Planning tab, then click Forecast sub-tab",
+        "steps": [
+          { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='planning']" },
+          { "action": "wait", "ms": 1000 },
+          { "action": "click", "selector": "[role='tab']:has-text('Forecast'), [role='tab']:has-text('Demand')" },
+          { "action": "wait", "ms": 1500 }
+        ]
+      },
+      "type": "state-based",
+      "expectedDOMElements": ["[data-testid='analytics-tabs']"],
+      "knownLimitation": "May need to find correct sub-tab selector at capture time",
+      "verificationCriteria": {
+        "mustShow": ["Forecast table with predicted quantities", "Sparkline charts"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "click", "selector": "[data-testid='analytics-tabs'] [role='tab'][value='planning']" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "click", "selector": "[role='tab']:has-text('Forecast'), [role='tab']:has-text('Demand')" },
+        { "action": "wait", "ms": 1500 },
+        { "action": "screenshot", "name": "wh-analytics-forecast" }
+      ]
+    }
+  ],
+  "languageSwitching": {
+    "selectors": { "en": "text=ENG", "ru": "text=РУС", "ka": "text=ქარ" },
+    "waitAfterSwitch": 2000
+  },
+  "captureOrder": [
+    "wh-analytics-filters", "wh-analytics-balance", "wh-analytics-insights",
+    "wh-analytics-dead-stock", "wh-analytics-low-stock", "wh-analytics-abc-xyz",
+    "wh-analytics-expiration", "wh-analytics-suppliers",
+    "wh-analytics-clinical-diagnosis", "wh-analytics-clinical-recall",
+    "wh-analytics-budget", "wh-analytics-forecast"
+  ],
+  "notes": "MOST COMPLEX section. CRITICAL: Must select 'This Year' preset and click Search ONCE at start — data persists across all 9 tab switches. Clinical and Planning tabs each have 2 sub-tabs. Tab selectors use data-testid='analytics-tabs' container with value attributes."
+}

@@ -15,7 +15,7 @@ async function initBrowser() {
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: 1920, height: 1080 },
     deviceScaleFactor: 2
   });
   page = await context.newPage();

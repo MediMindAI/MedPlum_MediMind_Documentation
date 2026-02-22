@@ -134,3 +134,72 @@
 - Balance cache: 30s TTL, BroadcastChannel for cross-tab invalidation
 - Three-tier nomenclature: ItemGroup (~310) -> MedicalItem (~503) -> WarehouseItem (~35900)
 - 11 warehouse groups: consumables, medications, household, non-inventory, fixed-assets, inventory, reagent, solution, medical-instrument, narcotics, food
+
+## Ward Supplies (Stationary) Source Paths (Verified 2026-02-21)
+- Codebase name: "stationary" (not "ward-supplies")
+- View: `views/stationary/StationaryView.tsx` (1297 lines, 3-reducer architecture)
+- CSS: `views/stationary/StationaryView.module.css` (736 lines)
+- Components: `components/stationary/` (index.ts exports all)
+  - StationaryLeftSidebar.tsx, StationaryPatientList.tsx, StationaryStockPanel.tsx, StationaryBottomPanel.tsx
+  - CalculationModal.tsx (3 tabs: Internal, Departments, Intraoperative)
+  - DailyBalanceModal.tsx (3 print buttons: today/total/combined)
+  - DeptHistoryModal.tsx ("H" button - patients by dept)
+  - NurseSupplyModal.tsx ("O" button - supplies delivered to dept)
+  - TreatmentModal.tsx (yin-yang icon, 2 tabs: supplies/research)
+- Types: `types/stationary.ts` (161 lines)
+- Hooks: `hooks/stationary/` (useStationaryPatients, usePatientTransfers, useDepartmentStock, etc.)
+- Services: `services/stationary.ts` (getDepartmentHistory, getNurseSupplies, searchNomenclatureProcedures, createProcedureExpenditure)
+- FHIR: ChargeItem (expenditures), Basic/StockQuant (stock), Encounter (visit context), Location (wards), ActivityDefinition (procedures)
+- Dual dept ID: Location (patient ward) vs Organization (stock tracking), mapped by name
+- Default dept: auto-selects "Emergency" via keyword match in 3 languages
+- Stock cached at module level (_cachedStockDepts)
+- ExpenditureMode: 'expenditure' | 'procedure'
+- Optimistic UI: prependExpenditure + adjustItemQuantity for instant feedback
+- Two-phase commit: decrement stock -> create ChargeItem
+- Procedure sub-items: ChargeItem with parentChargeItemId linking to parent procedure ChargeItem
+
+## Warehouse Dashboard & Analytics Source Paths (Verified 2026-02-21)
+- Dashboard view: `views/settings/tabs/administration/WarehouseDashboardPage.tsx` (wrapper with auto-refresh)
+- Dashboard component: `components/warehouse/dashboard/WarehouseDashboard.tsx` (6 KPI cards, critical alerts banner, quick actions, intelligence grid, daily volume charts, top moved items, recent activity timeline)
+- Analytics page: `components/warehouse/analytics/WarehouseAnalyticsPage.tsx` (9-tab analytics system)
+- Analytics types: `types/warehouse-analytics.ts` (918 lines - complete type definitions for all analytics features)
+- Analytics hook: `hooks/useWarehouseAnalytics.ts` (main data orchestration)
+- Clinical analytics hook: `hooks/warehouse/useClinicalAnalytics.ts` (diagnosis costs, encounter costs, lot recall)
+- Planning analytics hook: `hooks/warehouse/usePlanningAnalytics.ts` (budget variance, reorder points, demand forecasts)
+- Auto-refresh: 60-second interval on dashboard
+- FHIR integration: Basic(StockQuant) for balances, SupplyDelivery for movements, SupplyRequest for orders, DeviceDefinition for item master, Encounter for clinical context
+- Performance: Indexed searches on extensions, 30s cache TTL, BroadcastChannel invalidation
+
+## Analytics Tab Architecture (9 tabs)
+1. **Balance & Movement** — 22-column ledger (opening, inflows, outflows, closing, days of supply)
+2. **Insights** — Top items by value, department activity, period comparison
+3. **Dead Stock** — Zero movement items with last movement date/days since
+4. **Low Stock** — Items below safety thresholds with deficit/days of supply
+5. **ABC/XYZ Classification** — 3×3 matrix (value × variability) with management strategies
+6. **Expiration Risk** — Time-bucketed (7d/14d/30d/60d/90d/safe) with value-at-risk
+7. **Suppliers** — Scorecards, stock-out log, dept cost ranking, write-off analysis
+8. **Clinical Analytics** — Diagnosis costs, encounter costs, lot recall drill
+9. **Planning** — Budget vs actual, reorder point calculator, demand forecast
+
+## Documentation Writing Patterns (Updated 2026-02-21)
+- **User-first approach:** Describe UI behavior, not implementation (no React component names, no hook details)
+- **FHIR for integration team:** Include resource names and field mappings in tables
+- **Proportional depth:** Simple UI = brief explanation; complex features = detailed tables/workflows
+- **Stats rows:** Use `.doc-stats-row` with `.doc-stat-inline` for metric summaries
+- **Callout boxes:** `.doc-callout.doc-callout-info.doc-callout-simple` for tips/notes
+- **Warning boxes:** `.doc-callout.doc-callout-warning.doc-callout-simple` for important notices
+- **Tables:** Use `.doc-table` for structured data (FHIR mappings, feature lists, column descriptions)
+- **Screenshot containers:** `.doc-screenshot-full` for full-width screenshots
+- **Icons:** Use inline SVG in `.doc-section-icon` (24x24 viewBox)
+- **Section numbering:** Sequential starting from 1 within each category
+
+## Technical Documentation Patterns (Data Model Sections)
+- For text-only sections (no screenshots), use Mermaid diagrams extensively for visual structure
+- ER diagrams: Use `erDiagram` for FHIR resource relationships
+- State diagrams: Use `stateDiagram-v2` for status lifecycles (transfer, order, procurement)
+- Flow diagrams: Use `flowchart TD/LR` for process flows (FEFO picking, transaction flow)
+- Wrap status lifecycle diagrams in `<details class="doc-collapsible">` to keep page compact
+- Mermaid style colors: match theme (`#1a365d`, `#2b6cb0`, `#63b3ed`, `#bee3f8`)
+- Permission dependencies: tree diagram showing base permission -> dependent permissions
+- Extension tables: Extension name (without base URL) | Value Type | Purpose
+- Warehouse data model section number: 9 (9th section in warehouse category)

@@ -87,7 +87,7 @@ async function captureAllScreenshots(): Promise<void> {
   });
 
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: { width: 1920, height: 1080 },
     deviceScaleFactor: 2,
   });
 
@@ -172,7 +172,7 @@ async function captureAllScreenshots(): Promise<void> {
       await saveScreenshot(page, 'mobile-wizard', lang);
 
       // Reset viewport for next language
-      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.setViewportSize({ width: 1920, height: 1080 });
     }
 
     console.log('\n✓ All screenshots captured!');

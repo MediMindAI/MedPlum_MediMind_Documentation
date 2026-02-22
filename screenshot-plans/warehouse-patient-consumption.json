@@ -1,0 +1,233 @@
+{
+  "planVersion": "1.0",
+  "generatedAt": "2026-02-22T12:00:00Z",
+  "sourceSection": {
+    "id": "warehouse-patient-consumption",
+    "file": "sections/en/warehouse-patient-consumption.html",
+    "titleKey": "toc.warehousePatientConsumption"
+  },
+  "emrConfig": {
+    "baseUrl": "http://localhost:3005",
+    "loginCredentials": {
+      "email": "admin@medimind.ge",
+      "password": "MediMind2024"
+    },
+    "targetPage": "/emr/dashboard/warehouse/patient-consumption"
+  },
+  "screenshots": [
+    {
+      "id": "wh-consumption-overview",
+      "number": 1,
+      "name": "wh-consumption-overview",
+      "description": "Ward Supply Management full page showing title bar, three-column top zone, and two-column bottom zone",
+      "desiredState": "Patient consumption page fully loaded with all 5 zones visible — department selected to show data",
+      "differentiator": "Shows the FULL page layout with all zones visible — overview shot, NOT zoomed into any specific zone",
+      "stateSetup": {
+        "description": "Select a department in the left sidebar filter to populate all zones with data",
+        "steps": [
+          { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+          { "action": "wait", "ms": 1000 },
+          { "action": "click", "selector": "[role='option']:first-child" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["[class*='consumption']", "[class*='ward']"],
+      "knownLimitation": "May need to select specific department from dropdown",
+      "verificationCriteria": {
+        "mustShow": ["Three-column top zone", "Two-column bottom zone", "Department selected"],
+        "mustNotShow": ["Login page", "Empty page without data"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/patient-consumption" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "click", "selector": "[role='option']:first-child" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-consumption-overview" }
+      ]
+    },
+    {
+      "id": "wh-consumption-daily-balance",
+      "number": 2,
+      "name": "wh-consumption-daily-balance",
+      "description": "Daily balance view showing consumed items and quantities for the selected date and department",
+      "desiredState": "Daily balance tab active with consumption data visible",
+      "differentiator": "Shows DAILY BALANCE view — consumption tracking per day, NOT overview or patient list",
+      "stateSetup": null,
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Daily balance data", "Consumption records"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
+      "captureSteps": []
+    },
+    {
+      "id": "wh-consumption-patient-list",
+      "number": 3,
+      "name": "wh-consumption-patient-list",
+      "description": "Center column showing patient list table with numbered rows, names, and personal IDs, plus transfer history below",
+      "desiredState": "Department selected and patient list populated in center column",
+      "differentiator": "Focuses on the CENTER column — patient table with transfer history, NOT sidebar or stock column",
+      "stateSetup": {
+        "description": "Select department to populate patient list",
+        "steps": [
+          { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+          { "action": "wait", "ms": 1000 },
+          { "action": "click", "selector": "[role='option']:first-child" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Patient list table with rows", "Patient names and IDs"],
+        "mustNotShow": ["Login page", "Empty patient list"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/patient-consumption" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "click", "selector": "[role='option']:first-child" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-consumption-patient-list" }
+      ]
+    },
+    {
+      "id": "wh-consumption-stock",
+      "number": 4,
+      "name": "wh-consumption-stock",
+      "description": "Right column with department dropdown, action button row, search input, and scrollable stock items table",
+      "desiredState": "Department selected and stock items visible in right column",
+      "differentiator": "Focuses on the RIGHT column — stock items table, NOT patient list or sidebar",
+      "stateSetup": {
+        "description": "Select department to populate stock items",
+        "steps": [
+          { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+          { "action": "wait", "ms": 1000 },
+          { "action": "click", "selector": "[role='option']:first-child" },
+          { "action": "wait", "ms": 2000 }
+        ]
+      },
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Stock items table", "Search input"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/patient-consumption" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "click", "selector": "[role='option']:first-child" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "screenshot", "name": "wh-consumption-stock" }
+      ]
+    },
+    {
+      "id": "wh-consumption-expenditure",
+      "number": 5,
+      "name": "wh-consumption-expenditure",
+      "description": "Bottom zone showing expenditure mode selector, search autocomplete, history list on the left, and event details table on the right",
+      "desiredState": "Page scrolled to bottom zone showing expenditure entry area with history and details",
+      "differentiator": "Shows the BOTTOM zone — expenditure entry, NOT the top 3-column zone",
+      "stateSetup": {
+        "description": "Select department and scroll to bottom zone",
+        "steps": [
+          { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+          { "action": "wait", "ms": 1000 },
+          { "action": "click", "selector": "[role='option']:first-child" },
+          { "action": "wait", "ms": 2000 },
+          { "action": "evaluate", "script": "window.scrollTo(0, document.body.scrollHeight)" }
+        ]
+      },
+      "type": "scroll",
+      "expectedDOMElements": ["[class*='expenditure']"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Expenditure mode selector", "History list or details table"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "pending", "ka": "pending", "ru": "pending" },
+      "captureSteps": [
+        { "action": "navigate", "url": "{baseUrl}/emr/dashboard/warehouse/patient-consumption" },
+        { "action": "wait", "ms": 3000 },
+        { "action": "viewport", "width": 1440, "height": 900 },
+        { "action": "click", "selector": "[class*='department'] select, [class*='department'] [role='combobox']" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "click", "selector": "[role='option']:first-child" },
+        { "action": "wait", "ms": 2000 },
+        { "action": "evaluate", "script": "window.scrollTo(0, document.body.scrollHeight)" },
+        { "action": "wait", "ms": 1000 },
+        { "action": "screenshot", "name": "wh-consumption-expenditure" }
+      ]
+    },
+    {
+      "id": "wh-consumption-procedure",
+      "number": 6,
+      "name": "wh-consumption-procedure",
+      "description": "Procedure/treatment section showing medical procedures and associated item consumption",
+      "desiredState": "Procedure tab or section active showing procedure data",
+      "differentiator": "Shows PROCEDURE data — medical treatments and consumption, NOT patient list or stock",
+      "stateSetup": null,
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Procedure or treatment data"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
+      "captureSteps": []
+    },
+    {
+      "id": "wh-consumption-event-details",
+      "number": 7,
+      "name": "wh-consumption-event-details",
+      "description": "Event details section showing detailed consumption event records with item breakdown",
+      "desiredState": "Event details view active showing consumption event data",
+      "differentiator": "Shows EVENT DETAILS — individual consumption events, NOT overview or patient list",
+      "stateSetup": null,
+      "type": "interactive",
+      "expectedDOMElements": ["table"],
+      "knownLimitation": null,
+      "verificationCriteria": {
+        "mustShow": ["Event detail records"],
+        "mustNotShow": ["Login page"]
+      },
+      "languages": ["en", "ka", "ru"],
+      "status": { "en": "captured", "ka": "captured", "ru": "captured" },
+      "captureSteps": []
+    }
+  ],
+  "languageSwitching": {
+    "selectors": { "en": "text=ENG", "ru": "text=РУС", "ka": "text=ქარ" },
+    "waitAfterSwitch": 2000
+  },
+  "captureOrder": [
+    "wh-consumption-overview", "wh-consumption-daily-balance", "wh-consumption-patient-list",
+    "wh-consumption-stock", "wh-consumption-expenditure",
+    "wh-consumption-procedure", "wh-consumption-event-details"
+  ],
+  "notes": "5-region layout page. Must select a department in the filter sidebar FIRST to populate all zones. Template and Calculation modals are state-based (button click to open). Bottom zone requires scrolling."
+}

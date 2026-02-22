@@ -164,9 +164,11 @@ const SectionLoader = {
       results.forEach(html => {
         if (html) {
           const wrapper = document.createElement('div');
-          wrapper.className = 'section-fade-in';
           wrapper.innerHTML = html;
-          container.appendChild(wrapper.firstElementChild || wrapper);
+          while (wrapper.firstElementChild) {
+            wrapper.firstElementChild.classList.add('section-fade-in');
+            container.appendChild(wrapper.firstElementChild);
+          }
         }
       });
 
@@ -230,9 +232,11 @@ const SectionLoader = {
       results.forEach((html, index) => {
         if (html) {
           const wrapper = document.createElement('div');
-          wrapper.className = 'section-fade-in';
           wrapper.innerHTML = html;
-          container.appendChild(wrapper.firstElementChild || wrapper);
+          while (wrapper.firstElementChild) {
+            wrapper.firstElementChild.classList.add('section-fade-in');
+            container.appendChild(wrapper.firstElementChild);
+          }
         }
       });
 

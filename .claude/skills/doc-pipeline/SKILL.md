@@ -146,16 +146,24 @@ Write two output files:
 
 ### Step 4: User Approval Gate
 
-Present the plan to the user showing:
+**MANDATORY — DO NOT proceed to Phase 1 without explicit user approval.**
+
+Present the plan summary to the user, then use `AskUserQuestion` to get explicit approval. This is a BLOCKING gate — no Phase 1 work begins without user consent.
+
+Summary to present before asking:
 - Proposed sections with IDs, files, children/anchors
 - Screenshot inventory (basenames + descriptions)
 - FHIR resources and content topics
 - i18n key suggestions
 
-The user can:
-- **Approve** → proceed to Phase 1
-- **Modify** → update the plan based on feedback and re-present
-- **Reject** → stop the pipeline
+Then call `AskUserQuestion` with these options:
+- **Approve** — "Looks good, proceed to Phase 1"
+- **Modify** — "I want to change some things (I'll provide feedback)"
+- **Reject** — "Stop the pipeline entirely"
+
+If the user selects **Modify**: read their feedback, update the plan files, re-present the summary, and call `AskUserQuestion` again. Repeat until the user selects **Approve**.
+
+If the user selects **Reject**: stop the pipeline immediately. Do not proceed to any further phase.
 
 ### Step 5: Mark Approved, Proceed
 
@@ -366,6 +374,27 @@ If a planner fails or produces invalid JSON:
 - Extract all `data-i18n-img` attribute values
 - Create a minimal plan JSON with those basenames
 
+### Step 5: User Approval of Screenshot Plans
+
+**MANDATORY — DO NOT proceed to Phase 3 without explicit user approval of the screenshot plans.**
+
+After all plan JSONs are verified (Step 4), present a summary of what will be captured:
+
+For each plan JSON, show:
+- Section name and file
+- Number of screenshots planned
+- List of basenames with their descriptions (from the `description` field)
+- Any screenshots with `knownLimitation` (flag these so the user is aware)
+
+Then call `AskUserQuestion` with these options:
+- **Approve** — "Plans look good, proceed to write docs and capture screenshots"
+- **Modify** — "I want to adjust some plans (I'll provide feedback)"
+- **Reject** — "Stop the pipeline"
+
+If the user selects **Modify**: read their feedback, update the plan JSONs accordingly, re-present the summary, and call `AskUserQuestion` again. Repeat until the user selects **Approve**.
+
+If the user selects **Reject**: stop the pipeline immediately.
+
 ---
 
 ## Phase 3: DOCUMENT
@@ -428,14 +457,19 @@ Multiple section IDs can share one HTML file (e.g., `registration` + `visit-mana
       add a screenshot after each major UI feature described.
    5. Create/update sections/ka/{file}.html:
       - Copy SAME HTML structure as the English file
-      - Translate ALL visible text content to Georgian (headings, paragraphs, table cells,
-        list items, alt text). Do NOT translate CSS classes, IDs, data-* attributes, or code.
+      - DO NOT translate Georgian text yourself. Instead, use the Task tool to spawn
+        the `georgian-translator` agent (subagent_type: "georgian-translator") to translate
+        ALL visible text content to Georgian (headings, paragraphs, table cells,
+        list items, alt text).
+      - Send the georgian-translator agent the complete English HTML content and ask it
+        to return the Georgian translation preserving the exact HTML structure.
+      - Do NOT translate CSS classes, IDs, data-* attributes, or code.
       - Keep identical data-i18n-img attribute values (same basenames across all languages)
-      - Image src paths: Optionally change -en.png to -ka.png for consistency.
+      - Image src paths: Change -en.png to -ka.png for consistency.
         (Note: JavaScript dynamically rewrites src at runtime via data-i18n-img, so this
         is cosmetic — the docs site works correctly either way.)
-      - Translate directly in your response. If Georgian quality is uncertain,
-        mark those strings with <!-- NEEDS-REVIEW --> for manual verification.
+      - The georgian-translator agent has medical terminology expertise and proper
+        Georgian grammar — always delegate Georgian translation to it.
    6. Create/update sections/ru/{file}.html:
       - Same process as Georgian but translate to Russian
       - Optionally change image src paths to -ru.png suffix
@@ -1324,7 +1358,7 @@ Do NOT proceed to the next phase until the current phase is verified:
 |------|-------|
 | Phase 0 → 1 | Discover plan JSON exists with `"status": "approved"`, user confirmed |
 | Phase 1 → 2 | Section list resolved, files identified, deduplicated by file |
-| Phase 2 → 3 | All `screenshot-plans/{section}.json` exist and are valid JSON |
+| Phase 2 → 3 | All `screenshot-plans/{section}.json` exist and are valid JSON; user approved screenshot plans via `AskUserQuestion` |
 | Phase 3 → 4 | All `sections/{lang}/{file}.html` exist; files with screenshots have `data-i18n-img` |
 | Phase 4 → 5 | `_capture-report.md` exists; all screenshots have "captured" or "failed" status; no "pending" remains |
 | Phase 5 → 6 | All 3 verification reports generated; zero screenshots with "needs-recapture" status; _image-validation.md shows all verdicts passing |

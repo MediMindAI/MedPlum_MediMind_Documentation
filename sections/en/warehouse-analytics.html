@@ -1,0 +1,990 @@
+<section class="doc-section" id="warehouse-analytics">
+  <div class="doc-section-header">
+    <div class="doc-section-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="doc-section-number">1</div>
+      <h2>Warehouse Analytics</h2>
+    </div>
+  </div>
+
+  <p>The <strong>Warehouse Analytics</strong> page is the most comprehensive reporting tool in the MediMind warehouse module. Think of it as your hospital's supply chain intelligence center -- it takes the raw transaction data (receipts, transfers, write-offs, dispensing) and transforms it into actionable insights across <strong>9 specialized tabs</strong>.</p>
+
+  <p>Hospital managers use this page to answer critical questions: "Where is our money going? Which items are sitting idle? What will we run out of next month? Which suppliers deliver on time?" Instead of pulling reports from spreadsheets, everything is available in real-time from a single page.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-filters-en.png" alt="Warehouse Analytics page showing the global filter bar with date range, department and group selectors, and quick preset buttons" class="doc-screenshot-image" data-i18n-img="wh-analytics-filters">
+  </div>
+
+  <div class="doc-stats-row">
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">9</span>
+      <span class="doc-stat-inline-label">Analytics Tabs</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">8</span>
+      <span class="doc-stat-inline-label">KPI Cards</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">8</span>
+      <span class="doc-stat-inline-label">Date Presets</span>
+    </div>
+    <div class="doc-stat-inline">
+      <span class="doc-stat-inline-number">22+</span>
+      <span class="doc-stat-inline-label">Table Columns</span>
+    </div>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Export Options:</strong>
+    Every analytics view can be exported. Use the <strong>Excel</strong> button for raw data analysis in spreadsheets, or the <strong>PDF</strong> button for formatted reports suitable for management meetings and audits.
+  </div>
+
+  <!-- Global Filters -->
+  <h3 id="analytics-filters">1.1 Global Filters</h3>
+
+  <p>At the top of the analytics page, a <strong>collapsible filter bar</strong> controls which data appears in all tabs below. Setting filters here applies them across every tab -- you do not need to re-filter when switching between Balance Movement, Insights, or any other view.</p>
+
+  <h4>Date Range</h4>
+
+  <p>Two date pickers let you define the analysis period. The <strong>"From"</strong> date sets the starting point and the <strong>"To"</strong> date sets the end. The system automatically prevents you from selecting an end date before the start date.</p>
+
+  <h4>Quick Presets</h4>
+
+  <p>Below the date pickers, a row of <strong>pill-shaped buttons</strong> provides one-click shortcuts for common time ranges. Clicking a preset automatically fills both date fields:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Preset</th>
+          <th>Date Range Applied</th>
+          <th>Typical Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Today</strong></td>
+          <td>Current date only</td>
+          <td>End-of-day stock check</td>
+        </tr>
+        <tr>
+          <td><strong>This Week</strong></td>
+          <td>Monday through today</td>
+          <td>Weekly activity review</td>
+        </tr>
+        <tr>
+          <td><strong>This Month</strong></td>
+          <td>1st of current month through today</td>
+          <td>Monthly reporting</td>
+        </tr>
+        <tr>
+          <td><strong>Last Month</strong></td>
+          <td>Full previous calendar month</td>
+          <td>Completed month comparison</td>
+        </tr>
+        <tr>
+          <td><strong>This Quarter</strong></td>
+          <td>Start of current quarter through today</td>
+          <td>Quarterly budget review</td>
+        </tr>
+        <tr>
+          <td><strong>Last 3 Months</strong></td>
+          <td>Rolling 90-day window</td>
+          <td>Trend analysis</td>
+        </tr>
+        <tr>
+          <td><strong>Last 6 Months</strong></td>
+          <td>Rolling 180-day window</td>
+          <td>Seasonal patterns</td>
+        </tr>
+        <tr>
+          <td><strong>This Year</strong></td>
+          <td>January 1st through today</td>
+          <td>Annual performance review</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Department and Group Filters</h4>
+
+  <p>Two <strong>multi-select dropdowns</strong> let you narrow the analysis to specific departments or nomenclature groups:</p>
+
+  <ul class="doc-list">
+    <li><strong>Department</strong> -- Select one or more hospital departments (e.g., Emergency, Surgery, ICU). The dropdown is searchable and supports clearing all selections</li>
+    <li><strong>Nomenclature Group</strong> -- Select one or more item categories (e.g., Medications, Consumables, Reagents). Useful for analyzing a specific category of supplies</li>
+  </ul>
+
+  <p>An <strong>active filter count badge</strong> appears on the filter bar showing how many filters are currently applied, so you always know when your data is filtered.</p>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Click "Search" to Apply:</strong>
+    After changing any filters, you must click the <strong>Search</strong> button to apply them. Simply selecting a date or department does not automatically reload the data -- this is intentional to prevent unnecessary server load when setting multiple filters.
+  </div>
+
+  <!-- KPI Strip -->
+  <h3 id="kpi-strip">1.2 KPI Summary Strip</h3>
+
+  <p>Once you run a search, a row of <strong>KPI cards</strong> appears below the filters, giving you an instant health check of your warehouse for the selected period. The cards are arranged in two rows of four:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>KPI Card</th>
+          <th>What It Shows</th>
+          <th>How to Read It</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Total Inventory Value</strong></td>
+          <td>The total monetary value of all items currently in stock (in GEL)</td>
+          <td>A rising value without corresponding activity may indicate overstocking</td>
+        </tr>
+        <tr>
+          <td><strong>Total Items</strong></td>
+          <td>Count of distinct items that had any movement in the period</td>
+          <td>Compare against your full catalog to see how many items are active</td>
+        </tr>
+        <tr>
+          <td><strong>Total Purchases</strong></td>
+          <td>Total monetary value of all purchases (receipts from suppliers)</td>
+          <td>Track against budget to monitor procurement spending</td>
+        </tr>
+        <tr>
+          <td><strong>Total Dispensed</strong></td>
+          <td>Total value of items dispensed to patients or consumed</td>
+          <td>The core measure of how much supplies support patient care</td>
+        </tr>
+        <tr>
+          <td><strong>Dead Stock Count</strong></td>
+          <td>Number of items with zero movement but positive balance</td>
+          <td>High numbers indicate capital tied up in unused inventory</td>
+        </tr>
+        <tr>
+          <td><strong>Low Stock Count</strong></td>
+          <td>Number of items running below safe supply levels</td>
+          <td>These items need reordering attention before they run out</td>
+        </tr>
+        <tr>
+          <td><strong>Avg Days of Supply</strong></td>
+          <td>Average number of days current stock will last at current consumption rates</td>
+          <td>Below 14 days suggests system-wide supply risk</td>
+        </tr>
+        <tr>
+          <td><strong>Turnover Rate</strong></td>
+          <td>How many times inventory is "turned over" (sold and replaced) in the period</td>
+          <td>Higher is generally better -- it means supplies flow efficiently</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>When available, a ninth card shows the <strong>Fill Rate</strong> -- the percentage of requested items that were successfully fulfilled. A fill rate below the benchmark threshold appears in red, signaling fulfillment problems.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>FHIR Data Sources:</strong>
+    KPI values are computed from <strong>Basic</strong> (StockQuant) resources for current balances, <strong>SupplyDelivery</strong> for movement history (receipts, transfers, write-offs), and <strong>SupplyRequest</strong> for order fulfillment rates. Data is cached for 30 seconds to balance accuracy with performance.
+  </div>
+
+  <!-- Tab 1: Balance Movement -->
+  <h3 id="balance-movement">1.3 Balance &amp; Movement Table</h3>
+
+  <p>The <strong>Balance &amp; Movement</strong> tab is the most data-dense view in the analytics system. It presents a comprehensive ledger showing every item's opening balance, all inflows and outflows, and closing balance for the selected period -- similar to a financial trial balance, but for inventory.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-balance-en.png" alt="Balance Movement table with color-coded column groups showing opening balance, inflows, outflows, and closing balance" class="doc-screenshot-image" data-i18n-img="wh-analytics-balance">
+  </div>
+
+  <h4>Color-Coded Column Groups</h4>
+
+  <p>The table organizes its 22+ columns into color-coded groups so you can quickly scan for the information you need:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column Group</th>
+          <th>Color</th>
+          <th>Columns</th>
+          <th>What It Tracks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Item Info</strong></td>
+          <td>No color</td>
+          <td>Code, Name, Unit</td>
+          <td>Identifies the item. Code and Name columns are "sticky" (they stay visible when scrolling horizontally)</td>
+        </tr>
+        <tr>
+          <td><strong>Opening Balance</strong></td>
+          <td style="background: rgba(43, 108, 176, 0.08); padding: 2px 8px; border-radius: 4px;">Blue tint</td>
+          <td>Opening Qty, Avg Price, Opening Amount</td>
+          <td>The stock level at the start of your selected date range</td>
+        </tr>
+        <tr>
+          <td><strong>Inflows</strong></td>
+          <td style="background: rgba(34, 197, 94, 0.08); padding: 2px 8px; border-radius: 4px;">Green tint</td>
+          <td>Purchase Qty/Amount, Transfer In Qty/Amount</td>
+          <td>Stock coming in: purchases from suppliers and transfers from other departments</td>
+        </tr>
+        <tr>
+          <td><strong>Outflows</strong></td>
+          <td style="background: rgba(249, 115, 22, 0.08); padding: 2px 8px; border-radius: 4px;">Orange tint</td>
+          <td>Return Qty/Amount, Transfer Out Qty/Amount, Write-Off Qty/Amount, Dispensed Qty/Amount, Write-Off + Dispensed</td>
+          <td>Stock going out: returns to suppliers, transfers to other departments, write-offs, and items dispensed to patients</td>
+        </tr>
+        <tr>
+          <td><strong>Closing Balance</strong></td>
+          <td style="background: rgba(147, 51, 234, 0.08); padding: 2px 8px; border-radius: 4px;">Purple tint</td>
+          <td>Closing Qty, Closing Amount</td>
+          <td>The stock level at the end of your selected date range</td>
+        </tr>
+        <tr>
+          <td><strong>Analytics</strong></td>
+          <td>No color</td>
+          <td>Days of Supply, ABC Class</td>
+          <td>Calculated metrics: how long stock will last and its importance classification</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Row Highlighting</h4>
+
+  <p>The table automatically highlights rows that need attention:</p>
+
+  <ul class="doc-list">
+    <li><strong>Red-tinted rows</strong> -- Items with a closing quantity of zero (stock-out). These items have run out and may be affecting patient care</li>
+    <li><strong>Yellow-tinted rows</strong> -- Dead stock items: they have positive closing balance but zero movement in the period. Capital is tied up in these items without any usage</li>
+  </ul>
+
+  <h4>Days of Supply Badges</h4>
+
+  <p>The <strong>Days of Supply</strong> column uses a traffic-light system to show urgency:</p>
+
+  <ul class="doc-list">
+    <li><strong>Red badge (&lt;7 days)</strong> -- Critical. At current consumption rates, stock will run out within a week</li>
+    <li><strong>Yellow badge (7-30 days)</strong> -- Caution. Stock is limited but not immediately critical</li>
+    <li><strong>Green badge (&gt;30 days)</strong> -- Healthy. Sufficient stock for at least a month</li>
+    <li><strong>Gray "N/A" badge</strong> -- Item has stock but zero dispensing activity, so days of supply cannot be calculated</li>
+    <li><strong>"999+" display</strong> -- More than 999 days of supply (effectively overstocked)</li>
+  </ul>
+
+  <h4>ABC Classification Badges</h4>
+
+  <p>Each item automatically receives an <strong>ABC class</strong> based on its dispensing value relative to all items:</p>
+
+  <ul class="doc-list">
+    <li><strong>A (red badge)</strong> -- Top 80% of total dispensing value. These are your most valuable items and deserve the closest management attention</li>
+    <li><strong>B (yellow badge)</strong> -- Next 15% of value. Important but less critical than A items</li>
+    <li><strong>C (green badge)</strong> -- Remaining 5% of value. Low-value items that can be managed with simpler controls</li>
+  </ul>
+
+  <h4>Inline Search and Totals</h4>
+
+  <ul class="doc-list">
+    <li><strong>Code search</strong> and <strong>Name search</strong> inputs above the table let you filter items without changing the global filters</li>
+    <li>A <strong>sticky totals row</strong> at the bottom sums all quantity and amount columns, scrolling horizontally in sync with the main table</li>
+    <li>Column headers have <strong>tooltips</strong> explaining what each column measures -- hover over any header to see the description</li>
+  </ul>
+
+  <!-- Tab 2: Insights -->
+  <h3 id="insights">1.4 Insights</h3>
+
+  <p>The <strong>Insights</strong> tab presents four summary views that help managers quickly understand warehouse activity patterns without diving into the raw data. Think of it as the "executive summary" of your inventory operations.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-insights-en.png" alt="Insights tab showing top items by value, movement summary, period comparison, and department activity" class="doc-screenshot-image" data-i18n-img="wh-analytics-insights">
+  </div>
+
+  <h4>Top 10 Items by Value</h4>
+
+  <p>A <strong>ranked list</strong> showing the ten most valuable items in your inventory. Each item displays its name, total value, and a proportional progress bar (the #1 item fills the full bar width, and all others scale relative to it). This immediately answers: "Where is most of our inventory capital concentrated?"</p>
+
+  <h4>Movement Summary</h4>
+
+  <p>A <strong>six-row table</strong> aggregating all stock movements across the selected period:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Movement Type</th>
+          <th>What It Represents</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Purchases</strong></td>
+          <td>Total quantity and value received from suppliers</td>
+        </tr>
+        <tr>
+          <td><strong>Transfers In</strong></td>
+          <td>Items received from other departments</td>
+        </tr>
+        <tr>
+          <td><strong>Transfers Out</strong></td>
+          <td>Items sent to other departments</td>
+        </tr>
+        <tr>
+          <td><strong>Returns</strong></td>
+          <td>Items returned to suppliers</td>
+        </tr>
+        <tr>
+          <td><strong>Write-Offs</strong></td>
+          <td>Items removed due to expiry, damage, or other losses</td>
+        </tr>
+        <tr>
+          <td><strong>Dispensed</strong></td>
+          <td>Items consumed for patient care</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Period Comparison</h4>
+
+  <p>Compares the current period against the previous period of equal length. For example, if you selected "This Month," it compares against last month. Three key metrics are compared:</p>
+
+  <ul class="doc-list">
+    <li><strong>Purchases</strong> -- Are we buying more or less than before?</li>
+    <li><strong>Dispensed</strong> -- Is consumption going up or down?</li>
+    <li><strong>Total Inventory Value</strong> -- Is our stock value growing or shrinking?</li>
+  </ul>
+
+  <p>Each metric shows a <strong>percentage change badge</strong>: green for increases, red for decreases, and blue for no change.</p>
+
+  <h4>Department Activity</h4>
+
+  <p>A visual breakdown of <strong>inflow vs. outflow per department</strong>. Each department shows two horizontal bars:</p>
+
+  <ul class="doc-list">
+    <li><strong>Green bar</strong> -- Inflow (value of supplies received by the department)</li>
+    <li><strong>Yellow bar</strong> -- Outflow (value of supplies sent out or consumed)</li>
+  </ul>
+
+  <p>Departments where the outflow bar significantly exceeds the inflow bar may be consuming faster than they are being resupplied.</p>
+
+  <!-- Tab 3-4: Dead & Low Stock -->
+  <h3 id="dead-low-stock">1.5 Dead Stock &amp; Low Stock</h3>
+
+  <p>These two tabs identify items at opposite ends of the inventory health spectrum: items that are <strong>not moving at all</strong> (dead stock) and items that are <strong>dangerously low</strong> (low stock). Both tables are sortable by any column.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-dead-stock-en.png" alt="Dead Stock table showing items with zero movement and 'Never Moved' badges" class="doc-screenshot-image" data-i18n-img="wh-analytics-dead-stock">
+  </div>
+
+  <h4>Dead Stock Tab</h4>
+
+  <p><strong>Dead stock</strong> items have positive closing balance (they are in your warehouse) but had absolutely no movement during the selected period -- no purchases, no transfers, no dispensing, nothing. They represent capital that is sitting idle.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Code / Name / Unit</strong></td>
+          <td>Item identification</td>
+        </tr>
+        <tr>
+          <td><strong>Closing Qty</strong></td>
+          <td>How many units are sitting in stock</td>
+        </tr>
+        <tr>
+          <td><strong>Closing Amount</strong></td>
+          <td>The monetary value of idle stock (in GEL)</td>
+        </tr>
+        <tr>
+          <td><strong>Days Since Last Movement</strong></td>
+          <td>How many days since any transaction occurred. Items that have <strong>never</strong> had any movement display a red "Never Moved" badge</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Action on Dead Stock:</strong>
+    Items showing "Never Moved" may have been incorrectly entered or received into the wrong department. Review these items for potential data errors, and consider transferring idle items to departments that may need them before they expire.
+  </div>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-low-stock-en.png" alt="Low Stock table with color-coded Days of Supply column showing red, yellow, and green indicators" class="doc-screenshot-image" data-i18n-img="wh-analytics-low-stock">
+  </div>
+
+  <h4>Low Stock Tab</h4>
+
+  <p><strong>Low stock</strong> items have positive balance but are running low relative to their consumption rate. The key metric is <strong>Days of Supply</strong> -- how many days the current stock will last if consumption continues at the same rate.</p>
+
+  <p>The Days of Supply column uses <strong>color-coded text</strong>:</p>
+
+  <ul class="doc-list">
+    <li><strong style="color: #e53e3e;">Red text (&lt;7 days)</strong> -- Critical shortage. Reorder immediately</li>
+    <li><strong style="color: #d69e2e;">Yellow text (7-30 days)</strong> -- Low but not critical. Plan reorder soon</li>
+    <li><strong style="color: #38a169;">Green text (&gt;30 days)</strong> -- Healthy supply level</li>
+    <li><strong>"999+"</strong> -- Effectively unlimited supply at current consumption (possible overstocking)</li>
+  </ul>
+
+  <!-- Tab 5: ABC/XYZ -->
+  <h3 id="abc-xyz">1.6 ABC/XYZ Classification</h3>
+
+  <p>The <strong>ABC/XYZ</strong> tab applies a well-known inventory management technique that classifies every item along two dimensions: <strong>how much it costs</strong> (ABC) and <strong>how predictably it is consumed</strong> (XYZ). The result is a 3x3 matrix that tells you which items need the most management attention.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-abc-xyz-en.png" alt="ABC/XYZ interactive 3x3 classification matrix with color-coded cells showing item count and total spend, plus drill-down table below" class="doc-screenshot-image" data-i18n-img="wh-analytics-abc-xyz">
+  </div>
+
+  <h4>Understanding the Axes</h4>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Axis</th>
+          <th>Class</th>
+          <th>Definition</th>
+          <th>What It Means</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3"><strong>ABC (Value)</strong></td>
+          <td><strong>A</strong></td>
+          <td>Top 80% of annual spend</td>
+          <td>High-value items. A relatively small number of items that account for most of your spending</td>
+        </tr>
+        <tr>
+          <td><strong>B</strong></td>
+          <td>Next 15% of annual spend</td>
+          <td>Medium-value items. Important but not as critical as A items</td>
+        </tr>
+        <tr>
+          <td><strong>C</strong></td>
+          <td>Remaining 5% of annual spend</td>
+          <td>Low-value items. Many individual items but little total spend</td>
+        </tr>
+        <tr>
+          <td rowspan="3"><strong>XYZ (Variability)</strong></td>
+          <td><strong>X</strong></td>
+          <td>Coefficient of Variation &lt; 0.1</td>
+          <td>Stable demand. Consumption is very predictable week to week</td>
+        </tr>
+        <tr>
+          <td><strong>Y</strong></td>
+          <td>CV between 0.1 and 0.25</td>
+          <td>Moderate variability. Some fluctuation but generally predictable</td>
+        </tr>
+        <tr>
+          <td><strong>Z</strong></td>
+          <td>CV &gt; 0.25</td>
+          <td>Volatile demand. Consumption varies significantly -- hard to forecast</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>The Interactive Matrix</h4>
+
+  <p>The 3x3 grid is <strong>clickable</strong>. Each cell shows the number of items in that classification and their combined annual spend. Click any cell to filter the table below to show only items in that classification. Click again to deselect.</p>
+
+  <p>Cells are <strong>color-coded</strong> by management priority -- cells in the upper-left (AX: high value, stable demand) are highlighted differently from cells in the lower-right (CZ: low value, volatile demand).</p>
+
+  <h4>Drill-Down Table</h4>
+
+  <p>Below the matrix, a <strong>sortable table</strong> lists individual items with their details:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Item Code</strong></td>
+          <td>The item's catalog code</td>
+        </tr>
+        <tr>
+          <td><strong>Item Name</strong></td>
+          <td>Product name</td>
+        </tr>
+        <tr>
+          <td><strong>Annual Spend</strong></td>
+          <td>Total spend on this item in the period (in GEL)</td>
+        </tr>
+        <tr>
+          <td><strong>CV</strong></td>
+          <td>Coefficient of Variation -- a statistical measure of demand variability. Lower is more predictable</td>
+        </tr>
+        <tr>
+          <td><strong>Class</strong></td>
+          <td>Combined classification badge (e.g., AX, BY, CZ) with color coding</td>
+        </tr>
+        <tr>
+          <td><strong>Management Strategy</strong></td>
+          <td>A recommended approach for managing this type of item (e.g., "Just-in-time ordering" for AX items)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Minimum Data Required:</strong>
+    ABC/XYZ classification requires at least 3 months of transaction history to produce meaningful results. If insufficient data is available, the tab displays an empty state explaining the requirement.
+  </div>
+
+  <!-- Tab 6: Expiration Risk -->
+  <h3 id="expiration-risk">1.7 Expiration Risk</h3>
+
+  <p>The <strong>Expiration Risk</strong> tab helps prevent waste by showing which items are approaching their expiry date. Items are grouped into <strong>five time buckets</strong> so you can prioritize action based on urgency.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-expiration-en.png" alt="Expiration Risk view with five color-coded time bucket cards and a drill-down table showing items approaching expiry" class="doc-screenshot-image" data-i18n-img="wh-analytics-expiration">
+  </div>
+
+  <h4>Time Bucket Cards</h4>
+
+  <p>Five <strong>clickable cards</strong> across the top show how many items fall into each urgency window:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Bucket</th>
+          <th>Color</th>
+          <th>Urgency</th>
+          <th>Recommended Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>7 Days</strong></td>
+          <td style="background: rgba(229, 62, 62, 0.1); padding: 2px 8px; border-radius: 4px;">Red</td>
+          <td>Critical</td>
+          <td>Use immediately, transfer to departments that need them, or prepare for write-off</td>
+        </tr>
+        <tr>
+          <td><strong>14 Days</strong></td>
+          <td style="background: rgba(237, 137, 54, 0.1); padding: 2px 8px; border-radius: 4px;">Orange</td>
+          <td>Urgent</td>
+          <td>Prioritize for use in upcoming procedures. Alert departments</td>
+        </tr>
+        <tr>
+          <td><strong>30 Days</strong></td>
+          <td style="background: rgba(214, 158, 46, 0.1); padding: 2px 8px; border-radius: 4px;">Yellow</td>
+          <td>Caution</td>
+          <td>Plan usage or redistribution within the month</td>
+        </tr>
+        <tr>
+          <td><strong>60 Days</strong></td>
+          <td style="background: rgba(43, 108, 176, 0.1); padding: 2px 8px; border-radius: 4px;">Blue</td>
+          <td>Monitor</td>
+          <td>Be aware but no immediate action needed</td>
+        </tr>
+        <tr>
+          <td><strong>90 Days</strong></td>
+          <td style="background: rgba(56, 161, 105, 0.1); padding: 2px 8px; border-radius: 4px;">Green</td>
+          <td>Watch</td>
+          <td>Low priority -- include in routine expiry management</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Each card shows both the <strong>item count</strong> and the <strong>total value at risk</strong> (the monetary value of items that may be lost if they expire unused).</p>
+
+  <h4>Drill-Down Table</h4>
+
+  <p>Click any bucket card to reveal a detailed table of items in that time window:</p>
+
+  <ul class="doc-list">
+    <li><strong>Item Code / Name</strong> -- Item identification</li>
+    <li><strong>Lot Number</strong> -- The specific lot that is expiring</li>
+    <li><strong>Department</strong> -- Where the item is currently stored</li>
+    <li><strong>Quantity / Unit Cost / Value at Risk</strong> -- The financial impact if the item expires</li>
+    <li><strong>Expiry Date</strong> -- The actual expiration date</li>
+    <li><strong>Days Left badge</strong> -- Color-coded: red for 7 days or less, yellow for 8-30 days, blue for more than 30 days</li>
+  </ul>
+
+  <h4>Department Summary</h4>
+
+  <p>Below the table, a <strong>horizontal bar chart</strong> shows how expiration risk is distributed across departments. This helps identify if one department is holding a disproportionate share of soon-to-expire items.</p>
+
+  <!-- Tab 7: Suppliers -->
+  <h3 id="suppliers">1.8 Suppliers</h3>
+
+  <p>The <strong>Suppliers</strong> tab provides four distinct analysis sections stacked vertically. Together they answer: "Who are our suppliers? How do they perform? Where are we losing stock? Which departments cost the most?"</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-suppliers-en.png" alt="Suppliers tab showing supplier scorecard table with ranked suppliers, delivery counts, total spend, and expandable recent deliveries" class="doc-screenshot-image" data-i18n-img="wh-analytics-suppliers">
+  </div>
+
+  <h4>Supplier Scorecard</h4>
+
+  <p>A <strong>ranked table</strong> of all suppliers, sorted by total spend (highest first). Click any column header to re-sort. Each supplier row shows:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Rank (#)</strong></td>
+          <td>Position based on current sort order</td>
+        </tr>
+        <tr>
+          <td><strong>Supplier Name</strong></td>
+          <td>The supplier's organization name</td>
+        </tr>
+        <tr>
+          <td><strong>Delivery Count</strong></td>
+          <td>Number of deliveries received in the period</td>
+        </tr>
+        <tr>
+          <td><strong>Total Spend</strong></td>
+          <td>Total monetary value of purchases from this supplier (in GEL)</td>
+        </tr>
+        <tr>
+          <td><strong>Item Variety</strong></td>
+          <td>Number of distinct items supplied -- a high variety means this supplier covers many product categories</td>
+        </tr>
+        <tr>
+          <td><strong>Avg Lead Time</strong></td>
+          <td>Average number of days between order and delivery. Shorter is better</td>
+        </tr>
+        <tr>
+          <td><strong>Price Trend</strong></td>
+          <td>Badge showing whether this supplier's prices are increasing (red), stable (yellow), or decreasing (green)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Click any supplier row</strong> to expand and see their <strong>recent deliveries</strong> -- a sub-table showing the date, item count, and total value of each recent delivery.</p>
+
+  <h4>Stockout Log</h4>
+
+  <p>A chronological record of every time an item reached zero stock. This section includes:</p>
+
+  <ul class="doc-list">
+    <li><strong>Item Name / Code</strong> -- Which item ran out</li>
+    <li><strong>Department</strong> -- Where the stockout occurred. Use the department filter dropdown to focus on a specific department</li>
+    <li><strong>Date Reached Zero</strong> -- When the item went to zero stock</li>
+    <li><strong>Date Restocked</strong> -- When stock was restored (or a dash if still empty)</li>
+    <li><strong>Duration</strong> -- How long the stockout lasted. For <strong>ongoing stockouts</strong>, a pulsing red "Ongoing" badge appears instead of a duration</li>
+  </ul>
+
+  <p>Use the <strong>sort toggle button</strong> to switch between sorting by date (most recent first) and by duration (longest outage first).</p>
+
+  <h4>Department Cost Ranking</h4>
+
+  <p>Departments ranked by their total supply consumption cost, with <strong>proportional bar charts</strong> (the top-spending department fills the full bar width). Each department row shows total cost, item count, and fill rate. <strong>Click to expand</strong> and see the department's top items with cost breakdown and percentage of the department's total spend.</p>
+
+  <h4>Write-Off Analysis</h4>
+
+  <p>A visual breakdown of losses by reason, featuring three components:</p>
+
+  <ul class="doc-list">
+    <li><strong>Donut chart</strong> -- A circular chart showing the proportion of write-offs by reason (Expired, Damaged, Theft, Correction, Other). The center shows the total value lost</li>
+    <li><strong>Legend</strong> -- Clickable rows listing each reason with its quantity, value, and percentage of total write-offs. Click a reason to drill down</li>
+    <li><strong>Monthly trend bars</strong> -- A grouped bar chart showing write-off values per month, color-coded by reason. This reveals whether losses are increasing or decreasing over time</li>
+    <li><strong>Drill-down table</strong> -- When a reason is selected from the legend, a table appears listing every individual write-off item with its code, name, quantity, value, date, and department</li>
+  </ul>
+
+  <!-- Tab 8: Clinical Analytics -->
+  <h3 id="clinical-analytics">1.9 Clinical Analytics</h3>
+
+  <p>The <strong>Clinical Analytics</strong> tab bridges the gap between warehouse operations and patient care. It links supply consumption to clinical data -- diagnoses, hospital encounters, and lot numbers -- enabling cost analysis and recall traceability that would be impossible from inventory records alone.</p>
+
+  <p>This tab contains three sub-tabs:</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-clinical-diagnosis-en.png" alt="Clinical Analytics showing Diagnosis Cost Analysis with expandable ICD-10 rows and outlier detection badges" class="doc-screenshot-image" data-i18n-img="wh-analytics-clinical-diagnosis">
+  </div>
+
+  <h4>Diagnosis Cost Analysis</h4>
+
+  <p>Shows <strong>supply spending grouped by ICD-10 diagnosis code</strong>. For each diagnosis, you see the total supply cost, number of encounters, and average cost per encounter. This answers: "Which diagnoses consume the most supplies?"</p>
+
+  <p>Key features:</p>
+
+  <ul class="doc-list">
+    <li><strong>Outlier detection</strong> -- Diagnoses whose total cost exceeds the mean + 2 standard deviations are flagged with a red "Outlier" badge. This uses statistical detection (mean + 2 sigma) to identify diagnoses with unusually high supply costs</li>
+    <li><strong>Expandable rows</strong> -- Click the arrow on any diagnosis to reveal its <strong>top items</strong>: the specific supplies that drive the cost, with quantity and cost per item</li>
+    <li><strong>Outlier-highlighted rows</strong> -- Rows flagged as outliers receive a subtle visual highlight to draw attention</li>
+  </ul>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Diagnosis Code</strong></td>
+          <td>ICD-10 code with display name below</td>
+        </tr>
+        <tr>
+          <td><strong>Encounter Count</strong></td>
+          <td>How many patient encounters used this diagnosis</td>
+        </tr>
+        <tr>
+          <td><strong>Total Cost</strong></td>
+          <td>Combined supply cost across all encounters with this diagnosis</td>
+        </tr>
+        <tr>
+          <td><strong>Avg Cost / Encounter</strong></td>
+          <td>Average supply cost per encounter -- useful for budgeting per case type</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Encounter Cost Report</h4>
+
+  <p>Shows <strong>supply spending per patient encounter</strong> (hospital stay), sorted by total cost. This reveals which individual patient stays consumed the most supplies.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-clinical-recall-en.png" alt="Clinical Analytics Lot Recall search with results card showing department breakdown and affected patients table" class="doc-screenshot-image" data-i18n-img="wh-analytics-clinical-recall">
+  </div>
+
+  <ul class="doc-list">
+    <li><strong>Patient Name</strong> and <strong>Department</strong> -- Identifies the encounter</li>
+    <li><strong>Duration (Days)</strong> -- Length of stay</li>
+    <li><strong>Total Cost</strong> -- All supplies consumed during this encounter</li>
+    <li><strong>Outlier badge</strong> -- Statistical outlier detection flags encounters with unusually high supply costs</li>
+    <li><strong>Expandable detail</strong> -- Click to see every supply item consumed: name, quantity, cost, and date</li>
+  </ul>
+
+  <h4>Lot Recall</h4>
+
+  <p>A <strong>traceability tool</strong> for tracking a specific lot number across the entire hospital. This is critical for safety recalls: when a manufacturer recalls a lot, you need to know exactly where it went and which patients received it.</p>
+
+  <p>How to use it:</p>
+
+  <ol>
+    <li>Enter a <strong>lot number</strong> in the search field</li>
+    <li>Click <strong>Search</strong> (or press Enter)</li>
+    <li>The system returns a result card showing:
+      <ul class="doc-list">
+        <li><strong>Item details</strong> -- The product name and code associated with this lot</li>
+        <li><strong>Total affected patients count</strong> (displayed as a red badge)</li>
+        <li><strong>Department breakdown table</strong> -- For each department that received this lot: quantity received, quantity remaining, quantity dispensed to patients, and whether remaining stock exists</li>
+        <li><strong>Quarantine recommendation</strong> -- Departments still holding this lot show a yellow "Quarantine Recommended" badge</li>
+        <li><strong>Affected patients table</strong> -- Lists every patient who received items from this lot: patient name, department, quantity, and date</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="doc-callout doc-callout-warning doc-callout-simple">
+    <strong>Critical Safety Feature:</strong>
+    The Lot Recall tool is essential for regulatory compliance. When a manufacturer issues a recall, this tool provides the complete chain of custody: from receipt at the warehouse, through department distribution, to individual patient administration. Departments with remaining stock should immediately quarantine the affected items.
+  </div>
+
+  <!-- Tab 9: Planning -->
+  <h3 id="planning">1.10 Planning</h3>
+
+  <p>The <strong>Planning</strong> tab provides forward-looking tools for supply chain management: budget tracking, automated reorder triggers, and demand forecasting. It contains three sub-tabs.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-budget-en.png" alt="Planning tab Budget vs Actual view with variance table showing over/under budget departments and Set Budget modal" class="doc-screenshot-image" data-i18n-img="wh-analytics-budget">
+  </div>
+
+  <h4>Budget vs. Actual</h4>
+
+  <p>Compare planned budgets against actual spending per department. This is the financial control center for supply costs.</p>
+
+  <p>The <strong>variance table</strong> shows each department's budget, actual spend, variance amount, and variance percentage. Color coding immediately highlights the situation:</p>
+
+  <ul class="doc-list">
+    <li><strong>Red text + "Over Budget" badge</strong> -- Department has spent more than its allocated budget. Variance shows the overage</li>
+    <li><strong>Green text + "Under Budget" badge</strong> -- Department is within budget. Variance shows the remaining amount</li>
+  </ul>
+
+  <p>To set or update a department's budget, click the <strong>"Set Budget"</strong> button to open a modal dialog where you select:</p>
+
+  <ul class="doc-list">
+    <li><strong>Department</strong> -- Choose from a searchable dropdown</li>
+    <li><strong>Month</strong> -- Select the target month using a month picker (defaults to the current month)</li>
+    <li><strong>Budget Amount</strong> -- Enter the amount in GEL</li>
+  </ul>
+
+  <h4>Reorder Points</h4>
+
+  <p>A <strong>statistically calculated</strong> list of items with their optimal reorder triggers. The system analyzes historical consumption patterns to recommend when and how much to reorder.</p>
+
+  <p>When items are below their reorder threshold, an <strong>alert banner</strong> appears at the top showing the count of items needing reorder.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Item Name / Code</strong></td>
+          <td>Item identification</td>
+        </tr>
+        <tr>
+          <td><strong>Safety Stock</strong></td>
+          <td>The minimum quantity to keep on hand as a buffer against demand spikes</td>
+        </tr>
+        <tr>
+          <td><strong>Reorder Point</strong></td>
+          <td>When stock falls to this level, place a new order. Calculated from lead time and average consumption</td>
+        </tr>
+        <tr>
+          <td><strong>Suggested Order Qty</strong></td>
+          <td>The recommended quantity to order based on economic order quantity calculations</td>
+        </tr>
+        <tr>
+          <td><strong>Current Stock</strong></td>
+          <td>How much is currently on hand</td>
+        </tr>
+        <tr>
+          <td><strong>Needs Reorder</strong></td>
+          <td>Red "Needs Reorder" badge if current stock is at or below the reorder point, otherwise green "OK"</td>
+        </tr>
+        <tr>
+          <td><strong>Confidence</strong></td>
+          <td>How reliable the calculation is: High (green, 90+ days of data), Medium (yellow, 30-90 days), Low (red, less than 30 days of history)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-analytics-forecast-en.png" alt="Planning tab Demand Forecast with sparkline histograms showing consumption history and predicted quantities for 30, 60, and 90 day periods" class="doc-screenshot-image" data-i18n-img="wh-analytics-forecast">
+  </div>
+
+  <h4>Demand Forecast</h4>
+
+  <p>A <strong>predictive view</strong> showing expected consumption for each item over the next 30, 60, and 90 days. Think of it as the system answering: "Based on how fast we have been using this item, how much will we need next month?"</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Item Name / Code</strong></td>
+          <td>Item identification, plus the number of months of historical data available</td>
+        </tr>
+        <tr>
+          <td><strong>History (Sparkline)</strong></td>
+          <td>A miniature bar chart showing monthly consumption history. Each bar represents one month, and the bar height is proportional to the quantity consumed. This gives a visual sense of the consumption trend</td>
+        </tr>
+        <tr>
+          <td><strong>30d / 60d / 90d</strong></td>
+          <td>Predicted quantity needed for each forecast horizon</td>
+        </tr>
+        <tr>
+          <td><strong>Confidence Range</strong></td>
+          <td>The statistical range (low estimate to high estimate) for the 90-day forecast. A narrow range means high confidence</td>
+        </tr>
+        <tr>
+          <td><strong>Trend</strong></td>
+          <td>Badge with direction arrow: "Increasing" (yellow, consumption is going up), "Stable" (green, consistent), or "Decreasing" (blue, consumption is going down)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Forecast Accuracy:</strong>
+    Forecasts are more reliable for items with longer consumption history and stable demand (X-class items in ABC/XYZ). For volatile items (Z-class), pay more attention to the confidence range than the point estimate. Items with less than 3 months of history may not appear in the forecast.
+  </div>
+
+  <!-- FHIR Integration -->
+  <h3 id="fhir-integration">1.11 FHIR Resource Mapping</h3>
+
+  <p>For the integration team, the analytics system draws data from several FHIR resources. Understanding these mappings is useful when building custom reports, troubleshooting data discrepancies, or integrating with external analytics tools.</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Analytics Feature</th>
+          <th>FHIR Resource</th>
+          <th>Key Fields Used</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Current Balances / KPIs</strong></td>
+          <td>Basic (StockQuant)</td>
+          <td>Extensions: sq-item-code, sq-location-id, sq-quantity, sq-unit-cost, sq-expiry-date, sq-lot-number</td>
+        </tr>
+        <tr>
+          <td><strong>Movement History</strong></td>
+          <td>SupplyDelivery</td>
+          <td>type (receipt/transfer/writeoff), quantity, suppliedItem, occurrenceDateTime, supplier</td>
+        </tr>
+        <tr>
+          <td><strong>Orders / Fill Rate</strong></td>
+          <td>SupplyRequest</td>
+          <td>status, quantity, authoredOn, requester, deliverFrom, deliverTo</td>
+        </tr>
+        <tr>
+          <td><strong>Item Master / ABC/XYZ</strong></td>
+          <td>DeviceDefinition</td>
+          <td>identifier, deviceName, classification (group code), extensions for attributes</td>
+        </tr>
+        <tr>
+          <td><strong>Clinical Costs / Diagnosis</strong></td>
+          <td>Encounter + Condition</td>
+          <td>Encounter.period, Encounter.location, Condition.code (ICD-10), linked SupplyDelivery resources</td>
+        </tr>
+        <tr>
+          <td><strong>Lot Recall / Traceability</strong></td>
+          <td>SupplyDelivery + Basic (StockQuant)</td>
+          <td>SupplyDelivery lot extension, destination (Patient reference), StockQuant sq-lot-number</td>
+        </tr>
+        <tr>
+          <td><strong>Budgets</strong></td>
+          <td>Basic (Budget)</td>
+          <td>Custom resource with department reference, period (month), budget-amount extension</td>
+        </tr>
+        <tr>
+          <td><strong>Departments</strong></td>
+          <td>Location / Organization</td>
+          <td>Location for ward assignments, Organization for stock tracking and department hierarchy</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Performance Note:</strong>
+    Analytics queries use indexed searches on FHIR extensions and cache results for 30 seconds. Cross-tab cache invalidation via BroadcastChannel ensures that when one browser tab updates stock (e.g., processes a receipt), other open tabs reflect the change within the cache TTL. The FHIR base URL is <code>http://medimind.ge/fhir</code> and all monetary values use GEL (Georgian Lari) currency.
+  </div>
+</section>
