@@ -58,17 +58,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>History</strong></td>
+        <td><strong>Selling History</strong></td>
         <td>Full list of individual selling line items with filters, sorting, pagination, and correction actions</td>
         <td>Blue -- total record count</td>
       </tr>
       <tr>
-        <td><strong>Analytics</strong></td>
-        <td>KPI summary strip, Top 5 Sold Items, Buyer Activity bars, Department-Buyer heatmap, Period Summary, and grouped document table</td>
+        <td><strong>Selling Analytics</strong></td>
+        <td>KPI summary strip, Top Sold Items, Buyer Activity bars, Department-Buyer heatmap, Period Summary, and grouped document table</td>
         <td>Teal -- grouped document count</td>
       </tr>
       <tr>
-        <td><strong>Pending Confirmation</strong></td>
+        <td><strong>Selling Confirmation</strong></td>
         <td>In-progress selling groups awaiting approval; Confirm (green) or Reject (red) buttons with step-up authentication</td>
         <td>Orange -- pending group count</td>
       </tr>
@@ -101,7 +101,7 @@
     <tbody>
       <tr>
         <td>1</td>
-        <td><strong>Date</strong></td>
+        <td><strong>Date/Time</strong></td>
         <td>Date and time of the selling transaction</td>
         <td>Yes</td>
         <td>Visible</td>
@@ -115,8 +115,8 @@
       </tr>
       <tr>
         <td>3</td>
-        <td><strong>Doc #</strong></td>
-        <td>Auto-generated document number (format: <code>SELL-{timestamp}</code>)</td>
+        <td><strong>Document Number</strong></td>
+        <td>Auto-generated document number (format: <code>SELL-YYYY-NNN</code>, e.g. <code>SELL-2026-001</code>)</td>
         <td>No</td>
         <td>Hidden</td>
       </tr>
@@ -136,7 +136,7 @@
       </tr>
       <tr>
         <td>6</td>
-        <td><strong>Item Name</strong></td>
+        <td><strong>Item</strong></td>
         <td>Product name with item code shown below</td>
         <td>Yes</td>
         <td>Visible</td>
@@ -150,7 +150,7 @@
       </tr>
       <tr>
         <td>8</td>
-        <td><strong>Qty</strong></td>
+        <td><strong>Quantity</strong></td>
         <td>Quantity sold</td>
         <td>No</td>
         <td>Visible</td>
@@ -179,7 +179,7 @@
   <ul class="doc-list">
     <li><strong>Date From / Date To</strong> -- filter by date range</li>
     <li><strong>Department</strong> -- dropdown of inventory departments</li>
-    <li><strong>Warehouse Group</strong> -- filter by product category</li>
+    <li><strong>Category</strong> -- filter by product category</li>
     <li><strong>Buyer</strong> -- dropdown of all buyer companies</li>
     <li><strong>Item Search</strong> -- text search by product name</li>
     <li><strong>Document Number</strong> -- search by document number</li>
@@ -219,7 +219,7 @@
         <td>30-day sparkline + % change vs last month</td>
       </tr>
       <tr>
-        <td><strong>Total Value</strong></td>
+        <td><strong>Total Value (GEL)</strong></td>
         <td>Sum of all selling amounts in GEL</td>
         <td>30-day sparkline + % change vs last month</td>
       </tr>
@@ -229,7 +229,7 @@
         <td>--</td>
       </tr>
       <tr>
-        <td><strong>Avg Items/Doc</strong></td>
+        <td><strong>Avg Items / Sale</strong></td>
         <td>Average number of line items per waybill</td>
         <td>--</td>
       </tr>
@@ -255,7 +255,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>Top 5 Sold Items</strong></td>
+        <td><strong>Top Sold Items</strong></td>
         <td>Ranked list with badges</td>
         <td>Most frequently sold items by quantity, showing total value for each</td>
       </tr>
@@ -265,7 +265,7 @@
         <td>Transaction count per buyer company, sorted by frequency</td>
       </tr>
       <tr>
-        <td><strong>Dept &rarr; Buyer Heatmap</strong></td>
+        <td><strong>Department &rarr; Buyer Heatmap</strong></td>
         <td>Color-intensity grid</td>
         <td>Shows which departments sell to which buyers most often; darker cells indicate higher volume</td>
       </tr>
@@ -309,7 +309,7 @@
       <tr>
         <td><strong>Document Number</strong></td>
         <td>Auto</td>
-        <td>Auto-generated in format <code>SELL-{timestamp}</code>; field is read-only</td>
+        <td>Auto-generated in format <code>SELL-YYYY-NNN</code> (e.g. <code>SELL-2026-001</code>); field is read-only</td>
       </tr>
       <tr>
         <td><strong>Department</strong></td>
@@ -402,52 +402,52 @@
         <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
       </tr>
       <tr>
-        <td>Department ID</td>
-        <td>Extension: <code>source-department</code></td>
-      </tr>
-      <tr>
-        <td>Department Name</td>
-        <td>Extension: <code>source-department-name</code></td>
+        <td>Department</td>
+        <td><code>SupplyDelivery.supplier</code> (reference + display)</td>
       </tr>
       <tr>
         <td>Buyer ID</td>
-        <td>Extension: <code>selling-buyer-id</code></td>
+        <td>Extension: <code>buyer-id</code></td>
       </tr>
       <tr>
         <td>Buyer Name</td>
-        <td>Extension: <code>selling-buyer-name</code></td>
+        <td>Extension: <code>buyer-name</code></td>
       </tr>
       <tr>
         <td>Item Code</td>
-        <td>Extension: <code>item-code</code></td>
+        <td>Extension: <code>admin-item-code</code></td>
       </tr>
       <tr>
         <td>Item Name</td>
-        <td>Extension: <code>item-name</code></td>
+        <td>Extension: <code>admin-item-name</code></td>
       </tr>
       <tr>
         <td>Unit</td>
-        <td>Extension: <code>unit-of-measure</code></td>
+        <td>Extension: <code>admin-unit-of-measure</code></td>
       </tr>
       <tr>
-        <td>Unit Price</td>
-        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+        <td>Unit Price (Cost)</td>
+        <td>Extension: <code>admin-unit-price</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>Selling Price</td>
         <td>Extension: <code>selling-price</code> (valueMoney)</td>
       </tr>
       <tr>
-        <td>Line Total</td>
-        <td>Extension: <code>line-total</code> (valueMoney)</td>
+        <td>Selling Total</td>
+        <td>Extension: <code>selling-total</code> (valueMoney) -- quantity &times; selling price</td>
+      </tr>
+      <tr>
+        <td>Line Total (Cost)</td>
+        <td>Extension: <code>admin-line-total</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>Lot Number</td>
-        <td>Extension: <code>lot-number</code></td>
+        <td>Extension: <code>admin-lot-number</code></td>
       </tr>
       <tr>
         <td>Expiry Date</td>
-        <td>Extension: <code>expiry-date</code></td>
+        <td>Extension: <code>admin-expiry-date</code></td>
       </tr>
     </tbody>
   </table>
@@ -505,17 +505,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>History</strong></td>
+        <td><strong>Returns History</strong></td>
         <td>Full list of individual return line items with 11-column table including Supplier and Receiving Waybill columns</td>
         <td>Blue -- total record count</td>
       </tr>
       <tr>
-        <td><strong>Analytics</strong></td>
-        <td>KPI summary strip, Top 5 Returned Items, Supplier Activity bars, Supplier-Department heatmap, Period Summary</td>
+        <td><strong>Returns Analytics</strong></td>
+        <td>KPI summary strip, Top Returned Items, Supplier Activity bars, Supplier-Department heatmap, Period Summary</td>
         <td>Teal -- grouped document count</td>
       </tr>
       <tr>
-        <td><strong>Pending Confirmation</strong></td>
+        <td><strong>Returns Pending</strong></td>
         <td>In-progress return groups awaiting approval; identical confirm/reject flow to selling</td>
         <td>Orange -- pending group count</td>
       </tr>
@@ -560,8 +560,8 @@
       </tr>
       <tr>
         <td>3</td>
-        <td><strong>Doc #</strong></td>
-        <td>Auto-generated document number (format: <code>RET-{YYYY}-{NNN}</code>)</td>
+        <td><strong>Document Number</strong></td>
+        <td>Auto-generated document number (format: <code>RET-YYYY-NNN</code>, e.g. <code>RET-2026-001</code>)</td>
         <td>No</td>
         <td>Hidden</td>
       </tr>
@@ -588,7 +588,7 @@
       </tr>
       <tr>
         <td>7</td>
-        <td><strong>Item Name</strong></td>
+        <td><strong>Item</strong></td>
         <td>Product name with item code shown below</td>
         <td>Yes</td>
         <td>Visible</td>
@@ -602,7 +602,7 @@
       </tr>
       <tr>
         <td>9</td>
-        <td><strong>Qty</strong></td>
+        <td><strong>Quantity</strong></td>
         <td>Quantity being returned</td>
         <td>No</td>
         <td>Visible</td>
@@ -652,7 +652,7 @@
         <td>Same</td>
       </tr>
       <tr>
-        <td><strong>Total Value</strong></td>
+        <td><strong>Total Value (GEL)</strong></td>
         <td>Sum of all return amounts in GEL</td>
         <td>Same</td>
       </tr>
@@ -662,7 +662,7 @@
         <td>Selling shows "Top Buyer"</td>
       </tr>
       <tr>
-        <td><strong>Avg Items/Doc</strong></td>
+        <td><strong>Avg Items / Return</strong></td>
         <td>Average number of line items per return document</td>
         <td>Same</td>
       </tr>
@@ -686,7 +686,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>Top 5 Returned Items</strong></td>
+        <td><strong>Top Returned Items</strong></td>
         <td>Ranked list with badges</td>
         <td>Same structure, tracks returned items instead of sold items</td>
       </tr>
@@ -696,7 +696,7 @@
         <td>Shows return count per supplier (Selling shows per buyer)</td>
       </tr>
       <tr>
-        <td><strong>Supplier &rarr; Dept Heatmap</strong></td>
+        <td><strong>Supplier &rarr; Department Heatmap</strong></td>
         <td>Color-intensity grid</td>
         <td>Rows = Suppliers, Columns = Departments (Selling: Dept &rarr; Buyer)</td>
       </tr>
@@ -736,7 +736,7 @@
       <tr>
         <td><strong>Document Number</strong></td>
         <td>Auto</td>
-        <td>Auto-generated in format <code>RET-{YYYY}-{NNN}</code>; field is read-only</td>
+        <td>Auto-generated in format <code>RET-YYYY-NNN</code> (e.g. <code>RET-2026-001</code>); field is read-only</td>
       </tr>
       <tr>
         <td><strong>Department</strong></td>
@@ -813,12 +813,8 @@
         <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
       </tr>
       <tr>
-        <td>Department ID</td>
-        <td>Extension: <code>source-department</code></td>
-      </tr>
-      <tr>
-        <td>Department Name</td>
-        <td>Extension: <code>source-department-name</code></td>
+        <td>Department</td>
+        <td><code>SupplyDelivery.supplier</code> (reference + display)</td>
       </tr>
       <tr>
         <td>Supplier ID</td>
@@ -834,31 +830,31 @@
       </tr>
       <tr>
         <td>Item Code</td>
-        <td>Extension: <code>item-code</code></td>
+        <td>Extension: <code>admin-item-code</code></td>
       </tr>
       <tr>
         <td>Item Name</td>
-        <td>Extension: <code>item-name</code></td>
+        <td>Extension: <code>admin-item-name</code></td>
       </tr>
       <tr>
         <td>Unit</td>
-        <td>Extension: <code>unit-of-measure</code></td>
+        <td>Extension: <code>admin-unit-of-measure</code></td>
       </tr>
       <tr>
         <td>Unit Price</td>
-        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+        <td>Extension: <code>admin-unit-price</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>Line Total</td>
-        <td>Extension: <code>line-total</code> (valueMoney)</td>
+        <td>Extension: <code>admin-line-total</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>Lot Number</td>
-        <td>Extension: <code>lot-number</code></td>
+        <td>Extension: <code>admin-lot-number</code></td>
       </tr>
       <tr>
         <td>Expiry Date</td>
-        <td>Extension: <code>expiry-date</code></td>
+        <td>Extension: <code>admin-expiry-date</code></td>
       </tr>
     </tbody>
   </table>
@@ -903,8 +899,8 @@
       </tr>
       <tr>
         <td><strong>Doc # Format</strong></td>
-        <td><code>SELL-{timestamp}</code></td>
-        <td><code>RET-{YYYY}-{NNN}</code></td>
+        <td><code>SELL-YYYY-NNN</code></td>
+        <td><code>RET-YYYY-NNN</code></td>
       </tr>
       <tr>
         <td><strong>Counterparty Field</strong></td>

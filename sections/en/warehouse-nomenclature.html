@@ -29,7 +29,7 @@
       <span class="doc-stat-inline-label">Hierarchy Tiers</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">12</span>
+      <span class="doc-stat-inline-number">11</span>
       <span class="doc-stat-inline-label">Categories</span>
     </div>
     <div class="doc-stat-inline">
@@ -60,7 +60,7 @@
         <div style="font-weight: 700; font-size: 15px;">Categories</div>
         <div style="font-size: 12px; opacity: 0.85;">Broad classification groups (e.g., Medications, Consumables, Equipment)</div>
       </div>
-      <div style="margin-left: auto; background: rgba(255,255,255,0.2); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600;">12 items</div>
+      <div style="margin-left: auto; background: rgba(255,255,255,0.2); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 600;">11 items</div>
     </div>
     <div style="display: flex; justify-content: center; height: 20px;"><div style="border-left: 2px dashed var(--emr-gray-300);"></div></div>
 
@@ -107,7 +107,7 @@
     </div>
   </div>
 
-  <p>The <strong>tab bar</strong> at the top of the page represents each level with a clickable card. An arrow between the cards shows the parent-child flow. Each card displays a <strong>badge count</strong> showing the number of items at that level. Clicking a card switches the view to that tier's management table.</p>
+  <p>The <strong>tab bar</strong> at the top of the page represents each level with a clickable card. On desktop, a chevron icon between the cards shows the parent-child flow (hidden on mobile, where the cards appear in a grid layout). Each card displays a <strong>badge count</strong> showing the number of items at that level. Clicking a card switches the view to that tier's management table.</p>
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>Collapsible Info Panel:</strong>
@@ -131,7 +131,7 @@
         <td><strong>Level 1 - Categories</strong></td>
         <td>List</td>
         <td><code>warehouse-categories</code></td>
-        <td>12</td>
+        <td>11</td>
       </tr>
       <tr>
         <td><strong>Level 2 - Product Groups</strong></td>
@@ -182,7 +182,7 @@
     <h2>Categories (Level 1)</h2>
   </div>
 
-  <p><strong>Categories</strong> are the broadest classification tier -- the top-level "shelves" in your product library. They divide the hospital's entire inventory into major functional groups such as Medications, Consumables, Equipment, and Food. The system comes with <strong>12 predefined categories</strong>, and administrators can add custom ones.</p>
+  <p><strong>Categories</strong> are the broadest classification tier -- the top-level "shelves" in your product library. They divide the hospital's entire inventory into major functional groups such as Medications, Consumables, Equipment, and Food. The system comes with <strong>11 predefined categories</strong>, and administrators can add custom ones.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-nomenclature-categories-en.png" alt="Categories tab showing list and add form" class="doc-screenshot-image" data-i18n-img="wh-nomenclature-categories">
@@ -195,65 +195,53 @@
   <table class="doc-table">
     <thead>
       <tr>
-        <th>Group Name (Georgian)</th>
-        <th>English Translation</th>
+        <th>Group Name</th>
         <th>Examples</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>სახარჯი მასალა</td>
         <td>Consumable Materials</td>
         <td>Bandages, gauze, gloves, disposable items</td>
       </tr>
       <tr>
-        <td>მედიკამენტები</td>
         <td>Medications</td>
         <td>Tablets, injections, syrups, ointments</td>
       </tr>
       <tr>
-        <td>სამეურნეო</td>
         <td>Household Supplies</td>
         <td>Cleaning agents, paper towels, soap</td>
       </tr>
       <tr>
-        <td>არა ინვენტარი</td>
         <td>Non-Inventory</td>
         <td>One-time-use items not tracked in inventory</td>
       </tr>
       <tr>
-        <td>ძირითადი საშუალებები</td>
         <td>Fixed Assets</td>
         <td>Furniture, heavy equipment, vehicles</td>
       </tr>
       <tr>
-        <td>ინვენტარი</td>
         <td>Inventory Items</td>
         <td>Tracked reusable equipment and tools</td>
       </tr>
       <tr>
-        <td>რეაქტივი</td>
         <td>Reagents</td>
         <td>Lab testing reagents and chemicals</td>
       </tr>
       <tr>
-        <td>ხსნარი</td>
         <td>Solutions</td>
         <td>IV fluids, saline, dextrose solutions</td>
       </tr>
       <tr>
-        <td>სამედიცინო ინსტრუმენტი</td>
         <td>Medical Instruments</td>
         <td>Surgical tools, scalpels, forceps</td>
       </tr>
       <tr>
-        <td>ნარკოტიკები</td>
         <td>Controlled Substances</td>
         <td>Narcotics and regulated medications</td>
       </tr>
       <tr>
-        <td>კვება</td>
-        <td>Food / Nutrition</td>
+        <td>Food / Nutrition (კვება)</td>
         <td>Patient meals, nutritional supplements</td>
       </tr>
     </tbody>
@@ -373,16 +361,16 @@
     </thead>
     <tbody>
       <tr>
+        <td><strong>Code</strong></td>
+        <td>Internal code identifier for the sub-group (displays "-" if unset)</td>
+      </tr>
+      <tr>
         <td><strong>Name</strong></td>
         <td>The sub-group name (editable inline)</td>
       </tr>
       <tr>
-        <td><strong>Parent Group</strong></td>
+        <td><strong>Parent Category</strong></td>
         <td>The Level 2 product group this sub-group belongs to</td>
-      </tr>
-      <tr>
-        <td><strong>Item Count</strong></td>
-        <td>Number of generic names (Level 4) assigned to this sub-group</td>
       </tr>
       <tr>
         <td><strong>Status</strong></td>
@@ -391,7 +379,12 @@
     </tbody>
   </table>
 
-  <p>To add a new sub-group, type the name, select a parent product group from the dropdown, and click <strong>+</strong>. Clicking a sub-group row triggers cross-filtering to the Generic Names tab, showing only items in that sub-group.</p>
+  <p>To add a new sub-group, type the name, select a parent product group from the dropdown, and click <strong>+</strong>.</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Note:</strong>
+    Cross-filtering from sub-group rows to the Generic Names tab is defined in the component interface but is not currently wired up in the main view. Clicking a sub-group row does not trigger any navigation at this time.
+  </div>
 </section>
 
 
@@ -431,7 +424,7 @@
     <tbody>
       <tr>
         <td><strong>Name</strong></td>
-        <td>The standardized generic name. An arrow icon appears next to each name, indicating it is clickable for cross-filtering.</td>
+        <td>The standardized generic name. A chevron icon appears next to each name, indicating it is clickable for cross-filtering.</td>
       </tr>
       <tr>
         <td><strong>Sub-Group</strong></td>
@@ -468,74 +461,60 @@
     <thead>
       <tr>
         <th>Column</th>
-        <th>Width</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><strong>ID</strong></td>
-        <td>70px</td>
         <td>Original database ID or first 8 characters of the FHIR resource ID</td>
       </tr>
       <tr>
         <td><strong>Code</strong></td>
-        <td>70px</td>
         <td>Internal product code</td>
       </tr>
       <tr>
         <td><strong>Name</strong></td>
-        <td>250px</td>
         <td>Full product name (truncated to 1 line)</td>
       </tr>
       <tr>
         <td><strong>General Group</strong></td>
-        <td>150px</td>
         <td>The Level 2 product group this item belongs to</td>
       </tr>
       <tr>
         <td><strong>General Name</strong></td>
-        <td>200px</td>
         <td>The Level 4 generic name this item is linked to</td>
       </tr>
       <tr>
         <td><strong>Category</strong></td>
-        <td>120px</td>
         <td>Top-level warehouse group (e.g., Consumables, Medications)</td>
       </tr>
       <tr>
         <td><strong>Unit</strong></td>
-        <td>70px</td>
         <td>Unit of measure (piece, ml, vial, tablet, etc.)</td>
       </tr>
       <tr>
         <td><strong>Manufacturer</strong></td>
-        <td>140px</td>
         <td>Country or manufacturer name</td>
       </tr>
       <tr>
         <td><strong>Quantity</strong></td>
-        <td>70px</td>
-        <td>Quantity per unit (right-aligned)</td>
+        <td>Quantity per unit</td>
       </tr>
       <tr>
         <td><strong>Description</strong></td>
-        <td>180px</td>
         <td>Additional description text</td>
       </tr>
       <tr>
         <td><strong>Deleted</strong></td>
-        <td>70px</td>
         <td>Indicates if the item is soft-deleted (shown in red)</td>
       </tr>
       <tr>
         <td><strong>Parent</strong></td>
-        <td>80px</td>
         <td>Parent item reference (for composite/bundled products)</td>
       </tr>
       <tr>
         <td><strong>Price Calculation</strong></td>
-        <td>200px</td>
         <td>Price calculation mode for billing integration</td>
       </tr>
     </tbody>
@@ -546,26 +525,23 @@
   <p>The product catalog provides three filter controls in a horizontal row above the table:</p>
 
   <ul class="doc-list">
-    <li><strong>Search</strong> -- Real-time text search across product name, code, and barcode. The search is debounced (300ms delay) to avoid overloading the server with requests while you type.</li>
+    <li><strong>Search</strong> -- Real-time text search across product name. The search is debounced (300ms delay) to avoid excessive filtering while you type. (Barcode matching is available separately via the RS.ge integration service, not the main search bar.)</li>
     <li><strong>Category Filter</strong> -- Dropdown to filter by warehouse group (Consumables, Medications, etc.). Select "All" to see all categories.</li>
     <li><strong>Status Filter</strong> -- Dropdown to show active items only, deleted items only, or all items. Defaults to "Active."</li>
   </ul>
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>Server-Side Pagination:</strong>
-    Because the product catalog contains over 36,500 items, the table uses <strong>server-side pagination</strong> with 50 items per page. The page counter at the bottom shows "X / Total" (e.g., "50 / 36,513"). Data loads on-demand as you navigate pages to avoid loading the entire 22MB dataset.
+    Because the product catalog contains over 36,500 items, the table uses <strong>server-side pagination</strong> with 50 items per page. The item count in the header subtitle area shows "X / Total" (e.g., "50 / 36,513"), while standard pagination controls appear at the bottom. Data loads on-demand as you navigate pages to avoid loading the entire dataset.
   </div>
 
   <h4>Cross-Filter Indicator</h4>
 
-  <p>When you arrive at the Product Catalog via cross-filtering (clicking through from Group or Generic Name), a <strong>blue filter alert</strong> appears at the top showing which parent items are selected. The alert includes:</p>
+  <p>When you arrive at the Product Catalog via cross-filtering (clicking through from Group or Generic Name), <strong>two filter indicators</strong> appear:</p>
 
   <ul class="doc-list">
-    <li>A <strong>blue badge</strong> for the selected product group (Level 2)</li>
-    <li>An arrow separator</li>
-    <li>A <strong>teal badge</strong> for the selected generic name (Level 4)</li>
-    <li>Close buttons on each badge to clear individual filters</li>
-    <li>A global clear button to remove all filters at once</li>
+    <li><strong>Page-level filter bar</strong> (at the top of the entire nomenclature page) -- Shows a <strong>blue badge</strong> for the selected product group (Level 2), a chevron separator, and a <strong>teal badge</strong> for the selected generic name (Level 4). Each badge has its own close button to clear that filter individually. A global clear button at the right removes all filters at once.</li>
+    <li><strong>Tab-level alert</strong> (inside the Product Catalog tab) -- A simpler blue <code>Alert</code> component with inline badge text and a single close button to clear the cross-filter entirely.</li>
   </ul>
 
   <h4>Adding a New Product</h4>
@@ -690,7 +666,7 @@
       <tr>
         <td>9</td>
         <td><strong>Price Calculation</strong></td>
-        <td>Price mode selector, copy button</td>
+        <td>Price mode selector</td>
         <td>Controls whether the item appears in payment summaries and/or clinical calculations</td>
       </tr>
       <tr>
@@ -822,7 +798,7 @@
       <tr>
         <td><strong>Default Shelf Life (Days)</strong></td>
         <td>Only appears when expiration tracking is enabled. Sets the default shelf life for items received without an expiration date.</td>
-        <td><code>default-shelf-life</code></td>
+        <td><code>default-shelf-life-days</code></td>
       </tr>
     </tbody>
   </table>
@@ -834,7 +810,7 @@
 
   <h3>Units of Measure</h3>
 
-  <p>The system supports 17 unit types for product measurement, covering all common hospital supply packaging:</p>
+  <p>The system supports 17 unit types for product measurement (including both "მეტრი" and "მ" as separate entries), covering all common hospital supply packaging:</p>
 
   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin: 16px 0;">
     <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
@@ -877,7 +853,10 @@
       <strong>დოზა</strong> -- Dose
     </div>
     <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
-      <strong>მეტრი / მ</strong> -- Meter
+      <strong>მეტრი</strong> -- Meter
+    </div>
+    <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
+      <strong>მ</strong> -- Meter (abbrev.)
     </div>
     <div style="background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200); border-radius: 6px; padding: 8px 12px; font-size: 14px;">
       <strong>მკგ</strong> -- Microgram

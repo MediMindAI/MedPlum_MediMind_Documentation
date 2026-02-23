@@ -60,13 +60,13 @@
         <td><strong>გადაწერა</strong></td>
         <td>ნივთების გადაადგილება საავადმყოფოს განყოფილებებს შორის</td>
         <td>SupplyDelivery (type: transfer)</td>
-        <td>ყველა + დაჯგუფებული + დამტკიცება</td>
+        <td>გადაწერების ისტორია + ანალიტიკა + დასადასტურებელი</td>
       </tr>
       <tr>
         <td><strong>შეკვეთები</strong></td>
         <td>მარაგის მოთხოვნა სხვა განყოფილებებიდან</td>
         <td>SupplyRequest</td>
-        <td>ყველა + დაჯგუფებული + დადასტურება</td>
+        <td>შეკვეთების ისტორია + ანალიტიკა + დასადასტურებელი</td>
       </tr>
     </tbody>
   </table>
@@ -77,27 +77,27 @@
 
   <h3 id="receiving">3.1 მიღება (საქონლის მიღება)</h3>
 
-  <p><strong>მიღების</strong> მოდული აღრიცხავს საავადმყოფოში გარე მომწოდებლებისგან შემოსულ ყველა საქონელს. წარმოიდგინეთ ეს როგორც საავადმყოფოს „შესასვლელი კარი" ინვენტარისთვის — ყველა ნივთი, რომელიც მიწოდების ჯაჭვში შემოდის, აქედან იწყება. თითოეული მიღება დაკავშირებულია მომწოდებლის ზედნადებთან და ქმნის FHIR <code>SupplyDelivery</code> რესურსებს, რომლებიც ავტომატურად განაახლებენ მარაგის ნაშთებს.</p>
+  <p><strong>მიღების</strong> მოდულში აღირიცხება მომწოდებლებისგან შემოსული საქონელი. თითოეული მიღება უკავშირდება ზედნადებს და ქმნის FHIR <code>SupplyDelivery</code> რესურსს, რომელიც ავტომატურად განაახლებს მარაგის ნაშთებს.</p>
 
   <h4>გვერდის განლაგება</h4>
 
   <p>მიღების გვერდი იყენებს <strong>2-ჩანართიან განლაგებას</strong> საერთო სათაურის მოქმედებებით:</p>
 
   <ul class="doc-list">
-    <li><strong>ისტორიის ჩანართი</strong> — დაჯგუფებული ზედნადებების ცხრილი, რომელიც აჩვენებს ყველა მიღებულ ტვირთს ფილტრებით, დახარისხებითა და ექსპორტით</li>
-    <li><strong>ანალიტიკის ჩანართი</strong> — KPI შეჯამების ბარათები და დეტალური ანალიტიკის გრაფიკები მიღების ტენდენციებისთვის</li>
+    <li><strong>მიღების ისტორია</strong> — დაჯგუფებული ზედნადებების ცხრილი, რომელიც აჩვენებს ყველა მიღებულ ტვირთს ფილტრებით, დახარისხებითა და ექსპორტით</li>
+    <li><strong>ანალიტიკა</strong> — KPI შეჯამების ბარათები და დეტალური ანალიტიკის გრაფიკები მიღების ტენდენციებისთვის</li>
   </ul>
 
   <p>გვერდის სათაურში ორი მოქმედების ღილაკი ჩანს, ხელმისაწვდომია ორივე ჩანართიდან:</p>
   <ul class="doc-list">
-    <li><strong>RS-დან იმპორტი</strong> — ზედნადების მონაცემების იმპორტი RS (შემოსავლების სამსახური) ელექტრონული ანგარიშფაქტურის სისტემიდან</li>
-    <li><strong>ახალი მიღება</strong> — ახალი მიღების ხელით შექმნა მომწოდებლისა და ნივთების დეტალების შეყვანით</li>
+    <li><strong>მიღება RS-დან</strong> — ზედნადების მონაცემების იმპორტი RS (შემოსავლების სამსახური) ელექტრონული ანგარიშფაქტურის სისტემიდან</li>
+    <li><strong>ზედნადების შექმნა</strong> — ახალი მიღების ხელით შექმნა მომწოდებლისა და ნივთების დეტალების შეყვანით</li>
   </ul>
 
   <!-- Receiving History -->
-  <h4 id="receiving-history">ისტორიის ჩანართი</h4>
+  <h4 id="receiving-history">მიღების ისტორია</h4>
 
-  <p>ისტორიის ჩანართი აჩვენებს მიღების ყველა ჩანაწერს, რომლებიც დაჯგუფებულია ზედნადების ნომრის მიხედვით. თითოეული სტრიქონი წარმოადგენს მომწოდებლის ერთ ზედნადებს და აჩვენებს ამ ზედნადებზე არსებული ყველა ნივთის ჯამურ რაოდენობასა და ღირებულებას. სტრიქონზე დაწკაპუნებით იხსნება დეტალური მოდალი ცალკეული პოზიციებით.</p>
+  <p>მიღების ისტორიის ჩანართი აჩვენებს მიღების ყველა ჩანაწერს, რომლებიც დაჯგუფებულია ზედნადების ნომრის მიხედვით. თითოეული სტრიქონი წარმოადგენს მომწოდებლის ერთ ზედნადებს და აჩვენებს ამ ზედნადებზე არსებული ყველა ნივთის ჯამურ რაოდენობასა და ღირებულებას. სტრიქონზე დაწკაპუნებით იხსნება დეტალური მოდალი ცალკეული პოზიციებით.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-receiving-list-ka.png" alt="მიღების ისტორიის ჩანართი დაჯგუფებული ზედნადებების ცხრილით და ფილტრებით" class="doc-screenshot-image" data-i18n-img="wh-receiving-list">
@@ -181,7 +181,7 @@
         <tr>
           <td><strong>ხელშეკრულება #</strong></td>
           <td>შესყიდვის ხელშეკრულების მითითება</td>
-          <td>SupplyDelivery extension (contract-number)</td>
+          <td>Extension: admin-contract-number</td>
         </tr>
         <tr>
           <td><strong>კომპანია</strong></td>
@@ -191,7 +191,7 @@
         <tr>
           <td><strong>განყოფილება</strong></td>
           <td>მიმღები განყოფილება/საწყობი</td>
-          <td>SupplyDelivery.destination.display</td>
+          <td>Extension: dest-department (Location reference)</td>
         </tr>
         <tr>
           <td><strong>რაოდენობა</strong></td>
@@ -214,7 +214,7 @@
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>ექსპორტის ვარიანტები:</strong>
-    დააწკაპუნეთ ისტორიის ჩანართის სათაურში <strong>Excel</strong> ან <strong>PDF</strong> ღილაკზე ყველა გაფილტრული მიღების ჩანაწერის ექსპორტისთვის. Excel ექსპორტი მოიცავს ყველა სვეტს, პლუს შეფუთვის რაოდენობისა და შეფუთვის ფასის ველებს.
+    დააწკაპუნეთ მიღების ისტორიის ჩანართის სათაურში <strong>Excel</strong> ან <strong>CSV</strong> ღილაკზე ყველა გაფილტრული მიღების ჩანაწერის ექსპორტისთვის. Excel ექსპორტი მოიცავს ყველა სვეტს, პლუს შეფუთვის რაოდენობისა და შეფუთვის ფასის ველებს.
   </div>
 
   <h5>ზედნადების დეტალების მოდალი</h5>
@@ -287,7 +287,7 @@
   <!-- New Receipt Creation -->
   <h4 id="receipt-creation">ახალი მიღების შექმნა</h4>
 
-  <p>დააწკაპუნეთ <strong>ახალი მიღება</strong> გვერდის სათაურში მიღების შექმნის მოდალის გასახსნელად. ფორმას ორი ნაწილი აქვს: <strong>სათაურის სექცია</strong> ზედნადების დონის დეტალებისთვის და <strong>პოზიციების სექცია</strong> ცალკეული პროდუქტებისთვის.</p>
+  <p>დააწკაპუნეთ <strong>„ზედნადების შექმნა"</strong> ან <strong>„მიღება RS-დან"</strong> მიღების შექმნის მოდალის გასახსნელად. ფორმას ორი ნაწილი აქვს: <strong>სათაურის სექცია</strong> ზედნადების დონის დეტალებისთვის და <strong>პოზიციების სექცია</strong> ცალკეული პროდუქტებისთვის.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-receiving-create-ka.png" alt="ახალი მიღების შექმნის ფორმა მომწოდებლისა და ნივთების ველებით" class="doc-screenshot-image" data-i18n-img="wh-receiving-create">
@@ -354,7 +354,7 @@
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>RS იმპორტი:</strong>
-    ხელით შეყვანის ნაცვლად შეგიძლიათ გამოიყენოთ <strong>RS-დან იმპორტი</strong> ზედნადების მონაცემების პირდაპირ საქართველოს შემოსავლების სამსახურის ელექტრონული ანგარიშფაქტურის სისტემიდან ჩამოსატვირთად. ეს ავტომატურად ავსებს მომწოდებელს, ზედნადების ნომერსა და ყველა პოზიციას.
+    ხელით შეყვანის ნაცვლად შეგიძლიათ გამოიყენოთ <strong>მიღება RS-დან</strong> ზედნადების მონაცემების პირდაპირ საქართველოს შემოსავლების სამსახურის ელექტრონული ანგარიშფაქტურის სისტემიდან ჩამოსატვირთად. ეს ავტომატურად ავსებს მომწოდებელს, ზედნადების ნომერსა და ყველა პოზიციას.
   </div>
 
   <!-- ================================================================== -->
@@ -370,9 +370,9 @@
   <p>გადაწერის გვერდი იყენებს <strong>3-ჩანართიან განლაგებას</strong> საერთო სათაურის მოქმედების ღილაკით:</p>
 
   <ul class="doc-list">
-    <li><strong>ყველა გადაწერა</strong> — ყველა ცალკეული გადაწერის პოზიციის ბრტყელი სია რედაქტირების/წაშლის/კორექტირების მოქმედებებით</li>
-    <li><strong>დაჯგუფებული</strong> — ერთი სტრიქონი თითო დოკუმენტის ნომრისთვის KPI ანალიტიკითა და ექსპორტის ვარიანტებით</li>
-    <li><strong>დამტკიცების მოლოდინში</strong> — გადაწერები, რომლებიც ელოდებიან მიმღები განყოფილების დადასტურებას</li>
+    <li><strong>გადაწერების ისტორია</strong> — ყველა ცალკეული გადაწერის პოზიციის ბრტყელი სია რედაქტირების/წაშლის/კორექტირების მოქმედებებით</li>
+    <li><strong>ანალიტიკა</strong> — ერთი სტრიქონი თითო დოკუმენტის ნომრისთვის KPI ანალიტიკითა და ექსპორტის ვარიანტებით</li>
+    <li><strong>დასადასტურებელი</strong> — გადაწერები, რომლებიც ელოდებიან მიმღები განყოფილების დადასტურებას</li>
   </ul>
 
   <p>სათაური შეიცავს ერთ მოქმედების ღილაკს:</p>
@@ -381,9 +381,9 @@
   </ul>
 
   <!-- All Transfers Tab -->
-  <h4 id="transfers-all">ყველა გადაწერის ჩანართი</h4>
+  <h4 id="transfers-all">გადაწერების ისტორია</h4>
 
-  <p>ყველა გადაწერის ჩანართი აჩვენებს თითოეულ გადაწერის პოზიციას ცალკე სტრიქონად. თუ გადაწერის დოკუმენტს 5 ნივთი აქვს, თითოეული ჩანს როგორც ცალკე სტრიქონი, ვიზუალურად დაჯგუფებული დოკუმენტის ნომრის მიხედვით. ეს ხედი სასარგებლოა ცალკეული ნივთების მოსაძებნად და შესარედაქტირებლად.</p>
+  <p>გადაწერების ისტორიის ჩანართი აჩვენებს თითოეულ გადაწერის პოზიციას ცალკე სტრიქონად. თუ გადაწერის დოკუმენტს 5 ნივთი აქვს, თითოეული ჩანს როგორც ცალკე სტრიქონი, ვიზუალურად დაჯგუფებული დოკუმენტის ნომრის მიხედვით. ეს ხედი სასარგებლოა ცალკეული ნივთების მოსაძებნად და დასარედაქტირებლად.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-transfer-list-ka.png" alt="ყველა გადაწერის ჩანართი ცალკეული გადაწერის პოზიციებით" class="doc-screenshot-image" data-i18n-img="wh-transfer-list">
@@ -412,22 +412,22 @@
         <tr>
           <td><strong>გამგზავნი განყ.</strong></td>
           <td>გამგზავნი განყოფილების დასახელება</td>
-          <td>SupplyDelivery.supplier.display</td>
+          <td>Extension: source-department, source-department-name</td>
         </tr>
         <tr>
           <td><strong>მიმღები განყ.</strong></td>
           <td>მიმღები განყოფილების დასახელება</td>
-          <td>SupplyDelivery.destination.display</td>
+          <td>Extension: dest-department, dest-department-name</td>
         </tr>
         <tr>
           <td><strong>ნივთის კოდი</strong></td>
           <td>პროდუქტის კოდი ნომენკლატურიდან</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept</td>
+          <td>Extension: admin-item-code</td>
         </tr>
         <tr>
           <td><strong>ნივთის დასახელება</strong></td>
           <td>პროდუქტის დასახელება</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept.text</td>
+          <td>Extension: admin-item-name</td>
         </tr>
         <tr>
           <td><strong>ერთეული</strong></td>
@@ -442,7 +442,7 @@
         <tr>
           <td><strong>ფასი</strong></td>
           <td>ერთეულის ფასი (GEL)</td>
-          <td>SupplyDelivery extension (unit-price)</td>
+          <td>Extension: admin-unit-price</td>
         </tr>
         <tr>
           <td><strong>ჯამი</strong></td>
@@ -466,7 +466,7 @@
   <p>სტრიქონის დონის მოქმედებები მოიცავს:</p>
   <ul class="doc-list">
     <li><strong>რედაქტირება</strong> — ცალკეული პოზიციის გამგზავნი/მიმღები განყოფილების, რაოდენობის ან ფასის შეცვლა</li>
-    <li><strong>წაშლა</strong> — გადაწერის პოზიციის სრულად წაშლა (დადასტურების დიალოგით)</li>
+    <li><strong>წაშლა</strong> — გადაწერის პოზიციის სრულად წაშლა (დადასტურების შეტყობინებით)</li>
     <li><strong>კორექტირება</strong> — საწყობის კორექტირების მოდალის გახსნა კორექტირების ჩანაწერის შესაქმნელად, რომელიც აბრუნებს ან ცვლის ამ გადაწერას</li>
   </ul>
 
@@ -476,9 +476,9 @@
   </div>
 
   <!-- Grouped Tab -->
-  <h4 id="transfers-grouped">დაჯგუფებული ჩანართი</h4>
+  <h4 id="transfers-grouped">ანალიტიკა</h4>
 
-  <p>დაჯგუფებული ჩანართი აგრეგირებს გადაწერებს დოკუმენტის ნომრის მიხედვით და აჩვენებს ერთ სტრიქონს თითო გადაწერის დოკუმენტზე. ეს იძლევა გადაწერის აქტივობის უფრო მაღალი დონის ხედს და მოიცავს ანალიტიკის ფუნქციებს, რომლებიც არ არის ხელმისაწვდომი ყველა ჩანართში.</p>
+  <p>ანალიტიკის ჩანართში გადაწერები დოკუმენტის ნომრის მიხედვით არის გაერთიანებული — თითოეულ დოკუმენტს ერთი სტრიქონი შეესაბამება. ეს ხედი გადაწერის აქტივობის ზოგად სურათს იძლევა და შეიცავს ანალიტიკის ფუნქციებს, რომლებიც „ისტორიის" ჩანართში არ არის.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-transfer-grouped-ka.png" alt="გადაწერების დაჯგუფებული ხედი ანალიტიკის შეჯამების ბარათებით" class="doc-screenshot-image" data-i18n-img="wh-transfer-grouped">
@@ -529,9 +529,9 @@
   </div>
 
   <!-- Approval Tab -->
-  <h4 id="transfers-approval">დამტკიცების მოლოდინის ჩანართი</h4>
+  <h4 id="transfers-approval">დასადასტურებელი</h4>
 
-  <p>დამტკიცების მოლოდინის ჩანართი აჩვენებს გადაწერებს, რომლებიც შექმნილია, მაგრამ ჯერ არ არის დადასტურებული მიმღები განყოფილების მიერ. ეს არის გადაწერის დამტკიცების სამუშაო პროცესის ბირთვი — იგი უზრუნველყოფს, რომ მიმღებმა განყოფილებამ გადაამოწმოს რეალურად მიღებული საქონელი, სანამ ინვენტარის ნაშთები განახლდება.</p>
+  <p>დასადასტურებელი ჩანართი აჩვენებს გადაწერებს, რომლებიც შექმნილია, მაგრამ ჯერ არ არის დადასტურებული მიმღები განყოფილების მიერ. ეს არის გადაწერის დამტკიცების სამუშაო პროცესის ბირთვი — იგი უზრუნველყოფს, რომ მიმღებმა განყოფილებამ გადაამოწმოს რეალურად მიღებული საქონელი, სანამ ინვენტარის ნაშთები განახლდება.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-transfer-approval-ka.png" alt="გადაწერის დამტკიცების სამუშაო პროცესი სასიცოცხლო ციკლის ბეჯებითა და დადასტურების მოქმედებებით" class="doc-screenshot-image" data-i18n-img="wh-transfer-approval">
@@ -541,18 +541,20 @@
 
   <p>ჩანართის ზედა ნაწილში ვიზუალური სამუშაო პროცესის ინდიკატორი აჩვენებს გადაწერის დამტკიცების სამ ეტაპს:</p>
 
-  <div class="doc-zone-diagram" style="grid-template-columns: repeat(3, 1fr); max-width: 600px; margin: 0 auto 1.5rem;">
-    <div class="doc-zone" style="text-align: center;">
-      <div class="doc-zone-header" style="font-size: 0.85rem;">1. შექმნილი</div>
-      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">გადაწერა გაგზავნილია</p></div>
+  <div style="display: flex; align-items: center; gap: 8px; max-width: 600px; margin: 0 auto 1.5rem;">
+    <div style="flex: 1; text-align: center; padding: 10px; border-radius: 8px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200);">
+      <div style="font-weight: 600; font-size: 0.85rem; color: var(--emr-text-primary);">1. შექმნილი</div>
+      <div style="font-size: 0.8rem; color: var(--emr-text-secondary);">გადაწერა გაგზავნილია</div>
     </div>
-    <div class="doc-zone" style="text-align: center; border-color: var(--emr-secondary);">
-      <div class="doc-zone-header" style="background: var(--emr-gradient-secondary); color: white; font-size: 0.85rem;">2. განხილვის მოლოდინში</div>
-      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">ელოდება დადასტურებას</p></div>
+    <span style="color: var(--emr-gray-400); font-size: 1.2rem;">→</span>
+    <div style="flex: 1; text-align: center; padding: 10px; border-radius: 8px; background: var(--emr-gray-50); border: 1px solid var(--emr-secondary);">
+      <div style="font-weight: 600; font-size: 0.85rem; color: var(--emr-text-primary);">2. განხილვის მოლოდინში</div>
+      <div style="font-size: 0.8rem; color: var(--emr-text-secondary);">ელოდება დადასტურებას</div>
     </div>
-    <div class="doc-zone" style="text-align: center;">
-      <div class="doc-zone-header" style="font-size: 0.85rem;">3. დადასტურებული</div>
-      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">მარაგი განახლებულია</p></div>
+    <span style="color: var(--emr-gray-400); font-size: 1.2rem;">→</span>
+    <div style="flex: 1; text-align: center; padding: 10px; border-radius: 8px; background: var(--emr-gray-50); border: 1px solid var(--emr-gray-200);">
+      <div style="font-weight: 600; font-size: 0.85rem; color: var(--emr-text-primary);">3. დადასტურებული</div>
+      <div style="font-size: 0.8rem; color: var(--emr-text-secondary);">მარაგი განახლებულია</div>
     </div>
   </div>
 
@@ -585,12 +587,16 @@
 
   <h5>განყოფილების წვდომა</h5>
 
-  <p>დამტკიცების ჩანართი აფილტრავს გადაწერებს თქვენი განყოფილებისთვის მინიჭების მიხედვით. თქვენ ხედავთ მხოლოდ <strong>თქვენი განყოფილებისთვის მიმართულ</strong> გადაწერებს. პროექტის ადმინისტრატორებს (სისტემის ადმინებს) შეუძლიათ ნახონ და დაადასტურონ ყველა მოლოდინში მყოფი გადაწერა განყოფილების მიუხედავად.</p>
+  <p>დამტკიცების ჩანართი გაფილტრავს გადაწერებს თქვენი განყოფილებისთვის მინიჭების მიხედვით. თქვენ ხედავთ მხოლოდ <strong>თქვენი განყოფილებისთვის მიმართულ</strong> გადაწერებს. პროექტის ადმინისტრატორებს (სისტემის ადმინებს) შეუძლიათ ნახონ და დაადასტურონ ყველა მოლოდინში მყოფი გადაწერა განყოფილების მიუხედავად.</p>
 
   <!-- Transfer Book Modal -->
   <h4 id="transfer-book">ახალი გადაწერის შექმნა</h4>
 
   <p>დააწკაპუნეთ <strong>ახალი გადაწერა</strong> გვერდის სათაურში <strong>გადაწერის წიგნის</strong> მოდალის გასახსნელად. ეს არის ორპანელიანი ფორმა სათაურის ველებითა და პოზიციების შემქმნელით.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-transfer-book-ka.png" alt="გადაწერის წიგნის მოდალი" class="doc-screenshot-image" data-i18n-img="wh-transfer-book" />
+  </div>
 
   <h5>სათაურის ველები</h5>
 
@@ -718,31 +724,31 @@
 
   <h3 id="orders">3.3 შეკვეთები (მარაგის მოთხოვნები)</h3>
 
-  <p><strong>შეკვეთები</strong> საშუალებას აძლევს განყოფილებებს ოფიციალურად მოითხოვონ მარაგი სხვა განყოფილებებიდან. წარმოიდგინეთ ეს როგორც შიდა შესყიდვის შეკვეთა — მომთხოვნი განყოფილება ამბობს „გვჭირდება 50 შპრიცი მთავარი საწყობიდან", ხოლო მიმწოდებელმა განყოფილებამ შეუძლია განიხილოს, შეასწოროს და შეასრულოს შეკვეთა. შეკვეთები ქმნიან FHIR <code>SupplyRequest</code> რესურსებს და არის მხოლოდ რაოდენობის (ფასის აღრიცხვის გარეშე, გადაწერისგან განსხვავებით).</p>
+  <p><strong>შეკვეთები</strong> საშუალებას აძლევს განყოფილებებს ოფიციალურად მოითხოვონ მარაგი სხვა განყოფილებებიდან. მომთხოვნი განყოფილება აყალიბებს მოთხოვნას საჭირო ნომენკლატურისა და რაოდენობის მითითებით, ხოლო მიმწოდებელი განყოფილება განიხილავს, საჭიროების შემთხვევაში ასწორებს და ასრულებს მას. შეკვეთები ქმნიან FHIR <code>SupplyRequest</code> რესურსებს და მოიცავს მხოლოდ რაოდენობრივ ინფორმაციას — ფასის აღრიცხვა, გადაწერისგან განსხვავებით, არ ხდება.</p>
 
   <h4>გვერდის განლაგება</h4>
 
   <p>შეკვეთების გვერდი იყენებს <strong>3-ჩანართიან განლაგებას</strong> ორი სათაურის მოქმედების ღილაკით:</p>
 
   <ul class="doc-list">
-    <li><strong>ყველა შეკვეთა</strong> — ყველა შეკვეთის პოზიციის ბრტყელი სია რედაქტირების/წაშლის/კორექტირების მოქმედებებით</li>
-    <li><strong>დაჯგუფებული</strong> — ერთი სტრიქონი თითო შეკვეთის დოკუმენტზე KPI ანალიტიკითა და დეტალური ხედებით</li>
-    <li><strong>დადასტურება</strong> — შეკვეთები, რომლებიც ელოდებიან მიმწოდებელი განყოფილების დადასტურებას</li>
+    <li><strong>შეკვეთების ისტორია</strong> — ყველა შეკვეთის პოზიციის ბრტყელი სია რედაქტირების/წაშლის/კორექტირების მოქმედებებით</li>
+    <li><strong>ანალიტიკა</strong> — ერთი სტრიქონი თითო შეკვეთის დოკუმენტზე KPI ანალიტიკითა და დეტალური ხედებით</li>
+    <li><strong>დასადასტურებელი</strong> — შეკვეთები, რომლებიც ელოდებიან მიმწოდებელი განყოფილების დადასტურებას</li>
   </ul>
 
   <p>სათაურის მოქმედების ღილაკები:</p>
   <ul class="doc-list">
-    <li><strong>შეკვეთის წიგნი</strong> — ხსნის შეკვეთის წიგნის მოდალს ახალი შეკვეთის შესაქმნელად რამდენიმე ნივთით</li>
+    <li><strong>შეკვეთების წიგნი</strong> — ხსნის შეკვეთების წიგნის მოდალს ახალი შეკვეთის შესაქმნელად რამდენიმე ნივთით</li>
     <li><strong>ზედნადების შექმნა</strong> — ქმნის ზედნადებს (მიწოდების დოკუმენტს) არსებული დადასტურებული შეკვეთებიდან</li>
   </ul>
 
   <!-- All Orders Tab -->
-  <h4 id="orders-all">ყველა შეკვეთის ჩანართი</h4>
+  <h4 id="orders-all">შეკვეთების ისტორიის ჩანართი</h4>
 
-  <p>ყველა შეკვეთის ჩანართი აჩვენებს თითოეულ შეკვეთის პოზიციას ცალ-ცალკე, ყველა გადაწერის ჩანართის მსგავსად. თითოეული სტრიქონი არის შეკვეთის დოკუმენტში ერთი ნივთი. ფილტრები საშუალებას გაძლევთ მოძებნოთ თარიღის დიაპაზონის, დოკუმენტის ნომრის, განყოფილებებისა და ნივთის დასახელების მიხედვით.</p>
+  <p>შეკვეთების ისტორიის ჩანართი აჩვენებს თითოეულ შეკვეთის პოზიციას ცალ-ცალკე, ყველა გადაწერის ჩანართის მსგავსად. თითოეული სტრიქონი არის შეკვეთის დოკუმენტში ერთი ნივთი. ფილტრები საშუალებას გაძლევთ მოძებნოთ თარიღის დიაპაზონის, დოკუმენტის ნომრის, განყოფილებებისა და ნივთის დასახელების მიხედვით.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-orders-list-ka.png" alt="ყველა შეკვეთის ჩანართი შეკვეთის პოზიციებით და სტატუსის ბეჯებით" class="doc-screenshot-image" data-i18n-img="wh-orders-list">
+    <img src="images/wh-orders-list-ka.png" alt="შეკვეთების ისტორიის ჩანართი შეკვეთის პოზიციებით და სტატუსის ბეჯებით" class="doc-screenshot-image" data-i18n-img="wh-orders-list">
   </div>
 
   <div class="doc-table-container">
@@ -768,32 +774,32 @@
         <tr>
           <td><strong>მომთხოვნი</strong></td>
           <td>მარაგის მომთხოვნი განყოფილება</td>
-          <td>SupplyRequest.requester.display</td>
+          <td>Extension: requester-department</td>
         </tr>
         <tr>
           <td><strong>მიმწოდებელი</strong></td>
           <td>შეკვეთის შემსრულებელი განყოფილება</td>
-          <td>SupplyRequest.deliverTo.display</td>
+          <td>Extension: receiver-department</td>
         </tr>
         <tr>
           <td><strong>ნივთის კოდი</strong></td>
           <td>პროდუქტის კოდი ნომენკლატურიდან</td>
-          <td>SupplyRequest.itemCodeableConcept</td>
+          <td>Extension: order-line-items (JSON → itemCode)</td>
         </tr>
         <tr>
           <td><strong>ნივთის დასახელება</strong></td>
           <td>პროდუქტის დასახელება</td>
-          <td>SupplyRequest.itemCodeableConcept.text</td>
+          <td>Extension: order-line-items (JSON → itemName)</td>
         </tr>
         <tr>
           <td><strong>ერთეული</strong></td>
           <td>ზომის ერთეული</td>
-          <td>SupplyRequest.quantity.unit</td>
+          <td>Extension: order-line-items (JSON → unit)</td>
         </tr>
         <tr>
           <td><strong>რაოდ.</strong></td>
           <td>მოთხოვნილი რაოდენობა</td>
-          <td>SupplyRequest.quantity.value</td>
+          <td>Extension: order-line-items (JSON → quantity)</td>
         </tr>
         <tr>
           <td><strong>სტატუსი</strong></td>
@@ -815,12 +821,12 @@
   </div>
 
   <!-- Grouped Tab -->
-  <h4 id="orders-grouped">დაჯგუფებული ჩანართი</h4>
+  <h4 id="orders-grouped">ანალიტიკა</h4>
 
-  <p>დაჯგუფებული ჩანართი აგრეგირებს შეკვეთებს დოკუმენტის ნომრის მიხედვით და აჩვენებს ერთ სტრიქონს თითო შეკვეთისთვის ჯამური რაოდენობითა და ნივთების რაოდენობით. გადაწერების დაჯგუფებული ჩანართის მსგავსად, იგი მოიცავს ხუთ KPI ანალიტიკის ბარათსა და დეტალური ანალიტიკის სექციებს.</p>
+  <p>ანალიტიკის ჩანართი აჯგუფებს შეკვეთებს დოკუმენტის ნომრის მიხედვით, აჩვენებს ერთ სტრიქონს თითო შეკვეთაზე ჯამური რაოდენობითა და პოზიციების რაოდენობით. გადაწერების ანალიტიკის ჩანართის მსგავსად, იგი მოიცავს ხუთ KPI ანალიტიკურ ბარათს და დეტალურ ანალიტიკურ სექციებს.</p>
 
   <div class="doc-screenshot-full">
-    <img src="images/wh-orders-grouped-ka.png" alt="შეკვეთების დაჯგუფებული ხედი ანალიტიკის ბარათებითა და დოკუმენტის ცხრილით" class="doc-screenshot-image" data-i18n-img="wh-orders-grouped">
+    <img src="images/wh-orders-grouped-ka.png" alt="შეკვეთების ანალიტიკის ჩანართი" class="doc-screenshot-image" data-i18n-img="wh-orders-grouped">
   </div>
 
   <h5>ანალიტიკის ზოლი</h5>
@@ -858,6 +864,48 @@
     </table>
   </div>
 
+  <h5>ანალიტიკური დიაგრამები</h5>
+
+  <p>KPI ზოლის ქვემოთ, ოთხი ჩაშლადი ანალიტიკური სექცია გთავაზობთ უფრო ღრმა ანალიზს:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>სექცია</th>
+          <th>ვიზუალიზაცია</th>
+          <th>აღწერა</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ტოპ 5 ნივთი</strong></td>
+          <td>რეიტინგული სია ბეჯებით</td>
+          <td>ყველაზე ხშირად შეკვეთილი ნივთები რაოდენობის მიხედვით, ადგილის, ნივთის სახელის, რაოდენობისა და ჯამური ღირებულების (GEL) ჩვენებით</td>
+        </tr>
+        <tr>
+          <td><strong>განყოფილებების აქტივობა</strong></td>
+          <td>ჰორიზონტალური დაწყობილი სვეტოვანი დიაგრამა</td>
+          <td>ლურჯი = გაგზავნილი შეკვეთები (შემკვეთი), მწვანე = მიღებული შეკვეთები; განყოფილებები დალაგებულია ჯამური აქტივობის მიხედვით</td>
+        </tr>
+        <tr>
+          <td><strong>შეკვეთის მარშრუტების თბური რუკა</strong></td>
+          <td>ფერის ინტენსივობის ბადე</td>
+          <td>სტრიქონები = შემკვეთი განყოფილებები, სვეტები = მიმღები განყოფილებები; უჯრის ფერის ინტენსივობა მიუთითებს შეკვეთების მოცულობაზე წყვილებს შორის</td>
+        </tr>
+        <tr>
+          <td><strong>პერიოდის შეჯამება</strong></td>
+          <td>ცხრილი გადართვით</td>
+          <td>კვირეული (4 კვირა) ან თვიური (6 თვე) ხედი დოკუმენტების რაოდენობითა და ჯამური ღირებულებით (GEL) თითო პერიოდზე</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>პერიოდის გადართვა:</strong> პერიოდის შეჯამების სექცია მოიცავს <strong>კვირეული / თვიური</strong> გადამრთველს, რომელიც გადართავს 4-კვირიან და 6-თვიან შეკვეთების აქტივობის დაშლას შორის.
+  </div>
+
   <p>დაჯგუფებული შეკვეთების დეტალური მოდალი აჩვენებს შეკვეთის ყველა პოზიციას, რაც საშუალებას გაძლევთ განიხილოთ რა იყო მოთხოვნილი და დაადასტუროთ ცალკეული ნივთები.</p>
 
   <!-- Confirmation Tab -->
@@ -871,18 +919,20 @@
 
   <h5>სამუშაო პროცესის სასიცოცხლო ციკლი</h5>
 
-  <div class="doc-zone-diagram" style="grid-template-columns: repeat(3, 1fr); max-width: 600px; margin: 0 auto 1.5rem;">
-    <div class="doc-zone" style="text-align: center;">
-      <div class="doc-zone-header" style="font-size: 0.85rem;">1. შექმნილი</div>
-      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">შეკვეთა გაგზავნილია</p></div>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+    <div style="text-align: center;">
+      <strong style="color: #1f2937;">1. შექმნილი</strong><br>
+      <span style="font-size: 0.85rem; color: #1f2937;">შეკვეთა გაგზავნილია</span>
     </div>
-    <div class="doc-zone" style="text-align: center; border-color: var(--emr-secondary);">
-      <div class="doc-zone-header" style="background: var(--emr-gradient-secondary); color: white; font-size: 0.85rem;">2. განხილვის მოლოდინში</div>
-      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">ელოდება შესრულებას</p></div>
+    <span style="font-size: 1.5rem; color: var(--emr-secondary);">&rarr;</span>
+    <div style="text-align: center;">
+      <strong style="color: #1f2937;">2. განხილვის მოლოდინში</strong><br>
+      <span style="font-size: 0.85rem; color: #1f2937;">ელოდება შესრულებას</span>
     </div>
-    <div class="doc-zone" style="text-align: center;">
-      <div class="doc-zone-header" style="font-size: 0.85rem;">3. დადასტურებული</div>
-      <div class="doc-zone-content"><p style="margin: 0; font-size: 0.8rem;">შეკვეთა შესრულებულია</p></div>
+    <span style="font-size: 1.5rem; color: var(--emr-secondary);">&rarr;</span>
+    <div style="text-align: center;">
+      <strong style="color: #1f2937;">3. დადასტურებული</strong><br>
+      <span style="font-size: 0.85rem; color: #1f2937;">შეკვეთა შესრულებულია</span>
     </div>
   </div>
 
@@ -891,7 +941,7 @@
   <ul class="doc-list">
     <li><strong>განხილვა და რედაქტირება</strong> — ხსნის დადასტურების მოდალს, სადაც შეგიძლიათ შეცვალოთ თითოეული ნივთის <strong>გაცემული რაოდენობა</strong>. ეს არის მთავარი განსხვავება გადაწერის დამტკიცებისგან: შეგიძლიათ ზუსტად მიუთითოთ რამდენ ერთეულს გასცემთ, რაც შეიძლება განსხვავდებოდეს მოთხოვნილი რაოდენობისგან.</li>
     <li><strong>სწრაფი დადასტურება</strong> — ადასტურებს შეკვეთას თავდაპირველი მოთხოვნილი რაოდენობებით (კორექტირების გარეშე)</li>
-    <li><strong>წაშლა</strong> — შეკვეთის უარყოფა და წაშლა დადასტურების დიალოგით</li>
+    <li><strong>წაშლა</strong> — შეკვეთის უარყოფა და წაშლა დადასტურების შეტყობინებით</li>
   </ul>
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
@@ -906,7 +956,7 @@
   <!-- Order Book Modal -->
   <h4 id="order-book">ახალი შეკვეთის შექმნა</h4>
 
-  <p>დააწკაპუნეთ <strong>შეკვეთის წიგნი</strong> გვერდის სათაურში შეკვეთის წიგნის მოდალის გასახსნელად. გადაწერის წიგნის მსგავსად, ეს არის ორპანელიანი ფორმა სათაურის სექციითა და პოზიციების შემქმნელით.</p>
+  <p>დააწკაპუნეთ <strong>შეკვეთების წიგნი</strong> გვერდის სათაურში შეკვეთების წიგნის მოდალის გასახსნელად. გადაწერის წიგნის მსგავსად, ეს არის ორპანელიანი ფორმა სათაურის სექციითა და პოზიციების შემქმნელით.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-order-create-ka.png" alt="შეკვეთის წიგნის მოდალი მომთხოვნი/მიმწოდებელი განყოფილების არჩევითა და ნივთების სიით" class="doc-screenshot-image" data-i18n-img="wh-order-create">
@@ -1026,19 +1076,19 @@
           <td><strong>მიღება</strong></td>
           <td>SupplyDelivery</td>
           <td>identifier, occurrenceDateTime, supplier, destination, suppliedItem</td>
-          <td>contract-number, package-quantity, package-price, unit-price</td>
+          <td>admin-contract-number, package-quantity, package-price, admin-unit-price, admin-item-code, admin-item-name, admin-unit-of-measure, admin-line-total</td>
         </tr>
         <tr>
           <td><strong>გადაწერა</strong></td>
           <td>SupplyDelivery</td>
           <td>identifier, occurrenceDateTime, supplier (from), destination (to), suppliedItem, status</td>
-          <td>unit-price, document-number, direct-write-off, approval</td>
+          <td>admin-unit-price, source-department, dest-department, transfer-workflow-status, transfer-approved-by-id, transfer-approved-by-name, transfer-approved-at; Identifier: transfer-document-number</td>
         </tr>
         <tr>
           <td><strong>შეკვეთები</strong></td>
           <td>SupplyRequest</td>
-          <td>identifier, authoredOn, requester, deliverTo, itemCodeableConcept, quantity, status</td>
-          <td>document-number, issued-quantity</td>
+          <td>identifier, authoredOn, status</td>
+          <td>order-line-items, order-status, delivered-quantity, requester-department, receiver-department; Identifier: order-document-number</td>
         </tr>
       </tbody>
     </table>

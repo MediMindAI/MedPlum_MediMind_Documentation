@@ -67,7 +67,7 @@ erDiagram
         reference supplier "Organization"
         reference destination "Organization"
         quantity suppliedItem "qty + itemRef"
-        string status "in-progress / completed"
+        string status "in-progress / completed / abandoned / cancelled"
     }
     SUPPLY_REQUEST {
         string id PK
@@ -81,8 +81,8 @@ erDiagram
         string id PK
         string code "stock-quant"
         string itemCode "extension: sq-item-code"
-        string locationId "extension: sq-location"
-        string lotNumber "extension: sq-lot"
+        string locationId "extension: sq-location-id"
+        string lotNumber "extension: sq-lot-number"
         decimal quantity "extension: sq-quantity"
         decimal unitCost "extension: sq-unit-cost"
     }
@@ -167,7 +167,7 @@ erDiagram
         <td>Dynamic</td>
         <td>
           <code>code</code> = stock-quant,
-          extensions: <code>sq-item-code</code>, <code>sq-location</code>, <code>sq-lot</code>, <code>sq-expiry-date</code>, <code>sq-quantity</code>, <code>sq-reserved-quantity</code>, <code>sq-unit-cost</code>, <code>sq-quality-status</code>
+          extensions: <code>sq-item-code</code>, <code>sq-item-name</code>, <code>sq-location-id</code>, <code>sq-location-name</code>, <code>sq-lot-number</code>, <code>sq-expiry-date</code>, <code>sq-quantity</code>, <code>sq-reserved-qty</code>, <code>sq-unit-cost</code>, <code>sq-unit</code>, <code>sq-quality-status</code>, <code>sq-last-movement</code>, <code>sq-last-move-ref</code>, <code>disposal-reason</code>
         </td>
       </tr>
       <tr>
@@ -212,15 +212,15 @@ erDiagram
       </tr>
       <tr>
         <td><strong>Location</strong></td>
-        <td><code>sq-location</code></td>
+        <td><code>sq-location-id</code></td>
         <td>string</td>
         <td>Department/warehouse Location ID</td>
       </tr>
       <tr>
         <td><strong>Lot Number</strong></td>
-        <td><code>sq-lot</code></td>
+        <td><code>sq-lot-number</code></td>
         <td>string</td>
-        <td>Batch identifier (empty string = untracked)</td>
+        <td>Batch identifier (the extension stores an empty string for untracked items; the composite key identifier substitutes <code>NONE</code>)</td>
       </tr>
       <tr>
         <td><strong>Quality Status</strong></td>
@@ -244,6 +244,18 @@ erDiagram
     </thead>
     <tbody>
       <tr>
+        <td>Item Name</td>
+        <td><code>sq-item-name</code></td>
+        <td>string</td>
+        <td>Denormalized item display name for fast rendering</td>
+      </tr>
+      <tr>
+        <td>Location Name</td>
+        <td><code>sq-location-name</code></td>
+        <td>string</td>
+        <td>Denormalized location display name for fast rendering</td>
+      </tr>
+      <tr>
         <td>Quantity</td>
         <td><code>sq-quantity</code></td>
         <td>decimal</td>
@@ -251,7 +263,7 @@ erDiagram
       </tr>
       <tr>
         <td>Reserved Quantity</td>
-        <td><code>sq-reserved-quantity</code></td>
+        <td><code>sq-reserved-qty</code></td>
         <td>decimal</td>
         <td>Quantity reserved for pending transfers</td>
       </tr>
@@ -260,6 +272,12 @@ erDiagram
         <td><code>sq-unit-cost</code></td>
         <td>decimal</td>
         <td>Cost per unit in GEL (weighted average)</td>
+      </tr>
+      <tr>
+        <td>Unit</td>
+        <td><code>sq-unit</code></td>
+        <td>string</td>
+        <td>Unit of measure (e.g., "pcs", "ml", "mg")</td>
       </tr>
       <tr>
         <td>Expiry Date</td>
@@ -272,6 +290,18 @@ erDiagram
         <td><code>sq-last-movement</code></td>
         <td>dateTime</td>
         <td>Timestamp of last balance change</td>
+      </tr>
+      <tr>
+        <td>Last Move Ref</td>
+        <td><code>sq-last-move-ref</code></td>
+        <td>string</td>
+        <td>Reference to the SupplyDelivery that triggered the last balance change</td>
+      </tr>
+      <tr>
+        <td>Disposal Reason</td>
+        <td><code>disposal-reason</code></td>
+        <td>string</td>
+        <td>Reason for disposal (used when quality status is rejected/scrapped)</td>
       </tr>
       <tr>
         <td>Version ID</td>
@@ -386,6 +416,31 @@ erDiagram
         <td>string</td>
         <td>UNSPSC commodity classification code (8 digits)</td>
       </tr>
+      <tr>
+        <td><code>medical-heading</code></td>
+        <td>string</td>
+        <td>Medical classification heading</td>
+      </tr>
+      <tr>
+        <td><code>item-category</code></td>
+        <td>code/string</td>
+        <td>Item category tag</td>
+      </tr>
+      <tr>
+        <td><code>price-calculation-mode</code></td>
+        <td>code</td>
+        <td>Payment visibility mode (<code>0</code> or <code>3</code>)</td>
+      </tr>
+      <tr>
+        <td><code>analysis-id</code></td>
+        <td>string</td>
+        <td>Hidden analysis ID (legacy field)</td>
+      </tr>
+      <tr>
+        <td><code>warehouse-unknown-field</code></td>
+        <td>string</td>
+        <td>Hidden legacy field (preserved for backward compatibility)</td>
+      </tr>
     </tbody>
   </table>
 
@@ -438,7 +493,9 @@ erDiagram
   <!-- Stock Move Types -->
   <h4>Stock Movement Types</h4>
 
-  <p>Every inventory change creates an immutable <strong>StockMove</strong> record (modeled as a SupplyDelivery). The system supports seven movement types:</p>
+  <p>Every inventory change creates an immutable <strong>StockMove</strong> record (modeled as a SupplyDelivery). The system uses two sets of type codes: <strong>SUPPLY_TYPE_CODES</strong> (the SupplyDelivery <code>type</code> field) and <strong>STOCK_MOVE_CODES</strong> (additional movement types stored as extensions).</p>
+
+  <p><strong>Supply Type Codes</strong> (SupplyDelivery.type):</p>
 
   <table class="doc-table">
     <thead>
@@ -450,6 +507,11 @@ erDiagram
     </thead>
     <tbody>
       <tr>
+        <td><code>catalog</code></td>
+        <td>N/A</td>
+        <td>Product catalog entry (no stock movement)</td>
+      </tr>
+      <tr>
         <td><code>receipt</code></td>
         <td>Inbound (+)</td>
         <td>Goods received from supplier or another facility</td>
@@ -459,6 +521,45 @@ erDiagram
         <td>Outbound (-) / Inbound (+)</td>
         <td>Inter-department transfer (decrements source, increments destination)</td>
       </tr>
+      <tr>
+        <td><code>waybill</code></td>
+        <td>N/A</td>
+        <td>Waybill / shipping document</td>
+      </tr>
+      <tr>
+        <td><code>write-off</code></td>
+        <td>Outbound (-)</td>
+        <td>Write-off of expired, damaged, or obsolete items</td>
+      </tr>
+      <tr>
+        <td><code>selling</code></td>
+        <td>Outbound (-)</td>
+        <td>Sale of items to external company</td>
+      </tr>
+      <tr>
+        <td><code>return</code></td>
+        <td>Outbound (-)</td>
+        <td>Return of items to supplier</td>
+      </tr>
+      <tr>
+        <td><code>dispensing</code></td>
+        <td>Outbound (-)</td>
+        <td>Clinical patient dispensing (stationary module)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Stock Move Codes</strong> (additional movement sub-types):</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Move Type</th>
+        <th>Direction</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
       <tr>
         <td><code>adjustment-plus</code></td>
         <td>Inbound (+)</td>
@@ -483,6 +584,21 @@ erDiagram
         <td><code>recall</code></td>
         <td>Outbound (-)</td>
         <td>Lot recall removing specific batches from inventory</td>
+      </tr>
+      <tr>
+        <td><code>dept-correction-reversal</code></td>
+        <td>Reversal</td>
+        <td>Reverses a previous department-level stock correction</td>
+      </tr>
+      <tr>
+        <td><code>dept-correction-redo</code></td>
+        <td>Correction</td>
+        <td>Re-applies a department-level stock correction with updated values</td>
+      </tr>
+      <tr>
+        <td><code>transfer-qty-correction</code></td>
+        <td>Correction</td>
+        <td>Corrects quantities on a previously completed transfer</td>
       </tr>
     </tbody>
   </table>
@@ -799,8 +915,8 @@ flowchart TD
 
   <ul class="doc-list">
     <li><strong>ETag-based locking:</strong> Each StockQuant update includes an <code>If-Match</code> header with the resource's <code>meta.versionId</code></li>
-    <li><strong>Automatic retry:</strong> On a version conflict (HTTP 412), the system retries up to 5 times with exponential backoff and random jitter</li>
-    <li><strong>Balance cache:</strong> StockQuant balances are cached with a 30-second TTL (time to live)</li>
+    <li><strong>Automatic retry:</strong> On a version conflict (HTTP 412), the system retries up to 3 times with exponential backoff and random jitter</li>
+    <li><strong>Balance cache (two tiers):</strong> StockQuant balances use a two-tier cache: an <strong>in-memory cache</strong> with a 30-second TTL, backed by a <strong>localStorage cache</strong> with a 5-minute TTL and FNV hash integrity verification</li>
     <li><strong>Cross-tab invalidation:</strong> Cache invalidation is broadcast across browser tabs using the BroadcastChannel API</li>
   </ul>
 
@@ -840,9 +956,13 @@ stateDiagram-v2
     requested --> approved : Supervisor approves
     requested --> rejected : Supervisor rejects
     approved --> in_progress : Processing begins
+    approved --> cancelled : Cancel
     in_progress --> received : Destination confirms
     in_progress --> partial : Partial receipt
+    in_progress --> completed : Direct completion
+    in_progress --> cancelled : Cancel
     partial --> completed : Remaining received
+    partial --> cancelled : Cancel
     received --> completed : Finalize
     rejected --> [*]
     cancelled --> [*]
@@ -916,6 +1036,9 @@ stateDiagram-v2
     note right of approved : approve-procurement required
         </div>
       </div>
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>Note:</strong> The diagram uses underscores for readability (Mermaid limitation). The actual code values use <strong>hyphens</strong>: <code>under-review</code>, <code>partially-received</code>.
+      </div>
     </div>
   </details>
 
@@ -928,6 +1051,7 @@ stateDiagram-v2
     <thead>
       <tr>
         <th>Zone</th>
+        <th>Code</th>
         <th>Priority</th>
         <th>Description</th>
       </tr>
@@ -935,21 +1059,25 @@ stateDiagram-v2
     <tbody>
       <tr>
         <td><strong>Cold Chain</strong></td>
+        <td><code>cold-chain</code></td>
         <td>1 (Highest)</td>
         <td>Temperature-sensitive items requiring refrigeration</td>
       </tr>
       <tr>
         <td><strong>Controlled</strong></td>
+        <td><code>controlled</code></td>
         <td>2</td>
         <td>Narcotics and controlled substances requiring secure handling</td>
       </tr>
       <tr>
         <td><strong>Hazardous</strong></td>
+        <td><code>hazmat</code></td>
         <td>3</td>
         <td>Hazardous materials requiring special handling procedures</td>
       </tr>
       <tr>
         <td><strong>General</strong></td>
+        <td><code>general</code></td>
         <td>4 (Lowest)</td>
         <td>Standard warehouse items with no special handling requirements</td>
       </tr>

@@ -67,7 +67,7 @@ erDiagram
         reference supplier "Organization"
         reference destination "Organization"
         quantity suppliedItem "qty + itemRef"
-        string status "in-progress / completed"
+        string status "in-progress / completed / abandoned / cancelled"
     }
     SUPPLY_REQUEST {
         string id PK
@@ -81,8 +81,8 @@ erDiagram
         string id PK
         string code "stock-quant"
         string itemCode "extension: sq-item-code"
-        string locationId "extension: sq-location"
-        string lotNumber "extension: sq-lot"
+        string locationId "extension: sq-location-id"
+        string lotNumber "extension: sq-lot-number"
         decimal quantity "extension: sq-quantity"
         decimal unitCost "extension: sq-unit-cost"
     }
@@ -167,7 +167,7 @@ erDiagram
         <td>Динамический</td>
         <td>
           <code>code</code> = stock-quant,
-          расширения: <code>sq-item-code</code>, <code>sq-location</code>, <code>sq-lot</code>, <code>sq-expiry-date</code>, <code>sq-quantity</code>, <code>sq-reserved-quantity</code>, <code>sq-unit-cost</code>, <code>sq-quality-status</code>
+          расширения: <code>sq-item-code</code>, <code>sq-item-name</code>, <code>sq-location-id</code>, <code>sq-location-name</code>, <code>sq-lot-number</code>, <code>sq-expiry-date</code>, <code>sq-quantity</code>, <code>sq-reserved-qty</code>, <code>sq-unit-cost</code>, <code>sq-unit</code>, <code>sq-quality-status</code>, <code>sq-last-movement</code>, <code>sq-last-move-ref</code>, <code>disposal-reason</code>
         </td>
       </tr>
       <tr>
@@ -212,15 +212,15 @@ erDiagram
       </tr>
       <tr>
         <td><strong>Местоположение</strong></td>
-        <td><code>sq-location</code></td>
+        <td><code>sq-location-id</code></td>
         <td>string</td>
         <td>ID отделения/склада Location</td>
       </tr>
       <tr>
         <td><strong>Номер партии</strong></td>
-        <td><code>sq-lot</code></td>
+        <td><code>sq-lot-number</code></td>
         <td>string</td>
-        <td>Идентификатор партии (пустая строка = без отслеживания)</td>
+        <td>Идентификатор партии (расширение хранит пустую строку для позиций без отслеживания; составной ключ подставляет <code>NONE</code>)</td>
       </tr>
       <tr>
         <td><strong>Статус качества</strong></td>
@@ -244,6 +244,18 @@ erDiagram
     </thead>
     <tbody>
       <tr>
+        <td>Название позиции</td>
+        <td><code>sq-item-name</code></td>
+        <td>string</td>
+        <td>Денормализованное отображаемое имя позиции для быстрого рендеринга</td>
+      </tr>
+      <tr>
+        <td>Название местоположения</td>
+        <td><code>sq-location-name</code></td>
+        <td>string</td>
+        <td>Денормализованное отображаемое имя местоположения для быстрого рендеринга</td>
+      </tr>
+      <tr>
         <td>Количество</td>
         <td><code>sq-quantity</code></td>
         <td>decimal</td>
@@ -251,7 +263,7 @@ erDiagram
       </tr>
       <tr>
         <td>Зарезервированное количество</td>
-        <td><code>sq-reserved-quantity</code></td>
+        <td><code>sq-reserved-qty</code></td>
         <td>decimal</td>
         <td>Количество, зарезервированное для ожидающих трансферов</td>
       </tr>
@@ -260,6 +272,12 @@ erDiagram
         <td><code>sq-unit-cost</code></td>
         <td>decimal</td>
         <td>Стоимость за единицу в GEL (средневзвешенная)</td>
+      </tr>
+      <tr>
+        <td>Единица измерения</td>
+        <td><code>sq-unit</code></td>
+        <td>string</td>
+        <td>Единица измерения (напр., «шт», «мл», «мг»)</td>
       </tr>
       <tr>
         <td>Срок годности</td>
@@ -272,6 +290,18 @@ erDiagram
         <td><code>sq-last-movement</code></td>
         <td>dateTime</td>
         <td>Метка времени последнего изменения остатка</td>
+      </tr>
+      <tr>
+        <td>Ссылка на последнее движение</td>
+        <td><code>sq-last-move-ref</code></td>
+        <td>string</td>
+        <td>Ссылка на SupplyDelivery, вызвавший последнее изменение остатка</td>
+      </tr>
+      <tr>
+        <td>Причина утилизации</td>
+        <td><code>disposal-reason</code></td>
+        <td>string</td>
+        <td>Причина утилизации (используется при статусе качества rejected/scrapped)</td>
       </tr>
       <tr>
         <td>ID версии</td>
@@ -386,6 +416,31 @@ erDiagram
         <td>string</td>
         <td>Код классификации товаров UNSPSC (8 цифр)</td>
       </tr>
+      <tr>
+        <td><code>medical-heading</code></td>
+        <td>string</td>
+        <td>Заголовок медицинской классификации</td>
+      </tr>
+      <tr>
+        <td><code>item-category</code></td>
+        <td>code/string</td>
+        <td>Тег категории позиции</td>
+      </tr>
+      <tr>
+        <td><code>price-calculation-mode</code></td>
+        <td>code</td>
+        <td>Режим видимости оплаты (<code>0</code> или <code>3</code>)</td>
+      </tr>
+      <tr>
+        <td><code>analysis-id</code></td>
+        <td>string</td>
+        <td>Скрытый ID анализа (устаревшее поле)</td>
+      </tr>
+      <tr>
+        <td><code>warehouse-unknown-field</code></td>
+        <td>string</td>
+        <td>Скрытое устаревшее поле (сохранено для обратной совместимости)</td>
+      </tr>
     </tbody>
   </table>
 
@@ -438,7 +493,9 @@ erDiagram
   <!-- Типы движения запасов -->
   <h4>Типы движения запасов</h4>
 
-  <p>Каждое изменение инвентаря создает неизменяемую запись <strong>StockMove</strong> (моделируется как SupplyDelivery). Система поддерживает семь типов движений:</p>
+  <p>Каждое изменение инвентаря создает неизменяемую запись <strong>StockMove</strong> (моделируется как SupplyDelivery). Система использует два набора кодов типов: <strong>SUPPLY_TYPE_CODES</strong> (поле <code>type</code> SupplyDelivery) и <strong>STOCK_MOVE_CODES</strong> (дополнительные типы движений, хранимые как расширения).</p>
+
+  <p><strong>Коды типов поставки</strong> (SupplyDelivery.type):</p>
 
   <table class="doc-table">
     <thead>
@@ -450,6 +507,11 @@ erDiagram
     </thead>
     <tbody>
       <tr>
+        <td><code>catalog</code></td>
+        <td>N/A</td>
+        <td>Запись каталога продукции (движение запасов отсутствует)</td>
+      </tr>
+      <tr>
         <td><code>receipt</code></td>
         <td>Приход (+)</td>
         <td>Товары, полученные от поставщика или из другого учреждения</td>
@@ -459,6 +521,45 @@ erDiagram
         <td>Расход (-) / Приход (+)</td>
         <td>Межотделенческий трансфер (уменьшает остаток источника, увеличивает остаток получателя)</td>
       </tr>
+      <tr>
+        <td><code>waybill</code></td>
+        <td>N/A</td>
+        <td>Накладная / транспортный документ</td>
+      </tr>
+      <tr>
+        <td><code>write-off</code></td>
+        <td>Расход (-)</td>
+        <td>Списание просроченных, поврежденных или устаревших позиций</td>
+      </tr>
+      <tr>
+        <td><code>selling</code></td>
+        <td>Расход (-)</td>
+        <td>Продажа позиций внешней компании</td>
+      </tr>
+      <tr>
+        <td><code>return</code></td>
+        <td>Расход (-)</td>
+        <td>Возврат позиций поставщику</td>
+      </tr>
+      <tr>
+        <td><code>dispensing</code></td>
+        <td>Расход (-)</td>
+        <td>Клиническая выдача пациенту (стационарный модуль)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Коды движения запасов</strong> (дополнительные подтипы движений):</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th>Тип движения</th>
+        <th>Направление</th>
+        <th>Описание</th>
+      </tr>
+    </thead>
+    <tbody>
       <tr>
         <td><code>adjustment-plus</code></td>
         <td>Приход (+)</td>
@@ -483,6 +584,21 @@ erDiagram
         <td><code>recall</code></td>
         <td>Расход (-)</td>
         <td>Отзыв партии -- изъятие конкретных партий из инвентаря</td>
+      </tr>
+      <tr>
+        <td><code>dept-correction-reversal</code></td>
+        <td>Реверсия</td>
+        <td>Отмена предыдущей корректировки запасов на уровне отделения</td>
+      </tr>
+      <tr>
+        <td><code>dept-correction-redo</code></td>
+        <td>Корректировка</td>
+        <td>Повторное применение корректировки запасов отделения с обновленными значениями</td>
+      </tr>
+      <tr>
+        <td><code>transfer-qty-correction</code></td>
+        <td>Корректировка</td>
+        <td>Исправление количеств в ранее завершенном трансфере</td>
       </tr>
     </tbody>
   </table>
@@ -799,8 +915,8 @@ flowchart TD
 
   <ul class="doc-list">
     <li><strong>Блокировка на основе ETag:</strong> Каждое обновление StockQuant включает заголовок <code>If-Match</code> с <code>meta.versionId</code> ресурса</li>
-    <li><strong>Автоматический повтор:</strong> При конфликте версий (HTTP 412) система повторяет попытку до 5 раз с экспоненциальной задержкой и случайным смещением</li>
-    <li><strong>Кеш остатков:</strong> Остатки StockQuant кешируются с TTL 30 секунд (время жизни)</li>
+    <li><strong>Автоматический повтор:</strong> При конфликте версий (HTTP 412) система повторяет попытку до 3 раз с экспоненциальной задержкой и случайным смещением</li>
+    <li><strong>Кеш остатков (два уровня):</strong> Остатки StockQuant используют двухуровневый кеш: <strong>кеш в оперативной памяти</strong> с TTL 30 секунд, подкрепленный <strong>кешем в localStorage</strong> с TTL 5 минут и проверкой целостности по FNV-хешу</li>
     <li><strong>Межвкладочная инвалидация:</strong> Инвалидация кеша транслируется между вкладками браузера через BroadcastChannel API</li>
   </ul>
 
@@ -840,9 +956,13 @@ stateDiagram-v2
     requested --> approved : Supervisor approves
     requested --> rejected : Supervisor rejects
     approved --> in_progress : Processing begins
+    approved --> cancelled : Cancel
     in_progress --> received : Destination confirms
     in_progress --> partial : Partial receipt
+    in_progress --> completed : Direct completion
+    in_progress --> cancelled : Cancel
     partial --> completed : Remaining received
+    partial --> cancelled : Cancel
     received --> completed : Finalize
     rejected --> [*]
     cancelled --> [*]
@@ -916,6 +1036,9 @@ stateDiagram-v2
     note right of approved : approve-procurement required
         </div>
       </div>
+      <div class="doc-callout doc-callout-info doc-callout-simple">
+        <strong>Примечание:</strong> В диаграмме используются подчеркивания для удобочитаемости (ограничение Mermaid). Фактические значения в коде используют <strong>дефисы</strong>: <code>under-review</code>, <code>partially-received</code>.
+      </div>
     </div>
   </details>
 
@@ -928,6 +1051,7 @@ stateDiagram-v2
     <thead>
       <tr>
         <th>Зона</th>
+        <th>Код</th>
         <th>Приоритет</th>
         <th>Описание</th>
       </tr>
@@ -935,21 +1059,25 @@ stateDiagram-v2
     <tbody>
       <tr>
         <td><strong>Холодовая цепь</strong></td>
+        <td><code>cold-chain</code></td>
         <td>1 (Наивысший)</td>
         <td>Термочувствительные позиции, требующие хранения в холодильнике</td>
       </tr>
       <tr>
         <td><strong>Контролируемые</strong></td>
+        <td><code>controlled</code></td>
         <td>2</td>
         <td>Наркотические и контролируемые вещества, требующие безопасного обращения</td>
       </tr>
       <tr>
         <td><strong>Опасные</strong></td>
+        <td><code>hazmat</code></td>
         <td>3</td>
         <td>Опасные материалы, требующие специальных процедур обращения</td>
       </tr>
       <tr>
         <td><strong>Общие</strong></td>
+        <td><code>general</code></td>
         <td>4 (Наименьший)</td>
         <td>Стандартные складские позиции без особых требований к обращению</td>
       </tr>

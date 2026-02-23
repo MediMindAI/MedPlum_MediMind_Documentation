@@ -9,11 +9,11 @@
     </div>
     <div>
       <div class="doc-section-number">1</div>
-      <h2>Warehouse Analytics</h2>
+      <h2>Balance Analytics</h2>
     </div>
   </div>
 
-  <p>The <strong>Warehouse Analytics</strong> page is the most comprehensive reporting tool in the MediMind warehouse module. Think of it as your hospital's supply chain intelligence center -- it takes the raw transaction data (receipts, transfers, write-offs, dispensing) and transforms it into actionable insights across <strong>9 specialized tabs</strong>.</p>
+  <p>The <strong>Balance Analytics</strong> page is the most comprehensive reporting tool in the MediMind warehouse module. Think of it as your hospital's supply chain intelligence center -- it takes the raw transaction data (receipts, transfers, write-offs, dispensing) and transforms it into actionable insights across <strong>9 specialized tabs</strong>.</p>
 
   <p>Hospital managers use this page to answer critical questions: "Where is our money going? Which items are sitting idle? What will we run out of next month? Which suppliers deliver on time?" Instead of pulling reports from spreadsheets, everything is available in real-time from a single page.</p>
 
@@ -48,7 +48,7 @@
   <!-- Global Filters -->
   <h3 id="analytics-filters">1.1 Global Filters</h3>
 
-  <p>At the top of the analytics page, a <strong>collapsible filter bar</strong> controls which data appears in all tabs below. Setting filters here applies them across every tab -- you do not need to re-filter when switching between Balance Movement, Insights, or any other view.</p>
+  <p>At the top of the analytics page, a <strong>collapsible filter bar</strong> controls which data appears in all tabs below. Setting filters here applies them across every tab -- you do not need to re-filter when switching between Balance Table, Insights, or any other view.</p>
 
   <h4>Date Range</h4>
 
@@ -114,11 +114,11 @@
 
   <h4>Department and Group Filters</h4>
 
-  <p>Two <strong>multi-select dropdowns</strong> let you narrow the analysis to specific departments or nomenclature groups:</p>
+  <p>Two <strong>multi-select dropdowns</strong> let you narrow the analysis to specific departments or categories:</p>
 
   <ul class="doc-list">
     <li><strong>Department</strong> -- Select one or more hospital departments (e.g., Emergency, Surgery, ICU). The dropdown is searchable and supports clearing all selections</li>
-    <li><strong>Nomenclature Group</strong> -- Select one or more item categories (e.g., Medications, Consumables, Reagents). Useful for analyzing a specific category of supplies</li>
+    <li><strong>Category</strong> -- Select one or more item categories (e.g., Medications, Consumables, Reagents). Useful for analyzing a specific category of supplies</li>
   </ul>
 
   <p>An <strong>active filter count badge</strong> appears on the filter bar showing how many filters are currently applied, so you always know when your data is filtered.</p>
@@ -164,12 +164,12 @@
           <td>The core measure of how much supplies support patient care</td>
         </tr>
         <tr>
-          <td><strong>Dead Stock Count</strong></td>
+          <td><strong>Dead Stock Items</strong></td>
           <td>Number of items with zero movement but positive balance</td>
           <td>High numbers indicate capital tied up in unused inventory</td>
         </tr>
         <tr>
-          <td><strong>Low Stock Count</strong></td>
+          <td><strong>Low Stock Items</strong></td>
           <td>Number of items running below safe supply levels</td>
           <td>These items need reordering attention before they run out</td>
         </tr>
@@ -195,9 +195,9 @@
   </div>
 
   <!-- Tab 1: Balance Movement -->
-  <h3 id="balance-movement">1.3 Balance &amp; Movement Table</h3>
+  <h3 id="balance-movement">1.3 Balance Table</h3>
 
-  <p>The <strong>Balance &amp; Movement</strong> tab is the most data-dense view in the analytics system. It presents a comprehensive ledger showing every item's opening balance, all inflows and outflows, and closing balance for the selected period -- similar to a financial trial balance, but for inventory.</p>
+  <p>The <strong>Balance Table</strong> tab is the most data-dense view in the analytics system. It presents a comprehensive ledger showing every item's opening balance, all inflows and outflows, and closing balance for the selected period -- similar to a financial trial balance, but for inventory.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-analytics-balance-en.png" alt="Balance Movement table with color-coded column groups showing opening balance, inflows, outflows, and closing balance" class="doc-screenshot-image" data-i18n-img="wh-analytics-balance">
@@ -427,7 +427,7 @@
 
   <h4>Low Stock Tab</h4>
 
-  <p><strong>Low stock</strong> items have positive balance but are running low relative to their consumption rate. The key metric is <strong>Days of Supply</strong> -- how many days the current stock will last if consumption continues at the same rate.</p>
+  <p><strong>Low stock</strong> items have positive balance but their closing quantity is below 5 units. While the <strong>Days of Supply</strong> column shows how many days the current stock will last, the low stock filter itself identifies items with closing quantity below this threshold.</p>
 
   <p>The Days of Supply column uses <strong>color-coded text</strong>:</p>
 
@@ -626,9 +626,9 @@
   <p>Below the table, a <strong>horizontal bar chart</strong> shows how expiration risk is distributed across departments. This helps identify if one department is holding a disproportionate share of soon-to-expire items.</p>
 
   <!-- Tab 7: Suppliers -->
-  <h3 id="suppliers">1.8 Suppliers</h3>
+  <h3 id="suppliers">1.8 Suppliers &amp; Operations</h3>
 
-  <p>The <strong>Suppliers</strong> tab provides four distinct analysis sections stacked vertically. Together they answer: "Who are our suppliers? How do they perform? Where are we losing stock? Which departments cost the most?"</p>
+  <p>The <strong>Suppliers &amp; Operations</strong> tab provides four distinct analysis sections stacked vertically. Together they answer: "Who are our suppliers? How do they perform? Where are we losing stock? Which departments cost the most?"</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-analytics-suppliers-en.png" alt="Suppliers tab showing supplier scorecard table with ranked suppliers, delivery counts, total spend, and expandable recent deliveries" class="doc-screenshot-image" data-i18n-img="wh-analytics-suppliers">
@@ -711,9 +711,9 @@
   </ul>
 
   <!-- Tab 8: Clinical Analytics -->
-  <h3 id="clinical-analytics">1.9 Clinical Analytics</h3>
+  <h3 id="clinical-analytics">1.9 Clinical</h3>
 
-  <p>The <strong>Clinical Analytics</strong> tab bridges the gap between warehouse operations and patient care. It links supply consumption to clinical data -- diagnoses, hospital encounters, and lot numbers -- enabling cost analysis and recall traceability that would be impossible from inventory records alone.</p>
+  <p>The <strong>Clinical</strong> tab bridges the gap between warehouse operations and patient care. It links supply consumption to clinical data -- diagnoses, hospital encounters, and lot numbers -- enabling cost analysis and recall traceability that would be impossible from inventory records alone.</p>
 
   <p>This tab contains three sub-tabs:</p>
 
@@ -921,7 +921,7 @@
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>Forecast Accuracy:</strong>
-    Forecasts are more reliable for items with longer consumption history and stable demand (X-class items in ABC/XYZ). For volatile items (Z-class), pay more attention to the confidence range than the point estimate. Items with less than 3 months of history may not appear in the forecast.
+    Forecasts are more reliable for items with longer consumption history and stable demand (X-class items in ABC/XYZ). For volatile items (Z-class), pay more attention to the confidence range than the point estimate. Items with less than 6 months of history may not appear in the forecast.
   </div>
 
   <!-- FHIR Integration -->

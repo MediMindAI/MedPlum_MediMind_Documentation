@@ -227,7 +227,7 @@
       <tr>
         <td><strong>Reserved Qty</strong></td>
         <td>Basic (stock-quant)</td>
-        <td>sq-reserved-quantity</td>
+        <td>sq-reserved-qty</td>
       </tr>
     </tbody>
   </table>
@@ -365,12 +365,12 @@
   <ul class="doc-list">
     <li>The system automatically sorts available lots by expiry date (earliest first)</li>
     <li>The first lot in the sorted list gets the green <strong>"FEFO Recommended"</strong> badge</li>
-    <li>Expired and quarantined lots are excluded from the pick list</li>
+    <li>Expired and quarantined lots are sorted to the bottom of the list but remain visible for awareness</li>
     <li>Lots without an expiry date sort to the bottom (picked last)</li>
   </ul>
 
   <div class="doc-callout doc-callout-warning doc-callout-simple">
-    <strong>FEFO Override:</strong> If a picker selects a lot that is NOT the FEFO-recommended one, the system opens an override modal requiring a reason. Common reasons include: customer request, packaging condition, partial pallet, or quality inspection. The override reason and optional notes are logged for audit purposes.
+    <strong>FEFO Override:</strong> If a picker selects a lot that is NOT the FEFO-recommended one, the system opens an override modal requiring a reason. Available reasons: damaged packaging, customer request, lot recall, insufficient quantity, quality issue, or other (with free-text notes). The override reason and optional notes are logged for audit purposes.
   </div>
 
   <!-- 2.5 Zone Grouping -->
@@ -443,6 +443,10 @@
     <h2>Write-Offs</h2>
   </div>
 
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Navigation Note:</strong> Write-Offs is accessed as a separate page via its own menu item in the Warehouse sidebar, not as a tab within the Inventory page. The Inventory page contains only the Stock Levels and Picking Queue tabs.
+  </div>
+
   <p><strong>Write-offs</strong> remove items from inventory when they can no longer be used -- expired medications, damaged supplies, missing stock discovered during audits, or items recalled by the manufacturer. The write-off module provides a complete audit trail from creation through approval.</p>
 
   <p>The page has a <strong>"New Write-Off"</strong> button in the header and three tabs:</p>
@@ -463,13 +467,13 @@
   </div>
 
   <!-- 3.1 History Tab -->
-  <h3 id="writeoffs-history">History Tab</h3>
+  <h3 id="writeoffs-history">Write-Off History Tab</h3>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-writeoffs-list-en.png" alt="Write-offs history list with status badges" class="doc-screenshot-image" data-i18n-img="wh-writeoffs-list">
   </div>
 
-  <p>The <strong>History</strong> tab shows a sortable, paginated list of all write-off line items. Each row represents a single item that was written off.</p>
+  <p>The <strong>Write-Off History</strong> tab shows a sortable, paginated list of all write-off line items. Each row represents a single item that was written off.</p>
 
   <h4>Table Columns</h4>
 
@@ -756,7 +760,7 @@
   <!-- 3.5 FHIR Data Model -->
   <h3 id="writeoffs-fhir">FHIR Data Model</h3>
 
-  <p>Write-offs are stored as <strong>SupplyDelivery</strong> resources with a type code of <code>write-off</code>. Each line item is a separate SupplyDelivery resource, grouped by a shared document number extension.</p>
+  <p>Write-offs are stored as <strong>SupplyDelivery</strong> resources with a type code of <code>write-off</code>. Each line item is a separate SupplyDelivery resource, grouped by a shared document number identifier.</p>
 
   <table class="doc-table">
     <thead>
@@ -769,18 +773,18 @@
     <tbody>
       <tr>
         <td><strong>Document Number</strong></td>
-        <td>SupplyDelivery.extension (document-number)</td>
+        <td>SupplyDelivery.identifier</td>
         <td>Groups multiple line items into one document</td>
       </tr>
       <tr>
         <td><strong>Department</strong></td>
-        <td>SupplyDelivery.destination</td>
-        <td>Reference to Location resource</td>
+        <td>SupplyDelivery.supplier</td>
+        <td>Reference to Location/Organization resource</td>
       </tr>
       <tr>
         <td><strong>Item</strong></td>
-        <td>SupplyDelivery.suppliedItem.itemReference</td>
-        <td>Reference to DeviceDefinition (item master)</td>
+        <td>SupplyDelivery.suppliedItem.itemCodeableConcept</td>
+        <td>CodeableConcept with item code and name</td>
       </tr>
       <tr>
         <td><strong>Quantity</strong></td>

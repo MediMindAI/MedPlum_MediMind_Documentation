@@ -58,17 +58,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>ისტორია</strong></td>
-        <td>გაყიდვის ცალკეული პოზიციების სრული სია ფილტრებით, სორტირებით, პაგინაციითა და კორექტირების მოქმედებებით</td>
+        <td><strong>გაყიდვის ისტორია</strong></td>
+        <td>გაყიდვის ცალკეული პოზიციების სრული სია ფილტრებით, სორტირებით, გვერდებად დაყოფითა და კორექტირების მოქმედებებით</td>
         <td>ლურჯი -- ჩანაწერების საერთო რაოდენობა</td>
       </tr>
       <tr>
-        <td><strong>ანალიტიკა</strong></td>
+        <td><strong>გაყიდვის ანალიტიკა</strong></td>
         <td>KPI შემაჯამებელი ზოლი, ტოპ 5 გაყიდული პროდუქტი, მყიდველთა აქტივობის დიაგრამა, განყოფილება-მყიდველის სითბური რუკა, პერიოდის შეჯამება და დაჯგუფებული დოკუმენტების ცხრილი</td>
         <td>ფირუზისფერი -- დაჯგუფებული დოკუმენტების რაოდენობა</td>
       </tr>
       <tr>
-        <td><strong>დადასტურების მოლოდინში</strong></td>
+        <td><strong>გაყიდვის დადასტურება</strong></td>
         <td>მიმდინარე გაყიდვის ჯგუფები, რომლებიც დამტკიცებას ელოდება; დადასტურების (მწვანე) ან უარყოფის (წითელი) ღილაკები დამატებითი ავტორიზაციით</td>
         <td>ნარინჯისფერი -- მოლოდინში მყოფი ჯგუფების რაოდენობა</td>
       </tr>
@@ -101,7 +101,7 @@
     <tbody>
       <tr>
         <td>1</td>
-        <td><strong>თარიღი</strong></td>
+        <td><strong>თარიღი/დრო</strong></td>
         <td>გაყიდვის ტრანზაქციის თარიღი და დრო</td>
         <td>დიახ</td>
         <td>ხილული</td>
@@ -115,8 +115,8 @@
       </tr>
       <tr>
         <td>3</td>
-        <td><strong>დოკ. #</strong></td>
-        <td>ავტომატურად გენერირებული დოკუმენტის ნომერი (ფორმატი: <code>SELL-{timestamp}</code>)</td>
+        <td><strong>დოკუმენტის ნომერი</strong></td>
+        <td>ავტომატურად გენერირებული დოკუმენტის ნომერი (ფორმატი: <code>SELL-YYYY-NNN</code>, მაგ. <code>SELL-2026-001</code>)</td>
         <td>არა</td>
         <td>დამალული</td>
       </tr>
@@ -136,7 +136,7 @@
       </tr>
       <tr>
         <td>6</td>
-        <td><strong>დასახელება</strong></td>
+        <td><strong>საქონელი</strong></td>
         <td>პროდუქტის დასახელება, ქვემოთ ნაჩვენები პროდუქტის კოდით</td>
         <td>დიახ</td>
         <td>ხილული</td>
@@ -150,7 +150,7 @@
       </tr>
       <tr>
         <td>8</td>
-        <td><strong>რაოდ.</strong></td>
+        <td><strong>რაოდენობა</strong></td>
         <td>გაყიდული რაოდენობა</td>
         <td>არა</td>
         <td>ხილული</td>
@@ -179,7 +179,7 @@
   <ul class="doc-list">
     <li><strong>თარიღიდან / თარიღამდე</strong> -- ფილტრაცია თარიღის დიაპაზონით</li>
     <li><strong>განყოფილება</strong> -- სასაწყობო განყოფილებების ჩამოსაშლელი სია</li>
-    <li><strong>საწყობის ჯგუფი</strong> -- ფილტრაცია პროდუქტის კატეგორიით</li>
+    <li><strong>კატეგორია</strong> -- ფილტრაცია პროდუქტის კატეგორიით</li>
     <li><strong>მყიდველი</strong> -- ყველა მყიდველი კომპანიის ჩამოსაშლელი სია</li>
     <li><strong>პროდუქტის ძიება</strong> -- ტექსტური ძიება პროდუქტის დასახელებით</li>
     <li><strong>დოკუმენტის ნომერი</strong> -- ძიება დოკუმენტის ნომრით</li>
@@ -214,12 +214,12 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>დოკუმენტების საერთო რაოდენობა</strong></td>
+        <td><strong>დოკუმენტების რაოდენობა</strong></td>
         <td>შექმნილი გაყიდვის ზედნადებების რაოდენობა</td>
         <td>30-დღიანი სპარკლაინი + %-იანი ცვლილება წინა თვესთან შედარებით</td>
       </tr>
       <tr>
-        <td><strong>ჯამური ღირებულება</strong></td>
+        <td><strong>ჯამური ღირებულება (₾)</strong></td>
         <td>გაყიდვის ყველა თანხის ჯამი ლარში</td>
         <td>30-დღიანი სპარკლაინი + %-იანი ცვლილება წინა თვესთან შედარებით</td>
       </tr>
@@ -229,12 +229,12 @@
         <td>--</td>
       </tr>
       <tr>
-        <td><strong>საშ. პოზიციები/დოკ.</strong></td>
+        <td><strong>საშ. საქონელი / გაყიდვა</strong></td>
         <td>ზედნადებში პოზიციების საშუალო რაოდენობა</td>
         <td>--</td>
       </tr>
       <tr>
-        <td><strong>ყველაზე დატვირთული დღე</strong></td>
+        <td><strong>ყველაზე აქტიური დღე</strong></td>
         <td>კვირის დღე ყველაზე მაღალი გაყიდვის მოცულობით</td>
         <td>აჩვენებს ტრანზაქციების რაოდენობას</td>
       </tr>
@@ -255,17 +255,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>ტოპ 5 გაყიდული პროდუქტი</strong></td>
+        <td><strong>ყველაზე გაყიდვადი საქონელი</strong></td>
         <td>რანჟირებული სია ბეჯებით</td>
         <td>რაოდენობით ყველაზე ხშირად გაყიდული პროდუქტები, თითოეულისთვის ჯამური ღირებულების ჩვენებით</td>
       </tr>
       <tr>
-        <td><strong>მყიდველთა აქტივობა</strong></td>
+        <td><strong>მყიდველის აქტივობა</strong></td>
         <td>ჰორიზონტალური სვეტოვანი დიაგრამა</td>
         <td>ტრანზაქციების რაოდენობა მყიდველ კომპანიაზე, სიხშირით დალაგებული</td>
       </tr>
       <tr>
-        <td><strong>განყოფილება &rarr; მყიდველი - სითბური რუკა</strong></td>
+        <td><strong>განყოფილება &rarr; მყიდველი</strong></td>
         <td>ფერის ინტენსივობის ბადე</td>
         <td>აჩვენებს რომელი განყოფილებები ყიდიან რომელ მყიდველებს ყველაზე ხშირად; მუქი უჯრედები მიუთითებს მაღალ მოცულობაზე</td>
       </tr>
@@ -309,7 +309,7 @@
       <tr>
         <td><strong>დოკუმენტის ნომერი</strong></td>
         <td>ავტო</td>
-        <td>ავტომატურად გენერირებული ფორმატით <code>SELL-{timestamp}</code>; ველი მხოლოდ წასაკითხია</td>
+        <td>ავტომატურად გენერირებული ფორმატით <code>SELL-YYYY-NNN</code>; ველი მხოლოდ წასაკითხია</td>
       </tr>
       <tr>
         <td><strong>განყოფილება</strong></td>
@@ -341,7 +341,7 @@
 
   <h4>შეუნახავი ცვლილებების გაფრთხილება</h4>
 
-  <p>თუ მოდალურ ფანჯარას დახურავთ, როცა პროდუქტები ჯერ კიდევ მარჯვენა პანელშია, ბრაუზერის დადასტურების დიალოგი გამოჩნდება და გკითხავთ, გსურთ თუ არა შეუნახავი ცვლილებების გაუქმება.</p>
+  <p>თუ მოდალურ ფანჯარას დახურავთ, როცა პროდუქტები ჯერ კიდევ მარჯვენა პანელშია, ბრაუზერის დადასტურების შეტყობინება გამოჩნდება და გკითხავთ, გსურთ თუ არა შეუნახავი ცვლილებების გაუქმება.</p>
 
   <!-- 1.5 დადასტურების მოლოდინში -->
   <h3 id="selling-confirmation">1.5 დადასტურების მოლოდინში</h3>
@@ -402,36 +402,32 @@
         <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
       </tr>
       <tr>
-        <td>განყოფილების ID</td>
-        <td>Extension: <code>source-department</code></td>
-      </tr>
-      <tr>
-        <td>განყოფილების დასახელება</td>
-        <td>Extension: <code>source-department-name</code></td>
+        <td>განყოფილება</td>
+        <td><code>SupplyDelivery.supplier</code> (reference + display)</td>
       </tr>
       <tr>
         <td>მყიდველის ID</td>
-        <td>Extension: <code>selling-buyer-id</code></td>
+        <td>Extension: <code>buyer-id</code></td>
       </tr>
       <tr>
         <td>მყიდველის დასახელება</td>
-        <td>Extension: <code>selling-buyer-name</code></td>
+        <td>Extension: <code>buyer-name</code></td>
       </tr>
       <tr>
         <td>პროდუქტის კოდი</td>
-        <td>Extension: <code>item-code</code></td>
+        <td>Extension: <code>admin-item-code</code></td>
       </tr>
       <tr>
         <td>პროდუქტის დასახელება</td>
-        <td>Extension: <code>item-name</code></td>
+        <td>Extension: <code>admin-item-name</code></td>
       </tr>
       <tr>
         <td>ერთეული</td>
-        <td>Extension: <code>unit-of-measure</code></td>
+        <td>Extension: <code>admin-unit-of-measure</code></td>
       </tr>
       <tr>
         <td>ერთეულის ფასი</td>
-        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+        <td>Extension: <code>admin-unit-price</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>გასაყიდი ფასი</td>
@@ -439,15 +435,19 @@
       </tr>
       <tr>
         <td>პოზიციის ჯამი</td>
-        <td>Extension: <code>line-total</code> (valueMoney)</td>
+        <td>Extension: <code>admin-line-total</code> (valueMoney)</td>
+      </tr>
+      <tr>
+        <td>გაყიდვის ჯამი</td>
+        <td>Extension: <code>selling-total</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>სერიის ნომერი</td>
-        <td>Extension: <code>lot-number</code></td>
+        <td>Extension: <code>admin-lot-number</code></td>
       </tr>
       <tr>
         <td>ვარგისიანობის ვადა</td>
-        <td>Extension: <code>expiry-date</code></td>
+        <td>Extension: <code>admin-expiry-date</code></td>
       </tr>
     </tbody>
   </table>
@@ -505,17 +505,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>ისტორია</strong></td>
+        <td><strong>გაბრუნების ისტორია</strong></td>
         <td>გაბრუნების ცალკეული პოზიციების სრული სია 11-სვეტიანი ცხრილით, რომელიც მოიცავს მომწოდებლისა და მიღების ზედნადების სვეტებს</td>
         <td>ლურჯი -- ჩანაწერების საერთო რაოდენობა</td>
       </tr>
       <tr>
-        <td><strong>ანალიტიკა</strong></td>
+        <td><strong>გაბრუნების ანალიტიკა</strong></td>
         <td>KPI შემაჯამებელი ზოლი, ტოპ 5 გაბრუნებული პროდუქტი, მომწოდებელთა აქტივობის დიაგრამა, მომწოდებელი-განყოფილება სითბური რუკა, პერიოდის შეჯამება</td>
         <td>ფირუზისფერი -- დაჯგუფებული დოკუმენტების რაოდენობა</td>
       </tr>
       <tr>
-        <td><strong>დადასტურების მოლოდინში</strong></td>
+        <td><strong>მოლოდინში</strong></td>
         <td>მიმდინარე გაბრუნების ჯგუფები, რომლებიც დამტკიცებას ელოდება; დადასტურების/უარყოფის პროცესი გაყიდვის იდენტურია</td>
         <td>ნარინჯისფერი -- მოლოდინში მყოფი ჯგუფების რაოდენობა</td>
       </tr>
@@ -560,8 +560,8 @@
       </tr>
       <tr>
         <td>3</td>
-        <td><strong>დოკ. #</strong></td>
-        <td>ავტომატურად გენერირებული დოკუმენტის ნომერი (ფორმატი: <code>RET-{YYYY}-{NNN}</code>)</td>
+        <td><strong>დოკუმენტის ნომერი</strong></td>
+        <td>ავტომატურად გენერირებული დოკუმენტის ნომერი (ფორმატი: <code>RET-YYYY-NNN</code>)</td>
         <td>არა</td>
         <td>დამალული</td>
       </tr>
@@ -588,7 +588,7 @@
       </tr>
       <tr>
         <td>7</td>
-        <td><strong>დასახელება</strong></td>
+        <td><strong>საქონელი</strong></td>
         <td>პროდუქტის დასახელება, ქვემოთ ნაჩვენები პროდუქტის კოდით</td>
         <td>დიახ</td>
         <td>ხილული</td>
@@ -602,7 +602,7 @@
       </tr>
       <tr>
         <td>9</td>
-        <td><strong>რაოდ.</strong></td>
+        <td><strong>რაოდენობა</strong></td>
         <td>გასაბრუნებელი რაოდენობა</td>
         <td>არა</td>
         <td>ხილული</td>
@@ -647,12 +647,12 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>დოკუმენტების საერთო რაოდენობა</strong></td>
+        <td><strong>დოკუმენტების რაოდენობა</strong></td>
         <td>შექმნილი გაბრუნების ზედნადებების რაოდენობა</td>
         <td>იგივე</td>
       </tr>
       <tr>
-        <td><strong>ჯამური ღირებულება</strong></td>
+        <td><strong>ჯამური ღირებულება (₾)</strong></td>
         <td>გაბრუნების ყველა თანხის ჯამი ლარში</td>
         <td>იგივე</td>
       </tr>
@@ -662,12 +662,12 @@
         <td>გაყიდვაში ნაჩვენებია „მთავარი მყიდველი"</td>
       </tr>
       <tr>
-        <td><strong>საშ. პოზიციები/დოკ.</strong></td>
+        <td><strong>საშ. საქონელი / გაბრუნება</strong></td>
         <td>გაბრუნების დოკუმენტში პოზიციების საშუალო რაოდენობა</td>
         <td>იგივე</td>
       </tr>
       <tr>
-        <td><strong>ყველაზე დატვირთული დღე</strong></td>
+        <td><strong>ყველაზე აქტიური დღე</strong></td>
         <td>კვირის დღე ყველაზე მაღალი გაბრუნების მოცულობით</td>
         <td>იგივე</td>
       </tr>
@@ -686,17 +686,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><strong>ტოპ 5 გაბრუნებული პროდუქტი</strong></td>
+        <td><strong>ყველაზე დაბრუნებული საქონელი</strong></td>
         <td>რანჟირებული სია ბეჯებით</td>
         <td>იგივე სტრუქტურა, აღრიცხავს გაბრუნებულ პროდუქტებს გაყიდულის ნაცვლად</td>
       </tr>
       <tr>
-        <td><strong>მომწოდებელთა აქტივობა</strong></td>
+        <td><strong>მომწოდებლის აქტივობა</strong></td>
         <td>ჰორიზონტალური სვეტოვანი დიაგრამა</td>
         <td>აჩვენებს გაბრუნებების რაოდენობას მომწოდებელზე (გაყიდვაში -- მყიდველზე)</td>
       </tr>
       <tr>
-        <td><strong>მომწოდებელი &rarr; განყოფილება - სითბური რუკა</strong></td>
+        <td><strong>მომწოდებელი &rarr; განყოფილება</strong></td>
         <td>ფერის ინტენსივობის ბადე</td>
         <td>სტრიქონები = მომწოდებლები, სვეტები = განყოფილებები (გაყიდვაში: განყოფილება &rarr; მყიდველი)</td>
       </tr>
@@ -736,7 +736,7 @@
       <tr>
         <td><strong>დოკუმენტის ნომერი</strong></td>
         <td>ავტო</td>
-        <td>ავტომატურად გენერირებული ფორმატით <code>RET-{YYYY}-{NNN}</code>; ველი მხოლოდ წასაკითხია</td>
+        <td>ავტომატურად გენერირებული ფორმატით <code>RET-YYYY-NNN</code>; ველი მხოლოდ წასაკითხია</td>
       </tr>
       <tr>
         <td><strong>განყოფილება</strong></td>
@@ -813,12 +813,8 @@
         <td><code>SupplyDelivery.suppliedItem.quantity.value</code></td>
       </tr>
       <tr>
-        <td>განყოფილების ID</td>
-        <td>Extension: <code>source-department</code></td>
-      </tr>
-      <tr>
-        <td>განყოფილების დასახელება</td>
-        <td>Extension: <code>source-department-name</code></td>
+        <td>განყოფილება</td>
+        <td><code>SupplyDelivery.supplier</code> (reference + display)</td>
       </tr>
       <tr>
         <td>მომწოდებლის ID</td>
@@ -834,31 +830,31 @@
       </tr>
       <tr>
         <td>პროდუქტის კოდი</td>
-        <td>Extension: <code>item-code</code></td>
+        <td>Extension: <code>admin-item-code</code></td>
       </tr>
       <tr>
         <td>პროდუქტის დასახელება</td>
-        <td>Extension: <code>item-name</code></td>
+        <td>Extension: <code>admin-item-name</code></td>
       </tr>
       <tr>
         <td>ერთეული</td>
-        <td>Extension: <code>unit-of-measure</code></td>
+        <td>Extension: <code>admin-unit-of-measure</code></td>
       </tr>
       <tr>
         <td>ერთეულის ფასი</td>
-        <td>Extension: <code>unit-price</code> (valueMoney)</td>
+        <td>Extension: <code>admin-unit-price</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>პოზიციის ჯამი</td>
-        <td>Extension: <code>line-total</code> (valueMoney)</td>
+        <td>Extension: <code>admin-line-total</code> (valueMoney)</td>
       </tr>
       <tr>
         <td>სერიის ნომერი</td>
-        <td>Extension: <code>lot-number</code></td>
+        <td>Extension: <code>admin-lot-number</code></td>
       </tr>
       <tr>
         <td>ვარგისიანობის ვადა</td>
-        <td>Extension: <code>expiry-date</code></td>
+        <td>Extension: <code>admin-expiry-date</code></td>
       </tr>
     </tbody>
   </table>
@@ -903,8 +899,8 @@
       </tr>
       <tr>
         <td><strong>დოკ. # ფორმატი</strong></td>
-        <td><code>SELL-{timestamp}</code></td>
-        <td><code>RET-{YYYY}-{NNN}</code></td>
+        <td><code>SELL-YYYY-NNN</code></td>
+        <td><code>RET-YYYY-NNN</code></td>
       </tr>
       <tr>
         <td><strong>კონტრაგენტის ველი</strong></td>

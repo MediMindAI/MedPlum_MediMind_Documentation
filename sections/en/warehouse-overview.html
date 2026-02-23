@@ -14,7 +14,7 @@
 
   <p>The <strong>Warehouse Dashboard</strong> is the operational command center for your hospital's supply chain. It brings together real-time stock metrics, critical alerts, pending approvals, and activity logs into a single view -- giving warehouse staff an immediate picture of what needs attention right now.</p>
 
-  <p>The dashboard <strong>auto-refreshes every 60 seconds</strong>, so the numbers you see always reflect the current state of your inventory without needing to reload the page.</p>
+  <p>The dashboard fetches data once when the page loads. To update the numbers, click the <strong>refresh button</strong> in the header. A 60-second cache prevents redundant API calls when refreshing rapidly.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-dashboard-overview-en.png" alt="Warehouse Dashboard showing KPI stat cards, quick action buttons, and activity feed" class="doc-screenshot-image" data-i18n-img="wh-dashboard-overview">
@@ -32,15 +32,15 @@
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">60s</span>
-      <span class="doc-stat-inline-label">Auto-Refresh</span>
+      <span class="doc-stat-inline-label">Cache TTL</span>
     </div>
     <div class="doc-stat-inline">
       <span class="doc-stat-inline-number">4</span>
       <span class="doc-stat-inline-label">Quick Actions</span>
     </div>
     <div class="doc-stat-inline">
-      <span class="doc-stat-inline-number">5</span>
-      <span class="doc-stat-inline-label">Activity Types</span>
+      <span class="doc-stat-inline-number">6</span>
+      <span class="doc-stat-inline-label">Notification Types</span>
     </div>
   </div>
 
@@ -70,7 +70,7 @@
           <td>Ordering should be initiated before these items reach zero</td>
         </tr>
         <tr>
-          <td><strong>Expiring in 30 Days</strong></td>
+          <td><strong>Expiring 30d</strong></td>
           <td>Items with expiry dates within the next 30 days</td>
           <td>These should be prioritized for use or transferred to departments that need them</td>
         </tr>
@@ -90,7 +90,7 @@
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>FHIR Data Sources:</strong>
-    KPI cards pull data from multiple FHIR resources -- <strong>Basic</strong> (StockQuant) for stock levels, <strong>SupplyDelivery</strong> for receipts and transfers, and <strong>SupplyRequest</strong> for pending orders. All data is cached for 30 seconds to balance freshness with performance.
+    KPI cards pull data from multiple FHIR resources -- <strong>Basic</strong> (StockQuant) for stock levels, <strong>SupplyDelivery</strong> for receipts and transfers, and <strong>SupplyRequest</strong> for pending orders. All data is cached for 60 seconds to balance freshness with performance.
   </div>
 
   <h4>Critical Alerts Banner</h4>
@@ -131,22 +131,22 @@
       <tbody>
         <tr>
           <td><strong>New Receipt</strong></td>
-          <td>Record incoming deliveries from suppliers</td>
+          <td>Record incoming goods</td>
           <td>Receptions page (create new receipt)</td>
         </tr>
         <tr>
           <td><strong>New Transfer</strong></td>
-          <td>Move supplies between departments or warehouses</td>
+          <td>Move between departments</td>
           <td>Transfers page (create new transfer)</td>
         </tr>
         <tr>
           <td><strong>Confirm Orders</strong></td>
-          <td>Review and approve pending supply requests from departments. Shows a badge with the number of pending orders when orders are waiting</td>
+          <td>Review pending orders. Shows a badge with the number of pending orders when orders are waiting</td>
           <td>Order Confirmation page</td>
         </tr>
         <tr>
           <td><strong>View Balances</strong></td>
-          <td>Check current stock levels across all departments</td>
+          <td>Current stock levels</td>
           <td>Inventory Balances page</td>
         </tr>
       </tbody>
@@ -246,8 +246,13 @@
         </tr>
         <tr>
           <td><strong>Procurement</strong></td>
-          <td>Purchase order creation and status changes</td>
-          <td>"Procurement request approved: Medical Supplies Q1"</td>
+          <td>New purchase order submissions</td>
+          <td>"Procurement request: Medical Supplies Q1"</td>
+        </tr>
+        <tr>
+          <td><strong>Procurement Status</strong></td>
+          <td>Status changes on existing procurement requests</td>
+          <td>"Procurement PO-2024-003: Approved"</td>
         </tr>
         <tr>
           <td><strong>Write-Off</strong></td>
@@ -319,7 +324,7 @@
           <td>Manual stock corrections (inventory count, damage, loss)</td>
         </tr>
         <tr>
-          <td><strong>Expiry</strong></td>
+          <td><strong>Expiry Alert</strong></td>
           <td style="color: var(--emr-error);">Red</td>
           <td>Items flagged as expired and removed from usable stock</td>
         </tr>
@@ -328,6 +333,11 @@
   </div>
 
   <p>The timeline displays up to <strong>20 recent entries</strong> and supports click-to-navigate -- clicking an activity item opens the related record (e.g., clicking a receipt entry opens that receipt's detail page).</p>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Currently Active Types:</strong>
+    The dashboard currently generates <strong>Receipt</strong> and <strong>Transfer</strong> activity entries from the last 7 days. The Request, Adjustment, and Expiry Alert types are supported by the display component but are not yet produced by the data source.
+  </div>
 
   <!-- Analytics Overview -->
   <h3 id="analytics-overview">1.4 Analytics Overview</h3>
@@ -370,7 +380,7 @@
   <!-- Dashboard Layout Summary -->
   <h4>Dashboard Section Layout</h4>
 
-  <p>The dashboard organizes its content into logical sections, each with a labeled divider header. Here is the complete layout from top to bottom:</p>
+  <p>The dashboard organizes its content into logical sections. Three sections -- Intelligence, Notifications, and Analytics -- have labeled divider headers. Here is the complete layout from top to bottom:</p>
 
   <div class="doc-table-container">
     <table class="doc-table">

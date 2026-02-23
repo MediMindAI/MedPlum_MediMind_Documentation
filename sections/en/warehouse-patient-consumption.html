@@ -102,7 +102,7 @@
     <div class="doc-zone" style="border-left: 4px solid #48bb78;">
       <div class="doc-zone-header">Status Bar</div>
       <div class="doc-zone-content">
-        <p>Pulsing green dot + "Online (N patients)" live indicator</p>
+        <p>Pulsing green dot + "Online (N)" live indicator</p>
       </div>
     </div>
   </div>
@@ -307,7 +307,7 @@
         <tr>
           <td><strong>Measure</strong></td>
           <td>Treatment/Research</td>
-          <td>Modal with two tabs (Supplies, Research) showing the patient's expenditure summary</td>
+          <td>Modal with two tabs (Supplies &amp; Medications, Research &amp; Consultations) showing the patient's expenditure summary</td>
           <td>Yes</td>
         </tr>
         <tr>
@@ -364,7 +364,7 @@
         <tr>
           <td><strong>Search Input</strong></td>
           <td>Find items or procedures to add</td>
-          <td>Shows autocomplete dropdown with matching results. In Expenditure mode, shows stock items with quantity and unit. In Procedure mode, shows procedures with service code, name, and price in GEL</td>
+          <td>Shows autocomplete dropdown with matching results. In Expenditure mode, shows stock items with quantity and unit. In Procedure mode, shows procedures with service code, name, and price in ₾</td>
         </tr>
         <tr>
           <td><strong>Quantity Input</strong></td>
@@ -405,7 +405,7 @@
           <td><strong>Procedure</strong></td>
           <td>Medical procedures performed on the patient (lab tests, imaging, consultations)</td>
           <td>No stock decrement -- procedures are service charges, not physical items</td>
-          <td>Procedure catalog items with: service code, name, and price in GEL (e.g., "24001 - Blood Test (15.00 GEL)")</td>
+          <td>Procedure catalog items with: service code, name, and price in ₾ (e.g., "24001 - Blood Test (15.00 ₾)")</td>
         </tr>
       </tbody>
     </table>
@@ -603,8 +603,8 @@
   <h4>Treatment/Research Modal (Measure Button)</h4>
   <p>A summary modal for the selected patient's expenditure data, split into two tabs:</p>
   <ul class="doc-list">
-    <li><strong>Supplies tab</strong> -- lists all physical supply expenditures (non-procedure items) with date, name, and quantity</li>
-    <li><strong>Research tab</strong> -- lists all procedure entries with date, name, and quantity</li>
+    <li><strong>Supplies &amp; Medications tab</strong> -- lists all physical supply expenditures (non-procedure items) with date, name, and quantity</li>
+    <li><strong>Research &amp; Consultations tab</strong> -- lists all procedure entries with date, name, and quantity</li>
   </ul>
   <p>This provides a quick patient-level view without the full financial detail of the Calculation modal.</p>
 

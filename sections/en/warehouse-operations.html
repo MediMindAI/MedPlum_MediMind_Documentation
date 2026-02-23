@@ -60,13 +60,13 @@
         <td><strong>Transfers</strong></td>
         <td>Move items between hospital departments</td>
         <td>SupplyDelivery (type: transfer)</td>
-        <td>All + Grouped + Approval</td>
+        <td>Transfer History + Analytics + Needs Confirmation</td>
       </tr>
       <tr>
         <td><strong>Orders</strong></td>
         <td>Request supplies from other departments</td>
         <td>SupplyRequest</td>
-        <td>All + Grouped + Confirmation</td>
+        <td>Order History + Analytics + Needs Confirmation</td>
       </tr>
     </tbody>
   </table>
@@ -84,20 +84,20 @@
   <p>The Receiving page uses a <strong>2-tab layout</strong> with shared header actions:</p>
 
   <ul class="doc-list">
-    <li><strong>History tab</strong> — Grouped invoice table showing all received shipments with filters, sorting, and export</li>
-    <li><strong>Analytics tab</strong> — KPI summary cards and detailed analytics charts for receiving trends</li>
+    <li><strong>Receiving History</strong> — Grouped invoice table showing all received shipments with filters, sorting, and export</li>
+    <li><strong>Analytics</strong> — KPI summary cards and detailed analytics charts for receiving trends</li>
   </ul>
 
   <p>Two action buttons appear in the page header, available from either tab:</p>
   <ul class="doc-list">
     <li><strong>Import from RS</strong> — Import invoice data from the RS (Revenue Service) electronic invoicing system</li>
-    <li><strong>New Receipt</strong> — Create a new receipt manually by entering supplier and item details</li>
+    <li><strong>Create Receipt</strong> — Create a new receipt manually by entering supplier and item details</li>
   </ul>
 
   <!-- Receiving History -->
-  <h4 id="receiving-history">History Tab</h4>
+  <h4 id="receiving-history">Receiving History</h4>
 
-  <p>The History tab displays all receiving records grouped by invoice number. Each row represents one invoice from a supplier, showing the total quantity and value of all items on that invoice. Clicking a row opens a detail modal with the individual line items.</p>
+  <p>The Receiving History tab displays all receiving records grouped by invoice number. Each row represents one invoice from a supplier, showing the total quantity and value of all items on that invoice. Clicking a row opens a detail modal with the individual line items.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-receiving-list-en.png" alt="Receiving history tab showing grouped invoice table with filters" class="doc-screenshot-image" data-i18n-img="wh-receiving-list">
@@ -181,7 +181,7 @@
         <tr>
           <td><strong>Contract #</strong></td>
           <td>Procurement contract reference</td>
-          <td>SupplyDelivery extension (contract-number)</td>
+          <td>Extension: admin-contract-number</td>
         </tr>
         <tr>
           <td><strong>Company</strong></td>
@@ -191,7 +191,7 @@
         <tr>
           <td><strong>Department</strong></td>
           <td>Receiving department/warehouse</td>
-          <td>SupplyDelivery.destination.display</td>
+          <td>Extension: dest-department (Location reference)</td>
         </tr>
         <tr>
           <td><strong>Quantity</strong></td>
@@ -214,7 +214,7 @@
 
   <div class="doc-callout doc-callout-info doc-callout-simple">
     <strong>Export Options:</strong>
-    Click the <strong>Excel</strong> or <strong>PDF</strong> button in the History tab header to export all filtered receiving records. The Excel export includes all columns plus package quantity and package price fields.
+    Click the <strong>Excel</strong> or <strong>CSV</strong> button in the Receiving History tab header to export all filtered receiving records. The Excel export includes all columns plus package quantity and package price fields.
   </div>
 
   <h5>Invoice Detail Modal</h5>
@@ -287,7 +287,7 @@
   <!-- New Receipt Creation -->
   <h4 id="receipt-creation">Creating a New Receipt</h4>
 
-  <p>Click <strong>New Receipt</strong> in the page header to open the receipt creation modal. The form has two parts: a <strong>header section</strong> for invoice-level details and a <strong>line items section</strong> for individual products.</p>
+  <p>Click <strong>"Create Receipt"</strong> or <strong>"Import from RS"</strong> to open the receipt creation modal. The form has two parts: a <strong>header section</strong> for invoice-level details and a <strong>line items section</strong> for individual products.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-receiving-create-en.png" alt="New receipt creation form with supplier and item fields" class="doc-screenshot-image" data-i18n-img="wh-receiving-create">
@@ -370,9 +370,9 @@
   <p>The Transfers page uses a <strong>3-tab layout</strong> with a shared header action button:</p>
 
   <ul class="doc-list">
-    <li><strong>All Transfers</strong> — Flat list of every individual transfer line item with edit/delete/correct actions</li>
-    <li><strong>Grouped</strong> — One row per document number with KPI analytics and export options</li>
-    <li><strong>Pending Approval</strong> — Transfers awaiting confirmation from the receiving department</li>
+    <li><strong>Transfer History</strong> — Flat list of every individual transfer line item with edit/delete/correct actions</li>
+    <li><strong>Analytics</strong> — One row per document number with KPI analytics and export options</li>
+    <li><strong>Needs Confirmation</strong> — Transfers awaiting confirmation from the receiving department</li>
   </ul>
 
   <p>The header contains a single action button:</p>
@@ -381,9 +381,9 @@
   </ul>
 
   <!-- All Transfers Tab -->
-  <h4 id="transfers-all">All Transfers Tab</h4>
+  <h4 id="transfers-all">Transfer History</h4>
 
-  <p>The All Transfers tab shows every transfer line item as a separate row. If a transfer document has 5 items, each appears as its own row, grouped visually by document number. This view is useful for finding and editing individual items.</p>
+  <p>The Transfer History tab shows every transfer line item as a separate row. If a transfer document has 5 items, each appears as its own row, grouped visually by document number. This view is useful for finding and editing individual items.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-transfer-list-en.png" alt="All Transfers tab showing individual transfer line items" class="doc-screenshot-image" data-i18n-img="wh-transfer-list">
@@ -412,22 +412,22 @@
         <tr>
           <td><strong>From Dept</strong></td>
           <td>Sending department name</td>
-          <td>SupplyDelivery.supplier.display</td>
+          <td>Extension: source-department, source-department-name</td>
         </tr>
         <tr>
           <td><strong>To Dept</strong></td>
           <td>Receiving department name</td>
-          <td>SupplyDelivery.destination.display</td>
+          <td>Extension: dest-department, dest-department-name</td>
         </tr>
         <tr>
           <td><strong>Item Code</strong></td>
           <td>Product code from the nomenclature</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept</td>
+          <td>Extension: admin-item-code</td>
         </tr>
         <tr>
           <td><strong>Item Name</strong></td>
           <td>Product name</td>
-          <td>SupplyDelivery.suppliedItem.itemCodeableConcept.text</td>
+          <td>Extension: admin-item-name</td>
         </tr>
         <tr>
           <td><strong>Unit</strong></td>
@@ -442,7 +442,7 @@
         <tr>
           <td><strong>Price</strong></td>
           <td>Unit price (GEL)</td>
-          <td>SupplyDelivery extension (unit-price)</td>
+          <td>Extension: admin-unit-price</td>
         </tr>
         <tr>
           <td><strong>Total</strong></td>
@@ -476,9 +476,9 @@
   </div>
 
   <!-- Grouped Tab -->
-  <h4 id="transfers-grouped">Grouped Tab</h4>
+  <h4 id="transfers-grouped">Analytics</h4>
 
-  <p>The Grouped tab aggregates transfers by document number, showing one row per transfer document. This gives a higher-level view of transfer activity and includes analytics features not available in the All tab.</p>
+  <p>The Analytics tab aggregates transfers by document number, showing one row per transfer document. This gives a higher-level view of transfer activity and includes analytics features not available in the Transfer History tab.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-transfer-grouped-en.png" alt="Transfers grouped view with analytics summary cards" class="doc-screenshot-image" data-i18n-img="wh-transfer-grouped">
@@ -529,9 +529,9 @@
   </div>
 
   <!-- Approval Tab -->
-  <h4 id="transfers-approval">Pending Approval Tab</h4>
+  <h4 id="transfers-approval">Needs Confirmation</h4>
 
-  <p>The Pending Approval tab shows transfers that have been created but not yet confirmed by the receiving department. This is the core of the transfer approval workflow — it ensures that the receiving department verifies what was actually received before inventory balances are updated.</p>
+  <p>The Needs Confirmation tab shows transfers that have been created but not yet confirmed by the receiving department. This is the core of the transfer approval workflow — it ensures that the receiving department verifies what was actually received before inventory balances are updated.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-transfer-approval-en.png" alt="Transfer approval workflow with lifecycle badges and confirmation actions" class="doc-screenshot-image" data-i18n-img="wh-transfer-approval">
@@ -591,6 +591,10 @@
   <h4 id="transfer-book">Creating a New Transfer</h4>
 
   <p>Click <strong>New Transfer</strong> in the page header to open the <strong>Transfer Book</strong> modal. This is a dual-panel form with header fields and a line items builder.</p>
+
+  <div class="doc-screenshot-full">
+    <img src="images/wh-transfer-book-en.png" alt="Transfer Book Modal" class="doc-screenshot-image" data-i18n-img="wh-transfer-book" />
+  </div>
 
   <h5>Header Fields</h5>
 
@@ -718,16 +722,16 @@
 
   <h3 id="orders">3.3 Orders (Supply Requests)</h3>
 
-  <p><strong>Orders</strong> allow departments to formally request supplies from other departments. Think of it as an internal purchase order — the requesting department says "we need 50 syringes from the main warehouse," and the supplying department can review, adjust, and fulfill the order. Orders create FHIR <code>SupplyRequest</code> resources and are quantity-only (no price tracking, unlike transfers).</p>
+  <p><strong>Orders</strong> allow departments to formally request supplies from other departments. The requesting department submits a request specifying the required nomenclature and quantity, while the supplying department reviews, adjusts if necessary, and fulfills it. Orders create FHIR <code>SupplyRequest</code> resources and contain only quantity information — unlike transfers, no price tracking is involved.</p>
 
   <h4>Page Layout</h4>
 
   <p>The Orders page uses a <strong>3-tab layout</strong> with two header action buttons:</p>
 
   <ul class="doc-list">
-    <li><strong>All Orders</strong> — Flat list of all order line items with edit/delete/correct actions</li>
-    <li><strong>Grouped</strong> — One row per order document with KPI analytics and detail views</li>
-    <li><strong>Confirmation</strong> — Orders awaiting confirmation from the supplying department</li>
+    <li><strong>Order History</strong> — Flat list of all order line items with edit/delete/correct actions</li>
+    <li><strong>Analytics</strong> — One row per order document with KPI analytics and detail views</li>
+    <li><strong>Needs Confirmation</strong> — Orders awaiting confirmation from the supplying department</li>
   </ul>
 
   <p>Header action buttons:</p>
@@ -737,9 +741,9 @@
   </ul>
 
   <!-- All Orders Tab -->
-  <h4 id="orders-all">All Orders Tab</h4>
+  <h4 id="orders-all">Order History</h4>
 
-  <p>The All Orders tab shows every order line item individually, similar to the All Transfers tab. Each row is one item within an order document. Filters let you search by date range, document number, departments, and item name.</p>
+  <p>The Order History tab shows every order line item individually, similar to the Transfer History tab. Each row is one item within an order document. Filters let you search by date range, document number, departments, and item name.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-orders-list-en.png" alt="All Orders tab showing order line items with status badges" class="doc-screenshot-image" data-i18n-img="wh-orders-list">
@@ -768,32 +772,32 @@
         <tr>
           <td><strong>Requester</strong></td>
           <td>Department requesting the supplies</td>
-          <td>SupplyRequest.requester.display</td>
+          <td>Extension: requester-department</td>
         </tr>
         <tr>
           <td><strong>Receiver</strong></td>
           <td>Department fulfilling the order</td>
-          <td>SupplyRequest.deliverTo.display</td>
+          <td>Extension: receiver-department</td>
         </tr>
         <tr>
           <td><strong>Item Code</strong></td>
           <td>Product code from the nomenclature</td>
-          <td>SupplyRequest.itemCodeableConcept</td>
+          <td>Extension: order-line-items (JSON → itemCode)</td>
         </tr>
         <tr>
           <td><strong>Item Name</strong></td>
           <td>Product name</td>
-          <td>SupplyRequest.itemCodeableConcept.text</td>
+          <td>Extension: order-line-items (JSON → itemName)</td>
         </tr>
         <tr>
           <td><strong>Unit</strong></td>
           <td>Unit of measure</td>
-          <td>SupplyRequest.quantity.unit</td>
+          <td>Extension: order-line-items (JSON → unit)</td>
         </tr>
         <tr>
           <td><strong>Qty</strong></td>
           <td>Requested quantity</td>
-          <td>SupplyRequest.quantity.value</td>
+          <td>Extension: order-line-items (JSON → quantity)</td>
         </tr>
         <tr>
           <td><strong>Status</strong></td>
@@ -815,9 +819,9 @@
   </div>
 
   <!-- Grouped Tab -->
-  <h4 id="orders-grouped">Grouped Tab</h4>
+  <h4 id="orders-grouped">Analytics</h4>
 
-  <p>The Grouped tab aggregates orders by document number, showing one row per order with the total quantity and item count. Like the Transfers Grouped tab, it includes five KPI analytics cards and detailed analytics sections.</p>
+  <p>The Analytics tab aggregates orders by document number, showing one row per order with the total quantity and item count. Like the Transfers Analytics tab, it includes five KPI analytics cards and detailed analytics sections.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-orders-grouped-en.png" alt="Orders grouped view with analytics cards and document table" class="doc-screenshot-image" data-i18n-img="wh-orders-grouped">
@@ -858,12 +862,54 @@
     </table>
   </div>
 
+  <h5>Analytics Charts</h5>
+
+  <p>Below the KPI strip, four collapsible analytics sections provide deeper insights:</p>
+
+  <div class="doc-table-container">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Section</th>
+          <th>Visualization</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Top 5 Items</strong></td>
+          <td>Ranked list with badges</td>
+          <td>Most frequently ordered items by quantity, showing rank, item name, quantity, and total value (GEL)</td>
+        </tr>
+        <tr>
+          <td><strong>Department Activity</strong></td>
+          <td>Horizontal stacked bar chart</td>
+          <td>Blue bars = orders sent (as orderer), Green bars = orders received; departments sorted by total activity</td>
+        </tr>
+        <tr>
+          <td><strong>Order Routes Heatmap</strong></td>
+          <td>Color-intensity grid</td>
+          <td>Rows = orderer departments, Columns = receiver departments; cell color intensity indicates order volume between pairs</td>
+        </tr>
+        <tr>
+          <td><strong>Period Summary</strong></td>
+          <td>Table with toggle</td>
+          <td>Weekly (4 weeks) or Monthly (6 months) view showing document count and total value (GEL) per period</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-callout doc-callout-info doc-callout-simple">
+    <strong>Period Toggle:</strong> The Period Summary section includes a <strong>Weekly / Monthly</strong> toggle that switches between a 4-week breakdown and a 6-month breakdown of order activity.
+  </div>
+
   <p>The detail modal for grouped orders shows all line items in the order, allowing you to review what was requested and confirm individual items.</p>
 
   <!-- Confirmation Tab -->
-  <h4 id="orders-confirmation">Confirmation Tab</h4>
+  <h4 id="orders-confirmation">Needs Confirmation</h4>
 
-  <p>The Confirmation tab shows orders awaiting confirmation from the supplying department. It follows the same approval workflow pattern as transfers, with a visual lifecycle indicator and step-up authentication for all actions.</p>
+  <p>The Needs Confirmation tab shows orders awaiting confirmation from the supplying department. It follows the same approval workflow pattern as transfers, with a visual lifecycle indicator and step-up authentication for all actions.</p>
 
   <div class="doc-screenshot-full">
     <img src="images/wh-order-confirmation-en.png" alt="Order confirmation workflow with review and issued quantity editing" class="doc-screenshot-image" data-i18n-img="wh-order-confirmation">
@@ -1026,19 +1072,19 @@
           <td><strong>Receiving</strong></td>
           <td>SupplyDelivery</td>
           <td>identifier, occurrenceDateTime, supplier, destination, suppliedItem</td>
-          <td>contract-number, package-quantity, package-price, unit-price</td>
+          <td>admin-contract-number, package-quantity, package-price, admin-unit-price, admin-item-code, admin-item-name, admin-unit-of-measure, admin-line-total</td>
         </tr>
         <tr>
           <td><strong>Transfers</strong></td>
           <td>SupplyDelivery</td>
           <td>identifier, occurrenceDateTime, supplier (from), destination (to), suppliedItem, status</td>
-          <td>unit-price, document-number, direct-write-off, approval</td>
+          <td>admin-unit-price, source-department, dest-department, transfer-workflow-status, transfer-approved-by-id, transfer-approved-by-name, transfer-approved-at; Identifier: transfer-document-number</td>
         </tr>
         <tr>
           <td><strong>Orders</strong></td>
           <td>SupplyRequest</td>
-          <td>identifier, authoredOn, requester, deliverTo, itemCodeableConcept, quantity, status</td>
-          <td>document-number, issued-quantity</td>
+          <td>identifier, authoredOn, status</td>
+          <td>order-line-items, order-status, delivered-quantity, requester-department, receiver-department; Identifier: order-document-number</td>
         </tr>
       </tbody>
     </table>
